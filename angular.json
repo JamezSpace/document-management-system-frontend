@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "pnpm"
+    "packageManager": "pnpm",
+    "analytics": "335e13c4-3b0f-4bc3-b40b-3f06da8711f1"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -11,7 +12,7 @@
       "schematics": {},
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "nexus",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
