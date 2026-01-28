@@ -1,5 +1,5 @@
 {
-  "name": "document-management-system-frontend",
+  "name": "nexusfons",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:document-management-system-frontend": "node dist/document-management-system-frontend/server/server.mjs"
+    "serve:ssr:nexusfons": "node dist/document-management-system-frontend/server/server.mjs"
   },
   "prettier": {
     "printWidth": 100,
