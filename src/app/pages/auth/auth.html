@@ -1,0 +1,160 @@
+<div class="pseudo-body h-lvh max-sm:h-[120lvh] relative bg-(--surface) nexus-sans-font">
+  <div
+    class="w-full max-w-2xl max-sm:max-w-11/12 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+  >
+    <section class="custom-box-shadow bg-white rounded-xs px-7.5 max-sm:px-5 py-7.5 max-sm:py-5">
+      <a href="/"><img src="full-logo.webp" class="h-20" alt="NexusFons Logo" /></a>
+      <div class="mt-1.5 mb-5">
+        <h1 class="capitalize text-xl nexus-body-font font-medium">the gateway</h1>
+        <p class="text-neutral-700 max-sm:text-sm">
+          Welcome back to the University of Ibadan Digital Office infrastructure
+        </p>
+      </div>
+      <form [formGroup]="authFormGroup">
+        <div class="row">
+          <div class="field">
+            <label for="">institutional email</label>
+            <div class="input-field py-1.5 px-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <rect width="24" height="24" fill="none" />
+                <path
+                  fill="currentColor"
+                  d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20zm8-7L4 8v10h16V8zm0-2l8-5H4zM4 8V6v12z"
+                />
+              </svg>
+              <input
+                type="email"
+                placeholder="staff@ui.edu.ng"
+                formControlName="email"
+                [class.filled]="(authFormGroup.controls.email.value?.length ?? 0) > 0"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="">password</label>
+            <div class="input-field py-1.5 px-2.5 pr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <rect width="24" height="24" fill="none" />
+                <path
+                  fill="currentColor"
+                  d="M12 17a2 2 0 0 1-2-2c0-1.11.89-2 2-2a2 2 0 0 1 2 2a2 2 0 0 1-2 2m6 3V10H6v10zm0-12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10c0-1.11.89-2 2-2h1V6a5 5 0 0 1 5-5a5 5 0 0 1 5 5v2zm-6-5a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3"
+                />
+              </svg>
+              <input
+                [type]="passwordRevealed() ? 'text' : 'password'"
+                placeholder="staff@ui.edu.ng"
+                formControlName="password"
+                [class.filled]="(authFormGroup.controls.password.value?.length ?? 0) > 0"
+                maxlength="20"
+              />
+
+              <button type="button" (click)="togglePasswordFieldType()" class="text-lg">
+                <!-- this means password is visible as text -->
+                @if (passwordRevealed()) {
+                  <!-- icon family: Streamline Icons -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 14 14"
+                  >
+                    <rect width="14" height="14" fill="none" />
+                    <g
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1"
+                    >
+                      <path
+                        d="M3.63 3.624C4.621 2.98 5.771 2.5 7 2.5c2.79 0 5.18 2.475 6.23 3.746c.166.207.258.476.258.754s-.092.547-.258.754c-.579.7-1.565 1.767-2.8 2.583m-1.93.933c-.482.146-.984.23-1.5.23c-2.79 0-5.18-2.475-6.23-3.746C.604 7.547.512 7.279.512 7s.092-.547.258-.754c.333-.402.8-.926 1.372-1.454"
+                      />
+                      <path d="M8.414 8.414a2 2 0 0 0-2.828-2.828M13.5 13.5L.5.5" />
+                    </g>
+                  </svg>
+                } @else {
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 14 14"
+                  >
+                    <rect width="14" height="14" fill="none" />
+                    <g
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1"
+                    >
+                      <path
+                        d="M13.23 6.246c.166.207.258.476.258.754s-.092.547-.258.754C12.18 9.025 9.79 11.5 7 11.5S1.82 9.025.77 7.754C.604 7.547.512 7.279.512 7s.092-.547.258-.754C1.82 4.975 4.21 2.5 7 2.5s5.18 2.475 6.23 3.746"
+                      />
+                      <path d="M7 9a2 2 0 1 0 0-4a2 2 0 0 0 0 4" />
+                    </g>
+                  </svg>
+                }
+              </button>
+            </div>
+            <a
+              href="/"
+              class="capitalize text-sm hover:underline hover:ease-out text-(--accent) inline-block mt-2 mr-auto"
+              >forgot password?</a
+            >
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="block w-full nexus-button"
+          [class.disabled]="authFormGroup.invalid"
+        >
+          sign in securely
+        </button>
+      </form>
+      <hr class="mt-10 mb-6 w-3/4 mx-auto border-neutral-300" />
+      <p class="text-center text-sm max-sm:text-xs">
+        Having trouble accessing your account?<br />
+        <a href="/" class="text-(--accent)">Contact IT Support</a>
+      </p>
+    </section>
+    <article class="text-center mt-10 text-sm max-sm:text-xs text-neutral-700">
+      <p class="uppercase flex-center gap-2 justify-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class=""
+          width="1.2em"
+          height="1.2em"
+          viewBox="0 0 48 48"
+        >
+          <rect width="48" height="48" fill="none" />
+          <path
+            fill="currentColor"
+            d="M23.135 4.348a1.25 1.25 0 0 1 1.73 0c2.758 2.643 6.684 4.077 10.037 4.84c1.659.376 3.139.58 4.202.69a29 29 0 0 0 1.654.122h.021A1.25 1.25 0 0 1 42 11.25V21c0 9.497-5.06 19.016-17.627 22.943a1.25 1.25 0 0 1-.746 0c-6.238-1.95-10.668-5.292-13.53-9.418C7.244 30.408 6 25.587 6 20.75v-9.5A1.25 1.25 0 0 1 7.22 10h.022l.08-.003q.11-.004.328-.017c.29-.017.715-.048 1.246-.102a36 36 0 0 0 4.202-.69c3.352-.763 7.278-2.197 10.037-4.84m9.478 14.806a1.25 1.25 0 1 0-1.726-1.808L20.77 27.003l-3.636-3.637a1.25 1.25 0 0 0-1.768 1.768l4.5 4.5c.48.48 1.256.49 1.747.02z"
+          /></svg
+        ><span class="tracking-wide">official system</span>
+      </p>
+      <p class="mt-3 mb-2.5">
+        Offical University of Ibadan Institutional System.<br />
+        Unauthorized access is prohibited and monitored.
+      </p>
+      <p class="text-xs flex justify-center">
+        <span class="flex-center justify-center gap-1 mr-1">
+          <!-- copyright symbol -->
+          <span
+            ><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+              <rect width="24" height="24" fill="none" />
+              <path
+                fill="currentColor"
+                d="M11.88 9.14c1.28.06 1.61 1.15 1.63 1.66h1.79c-.08-1.98-1.49-3.19-3.45-3.19C9.64 7.61 8 9 8 12.14c0 1.94.93 4.24 3.84 4.24c2.22 0 3.41-1.65 3.44-2.95h-1.79c-.03.59-.45 1.38-1.63 1.44c-1.31-.04-1.86-1.06-1.86-2.73c0-2.89 1.28-2.98 1.88-3M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8"
+              /></svg
+          ></span>
+          <span>{{ currentYear }}</span>
+        </span>
+        NexusFons Governance Infrastructure
+      </p>
+    </article>
+  </div>
+</div>

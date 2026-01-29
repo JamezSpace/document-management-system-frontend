@@ -1,1 +1,155 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import 'tailwindcss';
+
+:root {
+  --primary: #001a33;
+  --accent: #c5a059;
+  --accent-shade-1: #9e8047;
+  --accent-shade-2: #766035;
+  --surface: #f4f7f9;
+  --success: #2d5a27;
+  --text: #2c3e50;
+}
+
+/* global tagname settings first */
+html {
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: 'GRAD' 0;
+}
+
+input,
+textarea {
+  outline: none;
+}
+
+select {
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* global class names */
+.nexus-serif-font {
+  font-family: 'Crimson Pro', serif;
+}
+
+.nexus-sans-font {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+
+.custom-box-shadow {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.row {
+  margin-bottom: 20px;
+
+  & .field label {
+    display: block;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  & .field .input-field {
+    --field-color: var(--color-neutral-500);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid var(--field-color);
+    color: var(--field-color);
+    box-sizing: content-box;
+    line-height: 1.75;
+
+    & :first-child {
+      font-size: 20px;
+    }
+
+    & input {
+      width: 100%;
+      border-radius: var(--radius-xs);
+    }
+
+    & input::placeholder {
+      color: var(--color-neutral-400);
+      font-family: inherit;
+    }
+
+    & input.filled {
+      color: var(--color-neutral-950);
+    }
+
+    &:where(:has(input:focus)) {
+      outline: 1px solid var(--color-neutral-950);
+      color: var(--color-neutral-950);
+    }
+  }
+}
+
+.nexus-button {
+  --bg-color: var(--accent-shade-1);
+
+  padding: 14px 28px;
+  white-space: nowrap;
+  gap: 8px;
+  border: 1px solid var(--bg-color);
+  font-size: 90%;
+  background-color: var(--bg-color);
+  color: var(--color-white);
+  font-weight: 500;
+  text-transform: capitalize;
+  transition-property: background-color, outline;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  &:hover {
+    --bg-color: var(--accent-shade-2);
+
+    background-color: var(--bg-color);
+  }
+
+  &:focus {
+    outline: 1px solid #333;
+  }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    color: var(--color-stone-200);
+  }
+
+  &.red {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    color: white;
+  }
+
+  &.red:hover {
+    background-color: hsl(from var(--secondary) h s calc(l - 10));
+  }
+}
+
+.nexus-button.secondary {
+  background-color: transparent;
+  color: var(--primary);
+
+  &:hover {
+    outline: 1px solid var(--primary);
+  }
+
+  &.red {
+    border-color: var(--seconary);
+    color: var(--seconary);
+  }
+}
