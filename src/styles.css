@@ -7,6 +7,7 @@
   --accent-shade-1: #9e8047;
   --accent-shade-2: #766035;
   --surface: #f4f7f9;
+  --surface-shade-1: #c3c6c7;
   --success: #2d5a27;
   --text: #2c3e50;
 }
@@ -43,6 +44,12 @@ button {
 .flex-center {
   display: flex;
   align-items: center;
+}
+
+.pseudo-body {
+  height: 120lvh;
+  position: relative;
+  background-color: var(--surface);
 }
 
 .custom-box-shadow {
@@ -82,7 +89,7 @@ button {
     }
 
     & input::placeholder {
-      color: var(--color-neutral-400);
+      color: var(--color-neutral-500);
       font-family: inherit;
     }
 
@@ -100,10 +107,11 @@ button {
 .nexus-button {
   --bg-color: var(--accent-shade-1);
 
-  padding: 14px 28px;
+  padding: 12px 24px;
   white-space: nowrap;
   gap: 8px;
   border: 1px solid var(--bg-color);
+  border-radius: 2px;
   font-size: 90%;
   background-color: var(--bg-color);
   color: var(--color-white);
@@ -152,4 +160,103 @@ button {
     border-color: var(--seconary);
     color: var(--seconary);
   }
+}
+
+/* nexus animations */
+@keyframes nexusFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(1.02); /* Starts slightly larger */
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes nexusFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    filter: blur(4px);
+  }
+}
+
+/* Slide in from right (Entering a new step) */
+@keyframes sweepIn {
+  0% {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide out to left (Leaving current step) */
+@keyframes sweepExit {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+}
+
+/* Gentle reveal (For text blocks or profile cards) */
+@keyframes softFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-premium {
+  animation: nexusFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+.sweep-in {
+  animation: sweepIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+.sweep-exit {
+  animation: sweepExit 0.5s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+.soft-fade {
+  animation: softFadeIn 0.8s ease-out forwards;
+}
+.fade-out-premium {
+  /* Using a 'Quintic' easing for a luxury feel */
+  animation: nexusFadeOut 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  pointer-events: none; /* Prevents users from clicking things while it's vanishing */
+}
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+.sweep-in,
+.sweep-exit,
+.fade-in-premium,
+.fade-out-premium {
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }

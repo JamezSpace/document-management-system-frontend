@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
   selector: 'nexus-auth',
@@ -8,7 +9,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrl: './auth.css',
 })
 export class Auth {
-    hasRequestBeenSent = signal<boolean>(false)
+    private authService = inject(AuthService);
 
     passwordRevealed = signal<boolean>(false)
     togglePasswordFieldType() {
@@ -24,5 +25,8 @@ export class Auth {
         password: new FormControl<string>('', Validators.required),
     })
 
-    
+    submitData() {
+        // this triggers the dashboard setup loader, should only be used when user is about entering dashboard
+        this.authService.setLoading(true);
+    }
 }

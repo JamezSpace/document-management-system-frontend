@@ -1,4 +1,4 @@
-<div class="pseudo-body h-lvh max-sm:h-[120lvh] relative bg-(--surface) nexus-sans-font">
+<div class="pseudo-body md:h-lvh nexus-sans-font">
   <div
     class="w-full max-w-2xl max-sm:max-w-11/12 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
   >
@@ -10,7 +10,7 @@
           Welcome back to the University of Ibadan Digital Office infrastructure
         </p>
       </div>
-      <form [formGroup]="authFormGroup">
+      <form [formGroup]="authFormGroup" autocomplete="off">
         <div class="row">
           <div class="field">
             <label for="">institutional email</label>
@@ -110,15 +110,11 @@
           type="button"
           class="block w-full nexus-button"
           [class.disabled]="authFormGroup.invalid"
+          (click)="submitData()"
         >
           sign in securely
         </button>
       </form>
-      <hr class="mt-10 mb-6 w-3/4 mx-auto border-neutral-300" />
-      <p class="text-center text-sm max-sm:text-xs">
-        Having trouble accessing your account?<br />
-        <a href="/" class="text-(--accent)">Contact IT Support</a>
-      </p>
     </section>
     <article class="text-center mt-10 text-sm max-sm:text-xs text-neutral-700">
       <p class="uppercase flex-center gap-2 justify-center">

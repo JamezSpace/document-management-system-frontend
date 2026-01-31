@@ -1,0 +1,26 @@
+.progress-container {
+  width: 100%;
+  height: 3px; /* Slightly thicker for better visibility of the Gold accent */
+  background: rgba(0, 26, 51, 0.1); /* Subtle Midnight Indigo track */
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999; /* Ensure it stays above the Google Sans headers */
+}
+
+.progress-bar {
+  width: 35%; /* Slightly shorter for a "faster" look */
+  height: 100%;
+  /* Gradient from Midnight Indigo to Heritage Gold */
+  background: linear-gradient(90deg, #001A33 0%, #C5A059 50%, #001A33 100%); 
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.4); /* Subtle gold glow for 'active' feel */
+  animation: velocity 1.8s infinite cubic-bezier(0.65, 0.05, 0.36, 1);
+}
+
+@keyframes velocity {
+  0% { transform: translateX(-100%); }
+  /* Adjusted to 300% to create a brief pause between cycles, 
+     making it feel more 'calculated' and deliberate */
+  100% { transform: translateX(300%); }
+}

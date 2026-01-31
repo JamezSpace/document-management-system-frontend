@@ -1,0 +1,64 @@
+
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: 'Google Sans',
+    density: 0,
+  ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+
+:root {
+  @include mat.checkbox-overrides((
+    selected-icon-color: var(--accent-shade-2),
+    selected-focus-icon-color: var(--accent-shade-2),
+    selected-hover-icon-color: var(--accent-shade-1),
+    selected-hover-state-layer-color: var(--accent-shade-1),
+    selected-focus-state-layer-color: var(--accent-shade-1)
+  ));
+
+    // mat tabs overrides
+  @include mat.tabs-overrides((
+    active-indicator-color: var(--accent),
+    active-hover-indicator-color: var(--accent),
+    active-focus-indicator-color: var(--accent),
+    active-label-text-color: var(--accent-shade-2),
+    active-focus-label-text-color: var(--accent-shade-2),
+  ));
+
+  // mat stepper overrides
+  @include mat.stepper-overrides((
+    container-color: transparent,
+    header-selected-state-icon-background-color: var(--accent-shade-1),
+    header-icon-background-color: var(--surface-shade-1),
+    header-edit-state-icon-background-color: var(--accent-shade-1)
+  ));
+}

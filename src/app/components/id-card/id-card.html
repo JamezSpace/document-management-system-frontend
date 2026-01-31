@@ -1,0 +1,27 @@
+@if (page === 'front') {
+<section class="card">
+    <article class="card-content">
+        <img src="full-logo.webp" alt="NexusFons Logo" class="w-60">
+    </article>
+</section>
+} @else if (page === 'back') {
+    <section class="card">
+        <article class="card-content flex-center pl-2.5">
+            <div class="logo-container w-1/5">
+                <img src="favicon/android-chrome-512x512.png" alt="NexusFons Logo" class="w-full">
+            </div>
+            <div id="vertical-line" class=" ml-3 mr-6 w-[0.5px] h-30 bg-neutral-300"></div>
+            <article class="flex-1">
+                <div class="top mb-2.5">
+                    <p class="text-xs font-medium">#{{ staffDetails.id }}</p>
+                    <p class="font-medium capitalize text-base">{{ staffDetails.last_name + ' ' + staffDetails.first_name }}</p>
+                <p class="uppercase text-xs">{{ staffDetails.role }}</p>
+                </div>
+
+                <div class="bottom">
+                    <p>{{ staffDetails.email }}</p>
+                </div>
+            </article>
+        </article>
+    </section>
+}

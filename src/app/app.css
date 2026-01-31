@@ -1,0 +1,44 @@
+/* app startup styles e.g. loaders */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff; /* Or #1a1a1a for dark mode */
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  transition:
+    opacity 0.5s ease-in-out,
+    visibility 0.5s;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.prestige-logo {
+  /* Applying the shimmer/pulse animations here */
+  animation: pulse-logo 2s ease-in-out infinite;
+}
+
+.loading-text {
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+  animation: fade-in-out 2s infinite;
+}
+
+@keyframes fade-in-out {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
