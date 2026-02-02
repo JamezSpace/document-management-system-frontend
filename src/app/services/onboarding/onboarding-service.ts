@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { EntityRequest, EntityResponse } from '../../interfaces/onboarding/entities/Entity.api-model';
 import { ApiResponse } from '../../interfaces/ApiResponse.interface';
@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 })
 export class OnboardingService {
     constructor(private httpClient: HttpClient) {}
+
+    loading = signal<boolean>(false)
 
     async getEntityDetails(entity: EntityRequest) {
         return this.httpClient.get(`${environment.api}/${entity.type}/${entity.id}`)

@@ -1,6 +1,18 @@
-@if (!isAnimationLeaveOn()) {
-  <div class="h-[70dvh] relative" animate.leave="sweep-exit" #frame id="intro">
-    <div class="w-full text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<nexus-onboarding-nav-bar />
+<div class="relative" [class.hidden]="!loading()">
+    <p class="opacity-0">.</p>
+    <nexus-line-loader />
+</div>
+
+@if (currentFrame() === 1) {
+  <div
+    class="h-[70dvh] relative fade-in-premium"
+    [class.sweep-exit]="isExiting()"
+    id="introduction-section"
+  >
+    <div
+      class="w-full px-5 text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+    >
       <h1 class="font-bold text-(--primary) nexus-sans-font text-4xl">
         Welcome to the Nexus-Fons Registry
       </h1>
@@ -14,36 +26,31 @@
         verification process.
       </p>
 
-      <button class="nexus-button mt-5" (click)="nextStep('frameOne')">
-        begin official onboarding
-      </button>
+      <button class="nexus-button mt-5" (click)="nextStep()">begin official onboarding</button>
     </div>
   </div>
 }
 
-<div
-  class="px-12 max-sm:px-6 mx-auto w-fit flex items-start gap-20 max-md:flex-col mt-5 pb-5"
-  id="complete-profile-section"
-  #frame
->
-  <div class="left">
-    <p class="font-bold flex-center gap-2 capitalize text-xl mb-5">
-      <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 48 48">
-        <rect width="48" height="48" fill="none" />
-        <path
-          fill="currentColor"
-          d="M23.135 4.348a1.25 1.25 0 0 1 1.73 0c2.758 2.643 6.684 4.077 10.037 4.84c1.659.376 3.139.58 4.202.69a29 29 0 0 0 1.654.122h.021A1.25 1.25 0 0 1 42 11.25V21c0 9.497-5.06 19.016-17.627 22.943a1.25 1.25 0 0 1-.746 0c-6.238-1.95-10.668-5.292-13.53-9.418C7.244 30.408 6 25.587 6 20.75v-9.5A1.25 1.25 0 0 1 7.22 10h.022l.08-.003q.11-.004.328-.017c.29-.017.715-.048 1.246-.102a36 36 0 0 0 4.202-.69c3.352-.763 7.278-2.197 10.037-4.84m9.478 14.806a1.25 1.25 0 1 0-1.726-1.808L20.77 27.003l-3.636-3.637a1.25 1.25 0 0 0-1.768 1.768l4.5 4.5c.48.48 1.256.49 1.747.02z"
-        />
-      </svg>
-      official identity card
+@if (currentFrame() === 2) {
+  <div
+    class="px-12 max-sm:px-6 mt-10 mx-auto text-center pb-5 fade-in-premium"
+    [class.sweep-exit]="isExiting()"
+    id="complete-profile-section"
+  >
+    <p class="text-[10px] uppercase tracking-widest text-neutral-400 mt-3">
+      Step 2 of 3: Identity Verification
     </p>
+    <p class="text-2xl capitalize mb-5">Here is a preview of your official identity card</p>
 
-    <div class="id-card-container">
-      <nexus-id-card idCardPage="front" [staffDetails]="entity().details" />
-      <br />
-      <nexus-id-card idCardPage="back" [staffDetails]="entity().details" />
-      <section class="card" id="lastPage"></section>
+    <div class="id-card-container flex-center max-md:flex-col gap-10">
+      <div class="w-full">
+        <nexus-id-card idCardPage="front" [staffDetails]="entity().details" />
+      </div>
+      <div class="w-full">
+        <nexus-id-card idCardPage="back" [staffDetails]="entity().details" />
+      </div>
     </div>
+
     <p class="mt-3.5">
       Notice an error in your HR records?
       <a href="mailto:hr@ui.edu.ng" class="font-medium inline-flex items-center hover:underline"
@@ -61,220 +68,236 @@
         </svg>
       </a>
     </p>
+
+    <div class="mt-10 mb-5">
+      <button class="nexus-button px-10 flex-center gap-2.5 mx-auto" (click)="nextStep()">
+        Confirm details & proceed
+        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="m14.475 12l-3.9-3.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375q0 .2-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7z"
+          />
+        </svg>
+      </button>
+    </div>
   </div>
-  <div class="right">
-    <div class="profile-form-container p-7.5 max-sm:p-3.75 rounded-xs bg-white min-w-2/3">
-      <article class="mb-10">
-        <h1 class="capitalize font-bold text-2xl">complete your profile</h1>
-        <p class="text-neutral-500">
-          These details are required for document signing and internal directory.
-        </p>
-      </article>
+}
 
-      <mat-stepper [linear]="true" [orientation]="isMobile() ? 'vertical' : 'horizontal'" #stepper>
-        <!-- profile picture -->
-        <mat-step [stepControl]="profilePictureFormGroup" label="Profile Picture Upload">
-          <form [formGroup]="profilePictureFormGroup">
-            <div class="row">
-              <div class="text-center">
-                <div
-                  class="mx-auto border border-dotted border-(--surface-shade-1) rounded-sm flex-center justify-center w-full h-72 max-w-72 bg-(--surface) relative overflow-hidden mt-3.5 mb-1.5"
+@if (currentFrame() === 3) {
+    <p class="text-[10px] uppercase tracking-widest text-neutral-400 mt-3 mb-3 text-center">
+      Step 3 of 3: Profile Finalization & Verification
+    </p>
+  <div
+    class="profile-form-container p-7.5 max-sm:p-3.75 rounded-xs bg-white w-4/5 mx-auto fade-in-premium"
+  >
+    <article class="mb-10">
+      <h1 class="capitalize font-bold text-2xl">complete your profile</h1>
+      <p class="text-neutral-500">
+        These details are required for document signing and internal directory.
+      </p>
+    </article>
+
+    <mat-stepper [linear]="true" [orientation]="isMobile() ? 'vertical' : 'horizontal'" #stepper>
+      <!-- profile picture -->
+      <mat-step [stepControl]="profilePictureFormGroup" label="Profile Picture Upload">
+        <form [formGroup]="profilePictureFormGroup">
+          <div class="row">
+            <div class="text-center">
+              <div
+                class="mx-auto border border-dotted border-(--surface-shade-1) rounded-sm flex-center justify-center w-full h-72 max-w-72 bg-(--surface) relative overflow-hidden mt-3.5 mb-1.5"
+              >
+                <img
+                  [src]="profilePictureUploadedPath()"
+                  alt="uploaded profile picture"
+                  [className]="profilePictureUploaded() ? 'w-full object-cover' : 'w-8'"
+                />
+
+                <input
+                  type="file"
+                  name=""
+                  id=""
+                  accept="image/*"
+                  title=""
+                  [matTooltip]="profilePictureUploaded() ? 'Change headshot' : 'Upload an image'"
+                  class="absolute z-10 w-full h-full opacity-0 cursor-pointer"
+                  (change)="uploadProfilePicture($event)"
+                />
+              </div>
+              <p class="capitalize font-medium mt-4 text-base">professional portrait</p>
+              <p class="text-neutral-700 leading-relaxed">
+                Aim for a well-lit headshot. This image will represent you across the document
+                network
+              </p>
+            </div>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- secondary Information -->
+      <mat-step [stepControl]="secondaryInformationFormGroup" label="Secondary Information">
+        <form [formGroup]="secondaryInformationFormGroup">
+          <p class="mt-2.5 mb-5 leading-relaxed font-medium">
+            Provide an alternative email and phone number to ensure you never lose access to your
+            workspace.
+          </p>
+          <div class="row">
+            <div class="field">
+              <label for="secondary-email">Secondary email address</label>
+              <div class="input-field px-2.5 py-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
                 >
-                  <img
-                    [src]="profilePictureUploadedPath()"
-                    alt="uploaded profile picture"
-                    [className]="profilePictureUploaded() ? 'w-full object-cover' : 'w-8'"
-                  />
+                  <rect width="24" height="24" fill="none" />
+                  <g
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                  >
+                    <path
+                      d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                    />
+                    <path d="m3 7l9 6l9-6" />
+                  </g>
+                </svg>
 
+                <input type="text" name="" id="secondary-email" placeholder="e.g. test@gmail.com" required />
+              </div>
+            </div>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- digital signature -->
+      <mat-step [stepControl]="digitalSignatureFormGroup" label="Digital Signature">
+        <form [formGroup]="digitalSignatureFormGroup">
+          <div class="row">
+            <div class="field">
+              <label for="">Digital Signature</label>
+              <p class="text-sm text-gray-600 mb-3">
+                You will be redirected to an external signing tool.
+                <br />
+                <span class="font-bold text-blue-600"
+                  >Note: Please save your signature as an SVG</span
+                >
+                to maintain clarity across all document sizes. Once downloaded, simply upload it
+                here.
+              </p>
+              @if (digitalSignatureImageUploaded()) {
+                <div class="relative hover:blur-[0.5px]">
+                  <img
+                    [src]="digitalSignatureImageUploadedPath()"
+                    class="mt-3.5 max-h-96 h-full object-center object-cover"
+                    alt="uploaded digital signature"
+                  />
                   <input
                     type="file"
-                    name=""
-                    id=""
-                    accept="image/*"
+                    class="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
                     title=""
-                    [matTooltip]="profilePictureUploaded() ? 'Change headshot' : 'Upload an image'"
-                    class="absolute z-10 w-full h-full opacity-0 cursor-pointer"
-                    (change)="uploadProfilePicture($event)"
+                    accept="image/*"
+                    matTooltip="Change digital signature"
+                    (change)="uploadDigitalSignature($event)"
                   />
                 </div>
-                <p class="capitalize font-medium mt-4 text-base">professional portrait</p>
-                <p class="text-neutral-700 leading-relaxed">
-                  Aim for a well-lit headshot. This image will represent you across the document
-                  network
-                </p>
-              </div>
-            </div>
-          </form>
-        </mat-step>
-
-        <!-- secondary Information -->
-        <mat-step [stepControl]="secondaryInformationFormGroup" label="Secondary Information">
-          <form [formGroup]="secondaryInformationFormGroup">
-            <p class="mt-2.5 mb-5 leading-relaxed font-medium">Provide an alternative email and phone number to ensure you never lose access to your workspace.</p>
-            <div class="row">
-              <div class="field">
-                <label for="secondary-email">Secondary email address</label>
-                <div class="input-field px-2.5 py-1.5">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                  >
-                    <rect width="24" height="24" fill="none" />
-                    <g
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="1.5"
+              } @else {
+                <div class="relative px-6 py-3">
+                  <div class="group/dropzone mt-6">
+                    <div
+                      class="relative rounded-xl border-2 border-dashed border-neutral-400 text-neutral-700 p-8 transition-colors group-hover/dropzone:border-neutral-900"
                     >
-                      <path
-                        d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                      <input
+                        type="file"
+                        class="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
+                        title=""
+                        accept=".svg"
+                        (change)="uploadDigitalSignature($event)"
                       />
-                      <path d="m3 7l9 6l9-6" />
-                    </g>
-                  </svg>
 
-                  <input
-                    type="text"
-                    name=""
-                    id="secondary-email"
-                    placeholder="e.g. test@gmail.com"
-                  />
-                </div>
-              </div>
-            </div>
-          </form>
-        </mat-step>
-
-        <!-- digital signature -->
-        <mat-step [stepControl]="digitalSignatureFormGroup" label="Digital Signature">
-          <form [formGroup]="digitalSignatureFormGroup">
-            <div class="row">
-              <div class="field">
-                <label for="">Digital Signature</label>
-                <p class="text-sm text-gray-600 mb-3">
-                  You will be redirected to an external signing tool.
-                  <br />
-                  <span class="font-bold text-blue-600"
-                    >Note: Please save your signature as an SVG</span
-                  >
-                  to maintain clarity across all document sizes. Once downloaded, simply upload it
-                  here.
-                </p>
-                @if (digitalSignatureImageUploaded()) {
-                  <div class="relative hover:blur-[0.5px]">
-                    <img
-                      [src]="digitalSignatureImageUploadedPath()"
-                      class="mt-3.5 max-h-96 h-full object-center object-cover"
-                      alt="uploaded digital signature"
-                    />
-                    <input
-                      type="file"
-                      class="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
-                      title=""
-                      accept="image/*"
-                      matTooltip="Change digital signature"
-                      (change)="uploadDigitalSignature($event)"
-                    />
-                  </div>
-                } @else {
-                  <div class="relative px-6 py-3">
-                    <div class="group/dropzone mt-6">
-                      <div
-                        class="relative rounded-xl border-2 border-dashed border-neutral-400 text-neutral-700 p-8 transition-colors group-hover/dropzone:border-neutral-900"
-                      >
-                        <input
-                          type="file"
-                          class="absolute inset-0 z-50 h-full w-full cursor-pointer opacity-0"
-                          title=""
-                          accept=".svg"
-                          (change)="uploadDigitalSignature($event)"
-                        />
-
-                        <div class="space-y-6 text-center">
-                          <div
-                            class="mx-auto flex p-2.5 w-fit items-center justify-center rounded-full bg-neutral-400"
+                      <div class="space-y-6 text-center">
+                        <div
+                          class="mx-auto flex p-2.5 w-fit items-center justify-center rounded-full bg-neutral-400"
+                        >
+                          <svg
+                            class="h-6 w-6 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
                           >
-                            <svg
-                              class="h-6 w-6 text-white"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              ></path>
-                            </svg>
-                          </div>
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            ></path>
+                          </svg>
+                        </div>
 
-                          <div class="space-y-2">
-                            <p class="text-base font-medium">Drop your file here or browse</p>
-                            <p class="text-sm text-neutral-500">Only svg files are allowed</p>
-                            <p class="text-xs text-neutral-500">Max image size: 500kb</p>
-                          </div>
+                        <div class="space-y-2">
+                          <p class="text-base font-medium">Drop your file here or browse</p>
+                          <p class="text-sm text-neutral-500">Only svg files are allowed</p>
+                          <p class="text-xs text-neutral-500">Max image size: 500kb</p>
                         </div>
                       </div>
                     </div>
                   </div>
-                }
-              </div>
+                </div>
+              }
             </div>
-          </form></mat-step
+          </div>
+        </form></mat-step
+      >
+    </mat-stepper>
+
+    <div class="flex-center gap-5 mt-3.5">
+      <div class="flex-center gap-2.5" [class.w-full]="!isFinalStepInCompletingProfile()">
+        <button
+          type="button"
+          class="nexus-button secondary gap-2.5"
+          [class]="{
+            'flex-center': currentStepInCompletingProfile() > 1,
+            hidden: currentStepInCompletingProfile() === 1,
+          }"
+          (click)="revertToPreviousStepInCompletingProfile()"
         >
-      </mat-stepper>
-
-      <div class="flex-center gap-5 mt-3.5">
-        <div class="flex-center gap-2.5" [class.w-full]="!isFinalStepInCompletingProfile()">
-          <button
-            type="button"
-            class="nexus-button secondary gap-2.5"
-            [class]="{
-              'flex-center': currentStepInCompletingProfile() > 1,
-              'hidden': currentStepInCompletingProfile() === 1
-            }"
-            (click)="revertToPreviousStepInCompletingProfile()"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-              <rect width="24" height="24" fill="none" />
-              <path fill="currentColor" d="m14 18l-6-6l6-6l1.4 1.4l-4.6 4.6l4.6 4.6z" />
-            </svg>
-            Previous Step
-          </button>
-
-          <button
-            type="button"
-            class="nexus-button gap-2.5"
-            [class]="{
-              'flex-center': currentStepInCompletingProfile() < 3,
-              'hidden': currentStepInCompletingProfile() === 3,
-              'secondary': isFinalStepInCompletingProfile(),
-              'w-full' : !isFinalStepInCompletingProfile()
-            }"
-            (click)="proceedToNextStepToCompleteProfile()"
-          >
-            Next Step
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-              <rect width="24" height="24" fill="none" />
-              <path fill="currentColor" d="M12.6 12L8 7.4L9.4 6l6 6l-6 6L8 16.6z" />
-            </svg>
-          </button>
-        </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            <rect width="24" height="24" fill="none" />
+            <path fill="currentColor" d="m14 18l-6-6l6-6l1.4 1.4l-4.6 4.6l4.6 4.6z" />
+          </svg>
+          Previous Step
+        </button>
 
         <button
           type="button"
-          class="nexus-button"
-          [class.disabled]="!isFinalStepInCompletingProfile()"
-          [class.secondary]="!isFinalStepInCompletingProfile()"
-          [class.w-full]="isFinalStepInCompletingProfile()"
+          class="nexus-button gap-2.5"
+          [class]="{
+            'flex-center': currentStepInCompletingProfile() < 3,
+            hidden: currentStepInCompletingProfile() === 3,
+            secondary: isFinalStepInCompletingProfile(),
+            'w-full': !isFinalStepInCompletingProfile(),
+          }"
+          (click)="proceedToNextStepToCompleteProfile()"
         >
-          finalize handshake
+          Next Step
+          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            <rect width="24" height="24" fill="none" />
+            <path fill="currentColor" d="M12.6 12L8 7.4L9.4 6l6 6l-6 6L8 16.6z" />
+          </svg>
         </button>
       </div>
+
+      <button
+        type="button"
+        class="nexus-button"
+        [class.disabled]="!isFinalStepInCompletingProfile()"
+        [class.secondary]="!isFinalStepInCompletingProfile()"
+        [class.w-full]="isFinalStepInCompletingProfile()"
+      >
+        finalize handshake
+      </button>
     </div>
   </div>
-</div>
+}

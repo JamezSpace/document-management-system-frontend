@@ -1,0 +1,13 @@
+.nav-item-active {
+    background-color: rgb(from var(--primary) r g b/0.1);
+    font-weight: 500;
+    letter-spacing: -0.75px;
+}
+
+.btn {
+    transition: background-color 200ms ease;
+
+    &:not(.nav-item-active):hover {
+       background-color: rgb(from var(--primary) r g b/0.025); 
+    }
+}

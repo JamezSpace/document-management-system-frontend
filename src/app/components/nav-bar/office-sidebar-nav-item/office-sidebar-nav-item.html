@@ -1,0 +1,9 @@
+<button
+  [routerLink]="navItem.route"
+  [routerLinkActive]="'nav-item-active'"
+  [routerLinkActiveOptions]="{exact: false}"
+  class="flex-center gap-2.5 px-3.5 py-2 mb-1 text-sm capitalize w-full rounded-sm btn whitespace-nowrap"
+>
+  <span [class]="navItem.icon" class="text-base"></span>
+  {{ navItem.label }}
+</button>
