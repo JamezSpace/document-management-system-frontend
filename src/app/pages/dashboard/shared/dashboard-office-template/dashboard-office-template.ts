@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { NavBarItem } from '../../../../interfaces/nav-bar/NavBarItem.interface';
+import { NavBarItem } from '../../../../interfaces/navigation/NavBarItem.interface';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import {

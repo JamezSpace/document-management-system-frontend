@@ -1,4 +1,4 @@
-import { DocumentState, DocumentType } from "../shared/Document.interface";
+import { DocumentState, DocumentType } from "./Document.entity";
 
 interface Document {
     id: string;
@@ -9,4 +9,4 @@ interface Document {
     }
 }
 
-export type {Document}
+export type { Document };

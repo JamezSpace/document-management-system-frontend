@@ -19,7 +19,7 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
-import { IdCard } from '../../components/public/id-card/id-card';
+import { IdCard } from '../../components/dashboard-wide/id-card/id-card';
 import {
   FormControl,
   FormGroup,
@@ -27,8 +27,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { OnboardingNavBar } from '../../components/nav-bar/onboarding-nav-bar/onboarding-nav-bar';
-import { LineLoader } from "../../components/loaders/line-loader/line-loader";
+import { OnboardingNavBar } from '../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
+import { LineLoader } from "../../components/system-wide/loaders/line-loader/line-loader";
 
 @Component({
   selector: 'nexus-onboarding',

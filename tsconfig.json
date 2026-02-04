@@ -60,6 +60,12 @@
       ],
       "@spartan-ng/helm/textarea": [
         "./libs/ui/textarea/src/index.ts"
+      ],
+      "@spartan-ng/helm/table": [
+        "./libs/ui/table/src/index.ts"
+      ],
+      "@spartan-ng/helm/empty": [
+        "./libs/ui/empty/src/index.ts"
       ]
     }
   },

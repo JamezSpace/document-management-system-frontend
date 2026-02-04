@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { SpartanH2 } from '../../../../../components/public/spartan-h2/spartan-h2';
-import { User } from '../../../../../interfaces/dashboard/User.interface';
-import { Document } from '../../../../../interfaces/dashboard/ui-models/Dashboard.ui-model';
+import { SpartanH2 } from '../../../../../components/system-wide/typograhy/spartan-h2/spartan-h2';
+import { User } from '../../../../../interfaces/users/User.interface';
+import { Document } from '../../../../../interfaces/documents/Document.ui';
 
 @Component({
   selector: 'nexus-staff-desk',
