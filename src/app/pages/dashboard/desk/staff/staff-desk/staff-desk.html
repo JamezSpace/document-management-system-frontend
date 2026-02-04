@@ -1,0 +1,120 @@
+<!-- TODO: replace 'soft-fade' with a skeleton loading screen -->
+<div class="px-4 soft-fade">
+  <section class="flex justify-between items-start mb-10">
+    <div class="space-y-1">
+      <!-- <h1 class="text-4xl nexus-serif-font font-bold text-(--text) soft-fade capitalize"> -->
+    <nexus-spartan-h2>
+        Hi, {{ user.name }}
+    </nexus-spartan-h2>
+      <p
+        class="text-xs font-semibold uppercase tracking-widest text-(--accent-shade-1) soft-fade delay-100"
+      >
+        {{ user.role }}
+      </p>
+    </div>
+
+    <div
+      class="flex items-center gap-4 bg-white p-4 rounded-xs border border-black/5"
+    >
+      <!-- TODO: replace this with a progress bar from angular material -->
+      <div
+        class="relative flex items-center justify-center w-12 h-12 rounded-full border-4 border-nexus-gold/20"
+      >
+        <span class="text-sm font-bold text-nexus-indigo">{{ user.efficiencyScore }}%</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[10px] uppercase tracking-tighter text-gray-400 font-bold"
+          >Productivity Pulse</span
+        >
+        <span class="text-xs text-green-600 font-medium">↑ 2% from last week</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div
+      class="bg-white rounded-xs p-6 subtle-box-shadow border-nexus-gold flex flex-col"
+    >
+      <div class="flex justify-between items-start mb-6">
+        <span class="uppercase tracking-normal text-sm text-neutral-600 font-bold"
+          >pending work</span
+        >
+        <span class="text-xs text-gray-400 italic">{{ lastDraft.lastSaved }}</span>
+      </div>
+
+      <section class="flex-center justify-between mb-6">
+        <article>
+          <p class="text-xs font-mono text-neutral-500 uppercase">{{ lastDraft.ref }}</p>
+          <h3 class="text-lg text-nexus-indigo leading-tight">{{ lastDraft.title }}</h3>
+          
+          @if (validToShowModifiedAt()) {
+            <p class="italic mt-1 text-neutral-500">
+              Modified {{ mostRecentDraftDurationFromNow(lastDraft.modifiedAt) }}
+            </p>
+          }
+        </article>
+        <!-- @if (draft is the most recent within one day. if it exceeds one day, dont show this field at all) { -->
+        <div
+          class="px-2.5 py-0.5 uppercase text-[10px] text-accent bg-(--accent)/5 font-medium"
+        >
+          most recent
+        </div>
+        <!-- } -->
+      </section>
+
+      <button
+        (click)="continueDraft()"
+        class="mt-auto w-fit bg-(--primary)/60 hover:bg-(--primary)/90 text-white px-6 py-3 rounded-xs font-semibold transition-all subtle-box-shadow active:scale-95"
+      >
+        Continue Editing
+      </button>
+    </div>
+
+    <div class="bg-white subtle-box-shadow rounded-xs p-6 delay-400">
+      <h3 class="uppercase tracking-normal text-sm text-neutral-600 font-bold mb-4">Directives</h3>
+
+      <div class="divide-y divide-gray-50">
+        @for (item of directives; track $index) {
+          <div
+            class="group flex justify-between items-center py-4 cursor-pointer hover:pl-2 transition-all"
+            [class]="{ 'border-l-2 border-orange-600 pl-3': item.priority === 'high' }"
+          >
+            <div class="flex flex-col">
+              <span
+                class="text-[10px] font-black uppercase"
+                [class]="item.priority === 'high' ? 'text-orange-600' : 'text-nexus-indigo'"
+              >
+                {{ item.type }}
+              </span>
+              <p class="text-sm text-gray-600 group-hover:text-nexus-indigo transition-colors">
+                {{ item.message }}
+              </p>
+            </div>
+            <svg
+              class="w-4 h-4 text-gray-300 group-hover:text-nexus-gold transition-colors"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <section class="mt-12 delay-500">
+    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Recent Tracking</h4>
+    <div class="bg-white rounded-xl border border-black/5 overflow-hidden">
+      <div class="p-4 text-sm text-gray-400 italic text-center">
+        Your document pipeline status will appear here.
+      </div>
+    </div>
+  </section>
+</div>

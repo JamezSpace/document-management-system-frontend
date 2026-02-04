@@ -1,0 +1,83 @@
+<!-- breadcrumb at the top -->
+<nav hlmBreadcrumb>
+  <ol hlmBreadcrumbList class="text-(--accent-shade-1)">
+    @for (directory of directories(); track $index) {
+      <li hlmBreadcrumbItem>
+        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
+      </li>
+
+      <!-- that is, if there still exists a next directory -->
+      @if ($index + 1 !== directories().length) {
+        <li hlmBreadcrumbSeparator></li>
+      }
+    }
+  </ol>
+</nav>
+
+<!-- avoiding quick nesting by placing this here while serving my intention of spacing beneath the breadbrumb -->
+<div class="mt-5"></div>
+
+<section class="flex-center justify-between">
+  <article>
+    <nexus-spartan-h3>documents registry</nexus-spartan-h3>
+    <nexus-spartan-p>
+      Complete view of all documents across drafts, submissions and shared items.
+    </nexus-spartan-p>
+  </article>
+  <button type="button" class="nexus-button flex-center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+      <rect width="24" height="24" fill="none" />
+      <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z" />
+    </svg>
+    new document
+  </button>
+</section>
+<hlm-separator class="my-4" />
+
+<div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
+  <!-- search -->
+  <div class="input-field">
+    <input
+      type="text"
+      name=""
+      maxlength="50"
+      placeholder="Search by title, reference number or subject..."
+      autocorrect="off"
+    />
+
+    <ng-icon name="lucideSearch" />
+  </div>
+
+  <!-- sort -->
+  <hlm-menubar>
+    <button type="button" [hlmMenubarTrigger]="sortOptions">
+      <ng-icon name="lucideArrowDownUp" />
+      <span class="capitalize ml-2.5">sort</span>
+    </button>
+  </hlm-menubar>
+  <ng-template #sortOptions>
+    <hlm-dropdown-menu sideOffset="1.5">
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        Name
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Date
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Type
+      </button>
+      <hlm-dropdown-menu-separator />
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        Ascending
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Descending
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+</div>

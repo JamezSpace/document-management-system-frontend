@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
 import { Auth } from './pages/auth/auth';
 import { Onboarding } from './pages/onboarding/onboarding';
-import { StaffDesk } from './pages/dashboard/staff/staff-desk/staff-desk';
-import { DocumentsVault } from './pages/dashboard/staff/documents-vault/documents-vault';
+import { DocumentsVault } from './pages/dashboard/document-workspace/admin/documents-vault/documents-vault';
 import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
 
 export const routes: Routes = [
@@ -30,36 +29,36 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'desk',
+        redirectTo: 'overview',
         pathMatch: 'full',
       },
       {
-        path: 'desk',
+        path: 'overview',
         loadComponent: () =>
-          import('./pages/dashboard/staff/staff-desk/staff-desk').then((m) => m.StaffDesk),
+          import('./pages/dashboard/desk/staff/staff-desk/staff-desk').then((m) => m.StaffDesk),
       },
       {
-        path: 'vault', // The "Google Drive" style file manager
+        path: 'documents',
         loadComponent: () =>
-          import('./pages/dashboard/staff/documents-vault/documents-vault').then(
-            (m) => m.DocumentsVault,
+          import('./pages/dashboard/document-workspace/staff/staff-documents/staff-documents').then(
+            (m) => m.StaffDocuments,
           ),
       },
       {
         path: '',
-        redirectTo: 'desk',
+        redirectTo: 'overview',
         pathMatch: 'full',
       },
     ],
   },
 
   // fallback
-  {
-    path: '404',
-    loadComponent: () => import('./pages/shared/not-found/not-found').then((m) => m.NotFound),
-  },
-  {
-    path: '**',
-    redirectTo: '404',
-  },
+  //   {
+  //     path: '404',
+  //     loadComponent: () => import('./pages/shared/not-found/not-found').then((m) => m.NotFound),
+  //   },
+  //   {
+  //     path: '**',
+  //     redirectTo: '404',
+  //   },
 ];

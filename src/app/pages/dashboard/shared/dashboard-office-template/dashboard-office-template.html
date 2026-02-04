@@ -1,9 +1,74 @@
-<div class="flex">
-  <div class="w-[20%] max-w-55">
-    <nexus-office-sidebar />
-  </div>
+<div hlmSidebarWrapper class="nexus-sans-font">
+  <hlm-sidebar collapsible="icon">
+    <header hlmSidebarHeader>
+      <a routerLink="/" class="w-7.5">
+        <img src="logo.webp" alt="NexusFons Collapsed Logo" class="w-full" />
+      </a>
+    </header>
 
-  <div class="w-[80%] p-5">
+    <hlm-separator></hlm-separator>
+
+    <div hlmSidebarGroupContent>
+      <section hlmSidebarGroup>
+        <div class="capitalize" hlmSidebarGroupLabel>general</div>
+        <div hlmSidebarGroupContent>
+          <ul hlmSidebarMenu>
+            @for (navItem of navItems; track $index) {
+              <hlm-collapsible [expanded]="navItem.defaultOpen ?? false" class="group/collapsible">
+                <li hlmSidebarMenuItem>
+                  <button
+                    hlmCollapsibleTrigger
+                    hlmSidebarMenuButton
+                    [routerLink]="navItem.route"
+                    [isActive]="isMenuActive(navItem.route)"
+                    class="capitalize"
+                  >
+                    <ng-icon hlm [name]="navItem.icon" />
+                    <span>{{ navItem.label }}</span>
+
+                    @if (navItem.subMenuExists) {
+                      <ng-icon
+                        name="lucideChevronRight"
+                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                        hlm
+                      />
+                    }
+                  </button>
+                  <!-- that is, if the sub menu is true, that is, there are sub menus -->
+                  @if (navItem.subMenuExists) {
+                    <hlm-collapsible-content>
+                      <ul hlmSidebarMenuSub>
+                        @for (submenu of navItem.subMenus; track $index) {
+                          <li hlmSidebarMenuSubItem>
+                            <button
+                              hlmSidebarMenuSubButton
+                              [routerLink]="[]"
+                              [queryParams]="submenu.route"
+                              queryParamsHandling="merge"
+                              [isActive]="isSubMenuActive(submenu.route)"
+                              class="w-full capitalize"
+                            >
+                              <span>{{ submenu.label }}</span>
+                            </button>
+                          </li>
+                        }
+                      </ul>
+                    </hlm-collapsible-content>
+                  }
+                </li>
+              </hlm-collapsible>
+            }
+          </ul>
+        </div>
+      </section>
+    </div>
+  </hlm-sidebar>
+
+  <main>
+    <button hlmSidebarTrigger><span class="sr-only"></span></button>
+  </main>
+
+  <div class="flex-1 p-5">
     <router-outlet />
   </div>
 </div>
