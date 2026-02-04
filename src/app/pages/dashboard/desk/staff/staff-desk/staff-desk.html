@@ -2,12 +2,12 @@
 <div class="px-4 soft-fade">
   <section class="flex justify-between items-start mb-10">
     <div class="space-y-1">
-      <!-- <h1 class="text-4xl nexus-serif-font font-bold text-(--text) soft-fade capitalize"> -->
+      <!-- <h1 class="text-4xl nexus-serif-font font-bold text-(--brand-text) soft-fade capitalize"> -->
     <nexus-spartan-h2>
         Hi, {{ user.name }}
     </nexus-spartan-h2>
       <p
-        class="text-xs font-semibold uppercase tracking-widest text-(--accent-shade-1) soft-fade delay-100"
+        class="text-xs font-semibold uppercase tracking-widest text-(--brand-accent-shade-1) soft-fade delay-100"
       >
         {{ user.role }}
       </p>
@@ -55,7 +55,7 @@
         </article>
         <!-- @if (draft is the most recent within one day. if it exceeds one day, dont show this field at all) { -->
         <div
-          class="px-2.5 py-0.5 uppercase text-[10px] text-accent bg-(--accent)/5 font-medium"
+          class="px-2.5 py-0.5 uppercase text-[10px] text-accent bg-(--brand-accent)/5 font-medium"
         >
           most recent
         </div>
@@ -64,7 +64,7 @@
 
       <button
         (click)="continueDraft()"
-        class="mt-auto w-fit bg-(--primary)/60 hover:bg-(--primary)/90 text-white px-6 py-3 rounded-xs font-semibold transition-all subtle-box-shadow active:scale-95"
+        class="mt-auto w-fit bg-(--brand-primary)/60 hover:bg-(--brand-primary)/90 text-white px-6 py-3 rounded-xs font-semibold transition-all subtle-box-shadow active:scale-95"
       >
         Continue Editing
       </button>

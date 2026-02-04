@@ -1,17 +1,22 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
-import { SpartanH3 } from '../../../../../components/public/spartan-h3/spartan-h3';
-import { SpartanP } from '../../../../../components/public/spartan-p/spartan-p';
-import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideSearch, lucideArrowDownUp } from '@ng-icons/lucide';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
+import { HlmInputGroupImports, HlmInputGroup, HlmInputGroupAddon } from '@spartan-ng/helm/input-group';
+import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
+import { SpartanH3 } from '../../../../../components/public/spartan-h3/spartan-h3';
+import { SpartanP } from '../../../../../components/public/spartan-p/spartan-p';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideSearch, lucideArrowDownUp } from '@ng-icons/lucide';
+import { hugeGridView } from '@ng-icons/huge-icons';
+
+
 
 @Component({
   selector: 'nexus-staff-documents',
   imports: [
+    HlmInputGroupImports,
     HlmBreadCrumbImports,
     HlmSeparatorImports,
     HlmDropdownMenuImports,
@@ -19,13 +24,16 @@ import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
     SpartanH3,
     SpartanP,
     NgIcon,
-  ],
+    HlmInputGroup,
+    HlmInputGroupAddon
+],
   templateUrl: './staff-documents.html',
   styleUrl: './staff-documents.css',
   providers: [
     provideIcons({
       lucideSearch,
       lucideArrowDownUp,
+      hugeGridView
     }),
   ],
 })

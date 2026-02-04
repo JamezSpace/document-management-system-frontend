@@ -1,6 +1,6 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--accent-shade-1)">
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
     @for (directory of directories(); track $index) {
       <li hlmBreadcrumbItem>
         <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
@@ -36,16 +36,19 @@
 
 <div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
   <!-- search -->
-  <div class="input-field">
+  <div hlmInputGroup>
     <input
       type="text"
       name=""
       maxlength="50"
       placeholder="Search by title, reference number or subject..."
       autocorrect="off"
+      hlmInputGroupInput
     />
 
+    <div hlmInputGroupAddon align="inline-end">
     <ng-icon name="lucideSearch" />
+    </div>
   </div>
 
   <!-- sort -->
@@ -79,5 +82,32 @@
         Descending
       </button>
     </hlm-dropdown-menu>
+  </ng-template>
+
+  <!-- view -->
+  <hlm-menubar>
+    <button type="button" [hlmMenubarTrigger]="viewOptions">
+      <ng-icon name="hugeGridView" />
+      <span class="capitalize ml-2.5">view</span>
+    </button>
+  </hlm-menubar>
+  <ng-template #viewOptions>
+    <hlm-dropdown-menu sideOffset="1.5">
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        List
+      </button>
+      <button hlmDropdownMenuRadio [hlmMenubarTrigger]="iconViewOptions">
+          Icons
+          <hlm-dropdown-menu-item-sub-indicator />
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+  <ng-template #iconViewOptions>
+    <hlm-dropdown-menu-sub>
+      <button hlmDropdownMenuItem>Large</button>
+      <button hlmDropdownMenuItem>Medium</button>
+      <button hlmDropdownMenuItem>Small</button>
+    </hlm-dropdown-menu-sub>
   </ng-template>
 </div>
