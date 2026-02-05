@@ -2,10 +2,14 @@ import { Component } from '@angular/core';
 import { SpartanH2 } from '../../../../../components/system-wide/typograhy/spartan-h2/spartan-h2';
 import { User } from '../../../../../interfaces/users/User.interface';
 import { Document } from '../../../../../interfaces/documents/Document.ui';
+import { SpartanH4 } from "../../../../../components/system-wide/typograhy/spartan-h4/spartan-h4";
+import { HlmSeparator } from "@spartan-ng/helm/separator";
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { SpartanP } from "../../../../../components/system-wide/typograhy/spartan-p/spartan-p";
 
 @Component({
   selector: 'nexus-staff-desk',
-  imports: [SpartanH2],
+  imports: [SpartanH2, SpartanH4, HlmSeparator, HlmCardImports, SpartanP],
   templateUrl: './staff-desk.html',
   styleUrl: './staff-desk.css',
 })
@@ -60,8 +64,13 @@ validToShowModifiedAt() {
   directives = [
     {
       priority: 'low',
-      type: 'memo',
-      message: 'respond now',
+      type: 'internal memo',
+      message: "meeting at director's office",
+    },
+    {
+      priority: 'high',
+      type: 'internal memo',
+      message: 'please see memo on document handling policy updates',
     },
   ];
 

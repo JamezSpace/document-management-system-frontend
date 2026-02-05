@@ -1,17 +1,20 @@
 import { Component, inject } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { NavBarItem } from '../../../../interfaces/navigation/NavBarItem.interface';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { HlmIcon } from '@spartan-ng/helm/icon';
 import {
-  lucideLayoutDashboard,
-  lucideFileLock,
-  lucideBell,
-  lucideChevronRight,
+    lucideBell,
+    lucideChevronRight,
+    lucideFileLock,
+    lucideLayoutDashboard,
 } from '@ng-icons/lucide';
-import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmCollapsibleImports } from '@spartan-ng/helm/collapsible';
+import { HlmIcon } from '@spartan-ng/helm/icon';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
+import { LineLoader } from "../../../../components/system-wide/loaders/line-loader/line-loader";
+import { NavBarItem } from '../../../../interfaces/navigation/NavBarItem.interface';
+import { StaffService } from '../../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
+import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -23,7 +26,8 @@ import { HlmCollapsibleImports } from '@spartan-ng/helm/collapsible';
     HlmSeparator,
     NgIcon,
     HlmIcon,
-  ],
+    LineLoader
+],
   templateUrl: './dashboard-office-template.html',
   styleUrl: './dashboard-office-template.css',
   providers: [
@@ -63,6 +67,10 @@ export class DashboardOfficeTemplate {
     },
   ];
 
+
+  genericDashboardService = inject(GenericDashboardService);
+
+  loading = this.genericDashboardService.loading;
   router = inject(Router);
   isMenuActive(intendedPath: string) {
     const currentPath = this.router.url.split('/');

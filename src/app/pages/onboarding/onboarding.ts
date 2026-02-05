@@ -8,12 +8,11 @@ import {
   ViewChild,
   viewChildren,
 } from '@angular/core';
-import { OnboardingService } from '../../services/onboarding/onboarding-service';
+import { OnboardingService } from '../../services/page-wide/onboarding/onboarding-service';
 import type { EntityResponse } from '../../interfaces/onboarding/entities/Entity.api-model';
 import { EntityType } from '../../interfaces/onboarding/entities/Entity.api-model';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';

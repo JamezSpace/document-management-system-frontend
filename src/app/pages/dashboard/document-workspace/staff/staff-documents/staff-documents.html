@@ -25,13 +25,48 @@
     </nexus-spartan-p>
   </article>
   <button type="button" class="nexus-button flex-center">
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-      <rect width="24" height="24" fill="none" />
-      <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z" />
-    </svg>
     new document
+    <ng-icon
+      name="lucideChevronDown"
+      class="relative top-px ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+    />
   </button>
 </section>
+<div>
+  <ul>
+    <li>
+      <hlm-alert-dialog>
+        <button id="edit-profile" brnAlertDialogTrigger>Show Dialog</button>
+        <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" class="min-w-md">
+          <hlm-alert-dialog-header>
+            <nexus-spartan-h4>Choose what you desire</nexus-spartan-h4>
+          </hlm-alert-dialog-header>
+
+          <div class="flex-center gap-5 mt-3.5">
+            <button
+              class="flex-center flex-col gap-3.5 p-5 rounded-lg hover:bg-muted hover:border hover:border-muted-foreground"
+              (click)="processSelection(ctx, 'template')"
+            >
+              <ng-icon name="lucideLayoutTemplate" class="text-2xl" />
+              <nexus-spartan-p>Use a template</nexus-spartan-p>
+            </button>
+            <section id="file-upload" class="relative">
+              <input type="file" accept=".pdf, .doc, .docx" title=" " class="absolute w-full h-full z-10 opacity-0" (change)="processSelection(ctx, 'upload')" />
+
+              <button
+                class="flex-center flex-col gap-3.5 p-5 rounded-lg hover:bg-muted hover:border hover:border-muted-foreground"
+              >
+                <ng-icon name="lucideUpload" class="text-2xl" />
+                <nexus-spartan-p>Upload a document</nexus-spartan-p>
+              </button>
+            </section>
+          </div>
+        </hlm-alert-dialog-content>
+      </hlm-alert-dialog>
+    </li>
+  </ul>
+</div>
+
 <hlm-separator class="my-4" />
 
 <div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
@@ -47,7 +82,7 @@
     />
 
     <div hlmInputGroupAddon align="inline-end">
-    <ng-icon name="lucideSearch" />
+      <ng-icon name="lucideSearch" />
     </div>
   </div>
 
@@ -59,7 +94,7 @@
     </button>
   </hlm-menubar>
   <ng-template #sortOptions>
-    <hlm-dropdown-menu sideOffset="1.5">
+    <hlm-dropdown-menu sideOffset="2.5">
       <button hlmDropdownMenuRadio checked>
         <hlm-dropdown-menu-radio-indicator />
         Name
@@ -92,14 +127,14 @@
     </button>
   </hlm-menubar>
   <ng-template #viewOptions>
-    <hlm-dropdown-menu sideOffset="1.5">
+    <hlm-dropdown-menu sideOffset="2.5">
       <button hlmDropdownMenuRadio checked>
         <hlm-dropdown-menu-radio-indicator />
         List
       </button>
       <button hlmDropdownMenuRadio [hlmMenubarTrigger]="iconViewOptions">
-          Icons
-          <hlm-dropdown-menu-item-sub-indicator />
+        Icons
+        <hlm-dropdown-menu-item-sub-indicator />
       </button>
     </hlm-dropdown-menu>
   </ng-template>
@@ -111,3 +146,9 @@
     </hlm-dropdown-menu-sub>
   </ng-template>
 </div>
+
+<hlm-separator class="my-4" />
+@for (docs of documents(); track $index) {
+} @empty {
+  <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
+}

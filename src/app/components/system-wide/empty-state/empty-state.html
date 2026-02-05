@@ -1,18 +1,26 @@
-
 <div hlmEmpty>
-	<div hlmEmptyHeader>
-		<div hlmEmptyMedia variant="icon">
-			<ng-icon name="lucideFilePlusCorner" />
-		</div>
-		<div hlmEmptyTitle>No Projects Yet</div>
-		<div hlmEmptyDescription>
-			You haven&apos;t created any projects yet. Get started by creating your first project.
-		</div>
-	</div>
-	<div hlmEmptyContent>
-		<div class="flex gap-2">
-			<button hlmBtn>Create Project</button>
-			<button hlmBtn variant="outline">Import Project</button>
-		</div>
-	</div>
+  <div hlmEmptyHeader>
+    <div hlmEmptyMedia variant="icon">
+      <ng-icon [name]="stateData.iconName" />
+    </div>
+    <div hlmEmptyTitle>{{ stateData.title }}</div>
+    <div hlmEmptyDescription>
+      {{ stateData.supportingText }}
+    </div>
+  </div>
+  <div hlmEmptyContent>
+    <div class="flex gap-2">
+      @for (action of stateData.actions; track $index) {
+        <button hlmBtn [routerLink]="action.route" class="nexus-button outlined">
+          {{ action.label }}
+        </button>
+        @if ($index < stateData.actions.length - 1) {
+          <span class="h-6 w-px bg-border"></span>
+        }
+        @if (stateData.actions.length > 1 && $index === stateData.actions.length - 1) {
+          <button hlmBtn variant="outline" [routerLink]="action.route">{{ action.label }}</button>
+        }
+      }
+    </div>
+  </div>
 </div>

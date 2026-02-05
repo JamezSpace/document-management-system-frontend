@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment.development';
   providedIn: 'root',
 })
 export class AiService {
-  private apiUrl = environment.api;
+    private apiUrl = environment.api;
   private http = inject(HttpClient);
 
   askAi(prompt: string) {

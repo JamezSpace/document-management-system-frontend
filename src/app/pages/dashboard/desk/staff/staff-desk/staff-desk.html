@@ -3,19 +3,16 @@
   <section class="flex justify-between items-start mb-10">
     <div class="space-y-1">
       <!-- <h1 class="text-4xl nexus-serif-font font-bold text-(--brand-text) soft-fade capitalize"> -->
-    <nexus-spartan-h2>
-        Hi, {{ user.name }}
-    </nexus-spartan-h2>
-      <p
+      <nexus-spartan-h2> Hi, {{ user.name }} </nexus-spartan-h2>
+      <nexus-spartan-p class="uppercase">{{ user.role }}</nexus-spartan-p>
+      <!-- <p
         class="text-xs font-semibold uppercase tracking-widest text-(--brand-accent-shade-1) soft-fade delay-100"
       >
         {{ user.role }}
-      </p>
+      </p> -->
     </div>
 
-    <div
-      class="flex items-center gap-4 bg-white p-4 rounded-xs border border-black/5"
-    >
+    <div class="flex items-center gap-4 bg-card text-card-foreground py-4 px-8 rounded-xs">
       <!-- TODO: replace this with a progress bar from angular material -->
       <div
         class="relative flex items-center justify-center w-12 h-12 rounded-full border-4 border-nexus-gold/20"
@@ -32,23 +29,22 @@
   </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div
-      class="bg-white rounded-xs p-6 subtle-box-shadow border-nexus-gold flex flex-col"
-    >
-      <div class="flex justify-between items-start mb-6">
-        <span class="uppercase tracking-normal text-sm text-neutral-600 font-bold"
-          >pending work</span
-        >
+    <!-- class="bg-card text-card-foreground rounded-xs p-6 subtle-box-shadow border-nexus-gold flex flex-col" -->
+    <section hlmCard>
+      <!-- class="flex justify-between items-start mb-8" -->
+      <div hlmCardHeader>
+        <nexus-spartan-h4>Pending Work</nexus-spartan-h4>
         <span class="text-xs text-gray-400 italic">{{ lastDraft.lastSaved }}</span>
       </div>
 
-      <section class="flex-center justify-between mb-6">
+      <!-- class="flex-center justify-between mb-6" -->
+      <section hlmCardContent>
         <article>
-          <p class="text-xs font-mono text-neutral-500 uppercase">{{ lastDraft.ref }}</p>
+          <p class="text-xs font-mono text-muted-foreground uppercase">{{ lastDraft.ref }}</p>
           <h3 class="text-lg text-nexus-indigo leading-tight">{{ lastDraft.title }}</h3>
-          
+
           @if (validToShowModifiedAt()) {
-            <p class="italic mt-1 text-neutral-500">
+            <p class="italic mt-1 text-muted-foreground">
               Modified {{ mostRecentDraftDurationFromNow(lastDraft.modifiedAt) }}
             </p>
           }
@@ -64,16 +60,19 @@
 
       <button
         (click)="continueDraft()"
-        class="mt-auto w-fit bg-(--brand-primary)/60 hover:bg-(--brand-primary)/90 text-white px-6 py-3 rounded-xs font-semibold transition-all subtle-box-shadow active:scale-95"
+        class="nexus-button secondary transition-all subtle-box-shadow active:scale-95"
       >
         Continue Editing
       </button>
-    </div>
+    </section>
 
-    <div class="bg-white subtle-box-shadow rounded-xs p-6 delay-400">
-      <h3 class="uppercase tracking-normal text-sm text-neutral-600 font-bold mb-4">Directives</h3>
+    <!-- class="bg-card text-card-foreground subtle-box-shadow rounded-xs p-6 delay-400" -->
+    <section hlmCard>
+      <div hlmCardHeader>
+        <nexus-spartan-h4> Directives </nexus-spartan-h4>
+      </div>
 
-      <div class="divide-y divide-gray-50">
+      <section hlmCardContent>
         @for (item of directives; track $index) {
           <div
             class="group flex justify-between items-center py-4 cursor-pointer hover:pl-2 transition-all"
@@ -82,14 +81,16 @@
             <div class="flex flex-col">
               <span
                 class="text-[10px] font-black uppercase"
-                [class]="item.priority === 'high' ? 'text-orange-600' : 'text-nexus-indigo'"
+                [class]="item.priority === 'high' ? 'text-destructive' : 'text-nexus-indigo'"
               >
                 {{ item.type }}
               </span>
+
               <p class="text-sm text-gray-600 group-hover:text-nexus-indigo transition-colors">
                 {{ item.message }}
               </p>
             </div>
+
             <svg
               class="w-4 h-4 text-gray-300 group-hover:text-nexus-gold transition-colors"
               fill="none"
@@ -104,9 +105,13 @@
               />
             </svg>
           </div>
+
+          @if ($index !== directives.length - 1) {
+            <hlm-separator />
+          }
         }
-      </div>
-    </div>
+      </section>
+    </section>
   </div>
 
   <section class="mt-12 delay-500">

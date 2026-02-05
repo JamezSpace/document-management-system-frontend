@@ -66,6 +66,15 @@
       ],
       "@spartan-ng/helm/empty": [
         "./libs/ui/empty/src/index.ts"
+      ],
+      "@spartan-ng/helm/card": [
+        "./libs/ui/card/src/index.ts"
+      ],
+      "@spartan-ng/helm/alert-dialog": [
+        "./libs/ui/alert-dialog/src/index.ts"
+      ],
+      "@spartan-ng/helm/navigation-menu": [
+        "./libs/ui/navigation-menu/src/index.ts"
       ]
     }
   },
