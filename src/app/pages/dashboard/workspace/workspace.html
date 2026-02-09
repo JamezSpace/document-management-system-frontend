@@ -1,0 +1,159 @@
+<!-- top bar -->
+<section class="flex-center justify-between px-2.5 py-0.5 pb-4 border-b">
+  <div id="left-section" class="flex-center gap-4">
+    <button
+      type="button"
+      class="p-1.5 flex-center justify-center rounded-xs hover:outline bg-muted"
+    >
+      <ng-icon name="lucideArrowLeft" hlm size="sm" />
+    </button>
+
+    <article class="flex-center gap-2">
+      <ng-icon name="lucideFile" hlm size="base" />
+
+      <div class="">
+        <nexus-spartan-muted>
+          {{ document.folderLocation }}
+        </nexus-spartan-muted>
+        <nexus-spartan-p class="text-base">
+          {{ document.title }}
+        </nexus-spartan-p>
+      </div>
+    </article>
+  </div>
+
+  <div id="right-section" class="flex-center gap-3.5">
+    <button type="button" class="nexus-button secondary scale-90">preview</button>
+    <button type="button" class="nexus-button flex-center gap-2.5 scale-90">
+      <ng-icon name="lucideSave" />
+      <span>Save</span>
+    </button>
+    <button type="button" class="p-2.5 rounded-xs hover:outline">
+      <ng-icon name="lucideUserRound" />
+    </button>
+  </div>
+</section>
+
+<!-- below top bar -->
+<div class="flex-center">
+  <!-- side bar -->
+  <aside class="py-5 border-r max-w-64">
+    <section id="metadata-section" class="px-2.5">
+      <p class="uppercase opacity-80 mb-1">document details</p>
+
+      <form>
+        <div class="row">
+          <div class="field">
+            <nexus-spartan-p> Recipient (to) </nexus-spartan-p>
+
+            <hlm-select class="block w-56 overflow-auto" placeholder="Select the department">
+              <hlm-select-trigger size="sm">
+                <hlm-select-value class="w-full">
+                  <!-- <div class="flex-center gap-x-2" *brnSelectValue="let value">
+                    <span>{{ value.id }}</span>
+                    {{ value.label }}
+                  </div> -->
+                </hlm-select-value>
+              </hlm-select-trigger>
+              <hlm-select-content class="w-full max-h-80">
+                <hlm-select-scroll-up />
+
+                <hlm-select-group>
+                  <hlm-select-label>Academic</hlm-select-label>
+                  @for (dept of academicDepartments(); track $index) {
+                    <hlm-option [value]="dept.id">{{ dept.name }}</hlm-option>
+                  }
+                </hlm-select-group>
+
+                <br />
+
+                <hlm-select-group>
+                  <hlm-select-label>Non-Academic</hlm-select-label>
+                  @for (dept of nonAcademicDepartments(); track $index) {
+                    <hlm-option [value]="dept.id">{{ dept.label }}</hlm-option>
+                  }
+                </hlm-select-group>
+
+                <hlm-select-scroll-down />
+              </hlm-select-content>
+            </hlm-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <nexus-spartan-p> Volume Series</nexus-spartan-p>
+
+            <brn-select class="inline-block" placeholder="Select a volume">
+              <hlm-select-trigger>
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content class="w-56">
+                @for (vol of correspondenceVolumes(); track $index) {
+                  <hlm-option [value]="vol.code">{{ vol.name }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field"></div>
+        </div>
+        <div class="row">
+          <div class="field"></div>
+        </div>
+      </form>
+    </section>
+
+    <hlm-separator class="my-3" />
+
+    <section id="attachements-section" class="px-2.5">
+        <div class="flex-center justify-between mb-3.5">
+            <p class="uppercase opacity-80">attachments</p>
+
+            <div class="relative border border-transparent hover:border-accent-foreground">
+                <button type="button" class="p-0.5 flex-center justify-center cursor-pointer outlined">
+                    <ng-icon name="lucidePlus" />
+                </button>
+
+                <input type="file" name="" id="" title="" class="absolute inset top-0 left-0 opacity-0 z-10"
+                accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf" (change)="onUploadAttachment($event)">
+            </div>
+        </div>
+
+        @if(fileUploaded()) {
+        <article class="p-2 flex-center gap-2.5 rounded-xs subtle-box-shadow">
+            <div class="icon text-3xl">
+                @if (fileUploaded()?.type === 'application/pdf') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20"><rect width="20" height="20" fill="none"/><path fill="currentColor" fill-rule="evenodd" d="M5.8 14H5v1h.8c.3 0 .5-.2.5-.5s-.2-.5-.5-.5M11 2H3v16h13V7zM7.2 14.6c0 .8-.6 1.4-1.4 1.4H5v1H4v-4h1.8c.8 0 1.4.6 1.4 1.4zm4.1.5c0 1-.8 1.9-1.9 1.9H8v-4h1.4c1 0 1.9.8 1.9 1.9zM15 14h-2v1h1.5v1H13v1h-1v-4h3zm0-2H4V3h7v4h4zm-5.6 2H9v2h.4c.6 0 1-.4 1-1s-.5-1-1-1" clip-rule="evenodd"/></svg>
+                } @else {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><rect width="16" height="16" fill="none"/><path fill="currentColor" fill-rule="evenodd" d="M14 4.5V11h-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zm-6.839 9.688v-.522a1.5 1.5 0 0 0-.117-.641a.86.86 0 0 0-.322-.387a.86.86 0 0 0-.469-.129a.87.87 0 0 0-.471.13a.87.87 0 0 0-.32.386a1.5 1.5 0 0 0-.117.641v.522q0 .384.117.641a.87.87 0 0 0 .32.387a.9.9 0 0 0 .471.126a.9.9 0 0 0 .469-.126a.86.86 0 0 0 .322-.386a1.55 1.55 0 0 0 .117-.642m.803-.516v.513q0 .563-.205.973a1.47 1.47 0 0 1-.589.627q-.381.216-.917.216a1.86 1.86 0 0 1-.92-.216a1.46 1.46 0 0 1-.589-.627a2.15 2.15 0 0 1-.205-.973v-.513q0-.569.205-.975q.205-.411.59-.627q.386-.22.92-.22q.535 0 .916.22q.383.219.59.63q.204.406.204.972M1 15.925v-3.999h1.459q.609 0 1.005.235q.396.233.589.68q.196.445.196 1.074q0 .634-.196 1.084q-.197.451-.595.689q-.396.237-.999.237zm1.354-3.354H1.79v2.707h.563q.277 0 .483-.082a.8.8 0 0 0 .334-.252q.132-.17.196-.422a2.3 2.3 0 0 0 .068-.592q0-.45-.118-.753a.9.9 0 0 0-.354-.454q-.237-.152-.61-.152Zm6.756 1.116q0-.373.103-.633a.87.87 0 0 1 .301-.398a.8.8 0 0 1 .475-.138q.225 0 .398.097a.7.7 0 0 1 .273.26a.85.85 0 0 1 .12.381h.765v-.073a1.33 1.33 0 0 0-.466-.964a1.4 1.4 0 0 0-.49-.272a1.8 1.8 0 0 0-.606-.097q-.534 0-.911.223q-.375.222-.571.633q-.197.41-.197.978v.498q0 .568.194.976q.195.406.571.627q.375.216.914.216q.44 0 .785-.164t.551-.454a1.27 1.27 0 0 0 .226-.674v-.076h-.765a.8.8 0 0 1-.117.364a.7.7 0 0 1-.273.248a.9.9 0 0 1-.401.088a.85.85 0 0 1-.478-.131a.83.83 0 0 1-.298-.393a1.7 1.7 0 0 1-.103-.627zm5.092-1.76h.894l-1.275 2.006l1.254 1.992h-.908l-.85-1.415h-.035l-.852 1.415h-.862l1.24-2.015l-1.228-1.984h.932l.832 1.439h.035z"/></svg>
+                }
+            </div>
+
+            <div class="">
+                <nexus-spartan-p>{{ fileUploaded()?.name }}</nexus-spartan-p>
+
+                <nexus-spartan-muted class="">{{ fileUploaded()?.size }}</nexus-spartan-muted>
+            </div>
+        </article>
+    } @else {
+        <article class="py-2 px-3.5">
+            <p class="italic text-xs text-center">Click on the "+" icon to attach any desired attachment here ...</p>
+        </article>
+    }
+    </section>
+
+    <hlm-separator class="my-3" />
+
+    <section id="version-history" class="px-2.5">
+        <p class="uppercase opacity-80 mb-1">version history</p>
+
+
+    </section>
+  </aside>
+  <main>
+    <article id="paper" class="rounded-xs">
+
+    </article>
+  </main>
+</div>

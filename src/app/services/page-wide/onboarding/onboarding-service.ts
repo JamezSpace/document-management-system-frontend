@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
-import { EntityRequest, EntityResponse } from '../../interfaces/onboarding/entities/Entity.api-model';
-import { ApiResponse } from '../../interfaces/shared/ApiResponse.interface';
+import { environment } from '../../../../environments/environment.development';
+import { EntityRequest } from '../../../interfaces/onboarding/entities/Entity.api-model';
+import { ApiResponse } from '../../../interfaces/shared/ApiResponse.interface';
 import { Observable } from 'rxjs';
 
 @Injectable({

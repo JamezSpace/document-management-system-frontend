@@ -75,6 +75,15 @@
       ],
       "@spartan-ng/helm/navigation-menu": [
         "./libs/ui/navigation-menu/src/index.ts"
+      ],
+      "@spartan-ng/helm/switch": [
+        "./libs/ui/switch/src/index.ts"
+      ],
+      "@spartan-ng/helm/select": [
+        "./libs/ui/select/src/index.ts"
+      ],
+      "@spartan-ng/helm/combobox": [
+        "./libs/ui/combobox/src/index.ts"
       ]
     }
   },

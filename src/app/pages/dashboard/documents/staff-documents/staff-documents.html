@@ -1,0 +1,276 @@
+<!-- breadcrumb at the top -->
+<nav hlmBreadcrumb>
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+    @for (directory of directories(); track $index) {
+      <li hlmBreadcrumbItem>
+        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
+      </li>
+
+      <!-- that is, if there still exists a next directory -->
+      @if ($index + 1 !== directories().length) {
+        <li hlmBreadcrumbSeparator></li>
+      }
+    }
+  </ol>
+</nav>
+
+<!-- avoiding quick nesting by placing this here while serving my intention of spacing beneath the breadbrumb -->
+<div class="mt-5"></div>
+
+<section class="flex-center justify-between">
+  <article>
+    <nexus-spartan-h3>documents registry</nexus-spartan-h3>
+    <nexus-spartan-p>
+      Complete view of all documents across drafts, submissions and shared items.
+    </nexus-spartan-p>
+  </article>
+  <button
+    type="button"
+    class="nexus-button flex-center"
+    hlmBtn
+    [brnAlertDialogTriggerFor]="documentTypeSelectionDialog"
+  >
+    <ng-icon
+      name="lucidePlus"
+      class="relative ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
+    />
+    new document
+  </button>
+</section>
+
+<!-- alert dialog to select new document type -->
+<hlm-alert-dialog #documentTypeSelectionDialog>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" class="min-w-md">
+    <hlm-alert-dialog-header>
+      <nexus-spartan-h4>Choose the jurisdictional boundary for this record</nexus-spartan-h4>
+    </hlm-alert-dialog-header>
+
+    <hlm-separator class="" />
+
+    <div class="flex-center gap-5 mt-3.5 flex-wrap justify-center">
+      <!-- interna l memos -->
+      <button
+        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
+        [brnAlertDialogTriggerFor]="externalMemoInitDialog"
+        (click)="ctx.close()"
+      >
+        <ng-icon name="lucideUsers2" class="text-2xl" />
+
+        <article>
+          <nexus-spartan-p>Internal Memo</nexus-spartan-p>
+          <nexus-spartan-muted class="whitespace-nowrap">Intra-Departmental</nexus-spartan-muted>
+        </article>
+      </button>
+
+      <!-- external memos -->
+      <button
+        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
+        [brnAlertDialogTriggerFor]="externalMemoInitDialog"
+        (click)="ctx.close()"
+      >
+        <ng-icon name="lucideNetwork" class="text-2xl" />
+
+        <article>
+          <nexus-spartan-p>External Memo</nexus-spartan-p>
+          <nexus-spartan-muted class="whitespace-nowrap">Inter-Departmental</nexus-spartan-muted>
+        </article>
+      </button>
+
+      <!-- letters -->
+      <button
+        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
+        [brnAlertDialogTriggerFor]="externalMemoInitDialog"
+        (click)="ctx.close()"
+      >
+        <ng-icon name="lucideNetwork" class="text-2xl" />
+
+        <article>
+          <nexus-spartan-p>Formal Letter</nexus-spartan-p>
+          <nexus-spartan-muted class="whitespace-nowrap">Outside Organization</nexus-spartan-muted>
+        </article>
+      </button>
+    </div>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<!-- alert dialog for choosing template -->
+<hlm-alert-dialog #externalMemoInitDialog>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-alert-dialog-header>
+      <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
+      <nexus-spartan-muted>
+        External Memorandum Workflow • {{ currentYear }} Session
+      </nexus-spartan-muted>
+    </hlm-alert-dialog-header>
+    <hlm-separator />
+
+    <form [formGroup]="externalMemoFormGroup">
+      <div class="row">
+        <div class="field in-dashboard">
+          <label>Correspondence Subject</label>
+          <input
+            type="text"
+            placeholder="Enter the official title of this memo..."
+            class="w-full custom-input"
+            formControlName="title"
+          />
+        </div>
+      </div>
+
+      <div class="row flex-center gap-3.5">
+        <div class="field in-dashboard">
+          <label>Department Category</label>
+          <brn-select
+            class="inline-block"
+            placeholder="Select an option"
+            (valueChange)="onCategoryChange($event)"
+          >
+            <hlm-select-trigger class="w-56">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="academic" class="cursor-pointer">Academic</hlm-option>
+              <hlm-option value="non-academic" class="cursor-pointer">Non-Academic</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+
+        <div class="field in-dashboard">
+          <label>select department</label>
+          <div hlmCombobox formControlName="to" autoFocus="first-tabbable">
+            <hlm-combobox-trigger class="w-full">
+				<span hlmComboboxValue></span>
+			</hlm-combobox-trigger>
+            
+            <div hlmComboboxContent class="w-full">
+              <hlm-combobox-input placeholder="Type the department name" showTrigger="false" showClear />
+              <hlm-combobox-empty>No departments found</hlm-combobox-empty>
+
+              <div hlmComboboxList>
+                <hlm-combobox-item value="">Select Department</hlm-combobox-item>
+
+                @for (dept of departmentsView(); track dept.id) {
+                  <hlm-combobox-item [value]="dept.name">
+                    <span class="mr-2 uppercase opacity-90">{{ dept.id }}</span>
+                    {{ dept.name }}
+                  </hlm-combobox-item>
+                }
+              </div>
+            </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard w-full">
+          <label>Volume (Subject Series)</label>
+          <brn-select class="block" placeholder="Select the volume..." formControlName="vol">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (vol of correspondenceVolumes(); track vol.code) {
+                <hlm-option [value]="vol.code">{{ vol.name }}</hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+    </form>
+
+    <hlm-alert-dialog-footer class="flex justify-between items-center">
+      <button class="nexus-button outlined" (click)="ctx.close()">Cancel</button>
+
+      <button class="nexus-button flex-center" [class.disabled]="externalMemoFormGroup.invalid">
+        Continue to Editor
+        <ng-icon name="lucideArrowRight" class="text-lg" />
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<hlm-separator class="my-4" />
+
+<div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
+  <!-- search -->
+  <div hlmInputGroup>
+    <input
+      type="text"
+      name=""
+      maxlength="50"
+      placeholder="Search by title, reference number or subject..."
+      autocorrect="off"
+      hlmInputGroupInput
+    />
+
+    <div hlmInputGroupAddon align="inline-end">
+      <ng-icon name="lucideSearch" />
+    </div>
+  </div>
+
+  <!-- sort -->
+  <hlm-menubar>
+    <button type="button" [hlmMenubarTrigger]="sortOptions">
+      <ng-icon name="lucideArrowDownUp" />
+      <span class="capitalize ml-2.5">sort</span>
+    </button>
+  </hlm-menubar>
+  <ng-template #sortOptions>
+    <hlm-dropdown-menu sideOffset="2.5">
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        Name
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Date
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Type
+      </button>
+      <hlm-dropdown-menu-separator />
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        Ascending
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Descending
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+
+  <!-- view -->
+  <hlm-menubar>
+    <button type="button" [hlmMenubarTrigger]="viewOptions">
+      <ng-icon name="hugeGridView" />
+      <span class="capitalize ml-2.5">view</span>
+    </button>
+  </hlm-menubar>
+  <ng-template #viewOptions>
+    <hlm-dropdown-menu sideOffset="2.5">
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        List
+      </button>
+      <button hlmDropdownMenuRadio [hlmMenubarTrigger]="iconViewOptions">
+        Icons
+        <hlm-dropdown-menu-item-sub-indicator />
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+  <ng-template #iconViewOptions>
+    <hlm-dropdown-menu-sub>
+      <button hlmDropdownMenuItem>Large</button>
+      <button hlmDropdownMenuItem>Medium</button>
+      <button hlmDropdownMenuItem>Small</button>
+    </hlm-dropdown-menu-sub>
+  </ng-template>
+</div>
+
+<hlm-separator class="my-4" />
+@for (docs of documents(); track $index) {
+} @empty {
+  <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
+}

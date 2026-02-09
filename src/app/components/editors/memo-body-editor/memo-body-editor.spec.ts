@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DocumentsVault } from './documents-vault';
+import { MemoBodyEditor } from './memo-body-editor';
 
-describe('DocumentsVault', () => {
-  let component: DocumentsVault;
-  let fixture: ComponentFixture<DocumentsVault>;
+describe('MemoBodyEditor', () => {
+  let component: MemoBodyEditor;
+  let fixture: ComponentFixture<MemoBodyEditor>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DocumentsVault]
+      imports: [MemoBodyEditor]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DocumentsVault);
+    fixture = TestBed.createComponent(MemoBodyEditor);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

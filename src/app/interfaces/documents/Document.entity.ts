@@ -9,8 +9,7 @@ enum DocumentState {
 enum DocumentType {
     INTERNAL_MEMO = "INTERNAL MEMORANDUM",
     EXTERNAL_MEMO = "EXTERNAL MEMORANDUM",
-    LETTER = "LETTER",
-    OTHERS = "OTHERS"
+    LETTER = "LETTER"
 }
 
 export { DocumentState, DocumentType };

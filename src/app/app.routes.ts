@@ -1,8 +1,7 @@
 import { Routes } from '@angular/router';
 import { Auth } from './pages/auth/auth';
-import { Onboarding } from './pages/onboarding/onboarding';
-import { DocumentsVault } from './pages/dashboard/document-workspace/admin/documents-vault/documents-vault';
 import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
+import { Onboarding } from './pages/onboarding/onboarding';
 
 export const routes: Routes = [
   // public/auth route
@@ -40,14 +39,13 @@ export const routes: Routes = [
       {
         path: 'documents',
         loadComponent: () =>
-          import('./pages/dashboard/document-workspace/staff/staff-documents/staff-documents').then(
+          import('./pages/dashboard/documents/staff-documents/staff-documents').then(
             (m) => m.StaffDocuments,
           ),
       },
       {
-        path: '',
-        redirectTo: 'overview',
-        pathMatch: 'full',
+        path: 'documents/workspace/:id',
+        loadComponent: () => import('./pages/dashboard/workspace/workspace').then((comp) => comp.Workspace)
       },
     ],
   },

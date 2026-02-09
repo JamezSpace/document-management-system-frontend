@@ -1,6 +1,6 @@
 import { DocumentState, DocumentType } from "./Document.entity";
 
-interface Document {
+interface DocumentApi {
     id: string;
     state: DocumentState;
     createdAt: Date;
@@ -11,4 +11,4 @@ interface Document {
     }
 }
 
-export type {Document}
+export type {DocumentApi}

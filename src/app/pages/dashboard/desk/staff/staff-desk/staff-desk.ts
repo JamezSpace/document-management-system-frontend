@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { SpartanH2 } from '../../../../../components/system-wide/typograhy/spartan-h2/spartan-h2';
-import { User } from '../../../../../interfaces/users/User.interface';
-import { Document } from '../../../../../interfaces/documents/Document.ui';
-import { SpartanH4 } from "../../../../../components/system-wide/typograhy/spartan-h4/spartan-h4";
-import { HlmSeparator } from "@spartan-ng/helm/separator";
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { SpartanP } from "../../../../../components/system-wide/typograhy/spartan-p/spartan-p";
+import { HlmSeparator } from "@spartan-ng/helm/separator";
+import { SpartanH2 } from '../../../../../components/system-wide/typography/spartan-h2/spartan-h2';
+import { SpartanH4 } from "../../../../../components/system-wide/typography/spartan-h4/spartan-h4";
+import { SpartanP } from "../../../../../components/system-wide/typography/spartan-p/spartan-p";
+import { DocumentUi } from '../../../../../interfaces/documents/Document.ui';
+import { User } from '../../../../../interfaces/users/User.interface';
 
 @Component({
   selector: 'nexus-staff-desk',
@@ -19,6 +19,7 @@ export class StaffDesk {
     role: 'user',
     details: {},
     efficiencyScore: 25,
+    permissionLevel: 1
   };
   documents!: Document;
 

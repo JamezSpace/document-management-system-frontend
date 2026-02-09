@@ -1,6 +1,6 @@
 import { DocumentState, DocumentType } from "./Document.entity";
 
-interface Document {
+interface DocumentUi {
     id: string;
     state: DocumentState;
     type: DocumentType;
@@ -9,4 +9,4 @@ interface Document {
     }
 }
 
-export type { Document };
+export type { DocumentUi };
