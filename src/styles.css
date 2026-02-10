@@ -47,6 +47,23 @@ iconify-icon {
   height: 1em;
 }
 
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+    background: #b1b1b1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 /* global class names */
 .nexus-serif-font {
   font-family: 'Crimson Pro', serif;

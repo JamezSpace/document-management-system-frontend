@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -13,8 +13,8 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
 import { LineLoader } from "../../../../components/system-wide/loaders/line-loader/line-loader";
 import { NavBarItem } from '../../../../interfaces/navigation/NavBarItem.interface';
-import { StaffService } from '../../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
+import { Workspace } from '../../workspace/workspace';
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -91,5 +91,12 @@ export class DashboardOfficeTemplate {
       intendedPathString = new URLSearchParams(intendedPath).toString();
 
     return currentPathString === intendedPathString;
+  }
+
+  isWorkspaceActive = signal(false);
+
+  onRouteActivate(component: any) {
+    // Check if the component being loaded into the outlet is the Workspace
+    this.isWorkspaceActive.set(component instanceof Workspace);
   }
 }

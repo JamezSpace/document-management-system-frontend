@@ -136,28 +136,26 @@
         </div>
 
         <div class="field in-dashboard">
-          <label>select department</label>
-          <div hlmCombobox formControlName="to" autoFocus="first-tabbable">
-            <hlm-combobox-trigger class="w-full">
-				<span hlmComboboxValue></span>
-			</hlm-combobox-trigger>
-            
-            <div hlmComboboxContent class="w-full">
-              <hlm-combobox-input placeholder="Type the department name" showTrigger="false" showClear />
-              <hlm-combobox-empty>No departments found</hlm-combobox-empty>
+          <label for="departmentSelected">select department</label>
 
-              <div hlmComboboxList>
-                <hlm-combobox-item value="">Select Department</hlm-combobox-item>
+          <input
+                type="text"
+                id="departmentSelected"
+                placeholder="Select the department"
+                aria-label="Department"
+                formControlName="to"
+                [matAutocomplete]="deptAuto"
+                class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+                (input)="updateDeptSearch($event)"
+              />
 
-                @for (dept of departmentsView(); track dept.id) {
-                  <hlm-combobox-item [value]="dept.name">
-                    <span class="mr-2 uppercase opacity-90">{{ dept.id }}</span>
-                    {{ dept.name }}
-                  </hlm-combobox-item>
+            <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete">
+                @for (dept of filteredDepartments(); track dept) {
+                  <mat-option [value]="`${dept.id} - ${dept.name}`">
+                    <span class="text-sm">{{ dept.name }}</span>
+                  </mat-option>
                 }
-              </div>
-            </div>
-        </div>
+              </mat-autocomplete>
         </div>
       </div>
 

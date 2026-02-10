@@ -16,6 +16,8 @@ html {
     typography: 'Google Sans',
     density: 0,
   ));
+
+
 }
 
 body {
@@ -37,11 +39,17 @@ body {
 }
 
 :root {
-  // mat stepper overrides
+ // mat stepper overrides
   @include mat.stepper-overrides((
     container-color: transparent,
     header-selected-state-icon-background-color: var(--accent-shade-1),
     header-icon-background-color: var(--brand-surface-shade-1),
     header-edit-state-icon-background-color: var(--accent-shade-1)
+  ));
+
+  @include mat.autocomplete-overrides((
+    background-color: var(--popover),
+    container-shape: var(--text-md),
+    container-elevation-shadow: var(--shadow-md),
   ));
 }

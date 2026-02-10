@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -47,10 +47,12 @@ import {
 } from '../../../../interfaces/system/EmptyState.ui';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { StaffService } from '../../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'nexus-staff-documents',
   imports: [
+    MatAutocompleteModule,
     HlmSelectImports,
     HlmComboboxImports,
     HlmInputGroupImports,
@@ -90,13 +92,6 @@ import { StaffService } from '../../../../services/page-wide/dashboard/document-
       lucideChevronLeft,
       lucideUsers2,
       lucideNetwork,
-    }),
-    provideBrnComboboxConfig({
-      filterOptions: { usage: 'search', sensitivity: 'base', ignorePunctuation: true },
-      filter: (itemValue: any, search: string, collator: Intl.Collator, itemToString?: any) =>
-                 comboboxContainsFilter(itemValue, search, collator, itemToString),
-      isItemEqualToValue: (v1: any, v2: any) => Object.is(v1, v2),
-      itemToString: undefined,
     })
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -158,26 +153,6 @@ export class StaffDocuments implements OnInit {
     // navigate to the document workspace
   }
 
-  toggleClassification(event: any) {
-    console.log('hi');
-  }
-
-  onCatChange(event: any) {
-    console.log(event);
-  }
-
-  onDeptChange(event: any) {
-    console.log(event);
-  }
-
-  // Define your categories for the Volume/Subject segment
-  SUBJECT_CATEGORIES = [
-    { code: 'GEN', label: 'General Administration' },
-    { code: 'FIN', label: 'Finance & Accounts' },
-    { code: 'PERS', label: 'Personnel & Staff Matters' },
-    { code: 'ACAD', label: 'Academic Affairs' },
-  ];
-
   // this data should be pulled from the services and not injected directly into the component, this is just for demo purposes...
   departments = this.staffService.departments;
   correspondenceVolumes = this.staffService.correspondenceVolumes;
@@ -200,4 +175,15 @@ export class StaffDocuments implements OnInit {
     to: new FormControl({value: '', disabled: this.departmentsView().length === 0}, Validators.required),
     vol: new FormControl('', Validators.required)
   })
+
+  searchValue = signal<string>('')
+  updateDeptSearch(event: any) {
+    const typedWord = event.target.value
+
+    this.searchValue.set(typedWord)
+  }
+  filteredDepartments = computed(() => {
+    const filterValue = this.searchValue().toLowerCase();
+    return this.departmentsView().filter((dept) => dept.label.toLowerCase().includes(filterValue));
+  });
 }

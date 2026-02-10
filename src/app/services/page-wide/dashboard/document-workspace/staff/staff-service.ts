@@ -1,19 +1,18 @@
 import { HttpClient, httpResource } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { DepartmentCategory } from '../../../../../interfaces/departments/Department.entity';
 import { DepartmentsUi } from '../../../../../interfaces/departments/Department.ui';
 import { DocumentVolumeUi } from '../../../../../interfaces/documents/volumes/DocumentVolume.ui';
+import { Observable } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../../interfaces/workspace/signature/signature.ui';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StaffService {
   private http = inject(HttpClient);
-
-  async getDepartments() {
-    return this.http.get(`${environment.api}/departments`);
-  }
 
   departments = signal<DepartmentsUi[]>([
     {
@@ -110,4 +109,24 @@ export class StaffService {
       name: 'Strategic Planning',
     },
   ]);
+
+//   signaturePlaceholder !: WritableSignal<SignaturePlaceHolderForBaseLevelAuthorityUi>
+signaturePlaceholder = signal<SignaturePlaceHolderForBaseLevelAuthorityUi>({
+    id: 'akhskash',
+    format: '__signature__'
+})
+  async getDepartments() {
+    return this.http.get(`${environment.api}/departments`);
+  }
+
+  async getSignature(id: string) {}
+
+  async getSignaturePlaceholder() {
+    const data = this.http.get(
+      `${environment.api}/signature/placeholder`,
+    ) as Observable<SignaturePlaceHolderForBaseLevelAuthorityUi>;
+
+    const signalData = toSignal(data)
+    if(signalData()) this.signaturePlaceholder.set(signalData()!)
+  }
 }

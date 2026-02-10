@@ -3,7 +3,7 @@
     <nexus-line-loader />
 </div>
 
-<div hlmSidebarWrapper class="nexus-sans-font">
+<div hlmSidebarWrapper class="nexus-sans-font" [class.sidebar-hidden]="isWorkspaceActive()">
   <hlm-sidebar collapsible="icon">
     <header hlmSidebarHeader>
       <a routerLink="/" class="w-7.5">
@@ -69,11 +69,11 @@
     </div>
   </hlm-sidebar>
 
-  <main>
+  <main [class.hidden]="isWorkspaceActive()">
     <button hlmSidebarTrigger><span class="sr-only"></span></button>
   </main>
 
-  <div class="flex-1 p-5">
-    <router-outlet />
+  <div [class]="isWorkspaceActive()? 'flex-1 p-0': 'flex-1 p-5'">
+    <router-outlet (activate)="onRouteActivate($event)" />
   </div>
 </div>

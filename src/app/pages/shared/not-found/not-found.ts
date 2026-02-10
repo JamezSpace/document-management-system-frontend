@@ -9,7 +9,6 @@ import { RouterLink } from '@angular/router';
   styleUrl: './not-found.css',
 })
 export class NotFound {
-
     location = inject(Location)
 
     goBack(): void {

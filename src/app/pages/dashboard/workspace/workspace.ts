@@ -1,18 +1,50 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Location } from '@angular/common';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideFile, lucideSave, lucideUserRound, lucidePlus } from '@ng-icons/lucide';
+import {
+  lucideArrowLeft,
+  lucideFile,
+  lucideLock,
+  lucideLockOpen,
+  lucidePanelLeftClose,
+  lucidePanelRightClose,
+  lucidePlus,
+  lucideSave,
+  lucideUserRound,
+} from '@ng-icons/lucide';
+import { HlmIcon } from '@spartan-ng/helm/icon';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { Delta } from 'quill';
+import { MemoBodyEditor } from '../../../components/editors/memo-body-editor/memo-body-editor';
+import { ExternalMemoTemplate } from '../../../components/editors/templates/external-memo-template/external-memo-template';
+import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
-import { HlmIcon } from '@spartan-ng/helm/icon';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { StaffService } from '../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
 import { DepartmentCategory } from '../../../interfaces/departments/Department.entity';
-import { HlmSeparator } from "@spartan-ng/helm/separator";
+import { EditorDataPreparation } from '../../../interfaces/workspace/EditorDataPreparation.ui';
+import { StaffService } from '../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'nexus-workspace',
-  imports: [NgIcon, SpartanMuted, SpartanP, HlmIcon, HlmSelectImports, BrnSelectImports, HlmSeparator],
+  imports: [
+    NgIcon,
+    SpartanMuted,
+    SpartanP,
+    HlmIcon,
+    HlmSelectImports,
+    LineLoader,
+    ExternalMemoTemplate,
+    MemoBodyEditor,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    HlmSeparator,
+  ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
   providers: [
@@ -21,12 +53,38 @@ import { HlmSeparator } from "@spartan-ng/helm/separator";
       lucideFile,
       lucideSave,
       lucideUserRound,
-      lucidePlus
+      lucidePlus,
+      lucidePanelLeftClose,
+      lucidePanelRightClose,
+      lucideLock,
+      lucideLockOpen,
     }),
   ],
 })
-export class Workspace {
+export class Workspace implements OnInit {
+  location = inject(Location);
+  loading = signal<boolean>(false);
   staffService = inject(StaffService);
+
+  sidebarClosed = signal<boolean>(false);
+  isDocmentMetadataEditable = signal<boolean>(false);
+
+  goToPreviousLocation() {
+    this.location.back();
+  }
+
+  ngOnInit(): void {
+    // this.staffService.getSignaturePlaceholder();
+  }
+
+  private breakpointObserver = inject(BreakpointObserver);
+  // Create a signal that is true when we are on a small screen (e.g., Handset)
+  isMobile = toSignal(
+    this.breakpointObserver
+      .observe([Breakpoints.Handset, '(max-width: 768px)'])
+      .pipe(map((result) => result.matches)),
+    { initialValue: false },
+  );
 
   document = {
     title: 'Q3 Financial Projection',
@@ -34,18 +92,129 @@ export class Workspace {
   };
 
   departments = this.staffService.departments;
-  academicDepartments = computed(() => this.departments().filter(dept => dept.category === DepartmentCategory.ACADEMIC))
-  nonAcademicDepartments = computed(() => this.departments().filter(dept => dept.category === DepartmentCategory.NON_ACADEMIC))
+  academicDepartments = computed(() =>
+    this.departments().filter((dept) => dept.category === DepartmentCategory.ACADEMIC),
+  );
+  nonAcademicDepartments = computed(() =>
+    this.departments().filter((dept) => dept.category === DepartmentCategory.NON_ACADEMIC),
+  );
 
-  correspondenceVolumes = this.staffService.correspondenceVolumes
+  correspondenceVolumes = this.staffService.correspondenceVolumes;
 
-  fileUploaded = signal<File | null>(null)
+  fileUploaded = signal<File | null>(null);
   onUploadAttachment(event: any) {
+    this.loading.set(true);
     const uploadedFile = event.target.files[0];
-    
+
     // perform check and scan on this document
 
     // update component with file uploaded
-    this.fileUploaded.set(uploadedFile)
+    this.fileUploaded.set(uploadedFile);
+    this.loading.set(false);
   }
+
+  documentMetadata = new FormGroup({
+    department: new FormControl(''),
+    volume: new FormControl(''),
+  });
+
+  searchDeptValue = signal<string>('');
+  searchVolValue = signal<string>('');
+
+  filteredDepartments = computed(() => {
+    const filterValue = this.searchDeptValue().toLowerCase();
+    return this.departments().filter((dept) => dept.label.toLowerCase().includes(filterValue));
+  });
+  filteredVolumes = computed(() => {
+    const filterValue = this.searchVolValue().toLowerCase();
+    return this.correspondenceVolumes().filter((vol) =>
+      vol.name.toLowerCase().includes(filterValue),
+    );
+  });
+
+  updateDeptSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchDeptValue.set(value);
+  }
+  updateVolSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchVolValue.set(value);
+  }
+
+  editorDataPreparation = signal<EditorDataPreparation>({
+    neededNow: false,
+    mode: 'text',
+  });
+
+  previewDocument() {
+    // trigger editor to return its contents
+    this.editorDataPreparation.set({
+      neededNow: true,
+      mode: 'text',
+    });
+
+    // scan for signature placeholder
+    let bounds = computed(() => {
+        return this.scanForSignaturePlaceholderAndReturnBounds()
+    });
+    
+    console.log(bounds());  
+  }
+
+  editorContentsAsDelta = signal<Delta | null>(null);
+  editorContentsAsText = signal<string>('');
+  retrieveEditorContentsAsDelta(data: Delta) {
+    this.editorContentsAsDelta.set(data);
+
+    // toggle editorDataPreparation back to false
+    this.editorDataPreparation.set({
+      mode: 'delta',
+      neededNow: false,
+    });
+
+    console.log(data.ops);
+  }
+
+  retrieveEditorContentsAsText(data: string) {    
+    this.editorContentsAsText.set(data);
+
+    // toggle editorDataPreparation back to false
+    // this.editorDataPreparation.set({
+    //   mode: 'text',
+    //   neededNow: false,
+    // });
+
+    console.log(this.editorContentsAsText());    
+  }
+
+  signaturePlaceholder = this.staffService.signaturePlaceholder;
+  scanForSignaturePlaceholderAndReturnBounds(): SignatureBounds {
+    console.log(this.editorContentsAsText());
+    
+    if (!this.editorContentsAsText()) return { exists: false };
+
+    const signaturePlaceholderFormat = this.signaturePlaceholder().format;
+
+    const beginIndexOfPlaceholder = this.editorContentsAsText()!.indexOf(
+        signaturePlaceholderFormat,
+    );
+
+    if (beginIndexOfPlaceholder < 0) return { exists: false };
+
+    return {
+        exists: true,
+        details: {
+            begin: beginIndexOfPlaceholder,
+            end: beginIndexOfPlaceholder + signaturePlaceholderFormat.length - 1,
+        },
+    };
+  }
+}
+
+interface SignatureBounds {
+  exists: boolean;
+  details?: {
+    begin: number;
+    end: number;
+  };
 }
