@@ -24,11 +24,11 @@ import { LineLoader } from '../../../components/system-wide/loaders/line-loader/
 import { SpartanMuted } from '../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
 import { DepartmentCategory } from '../../../interfaces/departments/Department.entity';
-import { EditorDataPreparation } from '../../../interfaces/workspace/EditorDataPreparation.ui';
 import { StaffService } from '../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { GenericDashboardService } from '../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -65,6 +65,7 @@ export class Workspace implements OnInit {
   location = inject(Location);
   loading = signal<boolean>(false);
   staffService = inject(StaffService);
+  genericDashboardService = inject(GenericDashboardService);
 
   sidebarClosed = signal<boolean>(false);
   isDocmentMetadataEditable = signal<boolean>(false);
@@ -75,6 +76,13 @@ export class Workspace implements OnInit {
 
   ngOnInit(): void {
     // this.staffService.getSignaturePlaceholder();
+  }
+
+  constructor() {
+    effect(() => {
+      if (this.isMobile()) this.sidebarClosed.set(true);
+      else this.sidebarClosed.set(false);
+    });
   }
 
   private breakpointObserver = inject(BreakpointObserver);
@@ -141,72 +149,39 @@ export class Workspace implements OnInit {
     this.searchVolValue.set(value);
   }
 
-  editorDataPreparation = signal<EditorDataPreparation>({
-    neededNow: false,
-    mode: 'text',
-  });
+  // scans for signature placeholder
+  signaturePlaceholderBounds = computed(() => this.scanForSignaturePlaceholderAndReturnBounds());
 
   previewDocument() {
-    // trigger editor to return its contents
-    this.editorDataPreparation.set({
-      neededNow: true,
-      mode: 'text',
-    });
-
-    // scan for signature placeholder
-    let bounds = computed(() => {
-        return this.scanForSignaturePlaceholderAndReturnBounds()
-    });
-    
-    console.log(bounds());  
+    console.log(this.signaturePlaceholderBounds());
   }
 
-  editorContentsAsDelta = signal<Delta | null>(null);
-  editorContentsAsText = signal<string>('');
-  retrieveEditorContentsAsDelta(data: Delta) {
-    this.editorContentsAsDelta.set(data);
-
-    // toggle editorDataPreparation back to false
-    this.editorDataPreparation.set({
-      mode: 'delta',
-      neededNow: false,
-    });
-
-    console.log(data.ops);
+  retrieveEditorContentsAsDelta() {
+    // retrieve data from the service
+    this.genericDashboardService.quillEditorContent().deltaContent;
   }
 
-  retrieveEditorContentsAsText(data: string) {    
-    this.editorContentsAsText.set(data);
-
-    // toggle editorDataPreparation back to false
-    // this.editorDataPreparation.set({
-    //   mode: 'text',
-    //   neededNow: false,
-    // });
-
-    console.log(this.editorContentsAsText());    
+  retrieveEditorContentsAsText() {
+    // retrieve data from the service
+    this.genericDashboardService.quillEditorContent().textContent;
   }
 
   signaturePlaceholder = this.staffService.signaturePlaceholder;
   scanForSignaturePlaceholderAndReturnBounds(): SignatureBounds {
-    console.log(this.editorContentsAsText());
-    
-    if (!this.editorContentsAsText()) return { exists: false };
+    const editorContentText = this.genericDashboardService.quillEditorContent().textContent;
 
     const signaturePlaceholderFormat = this.signaturePlaceholder().format;
 
-    const beginIndexOfPlaceholder = this.editorContentsAsText()!.indexOf(
-        signaturePlaceholderFormat,
-    );
+    const beginIndexOfPlaceholder = editorContentText.indexOf(signaturePlaceholderFormat);
 
     if (beginIndexOfPlaceholder < 0) return { exists: false };
 
     return {
-        exists: true,
-        details: {
-            begin: beginIndexOfPlaceholder,
-            end: beginIndexOfPlaceholder + signaturePlaceholderFormat.length - 1,
-        },
+      exists: true,
+      details: {
+        begin: beginIndexOfPlaceholder,
+        end: beginIndexOfPlaceholder + signaturePlaceholderFormat.length - 1,
+      },
     };
   }
 }

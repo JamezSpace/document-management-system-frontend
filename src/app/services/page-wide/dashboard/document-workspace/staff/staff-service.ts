@@ -110,11 +110,11 @@ export class StaffService {
     },
   ]);
 
-//   signaturePlaceholder !: WritableSignal<SignaturePlaceHolderForBaseLevelAuthorityUi>
-signaturePlaceholder = signal<SignaturePlaceHolderForBaseLevelAuthorityUi>({
+  //   signaturePlaceholder !: WritableSignal<SignaturePlaceHolderForBaseLevelAuthorityUi>
+  signaturePlaceholder = signal<SignaturePlaceHolderForBaseLevelAuthorityUi>({
     id: 'akhskash',
-    format: '__signature__'
-})
+    format: '{signature}',
+  });
   async getDepartments() {
     return this.http.get(`${environment.api}/departments`);
   }
@@ -126,7 +126,7 @@ signaturePlaceholder = signal<SignaturePlaceHolderForBaseLevelAuthorityUi>({
       `${environment.api}/signature/placeholder`,
     ) as Observable<SignaturePlaceHolderForBaseLevelAuthorityUi>;
 
-    const signalData = toSignal(data)
-    if(signalData()) this.signaturePlaceholder.set(signalData()!)
+    const signalData = toSignal(data);
+    if (signalData()) this.signaturePlaceholder.set(signalData()!);
   }
 }

@@ -44,7 +44,7 @@
   <!-- side bar -->
   <div
     class="side-bar-container flex flex-start absolute transition-transform z-10 min-w-64"
-    [class.-translate-x-64]="sidebarClosed() || isMobile()"
+    [class.-translate-x-64]="sidebarClosed()"
   >
     <aside class="py-5 border-r max-w-64 bg-background">
       <section id="metadata-section" class="px-2.5">
@@ -196,7 +196,7 @@
     <div class="absolute top-2.5 -right-8 z-10">
       <button
         class="p-2 flex-center justify-center hover:bg-accent hover:text-white rounded-xs"
-        (click)="this.sidebarClosed.set(!this.sidebarClosed())"
+        (click)="this.sidebarClosed.set(!this.sidebarClosed());"
       >
         @if (!this.sidebarClosed()) {
           <ng-icon name="lucidePanelLeftClose" hlm size="sm" />
@@ -211,7 +211,7 @@
     <article id="paper" class="rounded-xs">
       <nexus-external-memo-template />
 
-      <nexus-memo-body-editor (onFetchEditorContents)="retrieveEditorContentsAsText($event)" [editorDataPreparation]="editorDataPreparation()" />
+      <nexus-memo-body-editor />
     </article>
   </main>
 </div>

@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, effect, ElementRef, EventEmitter, input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, ElementRef, EventEmitter, inject, input, Output, ViewChild } from '@angular/core';
 import Quill, { Delta } from 'quill';
-import { EditorDataPreparation } from '../../../interfaces/workspace/EditorDataPreparation.ui';
+import { GenericDashboardService } from '../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 
 @Component({
   selector: 'nexus-memo-body-editor',
@@ -13,29 +13,22 @@ export class MemoBodyEditor implements AfterViewInit {
     quillEditor !: ElementRef<HTMLDivElement>;
     quill !: Quill;
 
+    genericDashboardService = inject(GenericDashboardService)
+
     ngAfterViewInit(): void {
         this.quill = new Quill(this.quillEditor.nativeElement, {
             theme: 'snow',
             placeholder: 'Type a text here...',
         })
-    }
 
-    @Output()
-    onFetchEditorContents = new EventEmitter()
-    
-    
-    editorDataPreparation = input.required<EditorDataPreparation>();
-    constructor() {
-        effect(() => {
-            const data = this.editorDataPreparation();
+        this.quill.on('text-change', () => {
+            const editorContentText = this.quill.getText()
+            const editorContentDelta = this.quill.getContents()
 
-            if(data.neededNow) 
-                this.onFetchEditorContents.emit(this.exportEditorContents(this.editorDataPreparation()))
+            this.genericDashboardService.quillEditorContent.set({
+                deltaContent: editorContentDelta,
+                textContent: editorContentText
+            })
         })
-    }
-
-    exportEditorContents(preference: EditorDataPreparation): Delta | string {
-        if(preference.mode === 'delta') return this.quill.getContents();
-        else return this.quill.getText()
     }
 }
