@@ -1,5 +1,14 @@
 import { Location } from '@angular/common';
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -29,6 +38,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { GenericDashboardService } from '../../../services/page-wide/dashboard/generic/generic-dashboard-service';
+import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 
 @Component({
   selector: 'nexus-workspace',
@@ -36,14 +47,16 @@ import { GenericDashboardService } from '../../../services/page-wide/dashboard/g
     NgIcon,
     SpartanMuted,
     SpartanP,
-    HlmIcon,
-    HlmSelectImports,
     LineLoader,
     ExternalMemoTemplate,
     MemoBodyEditor,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    HlmIcon,
     HlmSeparator,
+    HlmButtonImports,
+    HlmSelectImports,
+    HlmDropdownMenuImports,
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
@@ -152,23 +165,48 @@ export class Workspace implements OnInit {
   // scans for signature placeholder
   signaturePlaceholderBounds = computed(() => this.scanForSignaturePlaceholderAndReturnBounds());
 
+  isPrintPreview = signal(false);
+  editorHtmlContent = signal<string>('');
+
   previewDocument() {
     // retrieve content as html
-    const htmlContent = this.retrieveEditorContentsAsSpecificType('html')
+    const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
 
-    console.log(htmlContent);    
+    this.editorHtmlContent.set(htmlContent);
 
     // checks if signature exists
     const signatureExists = this.signaturePlaceholderBounds().exists;
 
+    this.isPrintPreview.set(true);
+  }
+
+  exitPreview() {
+    this.paperViewControls.set(false);
+    this.isPrintPreview.set(false);
+  }
+
+  paperViewControls = signal<boolean>(false);
+  @ViewChild('workspaceRoot')
+  workspaceRoot!: ElementRef<HTMLDivElement>;
+
+  onMouseEnter() {
+    if (this.isPrintPreview()) {
+      this.paperViewControls.set(true);
+    }
+  }
+
+  onMouseLeave() {
+    if (this.isPrintPreview()) {
+      this.paperViewControls.set(false);
+    }
   }
 
   retrieveEditorContentsAsSpecificType(desiredType: 'delta' | 'text' | 'html') {
-    const quillEditorContent = this.genericDashboardService.quillEditorContent()
+    const quillEditorContent = this.genericDashboardService.quillEditorContent();
 
-    if(desiredType === 'delta') return quillEditorContent.deltaContent;
-    else if(desiredType === 'html') return quillEditorContent.htmlContent;
-    else if(desiredType === 'text') return quillEditorContent.textContent
+    if (desiredType === 'delta') return quillEditorContent.deltaContent;
+    else if (desiredType === 'html') return quillEditorContent.htmlContent;
+    else if (desiredType === 'text') return quillEditorContent.textContent;
 
     return '';
   }

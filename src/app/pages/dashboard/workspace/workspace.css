@@ -42,7 +42,104 @@ main {
     height: 80dvh;
     padding: 2.5%;
     background-color: var(--paper-color);
-    box-shadow: 0 20px 40px -10px var(--dynamic-shadow);
+    /* box-shadow: 0 20px 40px -10px var(--dynamic-shadow); */
+    box-shadow: 0px 0px 30px -5px var(--dynamic-shadow);
     border: 1px solid oklch(from var(--paper-color) calc(l + 0.05) c h);
+  }
+}
+
+/* screen print preview mode */
+.paper-wrapper {
+  position: relative;
+}
+
+/* dropdown trigger container */
+.paper-actions {
+  position: absolute;
+  z-index: 5;
+  top: 45px;
+  left: 73.5vw;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.paper-actions.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.print-preview {
+  background: oklch(0.95 0 0);
+}
+
+/* Hide everything by default */
+.print-preview *:not(.paper-actions.visible, .paper-actions.visible *) {
+  visibility: hidden;
+}
+
+/* Show only paper */
+.print-preview #paper,
+.print-preview #paper * {
+  visibility: visible;
+}
+
+/* Center paper */
+.print-preview main {
+  padding: 0;
+  background: transparent;
+  height: unset;
+}
+
+.print-preview #paper {
+  position: relative;
+  margin: 40px auto;
+
+  /* REAL A4 size */
+  width: 210mm;
+  min-height: 297mm;
+
+  padding: 20mm;
+
+  background: white;
+  box-shadow: 0 0 0.6cm rgba(0, 0, 0, 0.3);
+
+  /* override your screen sizing */
+  max-width: none;
+  height: auto;
+  aspect-ratio: auto;
+}
+
+
+/* this is the actual print layout */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #paper,
+  #paper * {
+    visibility: visible;
+  }
+
+  #paper {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 20mm;
+
+    width: auto;
+    min-height: auto;
+    box-shadow: none;
+    border: none;
+  }
+
+  .paper-actions {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
   }
 }

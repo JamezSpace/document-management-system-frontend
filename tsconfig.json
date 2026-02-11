@@ -84,6 +84,12 @@
       ],
       "@spartan-ng/helm/combobox": [
         "./libs/ui/combobox/src/index.ts"
+      ],
+      "@spartan-ng/helm/hover-card": [
+        "./libs/ui/hover-card/src/index.ts"
+      ],
+      "@spartan-ng/helm/popover": [
+        "./libs/ui/popover/src/index.ts"
       ]
     }
   },
