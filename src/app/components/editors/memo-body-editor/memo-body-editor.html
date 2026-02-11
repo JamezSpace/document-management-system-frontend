@@ -1,3 +1,23 @@
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
-<div #editor></div>
+<!-- custom toolbar -->
+ <div id="toolbar">
+  <!-- Add buttons as you would before -->
+  <button class="ql-bold"></button>
+  <button class="ql-italic"></button>
+  <button class="ql-script" value="sub"></button>
+  <button class="ql-script" value="super"></button>
+  
+  <!-- custom lock editor button -->
+   <span class="float-end">
+  <button type="button" aria-label="this button locks the editor" (click)="editorLocked.set(!editorLocked())">
+      @if (editorLocked()) {
+          <ng-icon name="lucideLockOpen" />
+      } @else {
+          <ng-icon name="lucideLock" />
+      }
+  </button>
+  </span>
+</div>
+
+<div #editor [class.disabled]="editorLocked()"></div>

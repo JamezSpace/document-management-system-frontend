@@ -153,17 +153,24 @@ export class Workspace implements OnInit {
   signaturePlaceholderBounds = computed(() => this.scanForSignaturePlaceholderAndReturnBounds());
 
   previewDocument() {
-    console.log(this.signaturePlaceholderBounds());
+    // retrieve content as html
+    const htmlContent = this.retrieveEditorContentsAsSpecificType('html')
+
+    console.log(htmlContent);    
+
+    // checks if signature exists
+    const signatureExists = this.signaturePlaceholderBounds().exists;
+
   }
 
-  retrieveEditorContentsAsDelta() {
-    // retrieve data from the service
-    this.genericDashboardService.quillEditorContent().deltaContent;
-  }
+  retrieveEditorContentsAsSpecificType(desiredType: 'delta' | 'text' | 'html') {
+    const quillEditorContent = this.genericDashboardService.quillEditorContent()
 
-  retrieveEditorContentsAsText() {
-    // retrieve data from the service
-    this.genericDashboardService.quillEditorContent().textContent;
+    if(desiredType === 'delta') return quillEditorContent.deltaContent;
+    else if(desiredType === 'html') return quillEditorContent.htmlContent;
+    else if(desiredType === 'text') return quillEditorContent.textContent
+
+    return '';
   }
 
   signaturePlaceholder = this.staffService.signaturePlaceholder;

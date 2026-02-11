@@ -7,8 +7,9 @@ import { Delta } from 'quill';
 export class GenericDashboardService {
   loading = signal<boolean>(false);
 
-  quillEditorContent = signal<{ deltaContent: Delta | null; textContent: string }>({
+  quillEditorContent = signal<{ deltaContent: Delta | null; textContent: string; htmlContent: string }>({
     deltaContent: null,
     textContent: '',
+    htmlContent: ''
   });
 }
