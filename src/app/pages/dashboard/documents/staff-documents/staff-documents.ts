@@ -16,7 +16,6 @@ import {
     lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
-import { comboboxContainsFilter, provideBrnComboboxConfig } from '@spartan-ng/brain/combobox';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
@@ -38,9 +37,6 @@ import { SpartanH3 } from '../../../../components/system-wide/typography/spartan
 import { SpartanH4 } from '../../../../components/system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { DepartmentCategory } from '../../../../interfaces/departments/Department.entity';
-import { DepartmentsUi } from '../../../../interfaces/departments/Department.ui';
-import { DocumentVolumeUi } from '../../../../interfaces/documents/volumes/DocumentVolume.ui';
 import {
     EmptyStateType,
     type EmptyStateInterface,
@@ -48,6 +44,7 @@ import {
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { StaffService } from '../../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { DepartmentsUi } from '../../../../interfaces/departments/Department.ui';
 
 @Component({
   selector: 'nexus-staff-documents',
@@ -153,10 +150,8 @@ export class StaffDocuments implements OnInit {
     // navigate to the document workspace
   }
 
-  // this data should be pulled from the services and not injected directly into the component, this is just for demo purposes...
-  departments = this.staffService.departments;
-  correspondenceVolumes = this.staffService.correspondenceVolumes;
-  
+  departments = this.genericDashboardService.departments;
+  correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;  
 
   departmentsView = signal<DepartmentsUi[]>([]);
   onCategoryChange(selectedCategory: any) {
@@ -176,14 +171,51 @@ export class StaffDocuments implements OnInit {
     vol: new FormControl('', Validators.required)
   })
 
-  searchValue = signal<string>('')
+  internalMemoFormGroup = new FormGroup({
+    title: new FormControl('', Validators.required),
+    to: new FormControl('', Validators.required),
+    vol: new FormControl('', Validators.required)
+  })
+
+  searchDeptValue = signal<string>('')
   updateDeptSearch(event: any) {
     const typedWord = event.target.value
 
-    this.searchValue.set(typedWord)
+    this.searchDeptValue.set(typedWord)
   }
   filteredDepartments = computed(() => {
-    const filterValue = this.searchValue().toLowerCase();
+    const filterValue = this.searchDeptValue().toLowerCase();
     return this.departmentsView().filter((dept) => dept.label.toLowerCase().includes(filterValue));
   });
+
+  officeMembers = this.genericDashboardService.officeMembers
+  searchOfficeMemberValue = signal<string>('')
+  updateOfficeMember(event: any) {
+    const typedWord = event.target.value
+
+    this.searchOfficeMemberValue.set(typedWord)
+  }
+  filteredOfficeMembers = computed(() => {
+    const typedValue = this.searchOfficeMemberValue().toLowerCase();
+
+    return this.officeMembers().filter(member => {
+        // this is to search both part of the name to see if either name starts with the search value
+        const names = member.fullName.split(' ')
+        let fullName = ''
+
+        names.forEach(nm => {
+            if(nm.toLowerCase().startsWith(typedValue)) fullName = member.fullName
+        })
+        
+        return fullName;
+
+    })
+  })
+
+  showLabelRatherThanId = (id: string) => {
+    if(!id) return ''
+
+    const member = this.officeMembers().find(m => m.id === id);
+    return member ? member.fullName : '';
+  }
 }

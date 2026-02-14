@@ -53,3 +53,12 @@ body {
     container-elevation-shadow: var(--shadow-md),
   ));
 }
+
+div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-panel {
+    padding: 4px;
+}
+
+.mat-mdc-option.mat-mdc-option {
+    padding: 6px 8px;
+    min-height: unset;
+}

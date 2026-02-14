@@ -26,20 +26,19 @@ import {
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { Delta } from 'quill';
 import { MemoBodyEditor } from '../../../components/editors/memo-body-editor/memo-body-editor';
 import { ExternalMemoTemplate } from '../../../components/editors/templates/external-memo-template/external-memo-template';
 import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
 import { DepartmentCategory } from '../../../interfaces/departments/Department.entity';
-import { StaffService } from '../../../services/page-wide/dashboard/document-workspace/staff/staff-service';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { GenericDashboardService } from '../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { WorkspaceService } from '../../../services/page-wide/dashboard/workspace/workspace-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -77,7 +76,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 export class Workspace implements OnInit {
   location = inject(Location);
   loading = signal<boolean>(false);
-  staffService = inject(StaffService);
+  workspaceService = inject(WorkspaceService)
   genericDashboardService = inject(GenericDashboardService);
 
   sidebarClosed = signal<boolean>(false);
@@ -88,7 +87,7 @@ export class Workspace implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.staffService.getSignaturePlaceholder();
+    // this.workspaceService.getSignaturePlaceholder();
   }
 
   constructor() {
@@ -112,7 +111,7 @@ export class Workspace implements OnInit {
     folderLocation: '2026/iTCC/EXT-MEMO-001',
   };
 
-  departments = this.staffService.departments;
+  departments = this.genericDashboardService.departments;
   academicDepartments = computed(() =>
     this.departments().filter((dept) => dept.category === DepartmentCategory.ACADEMIC),
   );
@@ -120,7 +119,7 @@ export class Workspace implements OnInit {
     this.departments().filter((dept) => dept.category === DepartmentCategory.NON_ACADEMIC),
   );
 
-  correspondenceVolumes = this.staffService.correspondenceVolumes;
+  correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
 
   fileUploaded = signal<File | null>(null);
   onUploadAttachment(event: any) {
@@ -211,7 +210,7 @@ export class Workspace implements OnInit {
     return '';
   }
 
-  signaturePlaceholder = this.staffService.signaturePlaceholder;
+  signaturePlaceholder = this.workspaceService.signaturePlaceholder;
   scanForSignaturePlaceholderAndReturnBounds(): SignatureBounds {
     const editorContentText = this.genericDashboardService.quillEditorContent().textContent;
 

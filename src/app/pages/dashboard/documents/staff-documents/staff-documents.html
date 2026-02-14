@@ -51,7 +51,7 @@
       <!-- interna l memos -->
       <button
         class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
-        [brnAlertDialogTriggerFor]="externalMemoInitDialog"
+        [brnAlertDialogTriggerFor]="internalMemoInitDialog"
         (click)="ctx.close()"
       >
         <ng-icon name="lucideUsers2" class="text-2xl" />
@@ -93,9 +93,87 @@
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
 
-<!-- alert dialog for choosing template -->
+<!-- internal memo alert dialog for document creation -->
+<hlm-alert-dialog #internalMemoInitDialog>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let internalMemoDialog" class="min-w-md">
+    <hlm-alert-dialog-header>
+      <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
+      <nexus-spartan-muted>
+        Internal Memorandum Workflow • {{ currentYear }} Session
+      </nexus-spartan-muted>
+    </hlm-alert-dialog-header>
+    <hlm-separator />
+
+    <form [formGroup]="internalMemoFormGroup">
+      <div class="row">
+        <div class="field in-dashboard">
+          <label>Correspondence Subject</label>
+          <input
+            type="text"
+            placeholder="Enter the official title of this memo..."
+            class="w-full custom-input"
+            formControlName="title"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard">
+          <label for="departmentSelected">The Addressee</label>
+
+          <input
+                type="text"
+                id="departmentSelected"
+                placeholder="Who is this addressed to?"
+                aria-label="adressee of the internal memo"
+                formControlName="to"
+                [matAutocomplete]="addresseeAutoComplete"
+                class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+                (input)="updateOfficeMember($event)"
+              />
+
+            <mat-autocomplete autoActiveFirstOption #addresseeAutoComplete="matAutocomplete" [displayWith]="showLabelRatherThanId">
+                @for (member of filteredOfficeMembers(); track member.id) {
+                  <mat-option [value]="member.id">
+                    <span class="text-sm">{{member.fullName}}</span>
+                  </mat-option>
+                }
+              </mat-autocomplete>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard w-full">
+          <label>Volume (Subject Series)</label>
+          <brn-select class="block" placeholder="Select the volume..." formControlName="vol">
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (vol of correspondenceVolumes(); track vol.code) {
+                <hlm-option [value]="vol.code">{{ vol.name }}</hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+    </form>
+
+    <hlm-alert-dialog-footer class="flex justify-between items-center">
+      <button class="nexus-button outlined" (click)="internalMemoDialog.close()">Cancel</button>
+
+      <button class="nexus-button flex-center" [class.disabled]="internalMemoFormGroup.invalid">
+        Continue to Editor
+        <ng-icon name="lucideArrowRight" class="text-lg" />
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+
+<!-- extrenal memo alert dialog for document creation -->
 <hlm-alert-dialog #externalMemoInitDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+  <hlm-alert-dialog-content *brnAlertDialogContent="let externalMemoDialog">
     <hlm-alert-dialog-header>
       <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
       <nexus-spartan-muted>
@@ -177,7 +255,7 @@
     </form>
 
     <hlm-alert-dialog-footer class="flex justify-between items-center">
-      <button class="nexus-button outlined" (click)="ctx.close()">Cancel</button>
+      <button class="nexus-button outlined" (click)="externalMemoDialog.close()">Cancel</button>
 
       <button class="nexus-button flex-center" [class.disabled]="externalMemoFormGroup.invalid">
         Continue to Editor

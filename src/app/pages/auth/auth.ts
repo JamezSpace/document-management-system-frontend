@@ -5,7 +5,6 @@ import { AuthService } from '../../services/page-wide/auth/auth-service';
 import { lucideMail, lucideLockKeyhole, lucideEye, lucideEyeOff } from '@ng-icons/lucide';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 
-
 @Component({
   selector: 'nexus-auth',
   imports: [ReactiveFormsModule, HlmInputGroupImports, NgIcon],
@@ -13,29 +12,38 @@ import { provideIcons, NgIcon } from '@ng-icons/core';
   styleUrl: './auth.css',
   providers: [
     provideIcons({
-        lucideMail, lucideLockKeyhole, lucideEye, lucideEyeOff
-    })
-  ]
+      lucideMail,
+      lucideLockKeyhole,
+      lucideEye,
+      lucideEyeOff,
+    }),
+  ],
 })
 export class Auth {
-    private authService = inject(AuthService);
+  private authService = inject(AuthService);
 
-    passwordRevealed = signal<boolean>(false)
-    togglePasswordFieldType() {
-        this.passwordRevealed.set(!this.passwordRevealed())
-    }
+  passwordRevealed = signal<boolean>(false);
+  togglePasswordFieldType() {
+    this.passwordRevealed.set(!this.passwordRevealed());
+  }
 
-    get currentYear(): number {
-        return new Date().getFullYear();
-    }
+  get currentYear(): number {
+    return new Date().getFullYear();
+  }
 
-    authFormGroup = new FormGroup({
-        email: new FormControl<string>('', Validators.required),
-        password: new FormControl<string>('', Validators.required),
-    })
+  authFormGroup = new FormGroup({
+    email: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    password: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+  });
 
-    submitData() {
-        // this triggers the dashboard setup loader, should only be used when user is about entering dashboard
-        this.authService.setLoading(true);
-    }
+  submitData() {
+    // this triggers the dashboard setup loader, should only be used when user is about entering dashboard
+    this.authService.setLoading(true);
+
+    // login
+    this.authService.login({
+      email: this.authFormGroup.getRawValue().email,
+      password: this.authFormGroup.getRawValue().password,
+    });
+  }
 }
