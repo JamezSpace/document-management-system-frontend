@@ -9,7 +9,8 @@ import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
   styleUrl: './external-memo-template.css',
 })
 export class ExternalMemoTemplate {
-  memoDetails: { from: string; to: string; refNo: string; date: string; title: string; } = {
+  memoDetails: { fromDept: string; from: string; to: string; refNo: string; date: string; title: string; } = {
+    fromDept: 'industrial training coordinating centre',
     from: 'Deputy Registrar',
     to: 'ITEMS-MIS',
     refNo: '2026/ITCC/ITEMS-MIS/PERS/0050',

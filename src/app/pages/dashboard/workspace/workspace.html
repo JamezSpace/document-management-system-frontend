@@ -217,41 +217,57 @@
       </div>
     </div>
 
-    <main
-      class="paper-wrapper"
-      (mouseenter)="onMouseEnter()"
-      (mouseleave)="onMouseLeave()"
-    >
-      <div class="paper-actions" [class.visible]="paperViewControls()">
-        <button
-          hlmBtn
-          variant="outline"
-          size="sm"
-          [hlmDropdownMenuTrigger]="dropdownMenu"
-          aria-label="Print preview actions"
-        >
-          ⋯
+    <div class="w-full relative">
+      <div class="flex-center absolute right-3.5 top-2.5 z-5">
+        <button (click)="zoomOut()" class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center">
+            <ng-icon name="lucideZoomOut" />
+        </button>
+        <span class="mx-2.5">{{ (zoomLevel() * 100).toFixed(0) }}%</span>
+        <button (click)="zoomIn()" class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center">
+            <ng-icon name="lucideZoomIn" />
         </button>
       </div>
-
-      <ng-template #dropdownMenu>
-        <hlm-dropdown-menu>
-          <button hlmDropdownMenuItem (click)="exitPreview()">
-            <span>Quit Preview Mode</span>
-            <hlm-dropdown-menu-shortcut>⇧⌘P</hlm-dropdown-menu-shortcut>
+ 
+      <main
+        class="paper-wrapper viewport"
+        (mouseenter)="onMouseEnter()"
+        (mouseleave)="onMouseLeave()"
+      >
+        <div class="paper-actions" [class.visible]="paperViewControls()">
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            [hlmDropdownMenuTrigger]="dropdownMenu"
+            aria-label="Print preview actions"
+          >
+            ⋯
           </button>
-        </hlm-dropdown-menu>
-      </ng-template>
+        </div>
 
-      <article id="paper" class="rounded-xs">
-        <nexus-external-memo-template />
+        <ng-template #dropdownMenu>
+          <hlm-dropdown-menu>
+            <button hlmDropdownMenuItem (click)="exitPreview()">
+              <span>Quit Preview Mode</span>
+              <hlm-dropdown-menu-shortcut>⇧⌘P</hlm-dropdown-menu-shortcut>
+            </button>
+          </hlm-dropdown-menu>
+        </ng-template>
 
-        @if (isPrintPreview()) {
-          <div [innerHTML]="editorHtmlContent()"></div>
-        } @else {
-          <nexus-memo-body-editor />
-        }
-      </article>
-    </main>
+        <article
+          id="paper"
+          class="rounded-xs origin-top-center"
+          [style.transform]="canvasTransform()"
+        >
+          <nexus-external-memo-template />
+
+          @if (isPrintPreview()) {
+            <div [innerHTML]="editorHtmlContent()" class="wrap-anywhere text-justify"></div>
+          } @else {
+            <nexus-memo-body-editor />
+          }
+        </article>
+      </main>
+    </div>
   </div>
 </div>

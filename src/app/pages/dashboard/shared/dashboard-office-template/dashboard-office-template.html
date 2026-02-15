@@ -1,6 +1,6 @@
 <div class="relative" [class.hidden]="!loading()">
-    <p class="opacity-0">.</p>
-    <nexus-line-loader />
+  <p class="opacity-0">.</p>
+  <nexus-line-loader />
 </div>
 
 <div hlmSidebarWrapper class="nexus-sans-font" [class.sidebar-hidden]="isWorkspaceActive()">
@@ -14,58 +14,72 @@
     <hlm-separator></hlm-separator>
 
     <div hlmSidebarGroupContent>
-      <section hlmSidebarGroup>
-        <div class="capitalize" hlmSidebarGroupLabel>general</div>
-        <div hlmSidebarGroupContent>
-          <ul hlmSidebarMenu>
-            @for (navItem of navItems; track $index) {
-              <hlm-collapsible [expanded]="navItem.defaultOpen ?? false" class="group/collapsible">
-                <li hlmSidebarMenuItem>
-                  <button
-                    hlmCollapsibleTrigger
-                    hlmSidebarMenuButton
-                    [routerLink]="navItem.route"
-                    [isActive]="isMenuActive(navItem.route)"
-                    class="capitalize"
-                  >
-                    <ng-icon hlm [name]="navItem.icon" />
-                    <span>{{ navItem.label }}</span>
+      @for (group of groupedNavItems(); track $index) {
+        <section hlmSidebarGroup>
+          <div class="capitalize" hlmSidebarGroupLabel>{{ group.groupName }}</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (navItem of group.items; track $index) {
+                <hlm-collapsible
+                  [expanded]="navItem.defaultOpen ?? false"
+                  class="group/collapsible"
+                >
+                  <li hlmSidebarMenuItem>
+                    @if (navItem.leadsToExternalService) {
+                      <button type="button" hlmSidebarMenuButton [brnAlertDialogTriggerFor]="openExternalServiceAlertDialog" (click)="externalUrlToNavigateToNow.set(navItem.route)">
+                        <ng-icon hlm [name]="navItem.icon" />
+                        <span>{{ navItem.label }}</span>
 
-                    @if (navItem.subMenuExists) {
-                      <ng-icon
-                        name="lucideChevronRight"
-                        class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
-                        hlm
-                      />
-                    }
-                  </button>
-                  <!-- that is, if the sub menu is true, that is, there are sub menus -->
-                  @if (navItem.subMenuExists) {
-                    <hlm-collapsible-content>
-                      <ul hlmSidebarMenuSub>
-                        @for (submenu of navItem.subMenus; track $index) {
-                          <li hlmSidebarMenuSubItem>
-                            <button
-                              hlmSidebarMenuSubButton
-                              [routerLink]="[]"
-                              [queryParams]="submenu.route"
-                              queryParamsHandling="merge"
-                              [isActive]="isSubMenuActive(submenu.route)"
-                              class="w-full capitalize"
-                            >
-                              <span>{{ submenu.label }}</span>
-                            </button>
-                          </li>
+                        <ng-icon name="lucideExternalLink" class="ml-auto" />
+                      </button>
+                    } @else {
+                      <button
+                        hlmCollapsibleTrigger
+                        hlmSidebarMenuButton
+                        [routerLink]="navItem.route"
+                        [isActive]="isMenuActive(navItem.route)"
+                        class="capitalize"
+                      >
+                        <ng-icon hlm [name]="navItem.icon" />
+                        <span>{{ navItem.label }}</span>
+
+                        @if (navItem.subMenuExists) {
+                          <ng-icon
+                            name="lucideChevronRight"
+                            class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                            hlm
+                          />
                         }
-                      </ul>
-                    </hlm-collapsible-content>
-                  }
-                </li>
-              </hlm-collapsible>
-            }
-          </ul>
-        </div>
-      </section>
+                      </button>
+                    }
+                    <!-- that is, if the sub menu is true, that is, there are sub menus -->
+                    @if (navItem.subMenuExists) {
+                      <hlm-collapsible-content>
+                        <ul hlmSidebarMenuSub>
+                          @for (submenu of navItem.subMenus; track $index) {
+                            <li hlmSidebarMenuSubItem>
+                              <button
+                                hlmSidebarMenuSubButton
+                                [routerLink]="[]"
+                                [queryParams]="submenu.route"
+                                queryParamsHandling="merge"
+                                [isActive]="isSubMenuActive(submenu.route)"
+                                class="w-full capitalize"
+                              >
+                                <span>{{ submenu.label }}</span>
+                              </button>
+                            </li>
+                          }
+                        </ul>
+                      </hlm-collapsible-content>
+                    }
+                  </li>
+                </hlm-collapsible>
+              }
+            </ul>
+          </div>
+        </section>
+      }
     </div>
   </hlm-sidebar>
 
@@ -73,7 +87,26 @@
     <button hlmSidebarTrigger><span class="sr-only"></span></button>
   </main>
 
-  <div [class]="isWorkspaceActive()? 'flex-1 p-0': 'flex-1 p-5'">
+  <div [class]="isWorkspaceActive() ? 'flex-1 p-0' : 'flex-1 p-5'">
     <router-outlet (activate)="onRouteActivate($event)" />
   </div>
 </div>
+
+<hlm-alert-dialog #openExternalServiceAlertDialog>
+  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>Open Student IT Portal?</h2>
+      <p hlmAlertDialogDescription>
+        You are about to leave the Digital Office and open the Student IT Portal in a new tab.
+        Any unsaved changes in this workspace will not be affected.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Stay Here</button>
+      
+      <a [href]="externalUrlToNavigateToNow()" hlmAlertDialogAction target="_blank" rel="noopener noreferrer" class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring">
+  open portal
+</a>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

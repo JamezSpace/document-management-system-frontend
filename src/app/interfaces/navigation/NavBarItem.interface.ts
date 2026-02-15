@@ -1,4 +1,4 @@
-import { Params } from "@angular/router";
+import { Params } from '@angular/router';
 
 interface SubMenu {
   label: string;
@@ -12,6 +12,14 @@ interface NavBarItem {
   defaultOpen?: boolean;
   subMenuExists: boolean;
   subMenus?: SubMenu[];
+  group: NavGroup;
+  leadsToExternalService?: boolean;
 }
 
-export type { NavBarItem };
+enum NavGroup {
+  GENERAL = 'general',
+  OPERATIONS = 'operations',
+  ADMINISTRATION = 'administration',
+}
+
+export { type NavBarItem, NavGroup };

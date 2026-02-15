@@ -22,6 +22,8 @@ import {
   lucidePlus,
   lucideSave,
   lucideUserRound,
+  lucideZoomIn,
+  lucideZoomOut,
 } from '@ng-icons/lucide';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
@@ -70,13 +72,15 @@ import { WorkspaceService } from '../../../services/page-wide/dashboard/workspac
       lucidePanelRightClose,
       lucideLock,
       lucideLockOpen,
+      lucideZoomIn,
+      lucideZoomOut,
     }),
   ],
 })
 export class Workspace implements OnInit {
   location = inject(Location);
   loading = signal<boolean>(false);
-  workspaceService = inject(WorkspaceService)
+  workspaceService = inject(WorkspaceService);
   genericDashboardService = inject(GenericDashboardService);
 
   sidebarClosed = signal<boolean>(false);
@@ -168,6 +172,12 @@ export class Workspace implements OnInit {
   editorHtmlContent = signal<string>('');
 
   previewDocument() {
+    // store previous zoom level
+    this.previousZoomLevel.set(this.zoomLevel())
+
+    //reset zoom level
+    this.resetZoom()
+
     // retrieve content as html
     const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
 
@@ -180,7 +190,11 @@ export class Workspace implements OnInit {
   }
 
   exitPreview() {
+    // set current zoom level to the previous value
+    this.zoomLevel.set(this.previousZoomLevel())
+
     this.paperViewControls.set(false);
+    
     this.isPrintPreview.set(false);
   }
 
@@ -227,6 +241,25 @@ export class Workspace implements OnInit {
         end: beginIndexOfPlaceholder + signaturePlaceholderFormat.length - 1,
       },
     };
+  }
+
+  // 1.0 is 100%, 0.5 is 50%, etc.
+  zoomLevel = signal<number>(1.0);
+  previousZoomLevel = signal<number>(1);
+
+  // Compute the transform string for the template
+  canvasTransform = computed(() => `scale(${this.zoomLevel()})`);
+
+  zoomIn() {
+    this.zoomLevel.update((z) => Math.min(z + 0.1, 2.0)); // Cap at 200%
+  }
+
+  zoomOut() {
+    this.zoomLevel.update((z) => Math.max(z - 0.1, 0.5)); // Floor at 50%
+  }
+
+  resetZoom() {
+    this.zoomLevel.set(1.0);
   }
 }
 

@@ -39,7 +39,7 @@ main {
 
     margin-inline: auto;
     /* width: 80%; */
-    height: 80dvh;
+    /* height: 80dvh; */
     padding: 2.5%;
     background-color: var(--paper-color);
     /* box-shadow: 0 20px 40px -10px var(--dynamic-shadow); */
@@ -99,7 +99,7 @@ main {
   width: 210mm;
   min-height: 297mm;
 
-  padding: 20mm;
+  padding: 10mm;
 
   background: white;
   box-shadow: 0 0 0.6cm rgba(0, 0, 0, 0.3);

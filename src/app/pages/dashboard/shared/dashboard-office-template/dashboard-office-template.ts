@@ -1,18 +1,23 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
     lucideBell,
     lucideChevronRight,
+    lucideExternalLink,
     lucideFileLock,
     lucideLayoutDashboard,
+    lucideServer,
 } from '@ng-icons/lucide';
+import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCollapsibleImports } from '@spartan-ng/helm/collapsible';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
-import { LineLoader } from "../../../../components/system-wide/loaders/line-loader/line-loader";
-import { NavBarItem } from '../../../../interfaces/navigation/NavBarItem.interface';
+import { LineLoader } from '../../../../components/system-wide/loaders/line-loader/line-loader';
+import { NavBarItem, NavGroup } from '../../../../interfaces/navigation/NavBarItem.interface';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { Workspace } from '../../workspace/workspace';
 
@@ -23,19 +28,25 @@ import { Workspace } from '../../workspace/workspace';
     RouterLink,
     HlmSidebarImports,
     HlmCollapsibleImports,
+    HlmAlertDialogImports,
+    HlmButtonImports,
     HlmSeparator,
     NgIcon,
     HlmIcon,
-    LineLoader
+    LineLoader,
+    BrnAlertDialogContent,
+    BrnAlertDialogTrigger
 ],
   templateUrl: './dashboard-office-template.html',
   styleUrl: './dashboard-office-template.css',
   providers: [
     provideIcons({
-      lucideLayoutDashboard,
-      lucideFileLock,
-      lucideBell,
-      lucideChevronRight,
+        lucideLayoutDashboard,
+        lucideFileLock,
+        lucideBell,
+        lucideChevronRight,
+        lucideExternalLink,
+        lucideServer
     }),
   ],
 })
@@ -46,11 +57,13 @@ export class DashboardOfficeTemplate {
       label: 'work overview',
       route: 'overview',
       subMenuExists: false,
+      group: NavGroup.GENERAL,
     },
     {
       icon: 'lucideFileLock',
       label: 'documents',
       route: 'documents',
+      group: NavGroup.GENERAL,
       defaultOpen: false,
       subMenuExists: true,
       subMenus: [
@@ -64,10 +77,35 @@ export class DashboardOfficeTemplate {
       label: 'Notices',
       route: 'notices',
       subMenuExists: false,
+      group: NavGroup.GENERAL,
+    },
+    {
+      icon: 'lucideServer',
+      label: 'Student IT Portal',
+      leadsToExternalService: true,
+      route: 'https://studentit.itcc.edu.ng',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
     },
   ];
 
+  groupedNavItems = computed(() => {
+    const groups = new Map<string, NavBarItem[]>();
 
+    for (const item of this.navItems) {
+      if (!groups.has(item.group)) {
+        groups.set(item.group, []);
+      }
+      groups.get(item.group)!.push(item);
+    }
+
+    return Array.from(groups.entries()).map(([groupName, items]) => ({
+      groupName,
+      items,
+    }));
+  });
+
+  externalUrlToNavigateToNow = signal<string>('')
   genericDashboardService = inject(GenericDashboardService);
 
   loading = this.genericDashboardService.loading;
@@ -87,7 +125,7 @@ export class DashboardOfficeTemplate {
 
   isSubMenuActive(intendedPath: Params) {
     const currentPathArray = this.router.url.split('/'),
-    currentPathString = this.getCurrentPathParam(currentPathArray[currentPathArray.length - 1]),
+      currentPathString = this.getCurrentPathParam(currentPathArray[currentPathArray.length - 1]),
       intendedPathString = new URLSearchParams(intendedPath).toString();
 
     return currentPathString === intendedPathString;
