@@ -34,18 +34,54 @@ export const routes: Routes = [
       {
         path: 'overview',
         loadComponent: () =>
-          import('./pages/dashboard/desk/staff/staff-desk/staff-desk').then((m) => m.StaffDesk),
+          import('./pages/dashboard/staff/general/overview/overview').then((page) => page.Overview),
       },
       {
         path: 'documents',
         loadComponent: () =>
-          import('./pages/dashboard/documents/staff-documents/staff-documents').then(
-            (m) => m.StaffDocuments,
+          import('./pages/dashboard/staff/general/documents/documents').then(
+            (page) => page.Documents,
           ),
       },
       {
         path: 'documents/workspace/:id',
-        loadComponent: () => import('./pages/dashboard/workspace/workspace').then((comp) => comp.Workspace)
+        loadComponent: () =>
+          import('./pages/dashboard/staff/general/workspace/workspace').then(
+            (comp) => comp.Workspace,
+          ),
+      },
+      {
+        path: 'notices',
+        loadComponent: () =>
+          import('./pages/dashboard/staff/general/notices/notices').then((page) => page.Notices),
+      },
+      {
+        path: 'operations/tasks',
+        loadComponent: () =>
+          import('./pages/dashboard/staff/operations/regular/tasks-ledger/tasks-ledger').then(
+            (page) => page.TasksLedger,
+          ),
+      },
+      {
+        path: 'operations/unit-control',
+        loadComponent: () =>
+          import('./pages/dashboard/staff/operations/cio/unit-control/unit-control').then(
+            (page) => page.UnitControl,
+          ),
+      },
+      {
+        path: 'operations/directives',
+        loadComponent: () =>
+          import('./pages/dashboard/staff/operations/cio/directives-log/directives-log').then(
+            (page) => page.DirectivesLog,
+          ),
+      },
+      {
+        path: 'operations/staff',
+        loadComponent: () =>
+          import('./pages/dashboard/staff/operations/hr/staff-registry/staff-registry').then(
+            (page) => page.StaffRegistry,
+          ),
       },
     ],
   },

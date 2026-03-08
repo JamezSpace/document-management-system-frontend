@@ -1,33 +1,27 @@
 import {
-  Component,
-  ElementRef,
-  inject,
-  Input,
-  OnInit,
-  signal,
-  ViewChild,
-  viewChildren,
+    Component,
+    inject,
+    Input,
+    OnInit,
+    signal,
+    ViewChild
 } from '@angular/core';
-import { OnboardingService } from '../../services/page-wide/onboarding/onboarding-service';
-import type { EntityResponse } from '../../interfaces/onboarding/entities/Entity.api-model';
-import { EntityType } from '../../interfaces/onboarding/entities/Entity.api-model';
+import {
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule
+} from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
 import { IdCard } from '../../components/dashboard-wide/id-card/id-card';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { OnboardingNavBar } from '../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
 import { LineLoader } from "../../components/system-wide/loaders/line-loader/line-loader";
+import { OnboardingNavBar } from '../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
+import type { EntityResponse } from '../../interfaces/onboarding/entities/Entity.api';
+import { EntityType } from '../../interfaces/onboarding/entities/Entity.api';
+import { OnboardingService } from '../../services/page-wide/onboarding/onboarding-service';
+import { UtilService } from '../../services/system-wide/util-service/util-service';
 
 @Component({
   selector: 'nexus-onboarding',
@@ -50,6 +44,7 @@ export class Onboarding implements OnInit {
   @Input() entityType!: EntityType;
   @Input() entityId!: string;
   private onboardingService = inject(OnboardingService);
+  private genericSystemService = inject(UtilService);
 
   entity = signal<EntityResponse>({
     type: EntityType.STAFF,
@@ -69,17 +64,8 @@ export class Onboarding implements OnInit {
     });
   }
 
-  private breakpointObserver = inject(BreakpointObserver);
+  isMobile = this.genericSystemService.isMobile
 
-  // 1. Create a signal that is true when we are on a small screen (e.g., Handset)
-  isMobile = toSignal(
-    this.breakpointObserver
-      .observe([Breakpoints.Handset, '(max-width: 768px)'])
-      .pipe(map((result) => result.matches)),
-    { initialValue: false },
-  );
-
-  
   loading = signal<boolean>(false)
   currentFrame = signal<number>(1);
   isExiting = signal<boolean>(false);

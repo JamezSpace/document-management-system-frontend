@@ -1,0 +1,447 @@
+<!-- breadcrumb at the top -->
+<nav hlmBreadcrumb>
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+    @for (directory of directories(); track $index) {
+      <li hlmBreadcrumbItem>
+        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
+      </li>
+
+      <!-- that is, if there still exists a next directory -->
+      @if ($index + 1 !== directories().length) {
+        <li hlmBreadcrumbSeparator></li>
+      }
+    }
+  </ol>
+</nav>
+
+<!-- avoiding quick nesting by placing this here while serving my intention of spacing beneath the breadbrumb -->
+<div class="mt-5"></div>
+
+<section class="flex-center justify-between">
+  <article>
+    <nexus-spartan-h3>Unit Control Center</nexus-spartan-h3>
+    <nexus-spartan-p>
+      Monitor active personnel directives, latency metris, and real time instrution flow aross your
+      unit.
+    </nexus-spartan-p>
+  </article>
+  <button
+    type="button"
+    class="nexus-button flex-center"
+    hlmBtn
+    [brnAlertDialogTriggerFor]="broadcastDirectiveDialog"
+  >
+    <ng-icon name="lucideMegaphone" />
+    broadcast directive
+  </button>
+</section>
+
+<hlm-separator class="my-4" />
+
+<!-- alert dialog to broadcast directive across all unit members -->
+<hlm-alert-dialog #broadcastDirectiveDialog>
+  <hlm-alert-dialog-content
+    *brnAlertDialogContent="let ctx"
+    class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
+  >
+    <hlm-alert-dialog-header class="text-left">
+      <nexus-spartan-h4>Broadcast Unit Directive</nexus-spartan-h4>
+      <nexus-spartan-small>Chief Industrial Officer • ITCC Operations </nexus-spartan-small>
+      <nexus-spartan-muted
+        >Note: This message broadcasts to every member of your office!</nexus-spartan-muted
+      >
+    </hlm-alert-dialog-header>
+
+    <hlm-separator />
+
+    <form class="mt-2">
+      <div class="row">
+        <div class="field in-dashboard">
+          <label for="directiveSubject">Directive Subject</label>
+          <input
+            type="text"
+            placeholder="e.g., Immediate Server Maintenance - Room 4"
+            class="w-full custom-input"
+            id="directiveSubject"
+          />
+        </div>
+      </div>
+
+      <div class="row flex-center gap-3.5">
+        <div class="field in-dashboard">
+          <label for="priorityLevelSelect">Priority Level</label>
+          <brn-select
+            id="priorityLevelSelect"
+            class="inline-block"
+            placeholder="Select an option"
+            (valueChange)="onPriorityLevelSelect($event)"
+          >
+            <hlm-select-trigger class="w-64">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="urgent" class="cursor-pointer">Urgent Action Required</hlm-option>
+              <hlm-option value="standard" class="cursor-pointer">Regular</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+
+        <div class="field in-dashboard">
+          <label>Registry Volume</label>
+          <brn-select
+            id="priorityLevelSelect"
+            class="inline-block"
+            placeholder="Select an option"
+            (valueChange)="onPriorityLevelSelect($event)"
+          >
+            <hlm-select-trigger class="w-64">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="operations" class="cursor-pointer">Operations</hlm-option>
+              <hlm-option value="official" class="cursor-pointer">Official</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard">
+          <label>Official Instruction</label>
+
+          <textarea
+            hlmTextarea
+            placeholder="Provide the full scope of the directive..."
+            class="max-h-52"
+          ></textarea>
+        </div>
+      </div>
+
+      <p class="mb-5">
+        <mat-slide-toggle labelPosition="before">
+          <span>Require Formal Acknowledgement</span>
+        </mat-slide-toggle>
+      </p>
+    </form>
+
+    <hlm-alert-dialog-footer class="flex justify-between items-center">
+      <button (click)="ctx.close()" class="nexus-button outlined">Cancel</button>
+
+      <button class="nexus-button flex-center">
+        Transmit Directive
+        <ng-icon name="lucideSend" class="text-lg"></ng-icon>
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<!-- alert dialog to issue new directive -->
+<hlm-alert-dialog #issueNewDirectiveDialog>
+  <hlm-alert-dialog-content
+    class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
+    *brnAlertDialogContent="let ctx"
+  >
+    <hlm-alert-dialog-header class="text-left">
+      <nexus-spartan-h4>Issue New Directive</nexus-spartan-h4>
+    </hlm-alert-dialog-header>
+
+    <hlm-separator />
+
+    <form class="mt-2">
+      <div class="row">
+        <div class="field in-dashboard">
+          <label for="directiveSubject">Directive Subject</label>
+          <input
+            type="text"
+            placeholder="Operational Status Update: Sector 7"
+            class="w-full custom-input"
+            id="directiveSubject"
+          />
+        </div>
+      </div>
+
+      <div class="row flex-center gap-3.5">
+        <div class="field in-dashboard">
+          <label>Registry Volume</label>
+
+          <brn-select
+            id="priorityLevelSelect"
+            class="inline-block"
+            placeholder="Select an option"
+            (valueChange)="onPriorityLevelSelect($event)"
+          >
+            <hlm-select-trigger class="w-64">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="operations" class="cursor-pointer">Operations</hlm-option>
+              <hlm-option value="official" class="cursor-pointer">Official</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+
+        <div class="field in-dashboard">
+          <label for="priorityLevelSelect">Priority Level</label>
+
+          <brn-select
+            id="priorityLevelSelect"
+            class="inline-block"
+            placeholder="Select an option"
+            (valueChange)="onPriorityLevelSelect($event)"
+          >
+            <hlm-select-trigger class="w-64">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              <hlm-option value="urgent" class="cursor-pointer">Urgent Action Required</hlm-option>
+              <hlm-option value="standard" class="cursor-pointer">Regular</hlm-option>
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard">
+          <label for="directiveAddressee">Addressed To</label>
+
+          <header class="flex-center gap-x-2.5 mb-2">
+            <div
+              class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border">
+              <img src="ui-logo.png" alt="profile picture of staff member" />
+            </div>
+
+            <article>
+              <nexus-spartan-small class="font-black"> Officer Tomi </nexus-spartan-small>
+
+              <nexus-spartan-muted class="-mb-2"> Staff ID: 290075 </nexus-spartan-muted>
+            </article>
+          </header>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard">
+          <label>Official Instruction</label>
+
+          <textarea
+            hlmTextarea
+            placeholder="Provide the full scope of the directive..."
+            class="max-h-52"
+          ></textarea>
+        </div>
+      </div>
+    </form>
+
+    <hlm-alert-dialog-footer class="flex justify-between items-center">
+      <button (click)="ctx.close()" class="nexus-button outlined">Cancel</button>
+
+      <button class="nexus-button flex-center">
+        Transmit Directive
+        <ng-icon name="lucideSend" class="text-lg"></ng-icon>
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<section class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="card-container">
+    <header class="flex-center gap-x-2.5 mb-2">
+      <div
+        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
+      >
+        <img src="ui-logo.png" alt="profile picture of staff member" />
+      </div>
+
+      <article>
+        <nexus-spartan-small class="font-black"> Officer Tomi </nexus-spartan-small>
+
+        <nexus-spartan-muted class="-mb-2"> Staff ID: 290075 </nexus-spartan-muted>
+      </article>
+    </header>
+
+    <article class="pt-2">
+      <nexus-spartan-p class="font-medium capitalize underline underline-offset-2"
+        >live assignment</nexus-spartan-p
+      >
+      <p class="mb-2.5">
+        The card component supports a size prop that can be set to "sm" for a more compact
+        appearance.
+      </p>
+      <nexus-spartan-muted class="uppercase">dir-2019/a01</nexus-spartan-muted>
+    </article>
+
+    <div class="mx-auto btn-group">
+      <div hlmButtonGroup>
+        <button
+          hlmBtn
+          size="sm"
+          [brnAlertDialogTriggerFor]="issueNewDirectiveDialog"
+          variant="outline"
+        >
+          <ng-icon name="lucideZap" />
+          <span class="capitalize">directive</span>
+        </button>
+        <button hlmBtn variant="outline" size="sm">
+          <ng-icon name="lucideMessageSquare" />
+          <span class="capitalize">comms</span>
+        </button>
+        <button hlmBtn variant="outline" size="sm">
+          <ng-icon name="lucideLogs" />
+          <span class="capitalize">tasks log</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hlm-card size="sm" class="w-full">
+    <hlm-card-header class="flex-center gap-x-2.5">
+      <div
+        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
+      >
+        <img src="ui-logo.png" alt="profile picture of staff member" />
+      </div>
+      <article>
+        <h3 hlmCardTitle>Officer Tomi</h3>
+        <p hlmCardDescription>staff id: 290075</p>
+      </article>
+    </hlm-card-header>
+
+    <div hlmCardContent>
+      <nexus-spartan-p class="font-bold capitalize">live assignment</nexus-spartan-p>
+      <p>
+        The card component supports a size prop that can be set to "sm" for a more compact
+        appearance.
+      </p>
+    </div>
+  </hlm-card>
+
+  <hlm-card size="sm" class="w-full">
+    <hlm-card-header class="flex-center gap-x-2.5">
+      <div
+        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
+      >
+        <img src="ui-logo.png" alt="profile picture of staff member" />
+      </div>
+      <article>
+        <h3 hlmCardTitle>Officer Tomi</h3>
+        <p hlmCardDescription>staff id: 290075</p>
+      </article>
+    </hlm-card-header>
+
+    <div hlmCardContent>
+      <nexus-spartan-p class="font-bold capitalize">live assignment</nexus-spartan-p>
+      <p>
+        The card component supports a size prop that can be set to "sm" for a more compact
+        appearance.
+      </p>
+    </div>
+  </hlm-card>
+
+  <hlm-card size="sm" class="w-full">
+    <hlm-card-header class="flex-center gap-x-2.5">
+      <div
+        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
+      >
+        <img src="ui-logo.png" alt="profile picture of staff member" />
+      </div>
+      <article>
+        <h3 hlmCardTitle>Officer Tomi</h3>
+        <p hlmCardDescription>staff id: 290075</p>
+      </article>
+    </hlm-card-header>
+
+    <div hlmCardContent>
+      <nexus-spartan-p class="font-bold capitalize">live assignment</nexus-spartan-p>
+      <p>
+        The card component supports a size prop that can be set to "sm" for a more compact
+        appearance.
+      </p>
+    </div>
+    <hlm-card-footer class="flex-center justify-between">
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideZap" />
+        <span class="capitalize">directive</span>
+      </button>
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideMessageSquare" />
+        <span class="capitalize">comms</span>
+      </button>
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideLogs" />
+        <span class="capitalize">tasks log</span>
+      </button>
+    </hlm-card-footer>
+  </hlm-card>
+
+  <hlm-card size="sm" class="w-full">
+    <hlm-card-header class="flex-center gap-x-2.5">
+      <div
+        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
+      >
+        <img src="ui-logo.png" alt="profile picture of staff member" />
+      </div>
+      <article>
+        <h3 hlmCardTitle>Officer Tomi</h3>
+        <p hlmCardDescription>staff id: 290075</p>
+      </article>
+    </hlm-card-header>
+
+    <div hlmCardContent>
+      <nexus-spartan-p class="font-bold capitalize">live assignment</nexus-spartan-p>
+      <p>
+        The card component supports a size prop that can be set to "sm" for a more compact
+        appearance.
+      </p>
+    </div>
+    <hlm-card-footer class="flex-center justify-between">
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideZap" />
+        <span class="capitalize">directive</span>
+      </button>
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideMessageSquare" />
+        <span class="capitalize">comms</span>
+      </button>
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideLogs" />
+        <span class="capitalize">tasks log</span>
+      </button>
+    </hlm-card-footer>
+  </hlm-card>
+
+  <hlm-card size="sm" class="w-full">
+    <hlm-card-header class="flex-center gap-x-2.5">
+      <div
+        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
+      >
+        <img src="ui-logo.png" alt="profile picture of staff member" />
+      </div>
+      <article>
+        <h3 hlmCardTitle>Officer Tomi</h3>
+        <p hlmCardDescription>staff id: 290075</p>
+      </article>
+    </hlm-card-header>
+
+    <div hlmCardContent>
+      <nexus-spartan-p class="font-bold capitalize">live assignment</nexus-spartan-p>
+      <p>
+        The card component supports a size prop that can be set to "sm" for a more compact
+        appearance.
+      </p>
+    </div>
+    <hlm-card-footer class="flex-center justify-between">
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideZap" />
+        <span class="capitalize">directive</span>
+      </button>
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideMessageSquare" />
+        <span class="capitalize">comms</span>
+      </button>
+      <button hlmBtn variant="outline" size="sm" class="">
+        <ng-icon name="lucideLogs" />
+        <span class="capitalize">tasks log</span>
+      </button>
+    </hlm-card-footer>
+  </hlm-card>
+</section>

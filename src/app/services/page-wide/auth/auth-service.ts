@@ -1,18 +1,15 @@
-import { Injectable, signal } from '@angular/core';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-} from 'firebase/auth';
+import { Injectable, signal, computed } from '@angular/core';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { firebase_app } from '../../../app.config';
 import { AuthUser } from '../../../interfaces/auth/AuthUser.ui';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private loading = signal<boolean>(false);
-  auth = getAuth(firebase_app);
+  private auth = getAuth(firebase_app);
+  
+  // Signals for state
+  loading = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
 
   getLoading() {
     return this.loading;
@@ -23,36 +20,43 @@ export class AuthService {
   }
 
   async login(authUser: AuthUser) {
-    try {
-    // //   REMOVE! This is only used for local testing
-    //     return {
-    //     success: 1
-    //   };
+    this.loading.set(true);
+    this.errorMessage.set(null); // Reset previous errors
 
-      const user = await signInWithEmailAndPassword(
+    try {
+      const userCredential = await signInWithEmailAndPassword(
         this.auth,
         authUser.email,
         authUser.password
       );
-
-      console.log(user);
       
-    //   if (user_credential.user.uid) this.user_type.set(0);
+      console.log(userCredential);
+      
+      this.loading.set(false);
+      return { success: 1, user: userCredential.user };
 
-      return {
-        success: 1
-      };
     } catch (error: any) {
-      console.error(error);
-
-      return {
-        success: 0,
-        reason: error.message,
-      };
+      this.loading.set(false);
+      
+      // Handle the error via a helper method
+      const friendlyMsg = this.mapFirebaseError(error.code);
+      this.errorMessage.set(friendlyMsg);
+      
+      return { success: 0, reason: friendlyMsg };
     }
   }
 
-  async logout() {
-    this.auth.signOut();
+  // A "Pseudo-Interceptor" for Firebase errors
+  private mapFirebaseError(code: string): string {
+    switch (code) {
+      case 'auth/invalid-credential':
+        return 'Incorrect email or password.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Try again later.';
+      default:
+        return 'An unexpected error occurred. Please try again.';
+    }
   }
 }

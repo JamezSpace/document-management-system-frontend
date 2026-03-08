@@ -2,12 +2,21 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-    lucideBell,
-    lucideChevronRight,
-    lucideExternalLink,
-    lucideFileLock,
-    lucideLayoutDashboard,
-    lucideServer,
+  lucideAward,
+  lucideBell,
+  lucideBriefcase,
+  lucideCalendarCheck,
+  lucideCheckSquare,
+  lucideChevronRight,
+  lucideClipboardList,
+  lucideExternalLink,
+  lucideFileLock,
+  lucideHardHat,
+  lucideLayoutDashboard,
+  lucidePackageSearch,
+  lucideServer,
+  lucideUsers,
+  lucideZap,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
@@ -19,7 +28,7 @@ import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
 import { LineLoader } from '../../../../components/system-wide/loaders/line-loader/line-loader';
 import { NavBarItem, NavGroup } from '../../../../interfaces/navigation/NavBarItem.interface';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
-import { Workspace } from '../../workspace/workspace';
+import { Workspace } from '../../staff/general/workspace/workspace';
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -35,18 +44,27 @@ import { Workspace } from '../../workspace/workspace';
     HlmIcon,
     LineLoader,
     BrnAlertDialogContent,
-    BrnAlertDialogTrigger
-],
+    BrnAlertDialogTrigger,
+  ],
   templateUrl: './dashboard-office-template.html',
   styleUrl: './dashboard-office-template.css',
   providers: [
     provideIcons({
-        lucideLayoutDashboard,
-        lucideFileLock,
-        lucideBell,
-        lucideChevronRight,
-        lucideExternalLink,
-        lucideServer
+      lucideLayoutDashboard,
+      lucideFileLock,
+      lucideBell,
+      lucideCheckSquare,
+      lucideChevronRight,
+      lucideExternalLink,
+      lucideServer,
+      lucideUsers,
+      lucideAward,
+      lucideCalendarCheck,
+      lucideBriefcase,
+      lucideZap,
+      lucideClipboardList,
+      lucideHardHat,
+      lucidePackageSearch,
     }),
   ],
 })
@@ -80,10 +98,84 @@ export class DashboardOfficeTemplate {
       group: NavGroup.GENERAL,
     },
     {
+        icon: 'lucideCheckSquare', 
+        label: 'My Assignments',
+        route: 'operations/tasks',
+        subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    // Add these to the NavGroup.OPERATIONS for the CIO role
+    {
+      icon: 'lucideZap', // Represents immediate action/directives
+      label: 'Unit Control',
+      route: 'operations/unit-control',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    {
+      icon: 'lucideClipboardList', // Represents the log of official orders
+      label: 'Directives Log',
+      route: 'operations/directives',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    {
+      icon: 'lucideHardHat', // Represents the industrial/technical workforce
+      label: 'Technical Team',
+      route: 'operations/team-ops',
+      subMenuExists: true,
+      group: NavGroup.OPERATIONS,
+      subMenus: [
+        { label: 'Shift Roster', route: { view: 'roster' } },
+        { label: 'Performance Analytics', route: { view: 'analytics' } },
+      ],
+    },
+    {
+      icon: 'lucidePackageSearch', // Represents industrial equipment and requisitions
+      label: 'Equipment & Vault',
+      route: 'operations/inventory',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    {
       icon: 'lucideServer',
       label: 'Student IT Portal',
       leadsToExternalService: true,
       route: 'https://studentit.itcc.edu.ng',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    // Add these to your navItems array for an HR role
+    {
+      icon: 'lucideUsers',
+      label: 'Staff Records',
+      route: 'operations/staff',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+      //   subMenus: [
+      //     { label: 'Academic Staff', route: { view: 'academic' } },
+      //     { label: 'Non-Academic Staff', route: { view: 'non-academic' } },
+      //   ],
+    },
+    {
+      icon: 'lucideAward',
+      label: 'A&P Exercises', // Appointments & Promotions
+      route: 'promotions',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    {
+      icon: 'lucideCalendarCheck',
+      label: 'Leave Management',
+      route: 'leave',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+    },
+    {
+      icon: 'lucideBriefcase',
+      label: 'Establishment',
+      route: 'establishment',
+      leadsToExternalService: false,
       subMenuExists: false,
       group: NavGroup.OPERATIONS,
     },
@@ -105,7 +197,7 @@ export class DashboardOfficeTemplate {
     }));
   });
 
-  externalUrlToNavigateToNow = signal<string>('')
+  externalUrlToNavigateToNow = signal<string>('');
   genericDashboardService = inject(GenericDashboardService);
 
   loading = this.genericDashboardService.loading;
@@ -113,7 +205,9 @@ export class DashboardOfficeTemplate {
   isMenuActive(intendedPath: string) {
     const currentPath = this.router.url.split('/');
 
-    return currentPath[currentPath.length - 1] === intendedPath;
+    const pageRendered = currentPath[currentPath.length - 1];
+
+    return intendedPath.endsWith(pageRendered);
   }
 
   getCurrentPathParam(path: string): string {

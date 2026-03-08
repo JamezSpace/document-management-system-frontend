@@ -1,0 +1,4 @@
+interface TaskApi {
+    id: string;
+    
+}

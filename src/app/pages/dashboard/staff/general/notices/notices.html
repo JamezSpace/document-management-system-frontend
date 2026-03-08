@@ -1,0 +1,102 @@
+<!-- breadcrumb at the top -->
+<nav hlmBreadcrumb>
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+      <li hlmBreadcrumbItem>
+        <button hlmBreadcrumbLink class="capitalize">notices</button>
+      </li>
+  </ol>
+</nav>
+
+<!-- avoiding quick nesting by placing this here while serving my intention of spacing beneath the breadbrumb -->
+<div class="mt-5"></div>
+
+<section class="flex-center justify-between">
+  <article>
+    <nexus-spartan-h3>Notices</nexus-spartan-h3>
+    <nexus-spartan-p>
+      All Notifications are detailed here.
+    </nexus-spartan-p>
+  </article>
+</section>
+
+<hlm-separator class="my-4" />
+
+<div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
+  <!-- search -->
+  <div hlmInputGroup>
+    <input
+      type="text"
+      name=""
+      maxlength="50"
+      placeholder="Search by title, reference number or subject..."
+      autocorrect="off"
+      hlmInputGroupInput
+    />
+
+    <div hlmInputGroupAddon align="inline-end">
+      <ng-icon name="lucideSearch" />
+    </div>
+  </div>
+
+  <!-- sort -->
+  <hlm-menubar>
+    <button type="button" [hlmMenubarTrigger]="sortOptions">
+      <ng-icon name="lucideArrowDownUp" />
+      <span class="capitalize ml-2.5">sort</span>
+    </button>
+  </hlm-menubar>
+  <ng-template #sortOptions>
+    <hlm-dropdown-menu sideOffset="2.5">
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        Name
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Date
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Type
+      </button>
+      <hlm-dropdown-menu-separator />
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        Ascending
+      </button>
+      <button hlmDropdownMenuRadio>
+        <hlm-dropdown-menu-radio-indicator />
+        Descending
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+
+  <!-- view -->
+  <hlm-menubar>
+    <button type="button" [hlmMenubarTrigger]="viewOptions">
+      <ng-icon name="hugeGridView" />
+      <span class="capitalize ml-2.5">view</span>
+    </button>
+  </hlm-menubar>
+  <ng-template #viewOptions>
+    <hlm-dropdown-menu sideOffset="2.5">
+      <button hlmDropdownMenuRadio checked>
+        <hlm-dropdown-menu-radio-indicator />
+        List
+      </button>
+      <button hlmDropdownMenuRadio [hlmMenubarTrigger]="iconViewOptions">
+        Icons
+        <hlm-dropdown-menu-item-sub-indicator />
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+  <ng-template #iconViewOptions>
+    <hlm-dropdown-menu-sub>
+      <button hlmDropdownMenuItem>Large</button>
+      <button hlmDropdownMenuItem>Medium</button>
+      <button hlmDropdownMenuItem>Small</button>
+    </hlm-dropdown-menu-sub>
+  </ng-template>
+</div>
+
+<hlm-separator class="my-4" />

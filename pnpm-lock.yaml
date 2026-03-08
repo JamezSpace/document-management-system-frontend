@@ -41,6 +41,9 @@ importers:
       '@ng-icons/huge-icons':
         specifier: ^33.0.0
         version: 33.0.0
+      '@ng-icons/iconsax':
+        specifier: ^33.1.0
+        version: 33.1.0
       '@ng-icons/lucide':
         specifier: '>=32.0.0 <34.0.0'
         version: 33.0.0
@@ -59,6 +62,9 @@ importers:
       ngx-extended-pdf-viewer:
         specifier: ^25.6.4
         version: 25.6.4(@angular/common@21.1.2(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))
+      ngx-sonner:
+        specifier: '>=3.0.0'
+        version: 3.1.0(@angular/common@21.1.2(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))
       quill:
         specifier: 2.0.3
         version: 2.0.3
@@ -2130,6 +2136,9 @@ packages:
 
   '@ng-icons/huge-icons@33.0.0':
     resolution: {integrity: sha512-NbOObh9UiYJkwYIzd89VmslxLpU1il8t4QbWCS9HSNFmS/zk/koPfddU/sFmS3dawbGoO0LRffHpc7hJ1oK6rw==}
+
+  '@ng-icons/iconsax@33.1.0':
+    resolution: {integrity: sha512-ybWE0gkPNku2uwtR3khiLP2kAUMWpLTJJHcDybsfJSRsfTzd/HgA+2A+xKN0A3bv0SL8Ewr3ptzRDPS2aGGs3g==}
 
   '@ng-icons/lucide@33.0.0':
     resolution: {integrity: sha512-HX4tAihCPE3jYgzrlPpM8O/6d/1hbHNHW37GtCQOcY8JFeBc3v5a2MCwFQQwqFm74zBnQbY6iJeGIP6dsaMnuA==}
@@ -5304,6 +5313,12 @@ packages:
     peerDependencies:
       '@angular/common': '>=17.0.0 <22.0.0'
       '@angular/core': '>=17.0.0 <22.0.0'
+
+  ngx-sonner@3.1.0:
+    resolution: {integrity: sha512-hN5GolhBeVs0gzPNZi2VPnbv/sM+3+aMGCvIjH33MC8LHz+QIiOUWGw3AbnCH/hQxy08AGwkWHVYy1acvXByQQ==}
+    peerDependencies:
+      '@angular/common': '>=19.0.0'
+      '@angular/core': '>=19.0.0'
 
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
@@ -9523,6 +9538,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@ng-icons/iconsax@33.1.0':
+    dependencies:
+      tslib: 2.8.1
+
   '@ng-icons/lucide@33.0.0':
     dependencies:
       tslib: 2.8.1
@@ -13217,6 +13236,12 @@ snapshots:
   neo-async@2.6.2: {}
 
   ngx-extended-pdf-viewer@25.6.4(@angular/common@21.1.2(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2)):
+    dependencies:
+      '@angular/common': 21.1.2(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2)
+      tslib: 2.8.1
+
+  ngx-sonner@3.1.0(@angular/common@21.1.2(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2)):
     dependencies:
       '@angular/common': 21.1.2(@angular/core@21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core': 21.1.2(@angular/compiler@21.1.2)(rxjs@7.8.2)

@@ -1,0 +1,78 @@
+<header>
+  <nexus-spartan-muted>
+    {{ directiveDetail().id }}
+  </nexus-spartan-muted>
+
+  <nexus-spartan-h3>{{ directiveDetail().subject }}</nexus-spartan-h3>
+  <hlm-separator />
+</header>
+
+<main class="flex-1 overflow-y-auto">
+  <section>
+    <header class="flex-center gap-1.5">
+      <ng-icon name="lucideScrollText" />
+      <nexus-spartan-p class="uppercase tracking-wide">instruction text</nexus-spartan-p>
+    </header>
+
+    <article class="p-2.5">
+      {{ directiveDetail().instruction }}
+    </article>
+  </section>
+
+  <hlm-separator />
+
+  <section>
+    <header class="flex-center gap-1.5">
+      <ng-icon name="hugeSignature" />
+      <nexus-spartan-p class="uppercase tracking-wide">Acknowledgement history</nexus-spartan-p>
+    </header>
+
+    <section class="p-2.5">
+      @for (staff of directiveDetail().addressedTo; track $index) {
+        <div class="flex-center gap-2.5">
+          <span class="text-(--brand-success)">
+            <ng-icon name="saxTickCircleBold" />
+          </span>
+          <article>
+            <nexus-spartan-p>
+              {{ staff }}
+            </nexus-spartan-p>
+          </article>
+        </div>
+      }
+    </section>
+  </section>
+
+  <hlm-separator />
+
+  <section>
+    <header class="flex-center gap-1.5">
+      <ng-icon name="hugeTimer01" />
+      <nexus-spartan-p class="uppercase tracking-wide"> pending Acknowledgement </nexus-spartan-p>
+    </header>
+  </section>
+</main>
+
+<footer class="flex-center gap-2.5 mt-auto">
+  <button type="button" class="nexus-button secondary outlined">Close directive</button>
+  <button type="button" class="nexus-button w-full" brnDialogTriggerFor="nudgeUnacknowledgeStaffMembers">Nudge pending Acknowledgements</button>
+</footer>
+
+<hlm-alert-dialog #nudgeUnacknowledgeStaffMembers>
+  <hlm-alert-dialog-content >
+    @if (broadcastDirectiveDetail()) {
+      <div class="flex-center justify-center">
+        <ng-icon name="saxTickCircleBold" size="2rem" />
+      </div>
+      <nexus-spartan-h3 class="text-center">nudge successfully transmitted</nexus-spartan-h3>
+      <nexus-spartan-p class="text-center">
+        A priority notification has been dispatched to <span>12 personnel</span> who have not yet acknowledged directive 
+        <span class="font-medium uppercase">
+          {{ broadcastDirectiveDetail()?.id }}
+        </span>
+        </nexus-spartan-p>
+
+        <button class="nexus-button outlined" (click)="ctx.close()">Noted!</button>
+    }
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

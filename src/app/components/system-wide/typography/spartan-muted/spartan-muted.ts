@@ -8,5 +8,5 @@ import { hlmMuted } from '@spartan-ng/helm/typography';
   styleUrl: './spartan-muted.css',
 })
 export class SpartanMuted {
-muted_style = hlmMuted
+  muted_style = hlmMuted;
 }

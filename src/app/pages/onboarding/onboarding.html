@@ -109,7 +109,7 @@
                 <img
                   [src]="profilePictureUploadedPath()"
                   alt="uploaded profile picture"
-                  [className]="profilePictureUploaded() ? 'w-full object-cover' : 'w-8'"
+                  [className]="profilePictureUploaded() ? 'w-full object-cover rounded-xs' : 'w-8'"
                 />
 
                 <input
@@ -274,8 +274,8 @@
           type="button"
           class="nexus-button gap-2.5"
           [class]="{
-            'flex-center': currentStepInCompletingProfile() < 3,
-            hidden: currentStepInCompletingProfile() === 3,
+            'flex-center': currentStepInCompletingProfile() < numberOfStepsToCompleteProfile,
+            hidden: currentStepInCompletingProfile() === numberOfStepsToCompleteProfile,
             secondary: isFinalStepInCompletingProfile(),
             'w-full': !isFinalStepInCompletingProfile(),
           }"

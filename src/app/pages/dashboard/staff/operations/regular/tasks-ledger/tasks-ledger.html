@@ -1,0 +1,143 @@
+<!-- breadcrumb at the top -->
+<nav hlmBreadcrumb>
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+      @for (directory of directories(); track $index) {
+      <li hlmBreadcrumbItem>
+        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
+      </li>
+
+      <!-- that is, if there still exists a next directory -->
+      @if ($index + 1 !== directories().length) {
+        <li hlmBreadcrumbSeparator></li>
+      }
+    }
+  </ol>
+</nav>
+
+<!-- avoiding quick nesting by placing this here while serving my intention of spacing beneath the breadbrumb -->
+<div class="mt-5"></div>
+
+<section class="flex-center justify-between">
+  <article>
+    <nexus-spartan-h3>Personnel Task Ledger</nexus-spartan-h3>
+    <nexus-spartan-p>
+      High density operational monitoring for individual directives and secure deployment protocols.
+    </nexus-spartan-p>
+  </article>
+</section>
+
+<hlm-separator class="my-4" />
+
+<table mat-table [dataSource]="dataSource">
+  <!-- Ref Number Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>Ref Number</th>
+    <td mat-cell *matCellDef="let directive">
+      <button type="button" (click)="seeTaskFullDetails(directive.id)">
+        {{ directive.id }}
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Heading Column -->
+  <ng-container matColumnDef="heading">
+    <th mat-header-cell *matHeaderCellDef>Directive Heading</th>
+    <td mat-cell *matCellDef="let directive">{{ directive.heading }}</td>
+  </ng-container>
+
+  <!-- Recipients Column -->
+  <ng-container matColumnDef="recipients">
+    <th mat-header-cell *matHeaderCellDef>Recipients</th>
+    <td mat-cell *matCellDef="let directive">
+      <div>
+        @for (staff of directive.recipients; track $index) {
+          <brn-avatar>
+            <img
+              hlmAvatarImage
+              [src]="staff.profilePicture ?? 'ui-logo.png'"
+              alt="@spartan-ui logo"
+              class="grayscale"
+            />
+            <span hlmAvatarFallback>RG</span>
+          </brn-avatar>
+        } @empty {
+          <img
+            hlmAvatarImage
+            src="ui-logo.png"
+            alt="@spartan-ui logo"
+            class="grayscale h-7 rounded-full"
+          />
+        }
+      </div>
+    </td>
+  </ng-container>
+
+  <!-- Compliance Column -->
+  <ng-container matColumnDef="compliance">
+    <th mat-header-cell *matHeaderCellDef>Compliance</th>
+    <td mat-cell *matCellDef="let directive">
+      @if (directive.compliance.seen === directive.compliance.acknowledged) {
+        <div class="text-(--brand-success) flex-center gap-0.5">
+          <ng-icon name="hugeTickDouble02" size="1.2rem" />
+          <span>Compliance Verified</span>
+        </div>
+      } @else {
+        <div>
+          <nexus-spartan-muted>{{ directive.compliance.seen }} seen</nexus-spartan-muted>
+          <nexus-spartan-muted
+            >{{ directive.compliance.acknowledged }} acknowledged</nexus-spartan-muted
+          >
+        </div>
+      }
+    </td>
+  </ng-container>
+
+  <!-- Timstamp Column -->
+  <ng-container matColumnDef="modifiedAt">
+    <th mat-header-cell *matHeaderCellDef>Timestamp</th>
+    <td mat-cell *matCellDef="let directive">{{ directive.modifiedAt }}</td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef="let directive">Actions</th>
+    <td mat-cell>
+      <ng-icon name="lucideEye" />
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+</table>
+
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+  aria-label="Select page of directives issued"
+></mat-paginator>
+
+<div
+  [class]="
+    !sideNavOpened()
+      ? 'hidden'
+      : 'z-10 bg-(--brand-primary)/10' + ' fixed left-0 top-0 w-dvw h-dvh backdrop-blur-[2px]'
+  "
+  (click)="closeSideNavOnBackdropClick($event)"
+  data-function="backdrop"
+>
+  <div class="ml-auto h-full w-[35dvw] bg-(--brand-surface) px-3.5 py-5 flex flex-col">
+    <header class="px-1.5 shrink-0">
+      <button
+        class="block w-fit ml-auto text-neutral-500 hover:text-neutral-950"
+        type="button"
+        (click)="closeSideNav()"
+      >
+        <ng-icon name="lucideXCircle" size="1.2rem" />
+      </button>
+    </header>
+    <nexus-task-detail
+      class="flex flex-col flex-1"
+      [taskId]="taskIdToFetchDetailsOn()"
+    />
+  </div>
+</div>
