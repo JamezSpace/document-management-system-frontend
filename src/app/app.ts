@@ -13,7 +13,7 @@ export class App{
 
   private authService = inject(AuthService);
   get isNotLoading() {
-    return this.authService.getLoading();
+    return this.authService.getLoadingAsASignal();
   }
 
 }

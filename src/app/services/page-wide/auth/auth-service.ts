@@ -1,17 +1,20 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { getAuth, signInWithEmailAndPassword, AuthErrorCodes } from 'firebase/auth';
 import { firebase_app } from '../../../app.config';
 import { AuthUser } from '../../../interfaces/auth/AuthUser.ui';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private router = inject(Router);
   private auth = getAuth(firebase_app);
-  
+
   // Signals for state
   loading = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
+  accessToken = signal<string>('');
 
-  getLoading() {
+  getLoadingAsASignal() {
     return this.loading;
   }
 
@@ -27,21 +30,24 @@ export class AuthService {
       const userCredential = await signInWithEmailAndPassword(
         this.auth,
         authUser.email,
-        authUser.password
+        authUser.password,
       );
-      
-      console.log(userCredential);
-      
-      this.loading.set(false);
-      return { success: 1, user: userCredential.user };
 
+      const accessToken = await userCredential.user.getIdToken();
+      this.accessToken.set(accessToken);
+
+      this.loading.set(false);
+
+      this.router.navigateByUrl('/office')
+
+      return { success: 1 };
     } catch (error: any) {
       this.loading.set(false);
-      
+
       // Handle the error via a helper method
       const friendlyMsg = this.mapFirebaseError(error.code);
       this.errorMessage.set(friendlyMsg);
-      
+
       return { success: 0, reason: friendlyMsg };
     }
   }
@@ -49,11 +55,11 @@ export class AuthService {
   // A "Pseudo-Interceptor" for Firebase errors
   private mapFirebaseError(code: string): string {
     switch (code) {
-      case 'auth/invalid-credential':
+      case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
         return 'Incorrect email or password.';
-      case 'auth/user-disabled':
+      case AuthErrorCodes.USER_DISABLED:
         return 'This account has been disabled.';
-      case 'auth/too-many-requests':
+      case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
         return 'Too many attempts. Try again later.';
       default:
         return 'An unexpected error occurred. Please try again.';
