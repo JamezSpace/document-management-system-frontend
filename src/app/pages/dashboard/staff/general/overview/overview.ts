@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { User } from '../../../../../interfaces/users/User.interface';
 import { SpartanH2 } from "../../../../../components/system-wide/typography/spartan-h2/spartan-h2";
@@ -13,6 +13,7 @@ import { HlmSeparator } from "@spartan-ng/helm/separator";
   styleUrl: './overview.css',
 })
 export class Overview {
+    
     user: User = {
     name: 'samuel',
     role: 'user',

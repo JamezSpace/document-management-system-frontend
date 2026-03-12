@@ -13,7 +13,6 @@ import { OfficeMember } from '../../../../interfaces/users/office/office-member/
 // this service serves things common to the document initiator (e.g. StaffDocuments.html), workspace and editor in the workspace
 export class GenericDashboardService {
   private http = inject(HttpClient);
-
   loading = signal<boolean>(false);
 
   quillEditorContent = signal<{

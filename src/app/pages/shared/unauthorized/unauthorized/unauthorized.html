@@ -1,0 +1,22 @@
+<div class="min-h-screen flex flex-col items-center justify-center p-6">  
+  <div class="text-center max-w-md flex-center flex-col space-y-2.5">
+    <nexus-spartan-h1>Unauthorized!</nexus-spartan-h1>
+
+    <nexus-spartan-p>
+        You are currently restricted to view this resource by the University Registry.
+    </nexus-spartan-p>
+    
+  </div>
+
+  <div class="mt-8 flex gap-4 delay-300">
+    <button 
+      (click)="goBack()"
+      class="nexus-button outlined">
+      Go Back
+    </button>
+  </div>
+
+  <div class="mt-20 opacity-30">
+    <img src="assets/ui-seal-faded.png" alt="University Seal" class="w-24 grayscale">
+  </div>
+</div>

@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { Auth } from './pages/auth/auth';
 import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
 import { Onboarding } from './pages/onboarding/onboarding';
+import { authGuard } from './guards/auth-guard';
+import { Unauthorized } from './pages/shared/unauthorized/unauthorized/unauthorized';
 
 export const routes: Routes = [
   // public/auth route
@@ -25,6 +27,7 @@ export const routes: Routes = [
   {
     path: 'office',
     component: DashboardOfficeTemplate,
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -86,6 +89,11 @@ export const routes: Routes = [
     ],
   },
 
+  // unauthorized
+  {
+    path: 'unauthorized',
+    component: Unauthorized
+  }
   // fallback
   //   {
   //     path: '404',

@@ -1,22 +1,22 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideAward,
-  lucideBell,
-  lucideBriefcase,
-  lucideCalendarCheck,
-  lucideCheckSquare,
-  lucideChevronRight,
-  lucideClipboardList,
-  lucideExternalLink,
-  lucideFileLock,
-  lucideHardHat,
-  lucideLayoutDashboard,
-  lucidePackageSearch,
-  lucideServer,
-  lucideUsers,
-  lucideZap,
+    lucideAward,
+    lucideBell,
+    lucideBriefcase,
+    lucideCalendarCheck,
+    lucideCheckSquare,
+    lucideChevronRight,
+    lucideClipboardList,
+    lucideExternalLink,
+    lucideFileLock,
+    lucideHardHat,
+    lucideLayoutDashboard,
+    lucidePackageSearch,
+    lucideServer,
+    lucideUsers,
+    lucideZap,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
@@ -29,6 +29,7 @@ import { LineLoader } from '../../../../components/system-wide/loaders/line-load
 import { NavBarItem, NavGroup } from '../../../../interfaces/navigation/NavBarItem.interface';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { Workspace } from '../../staff/general/workspace/workspace';
+import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -68,7 +69,17 @@ import { Workspace } from '../../staff/general/workspace/workspace';
     }),
   ],
 })
-export class DashboardOfficeTemplate {
+export class DashboardOfficeTemplate implements OnInit {
+    private staffDetailsService = inject(StaffDetailsService)
+
+    async ngOnInit(): Promise<void> {
+        this.staffDetailsService.fetchStaffDetailsForLogin();
+        
+        if(this.staffDetailsService.loading())
+            console.log('data loading');
+        console.log(this.staffDetailsService.data())
+    }
+
   navItems: NavBarItem[] = [
     {
       icon: 'lucideLayoutDashboard',
