@@ -6,18 +6,13 @@
   width: 100vw;
   height: 100vh;
   background-color: #ffffff; /* Or #1a1a1a for dark mode */
-  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 5;
+  z-index: 50;
   transition:
     opacity 0.5s ease-in-out,
     visibility 0.5s;
-
-  &.hidden {
-    display: none;
-  }
 }
 
 .prestige-logo {

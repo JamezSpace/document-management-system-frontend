@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { DirectiveApi } from '../../../../../../interfaces/operations/cio/Directive.api';
 import { DirectiveUi } from '../../../../../../interfaces/operations/cio/Directive.ui';
 import { DirectiveDetailApi } from '../../../../../../interfaces/operations/cio/DirectiveDetail.api';
-import { StaffApi } from '../../../../../../interfaces/users/office/staff/Staff.api';
+import { StaffLoginApi } from '../../../../../../interfaces/users/office/staff/StaffLogin.api';
 
 @Injectable({
   providedIn: 'root',
@@ -179,7 +179,7 @@ export class DirectivesService {
     },
   ]);
   directiveDetail = signal<DirectiveDetailApi | null>(null)
-  unitStaffers = signal<StaffApi[]>([])
+  unitStaffers = signal<StaffLoginApi[]>([])
 
   private convertApiForUiUse(directivesApi: DirectiveApi[]): DirectiveUi[] {
     const directivesUi = directivesApi.map((directive) => {

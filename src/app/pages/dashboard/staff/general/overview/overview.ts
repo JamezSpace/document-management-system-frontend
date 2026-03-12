@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { User } from '../../../../../interfaces/users/User.interface';
-import { SpartanH2 } from "../../../../../components/system-wide/typography/spartan-h2/spartan-h2";
-import { SpartanP } from "../../../../../components/system-wide/typography/spartan-p/spartan-p";
-import { SpartanH4 } from "../../../../../components/system-wide/typography/spartan-h4/spartan-h4";
-import { HlmSeparator } from "@spartan-ng/helm/separator";
+import { SpartanH2 } from '../../../../../components/system-wide/typography/spartan-h2/spartan-h2';
+import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
+import { SpartanH4 } from '../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
+import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { StaffLoginApi } from '../../../../../interfaces/users/office/staff/StaffLogin.api';
+import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 
 @Component({
   selector: 'nexus-overview',
@@ -13,14 +14,10 @@ import { HlmSeparator } from "@spartan-ng/helm/separator";
   styleUrl: './overview.css',
 })
 export class Overview {
+    private staffDetailsService = inject(StaffDetailsService);
     
-    user: User = {
-    name: 'samuel',
-    role: 'user',
-    details: {},
-    efficiencyScore: 25,
-    permissionLevel: 1
-  };
+    readonly staff = this.staffDetailsService.data;
+
   documents!: Document;
 
   lastDraft = {
@@ -36,9 +33,9 @@ export class Overview {
     modifiedAt: '2/2/2026',
   };
 
-validToShowModifiedAt() {
+  validToShowModifiedAt() {
     return new Date(this.lastDraft.modifiedAt).getTime() < Date.now();
-}
+  }
 
   mostRecentDraftDurationFromNow(dateNow: string): string | undefined {
     const parsedDate = new Date(dateNow).getTime();

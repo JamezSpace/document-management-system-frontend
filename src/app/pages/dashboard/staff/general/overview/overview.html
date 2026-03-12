@@ -3,33 +3,35 @@
   <section class="flex justify-between items-start mb-10">
     <div class="space-y-1">
       <!-- <h1 class="text-4xl nexus-serif-font font-bold text-(--brand-text) soft-fade capitalize"> -->
-      <nexus-spartan-h2> Hi, {{ user.name }} </nexus-spartan-h2>
-      <nexus-spartan-p class="uppercase">{{ user.role }}</nexus-spartan-p>
+      <nexus-spartan-h2> Hi, {{ staff()?.firstName }} </nexus-spartan-h2>
+      @if (staff()?.designation) {
+        <nexus-spartan-p class="uppercase">{{ staff()?.designation }}</nexus-spartan-p>
+      }
       <!-- <p
         class="text-xs font-semibold uppercase tracking-widest text-(--brand-accent-shade-1) soft-fade delay-100"
       >
-        {{ user.role }}
+        {{ staff.role }}
       </p> -->
     </div>
 
-    <div class="flex items-center gap-4 bg-card text-card-foreground py-4 px-8 rounded-xs">
-      <!-- TODO: replace this with a progress bar from angular material -->
-      <div
-        class="relative flex items-center justify-center w-12 h-12 rounded-full border-4 border-nexus-gold/20"
-      >
-        <span class="text-sm font-bold text-nexus-indigo">{{ user.efficiencyScore }}%</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="text-[10px] uppercase tracking-tighter text-gray-400 font-bold"
-          >Productivity Pulse</span
+    <!-- @if (staff().efficiencyScore) {
+      <div class="flex items-center gap-4 bg-card text-card-foreground py-4 px-8 rounded-xs">
+        <div
+          class="relative flex items-center justify-center w-12 h-12 rounded-full border-4 border-nexus-gold/20"
         >
-        <span class="text-xs text-green-600 font-medium">↑ 2% from last week</span>
+          <span class="text-sm font-bold text-nexus-indigo">{{ staff().efficiencyScore }}%</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[10px] uppercase tracking-tighter text-gray-400 font-bold"
+            >Productivity Pulse</span
+          >
+          <span class="text-xs text-green-600 font-medium">↑ 2% from last week</span>
+        </div>
       </div>
-    </div>
+    } -->
   </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- class="bg-card text-card-foreground rounded-xs p-6 subtle-box-shadow border-nexus-gold flex flex-col" -->
     <section hlmCard>
       <!-- class="flex justify-between items-start mb-8" -->
       <div hlmCardHeader>

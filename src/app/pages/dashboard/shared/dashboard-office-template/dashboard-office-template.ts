@@ -1,22 +1,22 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-    lucideAward,
-    lucideBell,
-    lucideBriefcase,
-    lucideCalendarCheck,
-    lucideCheckSquare,
-    lucideChevronRight,
-    lucideClipboardList,
-    lucideExternalLink,
-    lucideFileLock,
-    lucideHardHat,
-    lucideLayoutDashboard,
-    lucidePackageSearch,
-    lucideServer,
-    lucideUsers,
-    lucideZap,
+  lucideAward,
+  lucideBell,
+  lucideBriefcase,
+  lucideCalendarCheck,
+  lucideCheckSquare,
+  lucideChevronRight,
+  lucideClipboardList,
+  lucideExternalLink,
+  lucideFileLock,
+  lucideHardHat,
+  lucideLayoutDashboard,
+  lucidePackageSearch,
+  lucideServer,
+  lucideUsers,
+  lucideZap,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
@@ -30,6 +30,7 @@ import { NavBarItem, NavGroup } from '../../../../interfaces/navigation/NavBarIt
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { Workspace } from '../../staff/general/workspace/workspace';
 import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
+import { AuthService } from '../../../../services/page-wide/auth/auth-service';
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -70,15 +71,30 @@ import { StaffDetailsService } from '../../../../services/page-wide/dashboard/of
   ],
 })
 export class DashboardOfficeTemplate implements OnInit {
-    private staffDetailsService = inject(StaffDetailsService)
+  private staffDetailsService = inject(StaffDetailsService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-    async ngOnInit(): Promise<void> {
-        this.staffDetailsService.fetchStaffDetailsForLogin();
-        
-        if(this.staffDetailsService.loading())
-            console.log('data loading');
-        console.log(this.staffDetailsService.data())
+
+  navigateOnDataReadiness = effect(() => {
+    const isLoading = this.staffDetailsService.loading();
+    const data = this.staffDetailsService.data();
+    const error = this.staffDetailsService.error();
+
+    this.authService.setLoading(isLoading);    
+
+    if (!isLoading) {
+        if (!data) {
+            this.router.navigateByUrl('/unauthorized');
+        } else {
+            console.log('Access Granted');
+        }
     }
+  })
+
+  async ngOnInit(): Promise<void> {
+    this.staffDetailsService.fetchStaffDetailsForLogin();    
+  }
 
   navItems: NavBarItem[] = [
     {
@@ -109,10 +125,10 @@ export class DashboardOfficeTemplate implements OnInit {
       group: NavGroup.GENERAL,
     },
     {
-        icon: 'lucideCheckSquare', 
-        label: 'My Assignments',
-        route: 'operations/tasks',
-        subMenuExists: false,
+      icon: 'lucideCheckSquare',
+      label: 'My Assignments',
+      route: 'operations/tasks',
+      subMenuExists: false,
       group: NavGroup.OPERATIONS,
     },
     // Add these to the NavGroup.OPERATIONS for the CIO role
@@ -212,7 +228,7 @@ export class DashboardOfficeTemplate implements OnInit {
   genericDashboardService = inject(GenericDashboardService);
 
   loading = this.genericDashboardService.loading;
-  router = inject(Router);
+  
   isMenuActive(intendedPath: string) {
     const currentPath = this.router.url.split('/');
 

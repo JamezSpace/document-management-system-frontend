@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
 import { finalize } from 'rxjs';
+import { StaffLoginApi } from '../../../../interfaces/users/office/staff/StaffLogin.api';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { finalize } from 'rxjs';
 export class StaffDetailsService {
   private http = inject(HttpClient);
 
-  data = signal<any>(null);
+  data = signal<StaffLoginApi | null>(null);
   error = signal<any>(null);
   loading = signal<boolean>(false);
 
@@ -17,7 +18,7 @@ export class StaffDetailsService {
     this.loading.set(true);
 
     this.http
-      .get(`${environment.api}/identity/staff/me`)
+      .get<StaffLoginApi>(`${environment.api}/identity/staff/me`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => this.data.set(response),

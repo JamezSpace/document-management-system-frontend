@@ -1,10 +1,12 @@
 <router-outlet />
 
 <!-- animated logo loader -->
-<div class="splash-screen nexus-sans-font" [class.flex]="isNotLoading()">
+<div class="splash-screen nexus-sans-font" [class]="isNotLoading() ? 'flex' : 'hidden'">
   <div class="logo-wrapper flex-center flex-col">
     <img src="full-logo.webp" class="prestige-logo w-xs" alt="NexusFons Logo" />
 
-    <div class="loading-text text-sm">Authenticating Secure Environment...</div>
+    <div class="loading-text text-sm">
+      <nexus-spartan-p> Setting up secure Environment... </nexus-spartan-p>
+    </div>
   </div>
 </div>
