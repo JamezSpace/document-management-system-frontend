@@ -116,7 +116,7 @@
             <hlm-select-content>
               @for (staff of unitStaffers(); track $index) {
                 <hlm-option [value]="staff.id" class="cursor-pointer">{{
-                  staff.fullName
+                  staff.firstName + ' ' + staff.lastName 
                 }}</hlm-option>
               }
             </hlm-select-content>

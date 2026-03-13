@@ -30,9 +30,7 @@
     hlmBtn
     [brnAlertDialogTriggerFor]="documentTypeSelectionDialog"
   >
-    <ng-icon
-      name="lucidePlus"
-    />
+    <ng-icon name="lucidePlus" />
     new document
   </button>
 </section>
@@ -125,8 +123,6 @@
   <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
 }
 
-
-
 <!-- alert dialog to select new document type -->
 <hlm-alert-dialog #documentTypeSelectionDialog>
   <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" class="min-w-md">
@@ -196,7 +192,7 @@
     <form [formGroup]="internalMemoFormGroup">
       <div class="row">
         <div class="field in-dashboard">
-          <label>Correspondence Subject</label>
+          <label>Correspondence Title</label>
           <input
             type="text"
             placeholder="Enter the official title of this memo..."
@@ -211,36 +207,60 @@
           <label for="departmentSelected">The Addressee</label>
 
           <input
-                type="text"
-                id="departmentSelected"
-                placeholder="Who is this addressed to?"
-                aria-label="adressee of the internal memo"
-                formControlName="to"
-                [matAutocomplete]="addresseeAutoComplete"
-                class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-                (input)="updateOfficeMember($event)"
-              />
+            type="text"
+            id="departmentSelected"
+            placeholder="Who is this addressed to?"
+            aria-label="adressee of the internal memo"
+            formControlName="to"
+            [matAutocomplete]="addresseeAutoComplete"
+            class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+            (input)="updateOfficeMember($event)"
+          />
 
-            <mat-autocomplete autoActiveFirstOption #addresseeAutoComplete="matAutocomplete" [displayWith]="showLabelRatherThanId">
-                @for (member of filteredOfficeMembers(); track member.id) {
-                  <mat-option [value]="member.id">
-                    <span class="text-sm">{{member.fullName}}</span>
-                  </mat-option>
-                }
-              </mat-autocomplete>
+          <mat-autocomplete
+            autoActiveFirstOption
+            #addresseeAutoComplete="matAutocomplete"
+            [displayWith]="showLabelRatherThanId"
+          >
+            @for (member of filteredOfficeMembers(); track member.id) {
+              <mat-option [value]="member.id">
+                <span class="text-sm">{{ member.fullName }}</span>
+              </mat-option>
+            }
+          </mat-autocomplete>
         </div>
       </div>
 
       <div class="row">
         <div class="field in-dashboard w-full">
-          <label>Volume (Subject Series)</label>
-          <brn-select class="block" placeholder="Select the volume..." formControlName="vol">
+          <label>Correspondence Subject</label>
+          <brn-select class="block" placeholder="Select the subject..." formControlName="subjectCode" (valueChange)="onSubjectSelection($event)">
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
             <hlm-select-content>
-              @for (vol of correspondenceVolumes(); track vol.code) {
-                <hlm-option [value]="vol.code">{{ vol.name }}</hlm-option>
+              @for (subj of corrSubjects(); track subj.id) {
+                <hlm-option [value]="subj.code">{{ subj.name }}</hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard w-full">
+          <label>Business Function</label>
+          <brn-select
+            class="block"
+            placeholder="Select Activity (e.g. Procurement)"
+            formControlName="functionCode"
+          >
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (func of filteredBussFunctions(); track func.id) {
+                <hlm-option [value]="func.code">{{ func.name }}</hlm-option>
               }
             </hlm-select-content>
           </brn-select>
@@ -273,7 +293,7 @@
     <form [formGroup]="externalMemoFormGroup">
       <div class="row">
         <div class="field in-dashboard">
-          <label>Correspondence Subject</label>
+          <label>Correspondence Title</label>
           <input
             type="text"
             placeholder="Enter the official title of this memo..."
@@ -306,36 +326,56 @@
           <label for="departmentSelected">select department</label>
 
           <input
-                type="text"
-                id="departmentSelected"
-                placeholder="Select the department"
-                aria-label="Department"
-                formControlName="to"
-                [matAutocomplete]="deptAuto"
-                class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-                (input)="updateDeptSearch($event)"
-              />
+            type="text"
+            id="departmentSelected"
+            placeholder="Select the department"
+            aria-label="Department"
+            formControlName="to"
+            [matAutocomplete]="deptAuto"
+            class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+            (input)="updateDeptSearch($event)"
+          />
 
-            <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete">
-                @for (dept of filteredDepartments(); track dept) {
-                  <mat-option [value]="`${dept.id} - ${dept.name}`">
-                    <span class="text-sm">{{ dept.name }}</span>
-                  </mat-option>
-                }
-              </mat-autocomplete>
+          <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete">
+            @for (dept of filteredDepartments(); track dept) {
+              <mat-option [value]="`${dept.id} - ${dept.name}`">
+                <span class="text-sm">{{ dept.name }}</span>
+              </mat-option>
+            }
+          </mat-autocomplete>
         </div>
       </div>
 
       <div class="row">
         <div class="field in-dashboard w-full">
-          <label>Volume (Subject Series)</label>
-          <brn-select class="block" placeholder="Select the volume..." formControlName="vol">
+          <label>Correspondence Subject</label>
+          <brn-select class="block" placeholder="Select the subject..." formControlName="subjectCode" (valueChange)="onSubjectSelection($event)">
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
             <hlm-select-content>
-              @for (vol of correspondenceVolumes(); track vol.code) {
-                <hlm-option [value]="vol.code">{{ vol.name }}</hlm-option>
+              @for (subj of corrSubjects(); track subj.id) {
+                <hlm-option [value]="subj.code">{{ subj.name }}</hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard w-full">
+          <label>Business Function</label>
+          <brn-select
+            class="block"
+            placeholder="Select Activity (e.g. Procurement)"
+            formControlName="functionCode"
+          >
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (func of filteredBussFunctions(); track func.id) {
+                <hlm-option [value]="func.code">{{ func.name }}</hlm-option>
               }
             </hlm-select-content>
           </brn-select>

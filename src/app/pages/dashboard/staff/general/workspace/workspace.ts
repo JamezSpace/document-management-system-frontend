@@ -118,7 +118,7 @@ export class Workspace implements OnInit {
     this.departments().filter((dept) => dept.category === DepartmentCategory.NON_ACADEMIC),
   );
 
-  correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
+//   correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
 
   fileUploaded = signal<File | null>(null);
   onUploadAttachment(event: any) {
@@ -144,12 +144,13 @@ export class Workspace implements OnInit {
     const filterValue = this.searchDeptValue().toLowerCase();
     return this.departments().filter((dept) => dept.label.toLowerCase().includes(filterValue));
   });
-  filteredVolumes = computed(() => {
-    const filterValue = this.searchVolValue().toLowerCase();
-    return this.correspondenceVolumes().filter((vol) =>
-      vol.name.toLowerCase().includes(filterValue),
-    );
-  });
+//   filteredVolumes = computed(() => {
+//     const filterValue = this.searchVolValue().toLowerCase();
+
+//     return this.correspondenceVolumes().filter((vol) =>
+//       vol.name.toLowerCase().includes(filterValue),
+//     );
+//   });
 
   updateDeptSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;

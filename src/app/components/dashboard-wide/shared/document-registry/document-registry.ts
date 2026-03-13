@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DepartmentsUi } from '../../../../interfaces/departments/Department.ui';
@@ -30,7 +37,21 @@ import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 import { hugeGridView } from '@ng-icons/huge-icons';
-import { lucideSearch, lucideArrowRight, lucideArrowDownUp, lucideChevronDown, lucideLayoutTemplate, lucideUpload, lucidePlus, lucideChevronLeft, lucideUsers2, lucideNetwork } from '@ng-icons/lucide';
+import {
+  lucideSearch,
+  lucideArrowRight,
+  lucideArrowDownUp,
+  lucideChevronDown,
+  lucideLayoutTemplate,
+  lucideUpload,
+  lucidePlus,
+  lucideChevronLeft,
+  lucideUsers2,
+  lucideNetwork,
+} from '@ng-icons/lucide';
+import { CorrSubjectApi } from '../../../../interfaces/documents/corrSubject/corrSubject.api';
+import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
+import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
 
 @Component({
   selector: 'nexus-document-registry',
@@ -75,12 +96,14 @@ import { lucideSearch, lucideArrowRight, lucideArrowDownUp, lucideChevronDown, l
       lucideChevronLeft,
       lucideUsers2,
       lucideNetwork,
-    })
+    }),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentRegistry implements OnInit {
   genericDashboardService = inject(GenericDashboardService);
+  businessFunctionService = inject(BusinessFunctionService);
+  corrSubjectService = inject(CorrespondenceSubjectService);
   staffService = inject(StaffService);
 
   activatedRouter = inject(ActivatedRoute);
@@ -90,6 +113,10 @@ export class DocumentRegistry implements OnInit {
     const currentPath = this.activatedRouter.snapshot.url.toString();
 
     this.directories.update((prev_directories) => [...prev_directories, currentPath]);
+
+    // document init deps
+    this.corrSubjectService.fetchCorrSubjects();
+    this.businessFunctionService.fetchBussFunctions();
   }
 
   emptyStateDataAsFistTime: EmptyStateInterface = {
@@ -137,7 +164,19 @@ export class DocumentRegistry implements OnInit {
   }
 
   departments = this.genericDashboardService.departments;
-  correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
+  corrSubjects = this.corrSubjectService.data;
+  selectedCorrSubject = signal<string | null>(null);
+  filteredBussFunctions = computed(() => {
+    if (!this.selectedCorrSubject()) return [];
+
+    return this.businessFunctionService
+      .data()
+      .filter((func) => func.subjectId.endsWith(this.selectedCorrSubject()!));
+  });
+
+  onSubjectSelection(selectedSubject: any) {
+    this.selectedCorrSubject.set(selectedSubject);
+  }
 
   departmentsView = signal<DepartmentsUi[]>([]);
   onCategoryChange(selectedCategory: any) {
@@ -157,13 +196,15 @@ export class DocumentRegistry implements OnInit {
       { value: '', disabled: this.departmentsView().length === 0 },
       Validators.required,
     ),
-    vol: new FormControl('', Validators.required),
+    subjectCode: new FormControl('', Validators.required),
+    functionCode: new FormControl('', Validators.required),
   });
 
   internalMemoFormGroup = new FormGroup({
     title: new FormControl('', Validators.required),
     to: new FormControl('', Validators.required),
-    vol: new FormControl('', Validators.required),
+    subjectCode: new FormControl('', Validators.required),
+    functionCode: new FormControl('', Validators.required),
   });
 
   searchDeptValue = signal<string>('');

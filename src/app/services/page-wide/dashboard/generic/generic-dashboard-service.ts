@@ -1,11 +1,13 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Delta } from 'quill';
 import { DepartmentCategory } from '../../../../interfaces/departments/Department.entity';
-import { DocumentVolumeUi } from '../../../../interfaces/documents/volumes/DocumentVolume.ui';
 import { DepartmentsUi } from '../../../../interfaces/departments/Department.ui';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment.development';
 import { OfficeMember } from '../../../../interfaces/users/office/office-member/OfficeMember.api';
+import { CorrSubjectApi } from '../../../../interfaces/documents/corrSubject/corrSubject.api';
+import { BussFunctionApi } from '../../../../interfaces/documents/bussFunction/bussFunction.api';
+import { ApiResponse } from '../../../../interfaces/shared/ApiResponse.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -98,28 +100,8 @@ export class GenericDashboardService {
     },
   ]);
 
-  correspondenceVolumes = signal<DocumentVolumeUi[]>([
-    {
-      code: 'exec',
-      name: 'Executive Governance',
-    },
-    {
-      code: 'pers',
-      name: 'Personnel & Registry',
-    },
-    {
-      code: 'fin',
-      name: 'Financial Records',
-    },
-    {
-      code: 'acad',
-      name: 'Academic Affairs',
-    },
-    {
-      code: 'strat',
-      name: 'Strategic Planning',
-    },
-  ]);
+  correspondencSubjects = signal<CorrSubjectApi[]>([]);
+  businessFunctions = signal<BussFunctionApi[]>([])
 
   officeMembers = signal<OfficeMember[]>([
     {
@@ -187,4 +169,5 @@ export class GenericDashboardService {
   async getDepartments() {
     return this.http.get(`${environment.api}/departments`);
   }
+
 }

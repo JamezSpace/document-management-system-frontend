@@ -73,9 +73,8 @@ export class AuthService {
     } catch (error: any) {
       const friendlyMsg = this.mapFirebaseError(error.code);
       this.errorMessage.set(friendlyMsg);
-      return { success: 0, reason: friendlyMsg };
-    } finally {
       this.loading.set(false);
+      return { success: 0, reason: friendlyMsg };
     }
   }
 

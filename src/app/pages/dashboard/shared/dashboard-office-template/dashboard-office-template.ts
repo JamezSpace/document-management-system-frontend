@@ -83,7 +83,7 @@ export class DashboardOfficeTemplate implements OnInit {
 
     this.authService.setLoading(isLoading);    
 
-    if (!isLoading) {
+    if (!isLoading) {        
         if (!data) {
             this.router.navigateByUrl('/unauthorized');
         } else {

@@ -1,14 +1,13 @@
 interface ApiResponse<T> {
   success: boolean;
-  message: string;
-  data?: T;
+  data: T;
+  message?: string;
   pagination?: {
     page: number;
     limit: number;
     total: number;
     pages: number;
   };
-  error?: string;
 }
 
 export type { ApiResponse };

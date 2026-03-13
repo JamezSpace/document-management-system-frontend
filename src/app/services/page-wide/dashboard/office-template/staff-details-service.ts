@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
 import { finalize } from 'rxjs';
 import { StaffLoginApi } from '../../../../interfaces/users/office/staff/StaffLogin.api';
+import { ApiResponse } from '../../../../interfaces/shared/ApiResponse.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -18,10 +19,10 @@ export class StaffDetailsService {
     this.loading.set(true);
 
     this.http
-      .get<StaffLoginApi>(`${environment.api}/identity/staff/me`)
+      .get<ApiResponse<StaffLoginApi>>(`${environment.api}/identity/staff/me`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (response) => this.data.set(response),
+        next: (response) => this.data.set(response.data),
         error: (err) => this.error.set(err)
       });
   }
