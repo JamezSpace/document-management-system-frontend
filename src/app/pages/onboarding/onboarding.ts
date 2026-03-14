@@ -50,8 +50,8 @@ export class Onboarding implements OnInit {
     type: EntityType.STAFF,
     details: {
       id: '90123',
-      first_name: 'samuel',
-      last_name: 'james',
+      firstName: 'samuel',
+      lastName: 'james',
       role: 'editor',
       email: 'adobeclip2003@gmail.com',
     },

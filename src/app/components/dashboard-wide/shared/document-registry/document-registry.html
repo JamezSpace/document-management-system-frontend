@@ -209,20 +209,21 @@
           <input
             type="text"
             id="departmentSelected"
+            formControlName="to"
             placeholder="Who is this addressed to?"
             aria-label="adressee of the internal memo"
-            formControlName="to"
             [matAutocomplete]="addresseeAutoComplete"
             class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-            (input)="updateOfficeMember($event)"
+            (input)="updateUnitMemberName($event)"
           />
 
           <mat-autocomplete
             autoActiveFirstOption
+            requireSelection
             #addresseeAutoComplete="matAutocomplete"
             [displayWith]="showLabelRatherThanId"
           >
-            @for (member of filteredOfficeMembers(); track member.id) {
+            @for (member of filteredUnitMembers(); track member.id) {
               <mat-option [value]="member.id">
                 <span class="text-sm">{{ member.fullName }}</span>
               </mat-option>
@@ -234,13 +235,13 @@
       <div class="row">
         <div class="field in-dashboard w-full">
           <label>Correspondence Subject</label>
-          <brn-select class="block" placeholder="Select the subject..." formControlName="subjectCode" (valueChange)="onSubjectSelection($event)">
+          <brn-select class="block" placeholder="Select the subject..." formControlName="subjectCodeObject" (valueChange)="onSubjectSelection($event)">
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
             <hlm-select-content>
               @for (subj of corrSubjects(); track subj.id) {
-                <hlm-option [value]="subj.code">{{ subj.name }}</hlm-option>
+                <hlm-option [value]="subj">{{ subj.name }}</hlm-option>
               }
             </hlm-select-content>
           </brn-select>
@@ -253,14 +254,34 @@
           <brn-select
             class="block"
             placeholder="Select Activity (e.g. Procurement)"
-            formControlName="functionCode"
+            formControlName="functionCodeObject"
           >
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
             <hlm-select-content>
               @for (func of filteredBussFunctions(); track func.id) {
-                <hlm-option [value]="func.code">{{ func.name }}</hlm-option>
+                <hlm-option [value]="func">{{ func.name }}</hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field in-dashboard w-full">
+          <label>Sensitivity Level</label>
+          <brn-select
+            class="block"
+            placeholder="Specify the sensistivity of this correspondence"
+            formControlName="sensitivity"
+          >
+            <hlm-select-trigger class="w-full">
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content>
+              @for (sensitivityLevel of sensitivityLevels; track $index) {
+                <hlm-option [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-option>
               }
             </hlm-select-content>
           </brn-select>
@@ -271,7 +292,7 @@
     <hlm-alert-dialog-footer class="flex justify-between items-center">
       <button class="nexus-button outlined" (click)="internalMemoDialog.close()">Cancel</button>
 
-      <button class="nexus-button flex-center" [class.disabled]="internalMemoFormGroup.invalid">
+      <button class="nexus-button flex-center" [class.disabled]="internalMemoFormGroup.invalid" (click)="submitInternalMemoData()">
         Continue to Editor
         <ng-icon name="lucideArrowRight" class="text-lg" />
       </button>

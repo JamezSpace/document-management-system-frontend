@@ -4,7 +4,6 @@ import { SpartanH2 } from '../../../../../components/system-wide/typography/spar
 import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { SpartanH4 } from '../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { StaffLoginApi } from '../../../../../interfaces/users/office/staff/StaffLogin.api';
 import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 
 @Component({

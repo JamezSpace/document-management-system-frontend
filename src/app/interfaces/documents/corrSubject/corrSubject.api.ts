@@ -3,7 +3,7 @@ interface CorrSubjectApi {
   code: string;
   name: string;
   description: string;
-  created_at: Date;
+  createdAt: Date;
   uploaded_at: Date;
 }
 

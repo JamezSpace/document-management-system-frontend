@@ -117,20 +117,20 @@ export class DirectivesLog implements OnInit, AfterViewInit {
     recipients: [
       {
         id: 'staff_001',
-        first_name: 'James',
-        last_name: 'Samuel',
+        firstName: 'James',
+        lastName: 'Samuel',
         role: 'Backend Developer',
       },
       {
         id: 'staff_002',
-        first_name: 'Ada',
-        last_name: 'Okafor',
+        firstName: 'Ada',
+        lastName: 'Okafor',
         role: 'HR Manager',
       },
       {
         id: 'staff_003',
-        first_name: 'Michael',
-        last_name: 'Adeyemi',
+        firstName: 'Michael',
+        lastName: 'Adeyemi',
         role: 'Operations Lead',
       },
     ],

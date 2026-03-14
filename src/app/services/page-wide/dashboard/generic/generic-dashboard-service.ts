@@ -4,7 +4,6 @@ import { DepartmentCategory } from '../../../../interfaces/departments/Departmen
 import { DepartmentsUi } from '../../../../interfaces/departments/Department.ui';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment.development';
-import { OfficeMember } from '../../../../interfaces/users/office/office-member/OfficeMember.api';
 import { CorrSubjectApi } from '../../../../interfaces/documents/corrSubject/corrSubject.api';
 import { BussFunctionApi } from '../../../../interfaces/documents/bussFunction/bussFunction.api';
 import { ApiResponse } from '../../../../interfaces/shared/ApiResponse.interface';
@@ -102,69 +101,6 @@ export class GenericDashboardService {
 
   correspondencSubjects = signal<CorrSubjectApi[]>([]);
   businessFunctions = signal<BussFunctionApi[]>([])
-
-  officeMembers = signal<OfficeMember[]>([
-    {
-      id: 'OM-001',
-      fullName: 'Alice Henderson',
-      email: 'a.henderson@company.com',
-      unit: 'Product Design',
-    },
-    {
-      id: 'OM-002',
-      fullName: 'Marcus Thorne',
-      email: 'm.thorne@company.com',
-      unit: 'Engineering',
-    },
-    {
-      id: 'OM-003',
-      fullName: 'Elena Rodriguez',
-      email: 'e.rodriguez@company.com',
-      unit: 'Marketing',
-    },
-    {
-      id: 'OM-004',
-      fullName: 'Jordan Smith',
-      email: 'j.smith@company.com',
-      unit: 'Human Resources',
-    },
-    {
-      id: 'OM-005',
-      fullName: 'Sarah Jenkins',
-      email: 's.jenkins@company.com',
-      unit: 'Finance',
-    },
-    {
-      id: 'OM-006',
-      fullName: 'David Chen',
-      email: 'd.chen@company.com',
-      unit: 'Engineering',
-    },
-    {
-      id: 'OM-007',
-      fullName: 'Amara Okafor',
-      email: 'a.okafor@company.com',
-      unit: 'Legal',
-    },
-    {
-      id: 'OM-008',
-      fullName: 'Leo Vance',
-      email: 'l.vance@company.com',
-      unit: 'Customer Success',
-    },
-    {
-      id: 'OM-009',
-      fullName: 'Sophie Muller',
-      email: 's.muller@company.com',
-      unit: 'Operations',
-    },
-    {
-      id: 'OM-010',
-      fullName: 'Victor Grant',
-      email: 'v.grant@company.com',
-      unit: 'Sales',
-    },
-  ]);
 
   async getDepartments() {
     return this.http.get(`${environment.api}/departments`);

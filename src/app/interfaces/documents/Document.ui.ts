@@ -1,4 +1,4 @@
-import { DocumentState, DocumentType } from "./Document.entity";
+import { DocumentState, DocumentType } from "./Document.enum";
 
 interface DocumentUi {
     id: string;
@@ -10,3 +10,4 @@ interface DocumentUi {
 }
 
 export type { DocumentUi };
+
