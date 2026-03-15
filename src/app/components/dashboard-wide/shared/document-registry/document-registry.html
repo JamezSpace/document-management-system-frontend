@@ -180,7 +180,12 @@
 
 <!-- internal memo alert dialog for document creation -->
 <hlm-alert-dialog #internalMemoInitDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let internalMemoDialog" class="min-w-md">
+  <hlm-alert-dialog-content *brnAlertDialogContent="let internalMemoDialog" class="min-w-md gap-0 p-0">
+    <div class="relative top-0" [class.hidden]="!loading()">
+      <p class="opacity-0">.</p>
+      <nexus-line-loader />
+    </div>
+    <section class="gap-4 p-6" [class.pt-2]="loading()">
     <hlm-alert-dialog-header>
       <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
       <nexus-spartan-muted>
@@ -235,7 +240,12 @@
       <div class="row">
         <div class="field in-dashboard w-full">
           <label>Correspondence Subject</label>
-          <brn-select class="block" placeholder="Select the subject..." formControlName="subjectCodeObject" (valueChange)="onSubjectSelection($event)">
+          <brn-select
+            class="block"
+            placeholder="Select the subject..."
+            formControlName="subjectCodeObject"
+            (valueChange)="onSubjectSelection($event)"
+          >
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>
@@ -292,11 +302,16 @@
     <hlm-alert-dialog-footer class="flex justify-between items-center">
       <button class="nexus-button outlined" (click)="internalMemoDialog.close()">Cancel</button>
 
-      <button class="nexus-button flex-center" [class.disabled]="internalMemoFormGroup.invalid" (click)="submitInternalMemoData()">
+      <button
+        class="nexus-button flex-center"
+        [class.disabled]="internalMemoFormGroup.invalid"
+        (click)="submitInternalMemoData()"
+      >
         Continue to Editor
         <ng-icon name="lucideArrowRight" class="text-lg" />
       </button>
     </hlm-alert-dialog-footer>
+    </section>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
 
@@ -370,7 +385,12 @@
       <div class="row">
         <div class="field in-dashboard w-full">
           <label>Correspondence Subject</label>
-          <brn-select class="block" placeholder="Select the subject..." formControlName="subjectCode" (valueChange)="onSubjectSelection($event)">
+          <brn-select
+            class="block"
+            placeholder="Select the subject..."
+            formControlName="subjectCode"
+            (valueChange)="onSubjectSelection($event)"
+          >
             <hlm-select-trigger class="w-full">
               <hlm-select-value />
             </hlm-select-trigger>

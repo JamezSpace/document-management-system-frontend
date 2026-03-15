@@ -8,6 +8,7 @@ import { lucideMail, lucideLockKeyhole, lucideEye, lucideEyeOff } from '@ng-icon
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { ErrorToast } from '../../components/system-wide/toast/error-toast/error-toast';
 import { LineLoader } from "../../components/system-wide/loaders/line-loader/line-loader";
+import { UtilService } from '../../services/system-wide/util-service/util-service';
 
 @Component({
   selector: 'nexus-auth',
@@ -31,7 +32,7 @@ import { LineLoader } from "../../components/system-wide/loaders/line-loader/lin
 })
 export class Auth {
   private authService = inject(AuthService);
-  private snackBar = inject(MatSnackBar);
+  private utilService = inject(UtilService);
 
   loadingFromAuthService = this.authService.loading;
   passwordRevealed = signal<boolean>(false);
@@ -58,17 +59,6 @@ export class Auth {
       password: this.authFormGroup.getRawValue().password,
     });
 
-    if (!response.success) this.showToast(response.reason!);
-  }
-
-  showToast(errorMsg: string) {
-    this.snackBar.openFromComponent(ErrorToast, {
-      duration: 5000,
-      data: {
-        errorMessage : errorMsg
-      },
-      horizontalPosition: 'end',
-      verticalPosition: 'bottom',
-    });
+    if (!response.success) this.utilService.showToast(response.reason!);
   }
 }

@@ -42,6 +42,8 @@ import { DepartmentCategory } from '../../../../../interfaces/departments/Depart
 import { GenericDashboardService } from '../../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
+import { InternalMemoService } from '../../../../../services/page-wide/dashboard/generic/internal-memo/internal-memo-service';
+import { CreatedDocument } from '../../../../../interfaces/documents/Document.api';
 
 @Component({
   selector: 'nexus-workspace',
@@ -83,7 +85,8 @@ export class Workspace implements OnInit {
   loading = signal<boolean>(false);
   workspaceService = inject(WorkspaceService);
   genericDashboardService = inject(GenericDashboardService);
-  utilService = inject(UtilService)
+  utilService = inject(UtilService);
+  private documentService = inject(InternalMemoService);
 
   sidebarClosed = signal<boolean>(false);
   isDocmentMetadataEditable = signal<boolean>(false);
@@ -105,10 +108,12 @@ export class Workspace implements OnInit {
 
   isMobile = this.utilService.isMobile;
   
-  document = {
-    title: 'Q3 Financial Projection',
-    folderLocation: '2026/iTCC/EXT-MEMO-001',
-  };
+  document = this.documentService.data;
+  
+//   document = {
+//     title: 'Q3 Financial Projection',
+//     folderLocation: '2026/iTCC/EXT-MEMO-001',
+//   };
 
   departments = this.genericDashboardService.departments;
   academicDepartments = computed(() =>

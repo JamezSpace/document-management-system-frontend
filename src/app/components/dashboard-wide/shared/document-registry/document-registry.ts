@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -13,16 +13,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
 import {
-    lucideArrowDownUp,
-    lucideArrowRight,
-    lucideChevronDown,
-    lucideChevronLeft,
-    lucideLayoutTemplate,
-    lucideNetwork,
-    lucidePlus,
-    lucideSearch,
-    lucideUpload,
-    lucideUsers2,
+  lucideArrowDownUp,
+  lucideArrowRight,
+  lucideChevronDown,
+  lucideChevronLeft,
+  lucideLayoutTemplate,
+  lucideNetwork,
+  lucidePlus,
+  lucideSearch,
+  lucideUpload,
+  lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -32,9 +32,9 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmComboboxImports } from '@spartan-ng/helm/combobox';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
-    HlmInputGroup,
-    HlmInputGroupAddon,
-    HlmInputGroupImports,
+  HlmInputGroup,
+  HlmInputGroupAddon,
+  HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
@@ -55,6 +55,8 @@ import { SpartanH3 } from '../../../system-wide/typography/spartan-h3/spartan-h3
 import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
+import { LineLoader } from '../../../system-wide/loaders/line-loader/line-loader';
+import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 
 @Component({
   selector: 'nexus-document-registry',
@@ -83,6 +85,7 @@ import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
     BrnAlertDialogTrigger,
     HlmButton,
     ReactiveFormsModule,
+    LineLoader,
   ],
   templateUrl: './document-registry.html',
   styleUrl: './document-registry.css',
@@ -104,13 +107,13 @@ import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentRegistry implements OnInit {
+  private utilService = inject(UtilService);
   genericDashboardService = inject(GenericDashboardService);
   private staffDetService = inject(StaffDetailsService);
   businessFunctionService = inject(BusinessFunctionService);
   corrSubjectService = inject(CorrespondenceSubjectService);
   unitMembersService = inject(UnitMembersService);
   internalMemoService = inject(InternalMemoService);
-
 
   readonly signedInStaff = this.staffDetService.data;
 
@@ -173,12 +176,13 @@ export class DocumentRegistry implements OnInit {
     this.router.navigate(['workspace', documentId], { relativeTo: this.activatedRouter });
   }
 
+  loading = signal<boolean>(false);
   showLoader() {
-    this.genericDashboardService.loading.set(true);
+    this.loading.set(true);
   }
 
   hideLoader() {
-    this.genericDashboardService.loading.set(false);
+    this.loading.set(false);
   }
 
   processSelectionForDocumentCreation(dialog: any, selectionType: 'template' | 'upload') {
@@ -227,40 +231,58 @@ export class DocumentRegistry implements OnInit {
 
   sensitivityLevels = Object.values(SensitivityLevel);
   internalMemoFormGroup = new FormGroup({
-    title: new FormControl<string>('', {nonNullable: true, validators: Validators.required}),
-    to: new FormControl<string>('',  {nonNullable: true, validators: Validators.required}),
-    subjectCodeObject: new FormControl<any>('',  {nonNullable: true, validators: Validators.required}),
-    functionCodeObject: new FormControl<any>('',  {nonNullable: true, validators: Validators.required}),
-    sensitivity: new FormControl<SensitivityLevel>(SensitivityLevel.INTERNAL, {nonNullable: true, validators: Validators.required})
+    title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    to: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    subjectCodeObject: new FormControl<any>('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    functionCodeObject: new FormControl<any>('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+    sensitivity: new FormControl<SensitivityLevel>(SensitivityLevel.INTERNAL, {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
   });
 
-
   submitInternalMemoData() {
-    this.showLoader()
-
+    this.showLoader();
 
     const recipientId = this.internalMemoFormGroup.getRawValue().to,
-    functionCodeObject = this.internalMemoFormGroup.getRawValue().functionCodeObject,
-    subjectCodeObject = this.internalMemoFormGroup.getRawValue().subjectCodeObject,
-    functionCodeId = functionCodeObject.id,
-    functionCode = functionCodeObject.code,
-    subjectCodeId = subjectCodeObject.id,
-    subjectCode = subjectCodeObject.code,
-    recipient = this.unitMembers().find(member => member.id === recipientId),
-    originatingUnitId = this.signedInStaff()?.unit.id!
-        
+      functionCodeObject = this.internalMemoFormGroup.getRawValue().functionCodeObject,
+      subjectCodeObject = this.internalMemoFormGroup.getRawValue().subjectCodeObject,
+      title = this.internalMemoFormGroup.getRawValue().title,
+      sensitivity = this.internalMemoFormGroup.getRawValue().sensitivity.toLowerCase(),
+      functionCodeId = functionCodeObject.id,
+      functionCode = functionCodeObject.code,
+      subjectCodeId = subjectCodeObject.id,
+      subjectCode = subjectCodeObject.code,
+      recipient = this.unitMembers().find((member) => member.id === recipientId),
+      originatingUnitId = this.signedInStaff()?.unit.id!;
 
     const response = this.internalMemoService.initInternalMemo({
-        title: this.internalMemoFormGroup.getRawValue().title,
-        functionCode,
-        functionCodeId,
-        subjectCode,
-        subjectCodeId,
-        sensitivity: this.internalMemoFormGroup.getRawValue().sensitivity,
-        originatingUnitId,
-        recipientUnitId: recipient?.unit.id!,
-        createdBy: this.signedInStaff()?.id!
-    })
+      title,
+      functionCode,
+      functionCodeId,
+      subjectCode,
+      subjectCodeId,
+      sensitivity,
+      originatingUnitId,
+      recipientUnitId: recipient?.unit.id!,
+      createdBy: this.signedInStaff()?.id!,
+    });
+
+    if (!response.success) {
+      this.hideLoader();
+      this.utilService.showToast(this.internalMemoService.error());
+      return;
+    }
+
+    this.router.navigate(['workspace', this.internalMemoService.data()?.id], {
+      relativeTo: this.activatedRouter,
+    });
   }
 
   searchDeptValue = signal<string>('');

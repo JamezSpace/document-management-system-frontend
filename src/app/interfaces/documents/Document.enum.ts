@@ -7,9 +7,9 @@ enum DocumentState {
 }
 
 enum DocumentType {
-     MEMO = "MEMORANDUM",
-    LETTER = "LETTER",
-    REPORT = "REPORT"
+    MEMO = "memorandum",
+    LETTER = "letter",
+    REPORT = "report"
 }
 
 enum CorrespondenceAddressee {
@@ -23,10 +23,10 @@ enum RecipientSector {
 }
 
 enum SensitivityLevel {
-  PUBLIC = "PUBLIC",
-  INTERNAL = "INTERNAL",
-  CONFIDENTIAL = "CONFIDENTIAL",
-  RESTRICTED = "RESTRICTED"
+  PUBLIC = "Public",
+  INTERNAL = "Internal",
+  CONFIDENTIAL = "Confidential",
+  RESTRICTED = "Restricted"
 }
 
 enum LifecycleActions {

@@ -15,10 +15,10 @@
 
         <div class="">
           <nexus-spartan-muted>
-            {{ document.folderLocation }}
+            {{ document()?.referenceNumber }}
           </nexus-spartan-muted>
           <nexus-spartan-p class="text-base">
-            {{ document.title }}
+            {{ document()?.title }}
           </nexus-spartan-p>
         </div>
       </article>
@@ -259,7 +259,9 @@
           class="rounded-xs origin-top-center"
           [style.transform]="canvasTransform()"
         >
-          <nexus-external-memo-template />
+            @if (document()?.classification?.documentType === 'memorandum') {
+                <nexus-external-memo-template />
+            }
 
           @if (isPrintPreview()) {
             <div [innerHTML]="editorHtmlContent()" class="wrap-anywhere text-justify"></div>

@@ -50,7 +50,7 @@ export const routes: Routes = [
         path: 'documents/workspace/:id',
         loadComponent: () =>
           import('./pages/dashboard/staff/general/workspace/workspace').then(
-            (comp) => comp.Workspace,
+            (page) => page.Workspace,
           ),
       },
       {
