@@ -1,10 +1,10 @@
-import { DepartmentCategory } from "./Department.entity";
+import { OrgUnitCategory } from "../../enum/identity/unitCategory.enum";
 
 interface DepartmentsUi {
     id: string;
     name: string;
     label: string;
-    category: DepartmentCategory;
+    category: OrgUnitCategory;
     deptHead: string;
 }
 

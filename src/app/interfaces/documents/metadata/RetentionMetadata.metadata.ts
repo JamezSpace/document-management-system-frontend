@@ -1,9 +1,9 @@
 interface RetentionMetadata {
-    policy_version: number;
-	retention_schedule_id: string;
-	retention_start_date: Date;
-	disposal_eligibility_date: Date;
-	archival_required: boolean;
+    policyVersion: number;
+	retentionScheduleId: string;
+	retentionStartDate: Date;
+	disposalEligibilityDate: Date;
+	archivalRequired: boolean;
 }
 
 export type { RetentionMetadata };

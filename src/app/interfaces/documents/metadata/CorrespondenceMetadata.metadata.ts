@@ -1,7 +1,7 @@
 interface CorrespondenceMetadata {
-	originating_unit_id: string;
-	recipient_code: string
-	subject_code: string;
+	originatingUnitId: string;
+	recipientCode: string
+	subjectCode: string;
 }
 
 export type { CorrespondenceMetadata };

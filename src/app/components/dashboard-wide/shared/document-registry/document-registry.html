@@ -125,7 +125,7 @@
 
 <!-- alert dialog to select new document type -->
 <hlm-alert-dialog #documentTypeSelectionDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" class="min-w-md">
+  <hlm-alert-dialog-content *brnAlertDialogContent class="min-w-md">
     <hlm-alert-dialog-header>
       <nexus-spartan-h4>Choose the jurisdictional boundary for this record</nexus-spartan-h4>
     </hlm-alert-dialog-header>
@@ -133,304 +133,251 @@
     <hlm-separator class="" />
 
     <div class="flex-center gap-5 mt-3.5 flex-wrap justify-center">
-      <!-- interna l memos -->
+      @for (docType of docTypes(); track docType.id) {
+        <button
+          class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground min-w-14"
+          [brnAlertDialogTriggerFor]="documentDirectionSelectionDialog"
+          (click)="setDocTypeSelected(docType.id, docType.name)"
+        >
+          @if (docType.code === 'memo') {
+            <ng-icon name="lucideStickyNote" class="text-2xl" />
+          } @else if (docType.code === 'letter') {
+            <ng-icon name="lucideMail" class="text-2xl" />
+          } @else {
+            <ng-icon name="lucideFileText" class="text-2xl" />
+          }
+
+          <article>
+            <nexus-spartan-p class="capitalize">{{ docType.name }}</nexus-spartan-p>
+          </article>
+        </button>
+      }
+    </div>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<!-- alert dialog to select the direction of the doument -->
+<hlm-alert-dialog #documentDirectionSelectionDialog>
+  <hlm-alert-dialog-content *brnAlertDialogContent class="min-w-md">
+    <hlm-alert-dialog-header>
+      <nexus-spartan-h4>Specify the direction for this record</nexus-spartan-h4>
+    </hlm-alert-dialog-header>
+    <hlm-separator />
+    <div class="flex-center gap-5 mt-3.5 flex-wrap justify-center">
+      <!-- internal -->
       <button
-        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
-        [brnAlertDialogTriggerFor]="internalMemoInitDialog"
-        (click)="ctx.close()"
+        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground min-w-14"
+        [brnAlertDialogTriggerFor]="documentInitDialog"
+        (click)="setDirectionSelected('internal')"
       >
-        <ng-icon name="lucideUsers2" class="text-2xl" />
+        <ng-icon name="lucideFileInput" class="text-2xl" />
 
         <article>
-          <nexus-spartan-p>Internal Memo</nexus-spartan-p>
-          <nexus-spartan-muted class="whitespace-nowrap">Intra-Departmental</nexus-spartan-muted>
+          <nexus-spartan-p class="capitalize">internal</nexus-spartan-p>
+          <nexus-spartan-muted>Within the unit</nexus-spartan-muted>
         </article>
       </button>
 
-      <!-- external memos -->
+      <!-- external -->
       <button
-        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
-        [brnAlertDialogTriggerFor]="externalMemoInitDialog"
-        (click)="ctx.close()"
+        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground min-w-14"
+        [brnAlertDialogTriggerFor]="documentInitDialog"
+        (click)="setDirectionSelected('external')"
       >
-        <ng-icon name="lucideNetwork" class="text-2xl" />
+        <ng-icon name="lucideFileOutput" class="text-2xl" />
 
         <article>
-          <nexus-spartan-p>External Memo</nexus-spartan-p>
-          <nexus-spartan-muted class="whitespace-nowrap">Inter-Departmental</nexus-spartan-muted>
-        </article>
-      </button>
-
-      <!-- letters -->
-      <button
-        class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground"
-        [brnAlertDialogTriggerFor]="externalMemoInitDialog"
-        (click)="ctx.close()"
-      >
-        <ng-icon name="lucideNetwork" class="text-2xl" />
-
-        <article>
-          <nexus-spartan-p>Formal Letter</nexus-spartan-p>
-          <nexus-spartan-muted class="whitespace-nowrap">Outside Organization</nexus-spartan-muted>
+          <nexus-spartan-p class="capitalize">external</nexus-spartan-p>
+          <nexus-spartan-muted>Outside the unit</nexus-spartan-muted>
         </article>
       </button>
     </div>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
 
-<!-- internal memo alert dialog for document creation -->
-<hlm-alert-dialog #internalMemoInitDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let internalMemoDialog" class="min-w-md gap-0 p-0">
+<!-- alert dialog to initialize the doument -->
+<hlm-alert-dialog #documentInitDialog>
+  <hlm-alert-dialog-content
+    *brnAlertDialogContent="let documentInitDialog"
+    class="min-w-md gap-0 p-0"
+  >
     <div class="relative top-0" [class.hidden]="!loading()">
       <p class="opacity-0">.</p>
       <nexus-line-loader />
     </div>
     <section class="gap-4 p-6" [class.pt-2]="loading()">
-    <hlm-alert-dialog-header>
-      <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
-      <nexus-spartan-muted>
-        Internal Memorandum Workflow • {{ currentYear }} Session
-      </nexus-spartan-muted>
-    </hlm-alert-dialog-header>
-    <hlm-separator />
-
-    <form [formGroup]="internalMemoFormGroup">
-      <div class="row">
-        <div class="field in-dashboard">
-          <label>Correspondence Title</label>
-          <input
-            type="text"
-            placeholder="Enter the official title of this memo..."
-            class="w-full custom-input"
-            formControlName="title"
-          />
+      <hlm-alert-dialog-header>
+        <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
+        <nexus-spartan-muted>
+          {{ initDocument()!.direction }} {{ initDocument()!.docType }} Workflow •
+          {{ currentYear }} Session
+        </nexus-spartan-muted>
+      </hlm-alert-dialog-header>
+      <hlm-separator />
+      <form [formGroup]="initDocFormGroup">
+        <div class="row">
+          <div class="field in-dashboard">
+            <label>Correspondence Title</label>
+            <input
+              type="text"
+              placeholder="Enter the official title of this memo..."
+              class="w-full custom-input"
+              formControlName="title"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="field in-dashboard">
-          <label for="departmentSelected">The Addressee</label>
+        @if (initDocument()?.direction === 'external') {
+          <div class="row flex-center gap-3.5">
+            <div class="field in-dashboard">
+              <label for="categorySelect">Unit Category</label>
+              <brn-select
+                class="inline-block"
+                placeholder="Select an option"
+                (valueChange)="onCategoryChange($event)"
+              >
+                <hlm-select-trigger class="w-56">
+                  <hlm-select-value />
+                </hlm-select-trigger>
+                <hlm-select-content>
+                  <hlm-option value="academic" class="cursor-pointer">Academic</hlm-option>
+                  <hlm-option value="non-academic" class="cursor-pointer">Non-Academic</hlm-option>
+                </hlm-select-content>
+              </brn-select>
+            </div>
 
-          <input
-            type="text"
-            id="departmentSelected"
-            formControlName="to"
-            placeholder="Who is this addressed to?"
-            aria-label="adressee of the internal memo"
-            [matAutocomplete]="addresseeAutoComplete"
-            class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-            (input)="updateUnitMemberName($event)"
-          />
+            <div class="field in-dashboard">
+              <label for="unitSelected">select unit</label>
 
-          <mat-autocomplete
-            autoActiveFirstOption
-            requireSelection
-            #addresseeAutoComplete="matAutocomplete"
-            [displayWith]="showLabelRatherThanId"
+              <input
+                type="text"
+                id="unitSelected"
+                placeholder="Select the unit"
+                aria-label="unit addressed to"
+                formControlName="to"
+                [matAutocomplete]="unitAuto"
+                class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+                (input)="updateUnitSearch($event)"
+              />
+
+              <mat-autocomplete autoActiveFirstOption #unitAuto="matAutocomplete">
+                @for (unit of filteredUnits(); track unit) {
+                  <mat-option [value]="`${unit.code} - ${unit.fullName}`">
+                    <span class="text-sm">{{ unit.fullName }}</span>
+                  </mat-option>
+                }
+              </mat-autocomplete>
+            </div>
+          </div>
+        } @else if (initDocument()?.direction === 'internal') {
+          <div class="row">
+            <div class="field in-dashboard">
+              <label for="departmentSelected">The Addressee</label>
+
+              <input
+                type="text"
+                formControlName="to"
+                [placeholder]="
+                  initDocument()?.direction === 'internal'
+                    ? 'Who is this addressed to?'
+                    : 'What unit is this addressed to?'
+                "
+                aria-label="adressee of the document"
+                [matAutocomplete]="addresseeAutoComplete"
+                class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+                (input)="updateAddresseeName($event)"
+              />
+
+              <mat-autocomplete
+                autoActiveFirstOption
+                requireSelection
+                #addresseeAutoComplete="matAutocomplete"
+                [displayWith]="showLabelRatherThanId"
+              >
+                @for (addressee of filteredUnitMembers(); track addressee.id) {
+                  <mat-option [value]="addressee.id">
+                    <span class="text-sm">{{ addressee.fullName }}</span>
+                  </mat-option>
+                }
+              </mat-autocomplete>
+            </div>
+          </div>
+        }
+
+        <div class="row">
+          <div class="field in-dashboard w-full">
+            <label>Correspondence Subject</label>
+            <brn-select
+              class="block"
+              placeholder="Select the subject..."
+              formControlName="subjectCodeObject"
+              (valueChange)="onSubjectSelection($event)"
+            >
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (subj of corrSubjects(); track subj.id) {
+                  <hlm-option [value]="subj">{{ subj.name }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field in-dashboard w-full">
+            <label>Business Function</label>
+            <brn-select
+              class="block"
+              placeholder="Select Activity (e.g. Procurement)"
+              formControlName="functionCodeObject"
+            >
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (func of filteredBussFunctions(); track func.id) {
+                  <hlm-option [value]="func">{{ func.name }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field in-dashboard w-full">
+            <label>Sensitivity Level</label>
+            <brn-select
+              class="block"
+              placeholder="Specify the sensistivity of this correspondence"
+              formControlName="sensitivity"
+            >
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (sensitivityLevel of sensitivityLevels; track $index) {
+                  <hlm-option [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+        </div>
+
+        <hlm-alert-dialog-footer class="flex justify-between items-center">
+          <button class="nexus-button outlined" (click)="documentInitDialog.close()">Cancel</button>
+
+          <button
+            class="nexus-button flex-center"
+            [class.disabled]="initDocFormGroup.invalid"
+            (click)="submitDocInitData()"
           >
-            @for (member of filteredUnitMembers(); track member.id) {
-              <mat-option [value]="member.id">
-                <span class="text-sm">{{ member.fullName }}</span>
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field in-dashboard w-full">
-          <label>Correspondence Subject</label>
-          <brn-select
-            class="block"
-            placeholder="Select the subject..."
-            formControlName="subjectCodeObject"
-            (valueChange)="onSubjectSelection($event)"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              @for (subj of corrSubjects(); track subj.id) {
-                <hlm-option [value]="subj">{{ subj.name }}</hlm-option>
-              }
-            </hlm-select-content>
-          </brn-select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field in-dashboard w-full">
-          <label>Business Function</label>
-          <brn-select
-            class="block"
-            placeholder="Select Activity (e.g. Procurement)"
-            formControlName="functionCodeObject"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              @for (func of filteredBussFunctions(); track func.id) {
-                <hlm-option [value]="func">{{ func.name }}</hlm-option>
-              }
-            </hlm-select-content>
-          </brn-select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field in-dashboard w-full">
-          <label>Sensitivity Level</label>
-          <brn-select
-            class="block"
-            placeholder="Specify the sensistivity of this correspondence"
-            formControlName="sensitivity"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              @for (sensitivityLevel of sensitivityLevels; track $index) {
-                <hlm-option [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-option>
-              }
-            </hlm-select-content>
-          </brn-select>
-        </div>
-      </div>
-    </form>
-
-    <hlm-alert-dialog-footer class="flex justify-between items-center">
-      <button class="nexus-button outlined" (click)="internalMemoDialog.close()">Cancel</button>
-
-      <button
-        class="nexus-button flex-center"
-        [class.disabled]="internalMemoFormGroup.invalid"
-        (click)="submitInternalMemoData()"
-      >
-        Continue to Editor
-        <ng-icon name="lucideArrowRight" class="text-lg" />
-      </button>
-    </hlm-alert-dialog-footer>
+            Continue to Editor
+            <ng-icon name="lucideArrowRight" class="text-lg" />
+          </button>
+        </hlm-alert-dialog-footer>
+      </form>
     </section>
-  </hlm-alert-dialog-content>
-</hlm-alert-dialog>
-
-<!-- extrenal memo alert dialog for document creation -->
-<hlm-alert-dialog #externalMemoInitDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let externalMemoDialog">
-    <hlm-alert-dialog-header>
-      <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
-      <nexus-spartan-muted>
-        External Memorandum Workflow • {{ currentYear }} Session
-      </nexus-spartan-muted>
-    </hlm-alert-dialog-header>
-    <hlm-separator />
-
-    <form [formGroup]="externalMemoFormGroup">
-      <div class="row">
-        <div class="field in-dashboard">
-          <label>Correspondence Title</label>
-          <input
-            type="text"
-            placeholder="Enter the official title of this memo..."
-            class="w-full custom-input"
-            formControlName="title"
-          />
-        </div>
-      </div>
-
-      <div class="row flex-center gap-3.5">
-        <div class="field in-dashboard">
-          <label for="categorySelect">Department Category</label>
-          <brn-select
-            id="categorySelect"
-            class="inline-block"
-            placeholder="Select an option"
-            (valueChange)="onCategoryChange($event)"
-          >
-            <hlm-select-trigger class="w-56">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option value="academic" class="cursor-pointer">Academic</hlm-option>
-              <hlm-option value="non-academic" class="cursor-pointer">Non-Academic</hlm-option>
-            </hlm-select-content>
-          </brn-select>
-        </div>
-
-        <div class="field in-dashboard">
-          <label for="departmentSelected">select department</label>
-
-          <input
-            type="text"
-            id="departmentSelected"
-            placeholder="Select the department"
-            aria-label="Department"
-            formControlName="to"
-            [matAutocomplete]="deptAuto"
-            class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-            (input)="updateDeptSearch($event)"
-          />
-
-          <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete">
-            @for (dept of filteredDepartments(); track dept) {
-              <mat-option [value]="`${dept.id} - ${dept.name}`">
-                <span class="text-sm">{{ dept.name }}</span>
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field in-dashboard w-full">
-          <label>Correspondence Subject</label>
-          <brn-select
-            class="block"
-            placeholder="Select the subject..."
-            formControlName="subjectCode"
-            (valueChange)="onSubjectSelection($event)"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              @for (subj of corrSubjects(); track subj.id) {
-                <hlm-option [value]="subj.code">{{ subj.name }}</hlm-option>
-              }
-            </hlm-select-content>
-          </brn-select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field in-dashboard w-full">
-          <label>Business Function</label>
-          <brn-select
-            class="block"
-            placeholder="Select Activity (e.g. Procurement)"
-            formControlName="functionCode"
-          >
-            <hlm-select-trigger class="w-full">
-              <hlm-select-value />
-            </hlm-select-trigger>
-            <hlm-select-content>
-              @for (func of filteredBussFunctions(); track func.id) {
-                <hlm-option [value]="func.code">{{ func.name }}</hlm-option>
-              }
-            </hlm-select-content>
-          </brn-select>
-        </div>
-      </div>
-    </form>
-
-    <hlm-alert-dialog-footer class="flex justify-between items-center">
-      <button class="nexus-button outlined" (click)="externalMemoDialog.close()">Cancel</button>
-
-      <button class="nexus-button flex-center" [class.disabled]="externalMemoFormGroup.invalid">
-        Continue to Editor
-        <ng-icon name="lucideArrowRight" class="text-lg" />
-      </button>
-    </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

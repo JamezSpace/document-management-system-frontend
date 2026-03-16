@@ -5,7 +5,7 @@ interface BussFunctionApi {
   name: string;
   description: string;
   createdAt: Date;
-  uploaded_at: Date;
+  uploadedAt: Date;
 }
 
 export type { BussFunctionApi };

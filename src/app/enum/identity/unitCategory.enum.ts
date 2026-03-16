@@ -1,6 +1,6 @@
-enum DepartmentCategory {
+enum OrgUnitCategory {
     ACADEMIC = 'academic',
     NON_ACADEMIC = 'non-academic',
- }
+}
 
- export {DepartmentCategory};
+export {OrgUnitCategory};

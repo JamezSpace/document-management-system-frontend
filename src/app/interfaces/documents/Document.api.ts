@@ -3,9 +3,12 @@ import { ClassificationMetadata } from './metadata/ClassificationMetadata.metada
 import { CorrespondenceMetadata } from './metadata/CorrespondenceMetadata.metadata';
 import { RetentionMetadata } from './metadata/RetentionMetadata.metadata';
 
-interface InitDocumentApi {
+interface InitDocumentApiPayload {
   title: string;
   createdBy: string;
+  documentTypeId: string;
+  direction: string;
+  addressedTo: string;
 
   // correspondence
   originatingUnitId: string;
@@ -29,7 +32,7 @@ interface CreatedDocument {
     functionCodeId: string;
     functionCode: string;
     sensitivity: string;
-    documentType: string;
+    documentTypeId: string;
     classifiedBy: string;
     classifiedAt: Date;
   };
@@ -47,15 +50,15 @@ interface CreatedDocument {
     archivalRequired: boolean;
   };
   createdAt: Date;
-  modifiedAt: Date | null;
+  updatedAt?: Date | null;
 }
 
 interface DocumentApi {
   id: string;
   ownerId: string;
   title: string;
-  current_version?: DocumentVersion;
-  reference_number?: string;
+  currentVersion?: DocumentVersion;
+  referenceNumber?: string;
 
   // Governance Domains (Value Objects)
   classification: ClassificationMetadata;
@@ -63,7 +66,8 @@ interface DocumentApi {
   retention: RetentionMetadata;
 
   createdAt: Date;
-  modified_at?: Date;
+  updatedAt?: Date;
 }
 
-export type { DocumentApi, InitDocumentApi, CreatedDocument };
+export type { CreatedDocument, DocumentApi, InitDocumentApiPayload };
+

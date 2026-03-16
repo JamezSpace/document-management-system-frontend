@@ -1,10 +1,9 @@
-interface CorrSubjectApi {
+interface DocTypeApi {
   id: string;
   code: string;
   name: string;
-  description: string;
   createdAt: Date;
   uploadedAt: Date;
 }
 
-export type { CorrSubjectApi };
+export type { DocTypeApi };

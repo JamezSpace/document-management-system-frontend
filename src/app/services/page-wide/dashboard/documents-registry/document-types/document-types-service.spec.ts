@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { InternalMemoService } from './internal-memo-service';
+import { DocumentTypesService } from './document-types-service';
 
-describe('InternalMemoService', () => {
-  let service: InternalMemoService;
+describe('DocumentTypesService', () => {
+  let service: DocumentTypesService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(InternalMemoService);
+    service = TestBed.inject(DocumentTypesService);
   });
 
   it('should be created', () => {

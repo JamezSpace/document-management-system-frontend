@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    OnInit,
+    signal,
+    ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -13,50 +14,60 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
 import {
-  lucideArrowDownUp,
-  lucideArrowRight,
-  lucideChevronDown,
-  lucideChevronLeft,
-  lucideLayoutTemplate,
-  lucideNetwork,
-  lucidePlus,
-  lucideSearch,
-  lucideUpload,
-  lucideUsers2,
+    lucideArrowDownUp,
+    lucideArrowRight,
+    lucideChevronDown,
+    lucideChevronLeft,
+    lucideFileInput,
+    lucideFileOutput,
+    lucideFileText,
+    lucideLayoutTemplate,
+    lucideMail,
+    lucideNetwork,
+    lucidePlus,
+    lucideSearch,
+    lucideStickyNote,
+    lucideUpload,
+    lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
 import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmComboboxImports } from '@spartan-ng/helm/combobox';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
-import { DepartmentsUi } from '../../../../interfaces/departments/Department.ui';
-import { SensitivityLevel } from '../../../../interfaces/documents/Document.enum';
+import {
+    CorrespondenceAddressee,
+    SensitivityLevel,
+} from '../../../../interfaces/documents/Document.enum';
+import { DepartmentsUi } from '../../../../interfaces/org units/Department.ui';
 import { EmptyStateInterface, EmptyStateType } from '../../../../interfaces/system/EmptyState.ui';
 import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
+import { DocumentTypesService } from '../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
+import { OrgUnitsService } from '../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
 import { UnitMembersService } from '../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
+import { DocumentsService } from '../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
-import { InternalMemoService } from '../../../../services/page-wide/dashboard/generic/internal-memo/internal-memo-service';
 import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
+import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 import { EmptyState } from '../../../system-wide/empty-state/empty-state';
+import { LineLoader } from '../../../system-wide/loaders/line-loader/line-loader';
 import { SpartanH3 } from '../../../system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { LineLoader } from '../../../system-wide/loaders/line-loader/line-loader';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 
 @Component({
   selector: 'nexus-document-registry',
@@ -92,6 +103,11 @@ import { UtilService } from '../../../../services/system-wide/util-service/util-
   providers: [
     provideIcons({
       lucideSearch,
+      lucideStickyNote,
+      lucideMail,
+      lucideFileText,
+      lucideFileInput,
+      lucideFileOutput,
       lucideArrowRight,
       lucideArrowDownUp,
       hugeGridView,
@@ -108,12 +124,14 @@ import { UtilService } from '../../../../services/system-wide/util-service/util-
 })
 export class DocumentRegistry implements OnInit {
   private utilService = inject(UtilService);
-  genericDashboardService = inject(GenericDashboardService);
   private staffDetService = inject(StaffDetailsService);
+  genericDashboardService = inject(GenericDashboardService);
   businessFunctionService = inject(BusinessFunctionService);
   corrSubjectService = inject(CorrespondenceSubjectService);
   unitMembersService = inject(UnitMembersService);
-  internalMemoService = inject(InternalMemoService);
+  documentTypesService = inject(DocumentTypesService);
+  orgUnitService = inject(OrgUnitsService);
+  documentService = inject(DocumentsService);
 
   readonly signedInStaff = this.staffDetService.data;
 
@@ -129,9 +147,11 @@ export class DocumentRegistry implements OnInit {
     // document init deps
     this.corrSubjectService.fetchCorrSubjects();
     this.businessFunctionService.fetchBussFunctions();
+    this.documentTypesService.fetchDocTypes();
+    this.orgUnitService.fetchOrgUnits();
   }
 
-  private loadUnitMembersEffect = effect(() => {
+  private afterInitEffect = effect(() => {
     const staff = this.signedInStaff();
 
     if (!staff) return;
@@ -141,6 +161,8 @@ export class DocumentRegistry implements OnInit {
     if (currentMembers.length === 0) {
       this.unitMembersService.fetchUnitMembers(staff.unit.id);
     }
+
+    this.documentService.fetchDocsByStaff(staff.id)
   });
 
   emptyStateDataAsFistTime: EmptyStateInterface = {
@@ -170,8 +192,6 @@ export class DocumentRegistry implements OnInit {
     ],
   };
 
-  documents = signal<any[]>([]);
-
   navigateToWorkspace(documentId: string) {
     this.router.navigate(['workspace', documentId], { relativeTo: this.activatedRouter });
   }
@@ -185,15 +205,46 @@ export class DocumentRegistry implements OnInit {
     this.loading.set(false);
   }
 
-  processSelectionForDocumentCreation(dialog: any, selectionType: 'template' | 'upload') {
-    // check what selection type is
-    // if it is upload, then verify the document type uploaded and perform conversion where necessary
-    // trigger backend to create new document
-    // navigate to the document workspace
+  docTypes = this.documentTypesService.data;
+  corrSubjects = this.corrSubjectService.data;
+  unitMembers = this.unitMembersService.data;
+  orgUnits = this.orgUnitService.data;
+  documents = this.documentService.staffDocuments;
+
+  initDocument = signal<{
+    docTypeId: string;
+    docType: string;
+    direction: string;
+  } | null>(null);
+
+  @ViewChild('documentTypeSelectionDialog')
+  private documentTypeSelectionDialog!: HlmAlertDialog;
+  setDocTypeSelected(typeId: string, type: string) {
+    this.initDocument.set({
+      docTypeId: typeId,
+      docType: type,
+      direction: '',
+    });
+
+    this.documentTypeSelectionDialog.close();
+  }
+
+  @ViewChild('documentTypeSelectionDialog')
+  private documentDirectionSelectionDialog!: HlmAlertDialog;
+  setDirectionSelected(direction: string) {
+    this.initDocument.update((doc) => {
+      if (!doc) return null;
+
+      return {
+        ...doc,
+        direction: direction,
+      };
+    });
+
+    this.documentDirectionSelectionDialog.close();
   }
 
   departments = this.genericDashboardService.departments;
-  corrSubjects = this.corrSubjectService.data;
   selectedCorrSubject = signal<any>(null);
   filteredBussFunctions = computed(() => {
     if (!this.selectedCorrSubject()) return [];
@@ -214,25 +265,21 @@ export class DocumentRegistry implements OnInit {
     );
 
     // disables the 'disable' state on the field
-    this.externalMemoFormGroup.controls.to.enable({ emitEvent: false });
+    this.initDocFormGroup.controls.to.enable({ emitEvent: false });
   }
 
   currentYear = new Date().getFullYear();
 
-  externalMemoFormGroup = new FormGroup({
-    title: new FormControl('', Validators.required),
-    to: new FormControl(
-      { value: '', disabled: this.departmentsView().length === 0 },
-      Validators.required,
-    ),
-    subjectCode: new FormControl('', Validators.required),
-    functionCode: new FormControl('', Validators.required),
-  });
-
   sensitivityLevels = Object.values(SensitivityLevel);
-  internalMemoFormGroup = new FormGroup({
+  initDocFormGroup = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    to: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+    to: new FormControl<string>(
+      {
+        value: '',
+        disabled: this.initDocument()?.direction === 'external' && this.orgUnits().length === 0,
+      },
+      { nonNullable: true, validators: Validators.required },
+    ),
     subjectCodeObject: new FormControl<any>('', {
       nonNullable: true,
       validators: Validators.required,
@@ -247,23 +294,34 @@ export class DocumentRegistry implements OnInit {
     }),
   });
 
-  submitInternalMemoData() {
+  submitDocInitData() {
     this.showLoader();
 
-    const recipientId = this.internalMemoFormGroup.getRawValue().to,
-      functionCodeObject = this.internalMemoFormGroup.getRawValue().functionCodeObject,
-      subjectCodeObject = this.internalMemoFormGroup.getRawValue().subjectCodeObject,
-      title = this.internalMemoFormGroup.getRawValue().title,
-      sensitivity = this.internalMemoFormGroup.getRawValue().sensitivity.toLowerCase(),
+    if (!this.initDocument()) return;
+
+    const recipientId = this.initDocFormGroup.getRawValue().to,
+      functionCodeObject = this.initDocFormGroup.getRawValue().functionCodeObject,
+      subjectCodeObject = this.initDocFormGroup.getRawValue().subjectCodeObject,
+      title = this.initDocFormGroup.getRawValue().title,
+      sensitivity = this.initDocFormGroup.getRawValue().sensitivity.toLowerCase(),
       functionCodeId = functionCodeObject.id,
       functionCode = functionCodeObject.code,
       subjectCodeId = subjectCodeObject.id,
       subjectCode = subjectCodeObject.code,
       recipient = this.unitMembers().find((member) => member.id === recipientId),
-      originatingUnitId = this.signedInStaff()?.unit.id!;
+      originatingUnitId = this.signedInStaff()?.unit.id!,
+      addressedTo =
+        this.initDocument()?.direction === 'internal'
+          ? CorrespondenceAddressee.UNIT
+          : CorrespondenceAddressee.EXTERNAL,
+      documentTypeId = this.initDocument()?.docTypeId!,
+      direction = this.initDocument()?.direction!;
 
-    const response = this.internalMemoService.initInternalMemo({
+    this.documentService.initDocument({
       title,
+      documentTypeId,
+      direction,
+      addressedTo,
       functionCode,
       functionCodeId,
       subjectCode,
@@ -273,39 +331,48 @@ export class DocumentRegistry implements OnInit {
       recipientUnitId: recipient?.unit.id!,
       createdBy: this.signedInStaff()?.id!,
     });
+  }
 
-    if (!response.success) {
-      this.hideLoader();
-      this.utilService.showToast(this.internalMemoService.error());
-      return;
+  InitDocumentApiPayloadEffect = effect(() => {
+    const data = this.documentService.newDocument();
+    const error = this.documentService.error();
+
+    this.hideLoader();
+
+    if (data) {
+      this.router.navigate(['workspace', this.documentService.newDocument()?.id], {
+        relativeTo: this.activatedRouter,
+      });
     }
 
-    this.router.navigate(['workspace', this.internalMemoService.data()?.id], {
-      relativeTo: this.activatedRouter,
-    });
-  }
+    if (error) {
+      this.hideLoader();
 
-  searchDeptValue = signal<string>('');
-  updateDeptSearch(event: any) {
-    const typedWord = event.target.value;
-
-    this.searchDeptValue.set(typedWord);
-  }
-  filteredDepartments = computed(() => {
-    const filterValue = this.searchDeptValue().toLowerCase();
-    return this.departmentsView().filter((dept) => dept.label.toLowerCase().includes(filterValue));
+      this.utilService.showToast(error.code.httpStatusCode === 500 ? 'Internal Server Error' : error.context.message);
+    }
   });
 
-  unitMembers = this.unitMembersService.data;
-  searchOfficeMemberValue = signal<string>('');
-  updateUnitMemberName(event: any) {
+  searchUnitValue = signal<string>('');
+  updateUnitSearch(event: any) {
     const typedWord = event.target.value;
 
-    this.searchOfficeMemberValue.set(typedWord);
+    this.searchUnitValue.set(typedWord);
+  }
+  filteredUnits = computed(() => {
+    const filterValue = this.searchUnitValue().toLowerCase();
+
+    return this.orgUnits().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
+  });
+
+  searchAddresseeNameValue = signal<string>('');
+  updateAddresseeName(event: any) {
+    const typedWord = event.target.value;
+
+    this.searchAddresseeNameValue.set(typedWord);
   }
 
   filteredUnitMembers = computed(() => {
-    const typedValue = this.searchOfficeMemberValue().toLowerCase();
+    const typedValue = this.searchAddresseeNameValue().toLowerCase();
 
     return (this.unitMembers() ?? [])
       .filter((member) => member.fullName.toLowerCase().includes(typedValue))

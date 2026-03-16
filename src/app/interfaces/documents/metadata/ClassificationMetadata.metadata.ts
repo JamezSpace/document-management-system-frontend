@@ -1,16 +1,15 @@
 import { SensitivityLevel } from "../Document.enum";
-import { DocumentType } from "../Document.enum";
 
 interface ClassificationMetadata {
   sensitivity: SensitivityLevel
-  function_code: string
-  document_type: DocumentType;
+  functionCode: string
+  documentTypeId: string;
 
-  classified_by: string;
-  classified_at: Date;
+  classifiedBy: string;
+  classifiedAt: Date;
 
-  last_reclassified_at?: Date | null;
-  last_reclassified_by?: string | null;
+  lastReclassifiedAt?: Date | null;
+  lastReclassifiedBy?: string | null;
 }
 
 export type { ClassificationMetadata };

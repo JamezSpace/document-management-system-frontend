@@ -25,25 +25,23 @@ import {
   lucideZoomIn,
   lucideZoomOut,
 } from '@ng-icons/lucide';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
-import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { MemoBodyEditor } from '../../../../../components/editors/memo-body-editor/memo-body-editor';
 import { ExternalMemoTemplate } from '../../../../../components/editors/templates/external-memo-template/external-memo-template';
 import { LineLoader } from '../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { DepartmentCategory } from '../../../../../interfaces/departments/Department.entity';
 import { GenericDashboardService } from '../../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
-import { InternalMemoService } from '../../../../../services/page-wide/dashboard/generic/internal-memo/internal-memo-service';
-import { CreatedDocument } from '../../../../../interfaces/documents/Document.api';
+import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
+import { DocumentsService } from '../../../../../services/page-wide/dashboard/generic/documents/documents-service';
+import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'nexus-workspace',
@@ -81,12 +79,14 @@ import { CreatedDocument } from '../../../../../interfaces/documents/Document.ap
   ],
 })
 export class Workspace implements OnInit {
+  activatedRoute = inject(ActivatedRoute);
   location = inject(Location);
   loading = signal<boolean>(false);
   workspaceService = inject(WorkspaceService);
   genericDashboardService = inject(GenericDashboardService);
   utilService = inject(UtilService);
-  private documentService = inject(InternalMemoService);
+  private documentService = inject(DocumentsService);
+  private docTypesService = inject(DocumentTypesService);
 
   sidebarClosed = signal<boolean>(false);
   isDocmentMetadataEditable = signal<boolean>(false);
@@ -97,7 +97,32 @@ export class Workspace implements OnInit {
 
   ngOnInit(): void {
     // this.workspaceService.getSignaturePlaceholder();
+    let typeId!: string;
+
+    // user refreshes a stale page
+    if (!this.documentService.newDocument()) {
+      // get docId from param
+      const segments = this.activatedRoute.snapshot.url;
+      const docId = segments[segments.length - 1].path;
+
+      this.documentService.fetchDocById(docId);
+    } 
+    
+    typeId = this.documentService.newDocument()!.classification.documentTypeId;
+
+    this.docTypesService.fetchDocTypeById(typeId);
   }
+
+  private workspaceInitEffect = effect(() => {
+    const documentFetchedById = this.documentService.documentFetchedById();
+
+    if(!documentFetchedById) return
+
+    // fetch necessary items
+    const typeId = this.documentService.documentFetchedById()!.classification.documentTypeId
+
+    this.docTypesService.fetchDocTypeById(typeId);
+  })
 
   constructor() {
     effect(() => {
@@ -107,23 +132,23 @@ export class Workspace implements OnInit {
   }
 
   isMobile = this.utilService.isMobile;
-  
-  document = this.documentService.data;
-  
-//   document = {
-//     title: 'Q3 Financial Projection',
-//     folderLocation: '2026/iTCC/EXT-MEMO-001',
-//   };
+
+  document = this.documentService.newDocument;
+
+  //   document = {
+  //     title: 'Q3 Financial Projection',
+  //     folderLocation: '2026/iTCC/EXT-MEMO-001',
+  //   };
 
   departments = this.genericDashboardService.departments;
   academicDepartments = computed(() =>
-    this.departments().filter((dept) => dept.category === DepartmentCategory.ACADEMIC),
+    this.departments().filter((dept) => dept.category === OrgUnitCategory.ACADEMIC),
   );
   nonAcademicDepartments = computed(() =>
-    this.departments().filter((dept) => dept.category === DepartmentCategory.NON_ACADEMIC),
+    this.departments().filter((dept) => dept.category === OrgUnitCategory.NON_ACADEMIC),
   );
 
-//   correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
+  //   correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
 
   fileUploaded = signal<File | null>(null);
   onUploadAttachment(event: any) {
@@ -149,13 +174,13 @@ export class Workspace implements OnInit {
     const filterValue = this.searchDeptValue().toLowerCase();
     return this.departments().filter((dept) => dept.label.toLowerCase().includes(filterValue));
   });
-//   filteredVolumes = computed(() => {
-//     const filterValue = this.searchVolValue().toLowerCase();
+  //   filteredVolumes = computed(() => {
+  //     const filterValue = this.searchVolValue().toLowerCase();
 
-//     return this.correspondenceVolumes().filter((vol) =>
-//       vol.name.toLowerCase().includes(filterValue),
-//     );
-//   });
+  //     return this.correspondenceVolumes().filter((vol) =>
+  //       vol.name.toLowerCase().includes(filterValue),
+  //     );
+  //   });
 
   updateDeptSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
@@ -174,10 +199,10 @@ export class Workspace implements OnInit {
 
   previewDocument() {
     // store previous zoom level
-    this.previousZoomLevel.set(this.zoomLevel())
+    this.previousZoomLevel.set(this.zoomLevel());
 
     //reset zoom level
-    this.resetZoom()
+    this.resetZoom();
 
     // retrieve content as html
     const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
@@ -192,10 +217,10 @@ export class Workspace implements OnInit {
 
   exitPreview() {
     // set current zoom level to the previous value
-    this.zoomLevel.set(this.previousZoomLevel())
+    this.zoomLevel.set(this.previousZoomLevel());
 
     this.paperViewControls.set(false);
-    
+
     this.isPrintPreview.set(false);
   }
 
