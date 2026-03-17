@@ -22,37 +22,6 @@ interface InitDocumentApiPayload {
   sensitivity: string;
 }
 
-interface CreatedDocument {
-  id: string;
-  ownerId: string;
-  title: string;
-  currentVersion: number | null;
-  referenceNumber: string;
-  classification: {
-    functionCodeId: string;
-    functionCode: string;
-    sensitivity: string;
-    documentTypeId: string;
-    classifiedBy: string;
-    classifiedAt: Date;
-  };
-  correspondence: {
-    originatingUnitId: string;
-    recipientCode: string;
-    subjectCodeId: string;
-    subjectCode: string;
-  };
-  retention: {
-    policyVersion: number;
-    retentionScheduleId: string;
-    retentionStartDate: Date;
-    disposalEligibilityDate: Date;
-    archivalRequired: boolean;
-  };
-  createdAt: Date;
-  updatedAt?: Date | null;
-}
-
 interface DocumentApi {
   id: string;
   ownerId: string;
@@ -66,8 +35,8 @@ interface DocumentApi {
   retention: RetentionMetadata;
 
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt?: Date | null;
 }
 
-export type { CreatedDocument, DocumentApi, InitDocumentApiPayload };
+export type { DocumentApi, InitDocumentApiPayload };
 

@@ -1,0 +1,22 @@
+<article>
+    <p class="text-center uppercase font-times-new-roman font-bold text-lg">university of ibadan</p>
+    <p class="text-center capitalize font-medium">{{ memoDetails.fromDept }}</p>
+    <div class="flex-center justify-center h-14 mt-1.5">
+        <img src="ui-logo.png" alt="ui's logo" class="h-full">
+    </div>
+  <nexus-spartan-p class="text-center">
+    <span class="uppercase font-bold"> {{documentToRender().correspondence.direction }} memorandum</span>
+  </nexus-spartan-p>
+
+  @if (documentToRender().correspondence.direction === 'external') {
+      <nexus-spartan-p><b>FROM:</b> {{ memoDetails.from }}</nexus-spartan-p>
+  }
+  
+  <nexus-spartan-p><b>TO:</b> {{ memoDetails.to }}</nexus-spartan-p>
+  <nexus-spartan-p><b>DATE:</b> {{ formattedDate(documentToRender().updatedAt ?? documentToRender().createdAt) }}</nexus-spartan-p>
+  <nexus-spartan-p class="uppercase"><b>REF. NO:</b> {{ documentToRender().referenceNumber }}</nexus-spartan-p>
+
+  <hlm-separator />
+
+  <nexus-spartan-p class="capitalize underline font-bold">{{ documentToRender().title }}</nexus-spartan-p>
+</article>

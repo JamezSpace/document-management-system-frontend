@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MemoTemplate } from './memo-template';
 
-import { ExternalMemoTemplate } from './external-memo-template';
-
-describe('ExternalMemoTemplate', () => {
-  let component: ExternalMemoTemplate;
-  let fixture: ComponentFixture<ExternalMemoTemplate>;
+describe('MemoTemplate', () => {
+  let component: MemoTemplate;
+  let fixture: ComponentFixture<MemoTemplate>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExternalMemoTemplate]
+      imports: [MemoTemplate]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ExternalMemoTemplate);
+    fixture = TestBed.createComponent(MemoTemplate);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

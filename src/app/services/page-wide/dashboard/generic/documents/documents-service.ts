@@ -2,13 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import {
-  CreatedDocument,
   DocumentApi,
   InitDocumentApiPayload,
 } from '../../../../../interfaces/documents/Document.api';
 import { LifecycleActions } from '../../../../../interfaces/documents/Document.enum';
 import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
 import { ErrorType } from '../../../../../interfaces/shared/Error.interface';
+import { finalize } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +16,7 @@ import { ErrorType } from '../../../../../interfaces/shared/Error.interface';
 export class DocumentsService {
   private http = inject(HttpClient);
 
-  newDocument = signal<CreatedDocument | null>(null);
-  documentFetchedById = signal<DocumentApi| null>(null);
+  document = signal<DocumentApi | null>(null);
   staffDocuments = signal<DocumentApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
@@ -26,14 +25,14 @@ export class DocumentsService {
     this.loading.set(true);
 
     this.http
-      .post<ApiResponse<CreatedDocument>>(`${environment.api}/document`, {
+      .post<ApiResponse<DocumentApi>>(`${environment.api}/document`, {
         action: LifecycleActions.CREATE,
         ...newDocumentPayload,
       })
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => this.newDocument.set(resp.data),
+        next: (resp) => this.document.set(resp.data),
         error: (err) => this.error.set(err),
-        complete: () => this.loading.set(false),
       });
   }
 
@@ -42,10 +41,10 @@ export class DocumentsService {
 
     this.http
       .get<ApiResponse<DocumentApi[]>>(`${environment.api}/document/documents/${staffId}`)
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.staffDocuments.set(resp.data),
         error: (err) => this.error.set(err),
-        complete: () => this.loading.set(false),
       });
   }
 
@@ -54,10 +53,25 @@ export class DocumentsService {
 
     this.http
       .get<ApiResponse<DocumentApi>>(`${environment.api}/document/${docId}`)
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => this.documentFetchedById.set(resp.data),
+        next: (resp) => this.document.set(resp.data),
         error: (err) => this.error.set(err),
-        complete: () => this.loading.set(false),
+      });
+  }
+
+  saveDocument(docId: string, payload: { document: DocumentApi; contentDelta: unknown }) {
+    this.loading.set(true);
+
+    this.http
+      .post<ApiResponse<DocumentApi>>(`${environment.api}/document/${docId}/save`, {
+        contentDelta: payload.contentDelta,
+        document: payload.document
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => this.document.set(resp.data),
+        error: (err) => this.error.set(err),
       });
   }
 }

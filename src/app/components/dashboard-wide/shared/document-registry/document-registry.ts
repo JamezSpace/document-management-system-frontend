@@ -205,7 +205,7 @@ export class DocumentRegistry implements OnInit {
     this.loading.set(false);
   }
 
-  docTypes = this.documentTypesService.data;
+  docTypes = this.documentTypesService.allDocTypes;
   corrSubjects = this.corrSubjectService.data;
   unitMembers = this.unitMembersService.data;
   orgUnits = this.orgUnitService.data;
@@ -334,13 +334,13 @@ export class DocumentRegistry implements OnInit {
   }
 
   InitDocumentApiPayloadEffect = effect(() => {
-    const data = this.documentService.newDocument();
+    const data = this.documentService.document();
     const error = this.documentService.error();
 
     this.hideLoader();
 
     if (data) {
-      this.router.navigate(['workspace', this.documentService.newDocument()?.id], {
+      this.router.navigate(['workspace', this.documentService.document()?.id], {
         relativeTo: this.activatedRouter,
       });
     }

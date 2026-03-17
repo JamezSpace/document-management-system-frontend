@@ -8,6 +8,7 @@ import {
   OnInit,
   signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -31,7 +32,7 @@ import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { MemoBodyEditor } from '../../../../../components/editors/memo-body-editor/memo-body-editor';
-import { ExternalMemoTemplate } from '../../../../../components/editors/templates/external-memo-template/external-memo-template';
+import { MemoTemplate } from '../../../../../components/editors/templates/memo-template/memo-template';
 import { LineLoader } from '../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
@@ -42,6 +43,7 @@ import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum'
 import { DocumentsService } from '../../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
 import { ActivatedRoute } from '@angular/router';
+import { DocumentApi } from '../../../../../interfaces/documents/Document.api';
 
 @Component({
   selector: 'nexus-workspace',
@@ -50,7 +52,7 @@ import { ActivatedRoute } from '@angular/router';
     SpartanMuted,
     SpartanP,
     LineLoader,
-    ExternalMemoTemplate,
+    MemoTemplate,
     MemoBodyEditor,
     MatAutocompleteModule,
     ReactiveFormsModule,
@@ -81,7 +83,7 @@ import { ActivatedRoute } from '@angular/router';
 export class Workspace implements OnInit {
   activatedRoute = inject(ActivatedRoute);
   location = inject(Location);
-  loading = signal<boolean>(false);
+  workspaceLoading = signal<boolean>(false);
   workspaceService = inject(WorkspaceService);
   genericDashboardService = inject(GenericDashboardService);
   utilService = inject(UtilService);
@@ -97,48 +99,51 @@ export class Workspace implements OnInit {
 
   ngOnInit(): void {
     // this.workspaceService.getSignaturePlaceholder();
-    let typeId!: string;
 
     // user refreshes a stale page
-    if (!this.documentService.newDocument()) {
+    const isThereAJustInitializedDocument = this.documentService.document();
+
+    if (!isThereAJustInitializedDocument) {
       // get docId from param
       const segments = this.activatedRoute.snapshot.url;
       const docId = segments[segments.length - 1].path;
 
       this.documentService.fetchDocById(docId);
-    } 
-    
-    typeId = this.documentService.newDocument()!.classification.documentTypeId;
+      return;
+    }
+
+    const typeId = this.documentService.document()!.classification.documentTypeId;
 
     this.docTypesService.fetchDocTypeById(typeId);
+    this.document = this.documentService.document;
   }
 
   private workspaceInitEffect = effect(() => {
-    const documentFetchedById = this.documentService.documentFetchedById();
+    // auto-close sidebar
+    if (this.isMobile()) this.sidebarClosed.set(true);
+    else this.sidebarClosed.set(false);
 
-    if(!documentFetchedById) return
+    // fetch document
+    const documentFetchedById = this.documentService.document();
 
-    // fetch necessary items
-    const typeId = this.documentService.documentFetchedById()!.classification.documentTypeId
+    if (!documentFetchedById) return;
+
+    // fetch document type
+    const typeId = this.documentService.document()!.classification.documentTypeId;
 
     this.docTypesService.fetchDocTypeById(typeId);
-  })
-
-  constructor() {
-    effect(() => {
-      if (this.isMobile()) this.sidebarClosed.set(true);
-      else this.sidebarClosed.set(false);
-    });
-  }
+    this.document = this.documentService.document;
+  });
 
   isMobile = this.utilService.isMobile;
+  documentType = this.docTypesService.docType;
+  document!: WritableSignal<DocumentApi | null>;
 
-  document = this.documentService.newDocument;
-
-  //   document = {
-  //     title: 'Q3 Financial Projection',
-  //     folderLocation: '2026/iTCC/EXT-MEMO-001',
-  //   };
+  memoDocument = computed(() => {
+    const doc = this.document();
+    
+    return this.documentType()?.code === 'memo' && doc ? doc : null;
+  });
 
   departments = this.genericDashboardService.departments;
   academicDepartments = computed(() =>
@@ -152,14 +157,14 @@ export class Workspace implements OnInit {
 
   fileUploaded = signal<File | null>(null);
   onUploadAttachment(event: any) {
-    this.loading.set(true);
+    this.workspaceLoading.set(true);
     const uploadedFile = event.target.files[0];
 
     // perform check and scan on this document
 
     // update component with file uploaded
     this.fileUploaded.set(uploadedFile);
-    this.loading.set(false);
+    this.workspaceLoading.set(false);
   }
 
   documentMetadata = new FormGroup({
@@ -286,6 +291,19 @@ export class Workspace implements OnInit {
 
   resetZoom() {
     this.zoomLevel.set(1.0);
+  }
+
+  saveDocument() {
+    const openedDocument = this.document()!
+    const contentAsDelta = this.retrieveEditorContentsAsSpecificType('delta')
+
+    this.documentService.saveDocument(
+        openedDocument.id,
+        {
+            document: openedDocument,
+            contentDelta: contentAsDelta
+        }
+    )
   }
 }
 

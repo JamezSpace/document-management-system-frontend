@@ -2,7 +2,7 @@ import { SensitivityLevel } from "../Document.enum";
 
 interface ClassificationMetadata {
   sensitivity: SensitivityLevel
-  functionCode: string
+  functionCodeId: string
   documentTypeId: string;
 
   classifiedBy: string;

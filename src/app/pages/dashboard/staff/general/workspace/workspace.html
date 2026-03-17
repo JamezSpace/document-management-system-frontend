@@ -17,7 +17,7 @@
           <nexus-spartan-muted>
             {{ document()?.referenceNumber }}
           </nexus-spartan-muted>
-          <nexus-spartan-p class="text-base">
+          <nexus-spartan-p class="text-base capitalize">
             {{ document()?.title }}
           </nexus-spartan-p>
         </div>
@@ -28,7 +28,7 @@
       <button type="button" class="nexus-button secondary scale-90" (click)="previewDocument()">
         preview
       </button>
-      <button type="button" class="nexus-button flex-center gap-2.5 scale-90">
+      <button type="button" class="nexus-button flex-center gap-2.5 scale-90" (click)="saveDocument()">
         <ng-icon name="lucideSave" />
         <span>Save</span>
       </button>
@@ -37,7 +37,7 @@
       </button>
     </div>
   </section>
-  <div class="relative" [class.hidden]="!loading()">
+  <div class="relative" [class.hidden]="!workspaceLoading()">
     <p class="opacity-0">.</p>
     <nexus-line-loader />
   </div>
@@ -49,7 +49,7 @@
       class="side-bar-container flex flex-start absolute transition-transform z-10 min-w-64"
       [class.-translate-x-64]="sidebarClosed()"
     >
-      <aside class="py-5 border-r max-w-64 bg-background">
+      <aside class="py-3.5 border-r max-w-64 bg-background">
         <section id="metadata-section" class="px-2.5">
           <div class="flex-center justify-between mb-2">
             <p class="section-descriptor">document details</p>
@@ -203,9 +203,9 @@
         </section>
       </aside>
 
-      <div class="absolute top-2.5 -right-8 z-10">
+      <div class="absolute top-2.5 -right-10 z-10">
         <button
-          class="p-2 flex-center justify-center hover:bg-accent hover:text-white rounded-xs"
+          class="p-2 rounded-full flex-center justify-center hover:bg-accent hover:text-white"
           (click)="this.sidebarClosed.set(!this.sidebarClosed())"
         >
           @if (!this.sidebarClosed()) {
@@ -219,15 +219,21 @@
 
     <div class="w-full relative">
       <div class="flex-center absolute right-3.5 top-2.5 z-5">
-        <button (click)="zoomOut()" class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center">
-            <ng-icon name="lucideZoomOut" />
+        <button
+          (click)="zoomOut()"
+          class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center"
+        >
+          <ng-icon name="lucideZoomOut" />
         </button>
         <span class="mx-2.5">{{ (zoomLevel() * 100).toFixed(0) }}%</span>
-        <button (click)="zoomIn()" class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center">
-            <ng-icon name="lucideZoomIn" />
+        <button
+          (click)="zoomIn()"
+          class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center"
+        >
+          <ng-icon name="lucideZoomIn" />
         </button>
       </div>
- 
+
       <main
         class="paper-wrapper viewport"
         (mouseenter)="onMouseEnter()"
@@ -249,7 +255,7 @@
           <hlm-dropdown-menu>
             <button hlmDropdownMenuItem (click)="exitPreview()">
               <span>Quit Preview Mode</span>
-              <hlm-dropdown-menu-shortcut>⇧⌘P</hlm-dropdown-menu-shortcut>
+              <hlm-dropdown-menu-shortcut>Esc</hlm-dropdown-menu-shortcut>
             </button>
           </hlm-dropdown-menu>
         </ng-template>
@@ -259,9 +265,9 @@
           class="rounded-xs origin-top-center"
           [style.transform]="canvasTransform()"
         >
-            @if (document()?.classification?.documentType === 'memorandum') {
-                <nexus-external-memo-template />
-            }
+          @if (memoDocument(); as doc) {
+            <nexus-memo-template [documentToRender]="doc" />
+          }
 
           @if (isPrintPreview()) {
             <div [innerHTML]="editorHtmlContent()" class="wrap-anywhere text-justify"></div>
