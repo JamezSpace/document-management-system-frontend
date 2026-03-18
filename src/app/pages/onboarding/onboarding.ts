@@ -44,7 +44,7 @@ export class Onboarding implements OnInit {
   @Input() entityType!: EntityType;
   @Input() entityId!: string;
   private onboardingService = inject(OnboardingService);
-  private genericSystemService = inject(UtilService);
+  private utilService = inject(UtilService);
 
   entity = signal<EntityResponse>({
     type: EntityType.STAFF,
@@ -64,7 +64,7 @@ export class Onboarding implements OnInit {
     });
   }
 
-  isMobile = this.genericSystemService.isMobile
+  isMobile = this.utilService.isMobile
 
   loading = signal<boolean>(false)
   currentFrame = signal<number>(1);

@@ -42,8 +42,11 @@ import { UtilService } from '../../../../../services/system-wide/util-service/ut
 import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
 import { DocumentsService } from '../../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentApi } from '../../../../../interfaces/documents/Document.api';
+import { UnitMembersService } from '../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
+import { OrgUnitsService } from '../../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
+import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -81,14 +84,20 @@ import { DocumentApi } from '../../../../../interfaces/documents/Document.api';
   ],
 })
 export class Workspace implements OnInit {
-  activatedRoute = inject(ActivatedRoute);
+  router = inject(Router);
+  utilService = inject(UtilService);
   location = inject(Location);
+  activatedRoute = inject(ActivatedRoute);
   workspaceLoading = signal<boolean>(false);
   workspaceService = inject(WorkspaceService);
+  documentService = inject(DocumentsService);
+  docTypesService = inject(DocumentTypesService);
+  unitService = inject(OrgUnitsService);
+  unitMembersService = inject(UnitMembersService);
+  staffDetailsService = inject(StaffDetailsService);
   genericDashboardService = inject(GenericDashboardService);
-  utilService = inject(UtilService);
-  private documentService = inject(DocumentsService);
-  private docTypesService = inject(DocumentTypesService);
+
+  readonly signedInStaff = this.staffDetailsService.data;
 
   sidebarClosed = signal<boolean>(false);
   isDocmentMetadataEditable = signal<boolean>(false);
@@ -100,6 +109,13 @@ export class Workspace implements OnInit {
   ngOnInit(): void {
     // this.workspaceService.getSignaturePlaceholder();
 
+    // disallow staff if it cant be ascertained if staff is logged in
+    const staff = this.signedInStaff();
+    if (!staff) {
+      this.router.navigateByUrl('/auth');
+      return;
+    }
+
     // user refreshes a stale page
     const isThereAJustInitializedDocument = this.documentService.document();
 
@@ -109,12 +125,16 @@ export class Workspace implements OnInit {
       const docId = segments[segments.length - 1].path;
 
       this.documentService.fetchDocById(docId);
+
+      // returning here leaves the workspaceInitEffect in charge of fetching all necessary items
       return;
     }
 
     const typeId = this.documentService.document()!.classification.documentTypeId;
 
-    this.docTypesService.fetchDocTypeById(typeId);
+    if (!this.docTypesService.docType()) this.docTypesService.fetchDocTypeById(typeId);
+
+    // that is, user is coming from the registry so, document exists already
     this.document = this.documentService.document;
   }
 
@@ -131,8 +151,22 @@ export class Workspace implements OnInit {
     // fetch document type
     const typeId = this.documentService.document()!.classification.documentTypeId;
 
-    this.docTypesService.fetchDocTypeById(typeId);
+    if (!this.docTypesService.docType()) this.docTypesService.fetchDocTypeById(typeId);
+
     this.document = this.documentService.document;
+  });
+
+  private effectRunsOnlyNecessarySecondaryItems = effect(() => {
+    // at this point, it is assured the staff exists
+    const staffUnit = this.signedInStaff()?.unit!;
+
+    if (this.document()?.correspondence.direction === 'internal') {
+      // ensure unit members are fetched if it doesnt pre-exist
+      if (!this.unitMembersService.data()) this.unitMembersService.fetchUnitMembers(staffUnit.id);
+    } else {
+      // ensure units are fetched if they dont pre-exist
+      if (!this.unitService.data()) this.unitService.fetchOrgUnits();
+    }
   });
 
   isMobile = this.utilService.isMobile;
@@ -141,16 +175,17 @@ export class Workspace implements OnInit {
 
   memoDocument = computed(() => {
     const doc = this.document();
-    
+
     return this.documentType()?.code === 'memo' && doc ? doc : null;
   });
 
-  departments = this.genericDashboardService.departments;
-  academicDepartments = computed(() =>
-    this.departments().filter((dept) => dept.category === OrgUnitCategory.ACADEMIC),
+  units = this.unitService.data;
+  unitsMembers = this.unitMembersService.data;
+  academicUnits = computed(() =>
+    this.units().filter((unit) => unit.sector === OrgUnitCategory.ACADEMIC),
   );
-  nonAcademicDepartments = computed(() =>
-    this.departments().filter((dept) => dept.category === OrgUnitCategory.NON_ACADEMIC),
+  nonacademicUnits = computed(() =>
+    this.units().filter((unit) => unit.sector === OrgUnitCategory.NON_ACADEMIC),
   );
 
   //   correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
@@ -170,15 +205,27 @@ export class Workspace implements OnInit {
   documentMetadata = new FormGroup({
     department: new FormControl(''),
     volume: new FormControl(''),
+    addressee: new FormControl(''),
   });
 
-  searchDeptValue = signal<string>('');
+  searchUnitValue = signal<string>('');
+  searchUnitMemberValue = signal<string>('');
   searchVolValue = signal<string>('');
 
-  filteredDepartments = computed(() => {
-    const filterValue = this.searchDeptValue().toLowerCase();
-    return this.departments().filter((dept) => dept.label.toLowerCase().includes(filterValue));
+  filteredUnits = computed(() => {
+    const filterValue = this.searchUnitValue().toLowerCase();
+
+    return this.units().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
   });
+
+  filteredUnitsMembers = computed(() => {
+    const filterValue = this.searchUnitMemberValue().toLowerCase();
+
+    return this.unitsMembers().filter((unitMember) =>
+      unitMember.fullName.toLowerCase().includes(filterValue),
+    );
+  });
+
   //   filteredVolumes = computed(() => {
   //     const filterValue = this.searchVolValue().toLowerCase();
 
@@ -189,7 +236,7 @@ export class Workspace implements OnInit {
 
   updateDeptSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    this.searchDeptValue.set(value);
+    this.searchUnitValue.set(value);
   }
   updateVolSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
@@ -294,16 +341,13 @@ export class Workspace implements OnInit {
   }
 
   saveDocument() {
-    const openedDocument = this.document()!
-    const contentAsDelta = this.retrieveEditorContentsAsSpecificType('delta')
+    const openedDocument = this.document()!;
+    const contentAsDelta = this.retrieveEditorContentsAsSpecificType('delta');
 
-    this.documentService.saveDocument(
-        openedDocument.id,
-        {
-            document: openedDocument,
-            contentDelta: contentAsDelta
-        }
-    )
+    this.documentService.saveDocument(openedDocument.id, {
+      document: openedDocument,
+      contentDelta: contentAsDelta,
+    });
   }
 }
 

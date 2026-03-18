@@ -28,7 +28,7 @@
     type="button"
     class="nexus-button flex-center"
     hlmBtn
-    [brnAlertDialogTriggerFor]="documentTypeSelectionDialog"
+    [hlmAlertDialogTriggerFor]="documentTypeSelectionDialog"
   >
     <ng-icon name="lucidePlus" />
     new document
@@ -118,14 +118,34 @@
 
 <hlm-separator class="my-4" />
 
-@for (docs of documents(); track $index) {
-} @empty {
-  <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
-}
+<div
+  class="grid transition-all duration-300 ease-in-out"
+  [style.gridTemplateColumns]="
+    isDetailsOpen() ? '0.6fr 0.4fr' : '1fr 0fr'"
+>
+  <section class="flex items-start flex-wrap w-full gap-3.5 overflow-hidden p-px min-w-0">
+    @for (doc of documents(); track doc.id) {
+      <nexus-document-item
+        [documentItem]="doc"
+        class="flex-1 max-w-56"
+      />
+    } @empty {
+      <section class="flex-center justify-center">
+        <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
+      </section>
+    }
+  </section>
+  <nexus-document-details
+    class="min-w-0 overflow-hidden transition-all duration-300 p-px h-vh"
+    [class.opacity-0]="!isDetailsOpen()"
+    [class.opacity-100]="isDetailsOpen()"
+    [documentToShowFullDetails]="documentClicked()"
+  />
+</div>
 
 <!-- alert dialog to select new document type -->
 <hlm-alert-dialog #documentTypeSelectionDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent class="min-w-md">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal class="min-w-md">
     <hlm-alert-dialog-header>
       <nexus-spartan-h4>Choose the jurisdictional boundary for this record</nexus-spartan-h4>
     </hlm-alert-dialog-header>
@@ -136,7 +156,7 @@
       @for (docType of docTypes(); track docType.id) {
         <button
           class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground min-w-14"
-          [brnAlertDialogTriggerFor]="documentDirectionSelectionDialog"
+          [hlmAlertDialogTriggerFor]="documentDirectionSelectionDialog"
           (click)="setDocTypeSelected(docType.id, docType.name)"
         >
           @if (docType.code === 'memo') {
@@ -158,7 +178,7 @@
 
 <!-- alert dialog to select the direction of the doument -->
 <hlm-alert-dialog #documentDirectionSelectionDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent class="min-w-md">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal class="min-w-md">
     <hlm-alert-dialog-header>
       <nexus-spartan-h4>Specify the direction for this record</nexus-spartan-h4>
     </hlm-alert-dialog-header>
@@ -167,7 +187,7 @@
       <!-- internal -->
       <button
         class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground min-w-14"
-        [brnAlertDialogTriggerFor]="documentInitDialog"
+        [hlmAlertDialogTriggerFor]="documentInitDialog"
         (click)="setDirectionSelected('internal')"
       >
         <ng-icon name="lucideFileInput" class="text-2xl" />
@@ -181,7 +201,7 @@
       <!-- external -->
       <button
         class="flex-center flex-col gap-3.5 p-5 rounded-lg border border-transparent hover:bg-muted hover:border-muted-foreground min-w-14"
-        [brnAlertDialogTriggerFor]="documentInitDialog"
+        [hlmAlertDialogTriggerFor]="documentInitDialog"
         (click)="setDirectionSelected('external')"
       >
         <ng-icon name="lucideFileOutput" class="text-2xl" />
@@ -198,7 +218,7 @@
 <!-- alert dialog to initialize the doument -->
 <hlm-alert-dialog #documentInitDialog>
   <hlm-alert-dialog-content
-    *brnAlertDialogContent="let documentInitDialog"
+    *hlmAlertDialogPortal="let documentInitDialog"
     class="min-w-md gap-0 p-0"
   >
     <div class="relative top-0" [class.hidden]="!loading()">

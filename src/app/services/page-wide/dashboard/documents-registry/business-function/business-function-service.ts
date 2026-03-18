@@ -10,13 +10,13 @@ import { environment } from '../../../../../../environments/environment.developm
 export class BusinessFunctionService {
   private http = inject(HttpClient);
 
-  data = signal<BussFunctionApi[]>([]);
+  bussFunctions = signal<BussFunctionApi[]>([]);
   error = signal<any>(null);
 
   fetchBussFunctions() {
     this.http.get<ApiResponse<BussFunctionApi[]>>(`${environment.api}/document/functions`)
     .subscribe({
-        next: (resp) => this.data.set(resp.data),
+        next: (resp) => this.bussFunctions.set(resp.data),
         error: (err) => this.error.set(err)
     })
   }

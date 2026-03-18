@@ -30,4 +30,12 @@ export class UtilService {
       verticalPosition: 'bottom',
     });
   }
+
+  formatDateAsReadableString(dateString: string | Date | null) {
+    if(!dateString) return ''
+
+    const date = new Date(dateString);
+
+    return date.toLocaleString();
+  }
 }

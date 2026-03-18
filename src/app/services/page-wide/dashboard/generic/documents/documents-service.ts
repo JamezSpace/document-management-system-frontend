@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import {
   DocumentApi,
+  emptyDocument,
   InitDocumentApiPayload,
 } from '../../../../../interfaces/documents/Document.api';
 import { LifecycleActions } from '../../../../../interfaces/documents/Document.enum';

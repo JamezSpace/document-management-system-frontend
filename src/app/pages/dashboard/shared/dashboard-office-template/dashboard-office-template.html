@@ -26,7 +26,7 @@
                 >
                   <li hlmSidebarMenuItem>
                     @if (navItem.leadsToExternalService) {
-                      <button type="button" hlmSidebarMenuButton [brnAlertDialogTriggerFor]="openExternalServiceAlertDialog" (click)="externalUrlToNavigateToNow.set(navItem.route)">
+                      <button type="button" hlmSidebarMenuButton [hlmAlertDialogTriggerFor]="openExternalServiceAlertDialog" (click)="externalUrlToNavigateToNow.set(navItem.route)">
                         <ng-icon hlm [name]="navItem.icon" />
                         <span>{{ navItem.label }}</span>
 
@@ -93,7 +93,7 @@
 </div>
 
 <hlm-alert-dialog #openExternalServiceAlertDialog>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
     <hlm-alert-dialog-header>
       <h2 hlmAlertDialogTitle>Open Student IT Portal?</h2>
       <p hlmAlertDialogDescription>

@@ -10,13 +10,13 @@ import { environment } from '../../../../../../environments/environment.developm
 export class CorrespondenceSubjectService {
   private http = inject(HttpClient);
 
-  data = signal<CorrSubjectApi[]>([]);
+  corrSubjects = signal<CorrSubjectApi[]>([]);
   error = signal<any>(null);
 
   fetchCorrSubjects() {
     this.http.get<ApiResponse<CorrSubjectApi[]>>(`${environment.api}/document/subjects`)
     .subscribe({
-        next: (resp) => this.data.set(resp.data),
+        next: (resp) => this.corrSubjects.set(resp.data),
         error: (err) => this.error.set(err)
     })
   }

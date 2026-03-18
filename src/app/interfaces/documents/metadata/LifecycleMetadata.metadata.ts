@@ -1,7 +1,7 @@
 interface LifecycleMetadata {
-    current_state: string;
-  state_entered_at: Date;
-  state_entered_by: string;
+  currentState: string;
+  stateEnteredAt: Date;
+  stateEnteredBy: string;
 }
 
-export type {LifecycleMetadata}
+export type { LifecycleMetadata };

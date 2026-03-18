@@ -1,0 +1,82 @@
+<section class="px-3 py-3 button-box-shadow rounded-xs">
+  <article class="flex-center justify-between mb-3.5">
+    <nexus-spartan-large class="capitalize">{{
+      documentToShowFullDetails().title
+    }}</nexus-spartan-large>
+
+    <button
+      type="button"
+      class="rounded-full p-1 flex-center justify-center hover:bg-(--muted-foreground)/20"
+      (click)="closeDocPane()"
+    >
+      <ng-icon name="lucideX" />
+    </button>
+  </article>
+  <mat-tab-group>
+    <mat-tab label="Details">
+      <section class="py-1">
+        <!-- direction -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">recipient category</nexus-spartan-muted>
+          <nexus-spartan-p class="capitalize">
+            {{ documentToShowFullDetails().correspondence.direction }}
+          </nexus-spartan-p>
+        </article>
+
+        <!-- recipient -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">addressed to</nexus-spartan-muted>
+          <nexus-spartan-p class="capitalize">
+            {{ addressedTo() }}
+          </nexus-spartan-p>
+        </article>
+
+        <!-- type -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">correspondence type</nexus-spartan-muted>
+          <nexus-spartan-p class="capitalize">
+            {{ docType()?.name ?? '--' }}
+          </nexus-spartan-p>
+        </article>
+
+        <!-- correspondence subject -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">correspondence subject</nexus-spartan-muted>
+          <nexus-spartan-p>
+            {{ corrService()?.name ?? '--' }}
+          </nexus-spartan-p>
+        </article>
+
+        <!-- business function -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">business function</nexus-spartan-muted>
+          <nexus-spartan-p>
+            {{ businessFuntion()?.name ?? '--' }}
+          </nexus-spartan-p>
+        </article>
+
+        <!-- created at -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">created at</nexus-spartan-muted>
+          <nexus-spartan-p>
+            {{ utilService.formatDateAsReadableString(documentToShowFullDetails().createdAt) }}
+          </nexus-spartan-p>
+        </article>
+
+        <!-- last updated at -->
+        <article class="mb-2">
+          <nexus-spartan-muted class="capitalize">last modified at</nexus-spartan-muted>
+          <nexus-spartan-p>
+            @if (documentToShowFullDetails().updatedAt; as updatedDate) {
+              {{ utilService.formatDateAsReadableString(updatedDate) }}
+            } @else {
+              <i>not experienced modification</i>
+            }
+          </nexus-spartan-p>
+        </article>
+      </section>
+    </mat-tab>
+
+    <mat-tab label="Activity"></mat-tab>
+  </mat-tab-group>
+</section>

@@ -26,7 +26,7 @@
     type="button"
     class="nexus-button flex-center"
     hlmBtn
-    [brnAlertDialogTriggerFor]="issueNewDirectiveDialog"
+    [hlmAlertDialogTriggerFor]="issueNewDirectiveDialog"
   >
     <ng-icon name="lucideGavel" />
     issue new directive
@@ -38,7 +38,7 @@
 <!-- alert dialog to issue new directive -->
 <hlm-alert-dialog #issueNewDirectiveDialog>
   <hlm-alert-dialog-content
-    *brnAlertDialogContent="let ctx"
+    *hlmAlertDialogPortal="let ctx"
     class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
   >
     <hlm-alert-dialog-header class="text-left">
@@ -149,7 +149,7 @@
 </hlm-alert-dialog>
 
 <hlm-alert-dialog #directiveSuccessfullyRegistered>
-  <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
     @if (broadcastDirectiveDetail()) {
       <div class="flex-center justify-center">
         <ng-icon name="saxTickCircleBold" size="2rem" />

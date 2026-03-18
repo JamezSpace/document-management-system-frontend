@@ -1,12 +1,12 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    OnInit,
-    signal,
-    ViewChild,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -14,21 +14,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
 import {
-    lucideArrowDownUp,
-    lucideArrowRight,
-    lucideChevronDown,
-    lucideChevronLeft,
-    lucideFileInput,
-    lucideFileOutput,
-    lucideFileText,
-    lucideLayoutTemplate,
-    lucideMail,
-    lucideNetwork,
-    lucidePlus,
-    lucideSearch,
-    lucideStickyNote,
-    lucideUpload,
-    lucideUsers2,
+  lucideArrowDownUp,
+  lucideArrowRight,
+  lucideChevronDown,
+  lucideChevronLeft,
+  lucideFileInput,
+  lucideFileOutput,
+  lucideFileText,
+  lucideLayoutTemplate,
+  lucideMail,
+  lucideNetwork,
+  lucidePlus,
+  lucideSearch,
+  lucideStickyNote,
+  lucideUpload,
+  lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -38,9 +38,9 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmComboboxImports } from '@spartan-ng/helm/combobox';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
-    HlmInputGroup,
-    HlmInputGroupAddon,
-    HlmInputGroupImports,
+  HlmInputGroup,
+  HlmInputGroupAddon,
+  HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
@@ -48,8 +48,8 @@ import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import {
-    CorrespondenceAddressee,
-    SensitivityLevel,
+  CorrespondenceAddressee,
+  SensitivityLevel,
 } from '../../../../interfaces/documents/Document.enum';
 import { DepartmentsUi } from '../../../../interfaces/org units/Department.ui';
 import { EmptyStateInterface, EmptyStateType } from '../../../../interfaces/system/EmptyState.ui';
@@ -68,6 +68,11 @@ import { SpartanH3 } from '../../../system-wide/typography/spartan-h3/spartan-h3
 import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
+import { DocumentItem } from '../document-item/document-item';
+import { HlmSidebarService } from '@spartan-ng/helm/sidebar';
+import { DocumentDetails } from '../document-details/document-details';
+import { DocumentApi, emptyDocument } from '../../../../interfaces/documents/Document.api';
+import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
 
 @Component({
   selector: 'nexus-document-registry',
@@ -97,6 +102,8 @@ import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
     HlmButton,
     ReactiveFormsModule,
     LineLoader,
+    DocumentItem,
+    DocumentDetails,
   ],
   templateUrl: './document-registry.html',
   styleUrl: './document-registry.css',
@@ -125,6 +132,7 @@ import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 export class DocumentRegistry implements OnInit {
   private utilService = inject(UtilService);
   private staffDetService = inject(StaffDetailsService);
+  registryService = inject(RegistryService);
   genericDashboardService = inject(GenericDashboardService);
   businessFunctionService = inject(BusinessFunctionService);
   corrSubjectService = inject(CorrespondenceSubjectService);
@@ -132,11 +140,10 @@ export class DocumentRegistry implements OnInit {
   documentTypesService = inject(DocumentTypesService);
   orgUnitService = inject(OrgUnitsService);
   documentService = inject(DocumentsService);
-
-  readonly signedInStaff = this.staffDetService.data;
-
   activatedRouter = inject(ActivatedRoute);
   router = inject(Router);
+
+  readonly signedInStaff = this.staffDetService.data;
 
   directories = signal<string[]>([]);
   ngOnInit(): void {
@@ -162,7 +169,7 @@ export class DocumentRegistry implements OnInit {
       this.unitMembersService.fetchUnitMembers(staff.unit.id);
     }
 
-    this.documentService.fetchDocsByStaff(staff.id)
+    this.documentService.fetchDocsByStaff(staff.id);
   });
 
   emptyStateDataAsFistTime: EmptyStateInterface = {
@@ -192,24 +199,31 @@ export class DocumentRegistry implements OnInit {
     ],
   };
 
-  navigateToWorkspace(documentId: string) {
-    this.router.navigate(['workspace', documentId], { relativeTo: this.activatedRouter });
-  }
-
   loading = signal<boolean>(false);
+  pageLoading = this.genericDashboardService.loading;
   showLoader() {
     this.loading.set(true);
   }
-
+  showPageLoader() {
+    this.pageLoading.set(true);
+  }
   hideLoader() {
     this.loading.set(false);
   }
+  hidePageLoader() {
+    this.pageLoading.set(false);
+  }
 
   docTypes = this.documentTypesService.allDocTypes;
-  corrSubjects = this.corrSubjectService.data;
+  corrSubjects = this.corrSubjectService.corrSubjects;
   unitMembers = this.unitMembersService.data;
   orgUnits = this.orgUnitService.data;
   documents = this.documentService.staffDocuments;
+
+  documentLoadingEffect = effect(() => {
+    if (this.documentService.loading()) this.showPageLoader();
+    else this.hidePageLoader();
+  });
 
   initDocument = signal<{
     docTypeId: string;
@@ -250,7 +264,7 @@ export class DocumentRegistry implements OnInit {
     if (!this.selectedCorrSubject()) return [];
 
     return this.businessFunctionService
-      .data()
+      .bussFunctions()
       .filter((func) => func.subjectId === this.selectedCorrSubject().id);
   });
 
@@ -348,7 +362,9 @@ export class DocumentRegistry implements OnInit {
     if (error) {
       this.hideLoader();
 
-      this.utilService.showToast(error.code.httpStatusCode === 500 ? 'Internal Server Error' : error.context.message);
+      this.utilService.showToast(
+        error.code.httpStatusCode === 500 ? 'Internal Server Error' : error.context.message,
+      );
     }
   });
 
@@ -388,4 +404,11 @@ export class DocumentRegistry implements OnInit {
     const member = this.unitMembers().find((m) => m.id === id);
     return member?.fullName ?? '';
   };
+
+  documentClicked = this.registryService.documentClicked;
+  isDetailsOpen = this.registryService.isDetailsOpen;
+
+  openDocPane(doc: DocumentApi) {
+    this.registryService.openDocDetails(doc);
+  }
 }

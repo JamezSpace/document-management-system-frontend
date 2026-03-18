@@ -29,7 +29,7 @@
     type="button"
     class="nexus-button flex-center"
     hlmBtn
-    [brnAlertDialogTriggerFor]="broadcastDirectiveDialog"
+    [hlmAlertDialogTriggerFor]="broadcastDirectiveDialog"
   >
     <ng-icon name="lucideMegaphone" />
     broadcast directive
@@ -41,7 +41,7 @@
 <!-- alert dialog to broadcast directive across all unit members -->
 <hlm-alert-dialog #broadcastDirectiveDialog>
   <hlm-alert-dialog-content
-    *brnAlertDialogContent="let ctx"
+    *hlmAlertDialogPortal="let ctx"
     class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
   >
     <hlm-alert-dialog-header class="text-left">
@@ -139,7 +139,7 @@
 <hlm-alert-dialog #issueNewDirectiveDialog>
   <hlm-alert-dialog-content
     class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
-    *brnAlertDialogContent="let ctx"
+    *hlmAlertDialogPortal="let ctx"
   >
     <hlm-alert-dialog-header class="text-left">
       <nexus-spartan-h4>Issue New Directive</nexus-spartan-h4>
@@ -275,7 +275,7 @@
         <button
           hlmBtn
           size="sm"
-          [brnAlertDialogTriggerFor]="issueNewDirectiveDialog"
+          [hlmAlertDialogTriggerFor]="issueNewDirectiveDialog"
           variant="outline"
         >
           <ng-icon name="lucideZap" />

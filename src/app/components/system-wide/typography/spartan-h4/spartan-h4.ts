@@ -8,5 +8,5 @@ import { hlmH4 } from '@spartan-ng/helm/typography';
   styleUrl: './spartan-h4.css',
 })
 export class SpartanH4 {
-h4_style = hlmH4
+h4_style = hlmH4.concat(' capitalize')
 }

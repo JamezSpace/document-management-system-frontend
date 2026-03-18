@@ -2,9 +2,10 @@ import { LifecycleMetadata } from "./metadata/LifecycleMetadata.metadata";
 
 interface DocumentVersion {
     id: string;
-    document_id: string;
-	version_number: number;
-	media_id: string;
+    documentId: string;
+    contentDelta: unknown;
+	versionNumber: number;
+	mediaId: string;
 	lifecycle: LifecycleMetadata;
 }
 

@@ -26,7 +26,7 @@
     type="button"
     class="nexus-button flex-center"
     hlmBtn
-    [brnAlertDialogTriggerFor]="registerNewStaffAlertDialog"
+    [hlmAlertDialogTriggerFor]="registerNewStaffAlertDialog"
   >
     <ng-icon name="lucidePlus" />
     <span> register new staff</span>
@@ -91,7 +91,7 @@
 
 <!-- alert dialog to select new document type -->
 <hlm-alert-dialog #registerNewStaffAlertDialog>
-    <hlm-alert-dialog-content *brnAlertDialogContent="let ctx" class="min-w-[60vw]">
+    <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[60vw]">
       <hlm-alert-dialog-header>
         <nexus-spartan-h4>Register new staff</nexus-spartan-h4>
         <nexus-spartan-muted

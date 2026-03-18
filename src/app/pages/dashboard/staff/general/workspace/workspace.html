@@ -50,7 +50,7 @@
       [class.-translate-x-64]="sidebarClosed()"
     >
       <aside class="py-3.5 border-r max-w-64 bg-background">
-        <section id="metadata-section" class="px-2.5">
+        <section id="metadata-section" class="px-3">
           <div class="flex-center justify-between mb-2">
             <p class="section-descriptor">document details</p>
 
@@ -71,8 +71,9 @@
 
           <form [formGroup]="documentMetadata" [class.disabled]="!isDocmentMetadataEditable()">
             <div class="mb-2">
-              <div class="field">
-                <nexus-spartan-p> Recipient (to) </nexus-spartan-p>
+              @if (document()?.correspondence?.direction === 'external') {
+                <div class="field">
+                <nexus-spartan-p> Recipient Unit </nexus-spartan-p>
 
                 <input
                   type="text"
@@ -85,13 +86,36 @@
                 />
 
                 <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete">
-                  @for (dept of filteredDepartments(); track dept) {
+                  @for (dept of filteredUnits(); track dept) {
                     <mat-option [value]="dept.id">
-                      <span class="text-sm">{{ dept.name }}</span>
+                      <span class="text-sm">{{ dept.code }}</span>
                     </mat-option>
                   }
                 </mat-autocomplete>
               </div>
+            } @else{
+              <div class="field">
+                <nexus-spartan-p> Recipient (to) </nexus-spartan-p>
+
+                <input
+                  type="text"
+                  placeholder="Select the addressee"
+                  aria-label="Change who this internal correspondence is addressed to"
+                  formControlName="addressee"
+                  [matAutocomplete]="addresseeAuto"
+                  class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+                  (input)="updateDeptSearch($event)"
+                />
+
+                <mat-autocomplete autoActiveFirstOption #addresseeAuto="matAutocomplete">
+                  @for (unitMember of filteredUnitsMembers(); track unitMember) {
+                    <mat-option [value]="unitMember.id">
+                      <span class="text-sm">{{ unitMember.fullName }}</span>
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+              </div>
+            }
             </div>
             <!-- <div>
               <div class="field">
@@ -122,7 +146,7 @@
 
         <hlm-separator class="mt-7.5 mb-3.25" />
 
-        <section id="attachements-section" class="px-2.5">
+        <section id="attachements-section" class="px-3">
           <div class="flex-center justify-between mb-3.5">
             <p class="section-descriptor">attachments</p>
 
@@ -196,11 +220,11 @@
           }
         </section>
 
-        <hlm-separator class="my-3" />
+         <!--<hlm-separator class="my-3" />
 
         <section id="version-history" class="px-2.5">
           <p class="section-descriptor mb-1.5">version history</p>
-        </section>
+        </section> -->
       </aside>
 
       <div class="absolute top-2.5 -right-10 z-10">
