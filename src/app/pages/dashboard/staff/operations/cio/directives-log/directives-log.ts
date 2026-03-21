@@ -20,6 +20,8 @@ import { SpartanMuted } from '../../../../../../components/system-wide/typograph
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { DirectiveUi } from '../../../../../../interfaces/operations/cio/Directive.ui';
 import { DirectivesService } from '../../../../../../services/page-wide/dashboard/operations/cio/directives/directives-service';
+import { SideModal } from "../../../../../../components/dashboard-wide/shared/side-modal/side-modal";
+import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 
 @Component({
   selector: 'nexus-directives-log',
@@ -40,7 +42,8 @@ import { DirectivesService } from '../../../../../../services/page-wide/dashboar
     MatTableModule,
     MatPaginatorModule,
     DirectiveDetail,
-  ],
+    SideModal
+],
   templateUrl: './directives-log.html',
   styleUrl: './directives-log.css',
   providers: [
@@ -93,22 +96,18 @@ export class DirectivesLog implements OnInit, AfterViewInit {
     return (currentCount / expectedCount) * 100;
   }
 
-  sideNavOpened = signal<boolean>(false);
+  sideModalService = inject(SideModalService);
   directiveIdToFetchDetailsOn = signal<string>('');
   async seeDirectiveFullDetails(directiveId: string) {
     // open side nav
-    this.sideNavOpened.set(true);
+    this.sideModalService.open();
 
     this.directiveIdToFetchDetailsOn.set(directiveId);
   }
 
   closeSideNav() {
-    this.sideNavOpened.set(false);
-  }
-  closeSideNavOnBackdropClick(event: any) {
-    const elFunction = event.target.dataset.function;
-
-    if (elFunction === 'backdrop') this.closeSideNav();
+    // calling the exposed method of the side modal
+    this.sideModalService.close()
   }
 
   broadcastDirectiveDetail = signal<DirectiveUi | null>({

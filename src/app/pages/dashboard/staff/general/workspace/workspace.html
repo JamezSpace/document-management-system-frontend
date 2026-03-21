@@ -15,7 +15,7 @@
 
         <div class="">
           <nexus-spartan-muted>
-            {{ document()?.referenceNumber }}
+            {{ document()?.referenceNumber?.toLowerCase() }}
           </nexus-spartan-muted>
           <nexus-spartan-p class="text-base capitalize">
             {{ document()?.title }}
@@ -85,7 +85,7 @@
                   (input)="updateDeptSearch($event)"
                 />
 
-                <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete">
+                <mat-autocomplete autoActiveFirstOption #deptAuto="matAutocomplete" [displayWith]="showUnitLabelRatherThanId">
                   @for (dept of filteredUnits(); track dept) {
                     <mat-option [value]="dept.id">
                       <span class="text-sm">{{ dept.code }}</span>
@@ -107,10 +107,10 @@
                   (input)="updateDeptSearch($event)"
                 />
 
-                <mat-autocomplete autoActiveFirstOption #addresseeAuto="matAutocomplete">
+                <mat-autocomplete autoActiveFirstOption #addresseeAuto="matAutocomplete" [displayWith]="showStaffLabelRatherThanId">
                   @for (unitMember of filteredUnitsMembers(); track unitMember) {
-                    <mat-option [value]="unitMember.id">
-                      <span class="text-sm">{{ unitMember.fullName }}</span>
+                    <mat-option [value]="unitMember.fullName">
+                      <span class="text-sm">{{ unitMember.id }}</span>
                     </mat-option>
                   }
                 </mat-autocomplete>

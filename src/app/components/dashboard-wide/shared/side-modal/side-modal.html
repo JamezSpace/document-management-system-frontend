@@ -1,0 +1,12 @@
+<div
+  [class]="
+    !isSideNavOpened()
+      ? 'hidden'
+      : 'z-10 bg-(--brand-primary)/10' + ' fixed left-0 top-0 w-dvw h-dvh backdrop-blur-[2px]'
+  "
+  (click)="closeSideNavOnBackdropClick($event)"
+  data-function="backdrop">
+  <div class="ml-auto h-full w-[35dvw] bg-(--brand-surface) px-3.5 py-5 flex flex-col">
+    <ng-content></ng-content>
+  </div>
+</div>

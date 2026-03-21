@@ -10,6 +10,7 @@ import { LifecycleActions } from '../../../../../interfaces/documents/Document.e
 import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
 import { ErrorType } from '../../../../../interfaces/shared/Error.interface';
 import { finalize } from 'rxjs';
+import { Delta, Op } from 'quill';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,16 @@ export class DocumentsService {
   staffDocuments = signal<DocumentApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
+
+  quillEditorContent = signal<{
+    deltaContent: Delta | null;
+    textContent: string;
+    htmlContent: string;
+  }>({
+    deltaContent: null,
+    textContent: '',
+    htmlContent: '',
+  });
 
   initDocument(newDocumentPayload: InitDocumentApiPayload) {
     this.loading.set(true);
@@ -56,7 +67,18 @@ export class DocumentsService {
       .get<ApiResponse<DocumentApi>>(`${environment.api}/document/${docId}`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => this.document.set(resp.data),
+        next: (resp) => {
+            this.document.set(resp.data)
+
+            const editorDelta = resp.data.currentVersion?.contentDelta
+
+            if(editorDelta)
+                this.quillEditorContent.set({
+                    deltaContent: new Delta(editorDelta as {ops: Op[]}),
+                    htmlContent: '',
+                    textContent: ''
+                })
+        },
         error: (err) => this.error.set(err),
       });
   }

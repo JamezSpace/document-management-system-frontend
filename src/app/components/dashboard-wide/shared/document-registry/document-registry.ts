@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatSidenavModule} from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
@@ -51,7 +52,6 @@ import {
   CorrespondenceAddressee,
   SensitivityLevel,
 } from '../../../../interfaces/documents/Document.enum';
-import { DepartmentsUi } from '../../../../interfaces/org units/Department.ui';
 import { EmptyStateInterface, EmptyStateType } from '../../../../interfaces/system/EmptyState.ui';
 import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
@@ -69,14 +69,17 @@ import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 import { DocumentItem } from '../document-item/document-item';
-import { HlmSidebarService } from '@spartan-ng/helm/sidebar';
 import { DocumentDetails } from '../document-details/document-details';
-import { DocumentApi, emptyDocument } from '../../../../interfaces/documents/Document.api';
+import { DocumentApi } from '../../../../interfaces/documents/Document.api';
 import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
+import { UnitsApi } from '../../../../interfaces/org units/units.api';
+import { StaffMember } from '../../../../interfaces/users/office/staff/StaffMember.api';
+import { SideModal } from "../side-modal/side-modal";
 
 @Component({
   selector: 'nexus-document-registry',
   imports: [
+    MatSidenavModule,
     MatAutocompleteModule,
     HlmSelectImports,
     HlmComboboxImports,
@@ -104,7 +107,8 @@ import { RegistryService } from '../../../../services/page-wide/dashboard/docume
     LineLoader,
     DocumentItem,
     DocumentDetails,
-  ],
+    SideModal
+],
   templateUrl: './document-registry.html',
   styleUrl: './document-registry.css',
   providers: [
@@ -258,7 +262,6 @@ export class DocumentRegistry implements OnInit {
     this.documentDirectionSelectionDialog.close();
   }
 
-  departments = this.genericDashboardService.departments;
   selectedCorrSubject = signal<any>(null);
   filteredBussFunctions = computed(() => {
     if (!this.selectedCorrSubject()) return [];
@@ -272,19 +275,73 @@ export class DocumentRegistry implements OnInit {
     this.selectedCorrSubject.set(selectedSubject);
   }
 
-  departmentsView = signal<DepartmentsUi[]>([]);
+  unitsView = signal<UnitsApi[]>([]);
   onCategoryChange(selectedCategory: any) {
-    this.departmentsView.set(
-      this.departments().filter((dept) => dept.category === selectedCategory),
+    this.unitsView.set(
+      // that is, for the external memo, only pick out the units that belong to the selected category and are not the current unit of the staff
+      this.orgUnits().filter(
+        (unit) => unit.sector === selectedCategory && unit.id !== this.signedInStaff()?.unit.id,
+      ),
     );
 
     // disables the 'disable' state on the field
     this.initDocFormGroup.controls.to.enable({ emitEvent: false });
   }
 
+  searchUnitValue = signal<string>('');
+  updateUnitSearch(event: any) {
+    const typedWord = event.target.value;
+
+    this.searchUnitValue.set(typedWord);
+  }
+  filteredUnits = computed(() => {
+    const filterValue = this.searchUnitValue().toLowerCase();
+
+    return this.unitsView().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
+  });
+
+  searchAddresseeNameValue = signal<string>('');
+  updateAddresseeName(event: any) {
+    const typedWord = event.target.value;
+
+    this.searchAddresseeNameValue.set(typedWord);
+  }
+
+  filteredUnitMembers = computed(() => {
+    const typedValue = this.searchAddresseeNameValue().toLowerCase();
+
+    return (this.unitMembers() ?? [])
+      .filter((member) => member.fullName.toLowerCase().includes(typedValue))
+      .map((data) => {
+        const { identityId, ...uiData } = data;
+        return uiData;
+      });
+  });
+
+  showStaffLabelRatherThanId = (staffId: string) => {
+    if (!staffId) return '';
+
+    const member = this.unitMembers().find((m) => m.id === staffId);
+    return member?.fullName ?? '';
+  };
+
+  showUnitLabelRatherThanId = (unitId: string) => {
+    if (!unitId) return '';
+
+    const unit = this.orgUnits().find(unit => unit.id === unitId);
+    return unit?.code ?? '';
+  };
+
   currentYear = new Date().getFullYear();
 
-  sensitivityLevels = Object.values(SensitivityLevel);
+  sensitivityLevels = computed(() => {
+    const allSensitivityLevels = Object.values(SensitivityLevel);
+
+    return this.initDocument()?.direction === 'internal'
+      ? allSensitivityLevels.filter((level) => level !== SensitivityLevel.PUBLIC)
+      : allSensitivityLevels.filter((level) => level !== SensitivityLevel.INTERNAL);
+  });
+
   initDocFormGroup = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
     to: new FormControl<string>(
@@ -302,10 +359,13 @@ export class DocumentRegistry implements OnInit {
       nonNullable: true,
       validators: Validators.required,
     }),
-    sensitivity: new FormControl<SensitivityLevel>(SensitivityLevel.INTERNAL, {
-      nonNullable: true,
-      validators: Validators.required,
-    }),
+    sensitivity: new FormControl<SensitivityLevel>(
+      SensitivityLevel.INTERNAL || SensitivityLevel.PUBLIC,
+      {
+        nonNullable: true,
+        validators: Validators.required,
+      },
+    ),
   });
 
   submitDocInitData() {
@@ -322,14 +382,17 @@ export class DocumentRegistry implements OnInit {
       functionCode = functionCodeObject.code,
       subjectCodeId = subjectCodeObject.id,
       subjectCode = subjectCodeObject.code,
-      recipient = this.unitMembers().find((member) => member.id === recipientId),
+      direction = this.initDocument()?.direction!,
+      recipient =
+        direction === 'internal'
+          ? this.unitMembers().find((member) => member.id === recipientId)!
+          : this.orgUnits().find((unit) => unit.id === recipientId)!,
       originatingUnitId = this.signedInStaff()?.unit.id!,
       addressedTo =
-        this.initDocument()?.direction === 'internal'
-          ? CorrespondenceAddressee.UNIT
-          : CorrespondenceAddressee.EXTERNAL,
-      documentTypeId = this.initDocument()?.docTypeId!,
-      direction = this.initDocument()?.direction!;
+        direction === 'internal' ? CorrespondenceAddressee.UNIT : CorrespondenceAddressee.EXTERNAL,
+      documentTypeId = this.initDocument()?.docTypeId!;
+
+    console.log(recipientId);
 
     this.documentService.initDocument({
       title,
@@ -342,7 +405,8 @@ export class DocumentRegistry implements OnInit {
       subjectCodeId,
       sensitivity,
       originatingUnitId,
-      recipientUnitId: recipient?.unit.id!,
+      recipientUnitId:
+        direction === 'internal' ? (recipient as StaffMember).unit.id : recipient.id,
       createdBy: this.signedInStaff()?.id!,
     });
   }
@@ -367,43 +431,6 @@ export class DocumentRegistry implements OnInit {
       );
     }
   });
-
-  searchUnitValue = signal<string>('');
-  updateUnitSearch(event: any) {
-    const typedWord = event.target.value;
-
-    this.searchUnitValue.set(typedWord);
-  }
-  filteredUnits = computed(() => {
-    const filterValue = this.searchUnitValue().toLowerCase();
-
-    return this.orgUnits().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
-  });
-
-  searchAddresseeNameValue = signal<string>('');
-  updateAddresseeName(event: any) {
-    const typedWord = event.target.value;
-
-    this.searchAddresseeNameValue.set(typedWord);
-  }
-
-  filteredUnitMembers = computed(() => {
-    const typedValue = this.searchAddresseeNameValue().toLowerCase();
-
-    return (this.unitMembers() ?? [])
-      .filter((member) => member.fullName.toLowerCase().includes(typedValue))
-      .map((data) => {
-        const { identityId, ...uiData } = data;
-        return uiData;
-      });
-  });
-
-  showLabelRatherThanId = (id: string) => {
-    if (!id) return '';
-
-    const member = this.unitMembers().find((m) => m.id === id);
-    return member?.fullName ?? '';
-  };
 
   documentClicked = this.registryService.documentClicked;
   isDetailsOpen = this.registryService.isDetailsOpen;

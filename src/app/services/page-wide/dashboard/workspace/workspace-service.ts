@@ -25,4 +25,6 @@ export class WorkspaceService {
     const signalData = toSignal(data);
     if (signalData()) this.signaturePlaceholder.set(signalData()!);
   }
+
+  
 }

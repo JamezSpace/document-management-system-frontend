@@ -4,7 +4,6 @@ import { DocumentApi } from '../../../../interfaces/documents/Document.api';
 import { SpartanLarge } from "../../../system-wide/typography/spartan-large/spartan-large";
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { lucideX } from '@ng-icons/lucide';
-import { SpartanMuted } from "../../../system-wide/typography/spartan-muted/spartan-muted";
 import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
 import { SpartanP } from "../../../system-wide/typography/spartan-p/spartan-p";
 import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
@@ -12,11 +11,12 @@ import { UtilService } from '../../../../services/system-wide/util-service/util-
 import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
 import { DocumentTypesService } from '../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
 import { UnitMembersService } from '../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
+import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 
 
 @Component({
   selector: 'nexus-document-details',
-  imports: [MatTabsModule, SpartanLarge, NgIcon, SpartanMuted, SpartanP],
+  imports: [MatTabsModule, SpartanLarge, NgIcon],
   templateUrl: './document-details.html',
   styleUrl: './document-details.css',
   providers: [
@@ -25,12 +25,13 @@ import { UnitMembersService } from '../../../../services/page-wide/dashboard/doc
 })
 export class DocumentDetails {
     registryService = inject(RegistryService)
-    documentToShowFullDetails = input.required<DocumentApi>();
+    sideModalService = inject(SideModalService);
     utilService = inject(UtilService);
     bussFunctionService = inject(BusinessFunctionService);
     corrSubjectService = inject(CorrespondenceSubjectService);
     docTypesService = inject(DocumentTypesService)
     unitMembersService = inject(UnitMembersService);
+    documentToShowFullDetails = input.required<DocumentApi>();
 
     businessFuntion = computed(() => {
         const bussFunctionId = this.documentToShowFullDetails().classification.functionCodeId;
@@ -57,6 +58,8 @@ export class DocumentDetails {
     })
 
     closeDocPane() {
+        this.sideModalService.close()
+
         this.registryService.closeDocDetails()
     }
 }

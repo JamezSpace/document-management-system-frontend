@@ -15,7 +15,7 @@ export class UnitMembersService {
 
   fetchUnitMembers(unitId: string) {
   this.http
-    .get<ApiResponse<StaffMember[]>>(`${environment.api}/identity/${unitId}/staff`)
+    .get<ApiResponse<StaffMember[]>>(`${environment.api}/identity/${unitId}/staff-members`)
     .subscribe({
       next: (resp) => this.data.set(resp.data ?? []),
       error: (err) => this.error.set(err)

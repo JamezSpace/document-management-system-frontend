@@ -116,7 +116,7 @@
             <hlm-select-content>
               @for (staff of unitStaffers(); track $index) {
                 <hlm-option [value]="staff.id" class="cursor-pointer">{{
-                  staff.firstName + ' ' + staff.lastName 
+                  staff.firstName + ' ' + staff.lastName
                 }}</hlm-option>
               }
             </hlm-select-content>
@@ -161,24 +161,24 @@
           {{ broadcastDirectiveDetail()?.id }}
         </span>
         has been broadcast to
-        {{ broadcastDirectiveDetail()!.recipients[0].firstName }}.</nexus-spartan-p>
+        {{ broadcastDirectiveDetail()!.recipients[0].firstName }}.</nexus-spartan-p
+      >
 
-        <section class="p-3 border rounded-xs">
-            <article>
-                <nexus-spartan-muted class="uppercase">directive heading</nexus-spartan-muted>
-                <nexus-spartan-p>{{ broadcastDirectiveDetail()?.heading }}</nexus-spartan-p>
-            </article>
+      <section class="p-3 border rounded-xs">
+        <article>
+          <nexus-spartan-muted class="uppercase">directive heading</nexus-spartan-muted>
+          <nexus-spartan-p>{{ broadcastDirectiveDetail()?.heading }}</nexus-spartan-p>
+        </article>
 
-            <hlm-separator class="my-2.5" />
+        <hlm-separator class="my-2.5" />
 
-            <article>
-                <nexus-spartan-muted class="uppercase">urgent priority</nexus-spartan-muted>
-                <nexus-spartan-p>{{ broadcastDirectiveDetail()?.heading }}</nexus-spartan-p>
-            </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">urgent priority</nexus-spartan-muted>
+          <nexus-spartan-p>{{ broadcastDirectiveDetail()?.heading }}</nexus-spartan-p>
+        </article>
+      </section>
 
-        </section>
-
-        <button class="nexus-button outlined" (click)="ctx.close()">Noted!</button>
+      <button class="nexus-button outlined" (click)="ctx.close()">Noted!</button>
     }
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
@@ -271,27 +271,18 @@
   aria-label="Select page of directives issued"
 ></mat-paginator>
 
-<div
-  [class]="
-    !sideNavOpened()
-      ? 'hidden'
-      : 'z-10 bg-(--brand-primary)/10' + ' fixed left-0 top-0 w-dvw h-dvh backdrop-blur-[2px]'
-  "
-  (click)="closeSideNavOnBackdropClick($event)"
-  data-function="backdrop">
-  <div class="ml-auto h-full w-[35dvw] bg-(--brand-surface) px-3.5 py-5 flex flex-col">
-    <header class="px-1.5 shrink-0">
-      <button
-        class="block w-fit ml-auto text-neutral-500 hover:text-neutral-950"
-        type="button"
-        (click)="closeSideNav()"
-      >
-        <ng-icon name="lucideXCircle" size="1.2rem" />
-      </button>
-    </header>
-    <nexus-directive-detail
-      class="flex flex-col flex-1"
-      [directiveId]="directiveIdToFetchDetailsOn()"
-    />
-  </div>
-</div>
+<nexus-side-modal>
+  <header class="px-1.5 shrink-0">
+    <button
+      class="block w-fit ml-auto text-neutral-500 hover:text-neutral-950"
+      type="button"
+      (click)="closeSideNav()"
+    >
+      <ng-icon name="lucideXCircle" size="1.2rem" />
+    </button>
+  </header>
+  <nexus-directive-detail
+    class="flex flex-col flex-1"
+    [directiveId]="directiveIdToFetchDetailsOn()"
+  />
+</nexus-side-modal>

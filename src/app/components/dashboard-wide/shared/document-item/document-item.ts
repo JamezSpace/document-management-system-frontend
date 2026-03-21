@@ -9,6 +9,7 @@ import { UtilService } from '../../../../services/system-wide/util-service/util-
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
 import { ActivatedRoute } from '@angular/router';
+import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 
 @Component({
   selector: 'nexus-document-item',
@@ -18,16 +19,19 @@ import { ActivatedRoute } from '@angular/router';
   providers: [provideIcons({ lucideMoreVertical, hugeFile02 })],
 })
 export class DocumentItem {
-    private activatedRouter = inject(ActivatedRoute);
+  private activatedRouter = inject(ActivatedRoute);
   documentItem = input.required<DocumentApi>();
   utilService = inject(UtilService);
   registryService = inject(RegistryService);
+  sideModalService = inject(SideModalService);
 
   openDocPane() {
     this.registryService.openDocDetails(this.documentItem());
+
+    this.sideModalService.open()
   }
 
   openWorkspaceEditor() {
-    this.registryService.navigateToWorkspace(this.activatedRouter, this.documentItem().id)
+    this.registryService.navigateToWorkspace(this.activatedRouter, this.documentItem().id);
   }
 }

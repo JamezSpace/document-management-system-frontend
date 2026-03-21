@@ -1,0 +1,6 @@
+.descriptor {
+    font-size: 12px;
+    text-transform: capitalize;
+    color: var(--color-muted-foreground);
+    margin-bottom: 3.5px;
+}

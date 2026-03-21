@@ -1,4 +1,4 @@
-<section class="px-3 py-3 button-box-shadow rounded-xs">
+<section class="h-max">
   <article class="flex-center justify-between mb-3.5">
     <nexus-spartan-large class="capitalize">{{
       documentToShowFullDetails().title
@@ -14,69 +14,89 @@
   </article>
   <mat-tab-group>
     <mat-tab label="Details">
-      <section class="py-1">
+      <section class="pt-5">
         <!-- direction -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">recipient category</nexus-spartan-muted>
-          <nexus-spartan-p class="capitalize">
+          <span class="descriptor">recipient category</span>
+          <p class="capitalize">
             {{ documentToShowFullDetails().correspondence.direction }}
-          </nexus-spartan-p>
+          </p>
         </article>
 
         <!-- recipient -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">addressed to</nexus-spartan-muted>
-          <nexus-spartan-p class="capitalize">
+          <span class="descriptor">addressed to</span>
+          <p class="capitalize">
             {{ addressedTo() }}
-          </nexus-spartan-p>
+          </p>
         </article>
 
         <!-- type -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">correspondence type</nexus-spartan-muted>
-          <nexus-spartan-p class="capitalize">
+          <span class="descriptor">correspondence type</span>
+          <p>
             {{ docType()?.name ?? '--' }}
-          </nexus-spartan-p>
+          </p>
         </article>
 
         <!-- correspondence subject -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">correspondence subject</nexus-spartan-muted>
-          <nexus-spartan-p>
+          <span class="descriptor">correspondence subject</span>
+          <p>
             {{ corrService()?.name ?? '--' }}
-          </nexus-spartan-p>
+          </p>
         </article>
 
         <!-- business function -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">business function</nexus-spartan-muted>
-          <nexus-spartan-p>
+          <span class="descriptor">business function</span>
+          <p>
             {{ businessFuntion()?.name ?? '--' }}
-          </nexus-spartan-p>
+          </p>
         </article>
 
         <!-- created at -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">created at</nexus-spartan-muted>
-          <nexus-spartan-p>
+          <span class="descriptor">created at</span>
+          <p>
             {{ utilService.formatDateAsReadableString(documentToShowFullDetails().createdAt) }}
-          </nexus-spartan-p>
+          </p>
         </article>
 
         <!-- last updated at -->
         <article class="mb-2">
-          <nexus-spartan-muted class="capitalize">last modified at</nexus-spartan-muted>
-          <nexus-spartan-p>
+          <span class="descriptor">last modified at</span>
+          <p>
             @if (documentToShowFullDetails().updatedAt; as updatedDate) {
               {{ utilService.formatDateAsReadableString(updatedDate) }}
             } @else {
               <i>not experienced modification</i>
             }
-          </nexus-spartan-p>
+          </p>
         </article>
       </section>
     </mat-tab>
 
-    <mat-tab label="Activity"></mat-tab>
+    <mat-tab label="Activity">
+        <section class="pt-5">
+        @if (documentToShowFullDetails().currentVersion; as version) {
+            <ul>
+                <li>
+                    <p>Correspondence is currently in {{ version.lifecycle.currentState.toUpperCase() }} state, entered this state at {{ utilService.formatDateAsReadableString(version.lifecycle.stateEnteredAt) }}.</p>
+                </li>
+            </ul>
+
+            @if (version.lifecycle.currentState.toLowerCase() === 'draft') {
+                <p class="text-xs font-medium mt-5">
+                    Correspondence hasn't been submited yet for approval.
+                </p>
+            }
+        } @else {
+            <p class="text-xs font-medium text-(--brand-accent-shade-2)">
+                Correspondence has no content!
+            </p>
+        }
+        </section>
+    </mat-tab>
   </mat-tab-group>
 </section>

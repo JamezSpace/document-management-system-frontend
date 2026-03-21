@@ -98,12 +98,13 @@ export class Workspace implements OnInit {
   genericDashboardService = inject(GenericDashboardService);
 
   readonly signedInStaff = this.staffDetailsService.data;
+  document = this.documentService.document;
 
   sidebarClosed = signal<boolean>(false);
   isDocmentMetadataEditable = signal<boolean>(false);
 
   goToPreviousLocation() {
-    this.location.back();
+    this.router.navigateByUrl('/office/documents')
   }
 
   ngOnInit(): void {
@@ -119,23 +120,14 @@ export class Workspace implements OnInit {
     // user refreshes a stale page
     const isThereAJustInitializedDocument = this.documentService.document();
 
-    if (!isThereAJustInitializedDocument) {
-      // get docId from param
+    const doc = this.documentService.document();
+
+    if (!doc) {
       const segments = this.activatedRoute.snapshot.url;
       const docId = segments[segments.length - 1].path;
 
       this.documentService.fetchDocById(docId);
-
-      // returning here leaves the workspaceInitEffect in charge of fetching all necessary items
-      return;
     }
-
-    const typeId = this.documentService.document()!.classification.documentTypeId;
-
-    if (!this.docTypesService.docType()) this.docTypesService.fetchDocTypeById(typeId);
-
-    // that is, user is coming from the registry so, document exists already
-    this.document = this.documentService.document;
   }
 
   private workspaceInitEffect = effect(() => {
@@ -152,13 +144,15 @@ export class Workspace implements OnInit {
     const typeId = this.documentService.document()!.classification.documentTypeId;
 
     if (!this.docTypesService.docType()) this.docTypesService.fetchDocTypeById(typeId);
-
-    this.document = this.documentService.document;
   });
 
   private effectRunsOnlyNecessarySecondaryItems = effect(() => {
-    // at this point, it is assured the staff exists
-    const staffUnit = this.signedInStaff()?.unit!;
+      const doc = this.document();
+    const staff = this.signedInStaff();
+
+  if (!doc || !staff) return;
+
+  const staffUnit = staff.unit;
 
     if (this.document()?.correspondence.direction === 'internal') {
       // ensure unit members are fetched if it doesnt pre-exist
@@ -171,16 +165,16 @@ export class Workspace implements OnInit {
 
   isMobile = this.utilService.isMobile;
   documentType = this.docTypesService.docType;
-  document!: WritableSignal<DocumentApi | null>;
 
   memoDocument = computed(() => {
     const doc = this.document();
+    const type = this.documentType();
 
-    return this.documentType()?.code === 'memo' && doc ? doc : null;
+    return type?.code === 'memo' && doc ? doc : null;
   });
 
   units = this.unitService.data;
-  unitsMembers = this.unitMembersService.data;
+  unitMembers = this.unitMembersService.data;
   academicUnits = computed(() =>
     this.units().filter((unit) => unit.sector === OrgUnitCategory.ACADEMIC),
   );
@@ -188,7 +182,19 @@ export class Workspace implements OnInit {
     this.units().filter((unit) => unit.sector === OrgUnitCategory.NON_ACADEMIC),
   );
 
-  //   correspondenceVolumes = this.genericDashboardService.correspondenceVolumes;
+  showStaffLabelRatherThanId = (staffId: string) => {
+    if (!staffId) return '';
+
+    const member = this.unitMembers().find((m) => m.id === staffId);
+    return member?.fullName ?? '';
+  };
+
+  showUnitLabelRatherThanId = (unitId: string) => {
+    if (!unitId) return '';
+
+    const unit = this.units().find(unit => unit.id === unitId);
+    return unit?.code ?? '';
+  };
 
   fileUploaded = signal<File | null>(null);
   onUploadAttachment(event: any) {
@@ -221,7 +227,7 @@ export class Workspace implements OnInit {
   filteredUnitsMembers = computed(() => {
     const filterValue = this.searchUnitMemberValue().toLowerCase();
 
-    return this.unitsMembers().filter((unitMember) =>
+    return this.unitMembers().filter((unitMember) =>
       unitMember.fullName.toLowerCase().includes(filterValue),
     );
   });
@@ -293,7 +299,7 @@ export class Workspace implements OnInit {
   }
 
   retrieveEditorContentsAsSpecificType(desiredType: 'delta' | 'text' | 'html') {
-    const quillEditorContent = this.genericDashboardService.quillEditorContent();
+    const quillEditorContent = this.documentService.quillEditorContent();
 
     if (desiredType === 'delta') return quillEditorContent.deltaContent;
     else if (desiredType === 'html') return quillEditorContent.htmlContent;
@@ -304,7 +310,7 @@ export class Workspace implements OnInit {
 
   signaturePlaceholder = this.workspaceService.signaturePlaceholder;
   scanForSignaturePlaceholderAndReturnBounds(): SignatureBounds {
-    const editorContentText = this.genericDashboardService.quillEditorContent().textContent;
+    const editorContentText = this.documentService.quillEditorContent().textContent;
 
     const signaturePlaceholderFormat = this.signaturePlaceholder().format;
 

@@ -118,30 +118,19 @@
 
 <hlm-separator class="my-4" />
 
-<div
-  class="grid transition-all duration-300 ease-in-out"
-  [style.gridTemplateColumns]="
-    isDetailsOpen() ? '0.6fr 0.4fr' : '1fr 0fr'"
->
-  <section class="flex items-start flex-wrap w-full gap-3.5 overflow-hidden p-px min-w-0">
-    @for (doc of documents(); track doc.id) {
-      <nexus-document-item
-        [documentItem]="doc"
-        class="flex-1 max-w-56"
-      />
-    } @empty {
-      <section class="flex-center justify-center">
-        <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
-      </section>
-    }
-  </section>
-  <nexus-document-details
-    class="min-w-0 overflow-hidden transition-all duration-300 p-px h-vh"
-    [class.opacity-0]="!isDetailsOpen()"
-    [class.opacity-100]="isDetailsOpen()"
-    [documentToShowFullDetails]="documentClicked()"
-  />
-</div>
+<section class="flex items-start flex-wrap w-full gap-3.5 overflow-hidden p-px" [class.justify-center]="documents().length !== 0">
+  @for (doc of documents(); track doc.id) {
+    <nexus-document-item [documentItem]="doc" class="flex-1 max-w-56" />
+  } @empty {
+    <section class="flex-center justify-center">
+      <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
+    </section>
+  }
+</section>
+
+<nexus-side-modal>
+  <nexus-document-details [documentToShowFullDetails]="documentClicked()" />
+</nexus-side-modal>
 
 <!-- alert dialog to select new document type -->
 <hlm-alert-dialog #documentTypeSelectionDialog>
@@ -228,7 +217,7 @@
     <section class="gap-4 p-6" [class.pt-2]="loading()">
       <hlm-alert-dialog-header>
         <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
-        <nexus-spartan-muted>
+        <nexus-spartan-muted class="capitalize">
           {{ initDocument()!.direction }} {{ initDocument()!.docType }} Workflow •
           {{ currentYear }} Session
         </nexus-spartan-muted>
@@ -248,7 +237,7 @@
         </div>
 
         @if (initDocument()?.direction === 'external') {
-          <div class="row flex-center gap-3.5">
+          <div class="row flex-center gap-2">
             <div class="field in-dashboard">
               <label for="categorySelect">Unit Category</label>
               <brn-select
@@ -256,7 +245,7 @@
                 placeholder="Select an option"
                 (valueChange)="onCategoryChange($event)"
               >
-                <hlm-select-trigger class="w-56">
+                <hlm-select-trigger class="w-48">
                   <hlm-select-value />
                 </hlm-select-trigger>
                 <hlm-select-content>
@@ -280,9 +269,13 @@
                 (input)="updateUnitSearch($event)"
               />
 
-              <mat-autocomplete autoActiveFirstOption #unitAuto="matAutocomplete">
+              <mat-autocomplete
+                autoActiveFirstOption
+                #unitAuto="matAutocomplete"
+                [displayWith]="showUnitLabelRatherThanId"
+              >
                 @for (unit of filteredUnits(); track unit) {
-                  <mat-option [value]="`${unit.code} - ${unit.fullName}`">
+                  <mat-option [value]="unit.id">
                     <span class="text-sm">{{ unit.fullName }}</span>
                   </mat-option>
                 }
@@ -312,7 +305,7 @@
                 autoActiveFirstOption
                 requireSelection
                 #addresseeAutoComplete="matAutocomplete"
-                [displayWith]="showLabelRatherThanId"
+                [displayWith]="showStaffLabelRatherThanId"
               >
                 @for (addressee of filteredUnitMembers(); track addressee.id) {
                   <mat-option [value]="addressee.id">
@@ -377,7 +370,7 @@
                 <hlm-select-value />
               </hlm-select-trigger>
               <hlm-select-content>
-                @for (sensitivityLevel of sensitivityLevels; track $index) {
+                @for (sensitivityLevel of sensitivityLevels(); track $index) {
                   <hlm-option [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-option>
                 }
               </hlm-select-content>
