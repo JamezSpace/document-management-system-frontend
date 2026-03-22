@@ -118,11 +118,11 @@
 
 <hlm-separator class="my-4" />
 
-<section class="flex items-start flex-wrap w-full gap-3.5 overflow-hidden p-px" [class.justify-center]="documents().length !== 0">
-  @for (doc of documents(); track doc.id) {
+<section class="flex items-start flex-wrap w-full gap-3.5 p-px">
+  @for (doc of filteredDocuments(); track doc.id) {
     <nexus-document-item [documentItem]="doc" class="flex-1 max-w-56" />
   } @empty {
-    <section class="flex-center justify-center">
+    <section class="w-full flex-center justify-center">
       <nexus-empty-state [stateData]="emptyStateDataAsFistTime" />
     </section>
   }

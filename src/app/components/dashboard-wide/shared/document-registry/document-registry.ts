@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
@@ -74,7 +74,8 @@ import { DocumentApi } from '../../../../interfaces/documents/Document.api';
 import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
 import { UnitsApi } from '../../../../interfaces/org units/units.api';
 import { StaffMember } from '../../../../interfaces/users/office/staff/StaffMember.api';
-import { SideModal } from "../side-modal/side-modal";
+import { SideModal } from '../side-modal/side-modal';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'nexus-document-registry',
@@ -107,8 +108,8 @@ import { SideModal } from "../side-modal/side-modal";
     LineLoader,
     DocumentItem,
     DocumentDetails,
-    SideModal
-],
+    SideModal,
+  ],
   templateUrl: './document-registry.html',
   styleUrl: './document-registry.css',
   providers: [
@@ -148,6 +149,9 @@ export class DocumentRegistry implements OnInit {
   router = inject(Router);
 
   readonly signedInStaff = this.staffDetService.data;
+
+  private queryParams = toSignal(this.activatedRouter.queryParamMap);
+  viewMode = computed(() => this.queryParams()?.get('view'));
 
   directories = signal<string[]>([]);
   ngOnInit(): void {
@@ -223,6 +227,21 @@ export class DocumentRegistry implements OnInit {
   unitMembers = this.unitMembersService.data;
   orgUnits = this.orgUnitService.data;
   documents = this.documentService.staffDocuments;
+  //   documents = signal<DocumentApi[]>([]);
+
+  filteredDocuments = computed(() => {
+    const mode = this.viewMode();
+    const docs = this.documents();
+
+    switch (mode) {
+        case 'draft':
+            return docs.filter((doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() === 'draft');
+        case null:
+            return docs;
+        default:
+            return []
+    }
+  });
 
   documentLoadingEffect = effect(() => {
     if (this.documentService.loading()) this.showPageLoader();
@@ -328,7 +347,7 @@ export class DocumentRegistry implements OnInit {
   showUnitLabelRatherThanId = (unitId: string) => {
     if (!unitId) return '';
 
-    const unit = this.orgUnits().find(unit => unit.id === unitId);
+    const unit = this.orgUnits().find((unit) => unit.id === unitId);
     return unit?.code ?? '';
   };
 
@@ -405,8 +424,7 @@ export class DocumentRegistry implements OnInit {
       subjectCodeId,
       sensitivity,
       originatingUnitId,
-      recipientUnitId:
-        direction === 'internal' ? (recipient as StaffMember).unit.id : recipient.id,
+      recipientUnitId: direction === 'internal' ? (recipient as StaffMember).unit.id : recipient.id,
       createdBy: this.signedInStaff()?.id!,
     });
   }

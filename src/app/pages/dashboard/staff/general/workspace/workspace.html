@@ -37,6 +37,8 @@
       </button>
     </div>
   </section>
+
+  <!-- loader -->
   <div class="relative" [class.hidden]="!workspaceLoading()">
     <p class="opacity-0">.</p>
     <nexus-line-loader />
@@ -242,6 +244,8 @@
     </div>
 
     <div class="w-full relative">
+        
+        <!-- paper controls -->
       <div class="flex-center absolute right-3.5 top-2.5 z-5">
         <button
           (click)="zoomOut()"
@@ -263,32 +267,30 @@
         (mouseenter)="onMouseEnter()"
         (mouseleave)="onMouseLeave()"
       >
-        <div class="paper-actions" [class.visible]="paperViewControls()">
-          <button
-            hlmBtn
-            variant="outline"
-            size="sm"
-            [hlmDropdownMenuTrigger]="dropdownMenu"
-            aria-label="Print preview actions"
-          >
-            ⋯
-          </button>
-        </div>
-
         <ng-template #dropdownMenu>
           <hlm-dropdown-menu>
             <button hlmDropdownMenuItem (click)="exitPreview()">
               <span>Quit Preview Mode</span>
-              <hlm-dropdown-menu-shortcut>Esc</hlm-dropdown-menu-shortcut>
+              <kbd hlmKbd>Esc</kbd>
             </button>
           </hlm-dropdown-menu>
         </ng-template>
 
         <article
           id="paper"
-          class="rounded-xs origin-top-center"
+          class="rounded-xs origin-top-center relative"
           [style.transform]="canvasTransform()"
         >
+            <div class="paper-actions" [class.visible]="paperViewControls()">
+          <button
+            class="flex-center p-2 rounded-full bg-muted-foreground/5"
+            [hlmDropdownMenuTrigger]="dropdownMenu"
+            aria-label="Print preview actions"
+          >
+            <ng-icon name="lucideGripVertical" />
+          </button>
+        </div>
+
           @if (memoDocument(); as doc) {
             <nexus-memo-template [documentToRender]="doc" />
           }

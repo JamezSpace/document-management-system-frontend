@@ -4,9 +4,9 @@ import {
   effect,
   ElementRef,
   inject,
+  OnDestroy,
   signal,
   viewChild,
-  ViewChild,
 } from '@angular/core';
 import Quill from 'quill';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -25,12 +25,13 @@ import { DocumentsService } from '../../../services/page-wide/dashboard/generic/
     }),
   ],
 })
-export class MemoBodyEditor implements AfterViewInit {
+export class MemoBodyEditor implements AfterViewInit, OnDestroy {
   documentService = inject(DocumentsService);
 
   quillEditor = viewChild<ElementRef<HTMLDivElement>>('editor');
   quill = signal<Quill | null>(null);
   editorLocked = signal<boolean>(false);
+  private saveTimer: any;
 
   ngAfterViewInit(): void {
     const quillElement = this.quillEditor()?.nativeElement;
@@ -47,15 +48,30 @@ export class MemoBodyEditor implements AfterViewInit {
 
     // Listen for changes
     quillInstance.on('text-change', (delta, oldDelta, source) => {
-    if (source !== 'user') return;
+      if (source !== 'user') return;
 
-      this.documentService.quillEditorContent.set({
-        deltaContent: quillInstance.getContents(),
-        textContent: quillInstance.getText(),
-        htmlContent: quillInstance.getSemanticHTML(),
-      });
+      // this clears the previous timer every time a key is pressed
+      if (this.saveTimer) {
+        clearTimeout(this.saveTimer);
+      }
+
+      this.saveTimer = setTimeout(() => {
+        this.documentService.quillEditorContent.set({
+          deltaContent: quillInstance.getContents(),
+          textContent: quillInstance.getText(),
+          htmlContent: quillInstance.getSemanticHTML(),
+        });
+      }, 500);
     });
   }
+
+  ngOnDestroy(): void {
+    if (this.saveTimer) {
+      clearTimeout(this.saveTimer);
+      // Manually trigger the service update here if needed
+    }
+  }
+
   private memoEditorContentEffect = effect(() => {
     const quill = this.quill();
 
@@ -63,8 +79,9 @@ export class MemoBodyEditor implements AfterViewInit {
 
     if (quill && savedContent.deltaContent) {
       const currentContents = quill.getContents();
+
       if (JSON.stringify(currentContents) !== JSON.stringify(savedContent.deltaContent)) {
-        quill.setContents(savedContent.deltaContent, 'silent');
+        quill.setContents(savedContent.deltaContent, 'user');
       }
     }
   });

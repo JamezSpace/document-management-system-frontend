@@ -16,6 +16,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideArrowLeft,
   lucideFile,
+  lucideGripVertical,
   lucideLock,
   lucideLockOpen,
   lucidePanelLeftClose,
@@ -43,7 +44,7 @@ import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum'
 import { DocumentsService } from '../../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DocumentApi } from '../../../../../interfaces/documents/Document.api';
+import { HlmKbdImports } from '@spartan-ng/helm/kbd';
 import { UnitMembersService } from '../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
 import { OrgUnitsService } from '../../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
 import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
@@ -64,6 +65,7 @@ import { StaffDetailsService } from '../../../../../services/page-wide/dashboard
     HlmButtonImports,
     HlmSelectImports,
     HlmDropdownMenuImports,
+    HlmKbdImports
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
@@ -80,6 +82,7 @@ import { StaffDetailsService } from '../../../../../services/page-wide/dashboard
       lucideLockOpen,
       lucideZoomIn,
       lucideZoomOut,
+      lucideGripVertical
     }),
   ],
 })
@@ -264,6 +267,9 @@ export class Workspace implements OnInit {
 
     // retrieve content as html
     const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
+
+    console.log(htmlContent);
+    
 
     this.editorHtmlContent.set(htmlContent);
 

@@ -108,6 +108,9 @@
       ],
       "@spartan-ng/helm/utils": [
         "./libs/ui/utils/src/index.ts"
+      ],
+      "@spartan-ng/helm/kbd": [
+        "./libs/ui/kbd/src/index.ts"
       ]
     }
   },
