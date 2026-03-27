@@ -22,12 +22,6 @@
       "@spartan-ng/helm/breadcrumb": [
         "./libs/ui/breadcrumb/src/index.ts"
       ],
-      "@spartan-ng/helm/button": [
-        "./libs/ui/button/src/index.ts"
-      ],
-      "@spartan-ng/helm/button-group": [
-        "./libs/ui/button-group/src/index.ts"
-      ],
       "@spartan-ng/helm/card": [
         "./libs/ui/card/src/index.ts"
       ],
@@ -111,6 +105,12 @@
       ],
       "@spartan-ng/helm/kbd": [
         "./libs/ui/kbd/src/index.ts"
+      ],
+      "@spartan-ng/helm/button": [
+        "./libs/ui/button/src/index.ts"
+      ],
+      "@spartan-ng/helm/button-group": [
+        "./libs/ui/button-group/src/index.ts"
       ]
     }
   },
