@@ -96,122 +96,180 @@ export class DashboardOfficeTemplate implements OnInit {
     this.staffDetailsService.fetchStaffDetailsForLogin();    
   }
 
-  navItems: NavBarItem[] = [
-    {
-      icon: 'lucideLayoutDashboard',
-      label: 'work overview',
-      route: 'overview',
-      subMenuExists: false,
-      group: NavGroup.GENERAL,
-    },
-    {
-      icon: 'lucideFileLock',
-      label: 'documents',
-      route: 'documents',
-      group: NavGroup.GENERAL,
-      defaultOpen: false,
-      subMenuExists: true,
-      subMenus: [
-        { label: 'My Drafts', route: { view: 'draft' } },
-        { label: 'Submitted / In Progress', route: { view: 'in-progress' } },
-        { label: 'Shared With Me', route: { view: 'shared' } },
-      ],
-    },
-    {
-      icon: 'lucideBell',
-      label: 'Notices',
-      route: 'notices',
-      subMenuExists: false,
-      group: NavGroup.GENERAL,
-    },
-    {
-      icon: 'lucideCheckSquare',
-      label: 'My Assignments',
-      route: 'operations/tasks',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    // Add these to the NavGroup.OPERATIONS for the CIO role
-    {
-      icon: 'lucideZap', // Represents immediate action/directives
-      label: 'Unit Control',
-      route: 'operations/unit-control',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    {
-      icon: 'lucideClipboardList', // Represents the log of official orders
-      label: 'Directives Log',
-      route: 'operations/directives',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    {
-      icon: 'lucideHardHat', // Represents the industrial/technical workforce
-      label: 'Technical Team',
-      route: 'operations/team-ops',
-      subMenuExists: true,
-      group: NavGroup.OPERATIONS,
-      subMenus: [
-        { label: 'Shift Roster', route: { view: 'roster' } },
-        { label: 'Performance Analytics', route: { view: 'analytics' } },
-      ],
-    },
-    {
-      icon: 'lucidePackageSearch', // Represents industrial equipment and requisitions
-      label: 'Equipment & Vault',
-      route: 'operations/inventory',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    {
-      icon: 'lucideServer',
-      label: 'Student IT Portal',
-      leadsToExternalService: true,
-      route: 'https://studentit.itcc.edu.ng',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    // Add these to your navItems array for an HR role
-    {
-      icon: 'lucideUsers',
-      label: 'Staff Records',
-      route: 'operations/staff',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-      //   subMenus: [
-      //     { label: 'Academic Staff', route: { view: 'academic' } },
-      //     { label: 'Non-Academic Staff', route: { view: 'non-academic' } },
-      //   ],
-    },
-    {
-      icon: 'lucideAward',
-      label: 'A&P Exercises', // Appointments & Promotions
-      route: 'promotions',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    {
-      icon: 'lucideCalendarCheck',
-      label: 'Leave Management',
-      route: 'leave',
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-    {
-      icon: 'lucideBriefcase',
-      label: 'Establishment',
-      route: 'establishment',
-      leadsToExternalService: false,
-      subMenuExists: false,
-      group: NavGroup.OPERATIONS,
-    },
-  ];
+//   navItems: NavBarItem[] = [
+//     {
+//       icon: 'lucideLayoutDashboard',
+//       label: 'work overview',
+//       route: 'overview',
+//       subMenuExists: false,
+//       group: NavGroup.GENERAL,
+//     },
+//     {
+//       icon: 'lucideFileLock',
+//       label: 'documents',
+//       route: 'documents',
+//       group: NavGroup.GENERAL,
+//       defaultOpen: false,
+//       subMenuExists: true,
+//       subMenus: [
+//         { label: 'My Drafts', route: { view: 'draft' } },
+//         { label: 'Submitted / In Progress', route: { view: 'in-progress' } },
+//         { label: 'Shared With Me', route: { view: 'shared' } },
+//       ],
+//     },
+//     {
+//       icon: 'lucideBell',
+//       label: 'Notices',
+//       route: 'notices',
+//       subMenuExists: false,
+//       group: NavGroup.GENERAL,
+//     },
+//     {
+//       icon: 'lucideCheckSquare',
+//       label: 'My Assignments',
+//       route: 'operations/tasks',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     // Add these to the NavGroup.OPERATIONS for the CIO role
+//     {
+//       icon: 'lucideZap', // Represents immediate action/directives
+//       label: 'Unit Control',
+//       route: 'operations/unit-control',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     {
+//       icon: 'lucideClipboardList', // Represents the log of official orders
+//       label: 'Directives Log',
+//       route: 'operations/directives',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     {
+//       icon: 'lucideHardHat', // Represents the industrial/technical workforce
+//       label: 'Technical Team',
+//       route: 'operations/team-ops',
+//       subMenuExists: true,
+//       group: NavGroup.OPERATIONS,
+//       subMenus: [
+//         { label: 'Shift Roster', route: { view: 'roster' } },
+//         { label: 'Performance Analytics', route: { view: 'analytics' } },
+//       ],
+//     },
+//     {
+//       icon: 'lucidePackageSearch', // Represents industrial equipment and requisitions
+//       label: 'Equipment & Vault',
+//       route: 'operations/inventory',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     {
+//       icon: 'lucideServer',
+//       label: 'Student IT Portal',
+//       leadsToExternalService: true,
+//       route: 'https://studentit.itcc.edu.ng',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     // Add these to your navItems array for an HR role
+//     {
+//       icon: 'lucideUsers',
+//       label: 'Staff Records',
+//       route: 'operations/staff',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//       //   subMenus: [
+//       //     { label: 'Academic Staff', route: { view: 'academic' } },
+//       //     { label: 'Non-Academic Staff', route: { view: 'non-academic' } },
+//       //   ],
+//     },
+//     {
+//       icon: 'lucideAward',
+//       label: 'A&P Exercises', // Appointments & Promotions
+//       route: 'promotions',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     {
+//       icon: 'lucideCalendarCheck',
+//       label: 'Leave Management',
+//       route: 'leave',
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//     {
+//       icon: 'lucideBriefcase',
+//       label: 'Establishment',
+//       route: 'establishment',
+//       leadsToExternalService: false,
+//       subMenuExists: false,
+//       group: NavGroup.OPERATIONS,
+//     },
+//   ];
+
+  private NAV_REGISTRY: NavBarItem[] = [
+  {
+    icon: 'lucideLayoutDashboard',
+    label: 'work overview',
+    route: 'overview',
+    subMenuExists: false,
+    group: NavGroup.GENERAL,
+    requiredCapability: 'VIEW_OVERVIEW'
+  },
+  {
+    icon: 'lucideFileLock',
+    label: 'documents',
+    route: 'documents',
+    group: NavGroup.GENERAL,
+    subMenuExists: true,
+    requiredCapability: 'VIEW_DOCUMENTS',
+    subMenus: [
+      {
+        label: 'My Drafts',
+        route: { view: 'draft' },
+        requiredCapability: 'VIEW_DOCUMENTS'
+      },
+      {
+        label: 'Submitted / In Progress',
+        route: { view: 'in-progress' },
+        requiredCapability: 'VIEW_DOCUMENTS'
+      },
+      {
+        label: 'Shared With Me',
+        route: { view: 'shared' },
+        requiredCapability: 'VIEW_SHARED_DOCS'
+      }
+    ]
+  },
+  {
+    icon: 'lucideServer',
+    label: 'Student IT Portal',
+    route: 'https://studentit.itcc.edu.ng',
+    subMenuExists: false,
+    group: NavGroup.OPERATIONS,
+    leadsToExternalService: true,
+    requiredCapability: 'ACCESS_STUDENT_PORTAL'
+  }
+];
+
+ navItems = computed(() =>
+  this.NAV_REGISTRY
+    .filter(item =>
+      this.authService.hasCapability(item.requiredCapability)
+    )
+    .map(item => ({
+      ...item,
+      subMenus: item.subMenus?.filter(sub =>
+        this.authService.hasCapability(sub.requiredCapability)
+      )
+    }))
+);
 
   groupedNavItems = computed(() => {
     const groups = new Map<string, NavBarItem[]>();
 
-    for (const item of this.navItems) {
+    for (const item of this.navItems()) {
       if (!groups.has(item.group)) {
         groups.set(item.group, []);
       }

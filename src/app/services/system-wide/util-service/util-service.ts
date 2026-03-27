@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map } from 'rxjs';
 import { ErrorToast } from '../../../components/system-wide/toast/error-toast/error-toast';
+import { NotifToast } from '../../../components/system-wide/toast/notif-toast/notif-toast';
 
 @Injectable({
   providedIn: 'root',
@@ -20,19 +21,29 @@ export class UtilService {
     { initialValue: false },
   );
 
-  showToast(errorMsg: string) {
-    this.snackBar.openFromComponent(ErrorToast, {
-      duration: 5000,
-      data: {
-        errorMessage: errorMsg,
-      },
-      horizontalPosition: 'end',
-      verticalPosition: 'bottom',
-    });
+  showToast(type: 'error' | 'info', message: string) {
+    if (type === 'error')
+      this.snackBar.openFromComponent(ErrorToast, {
+        duration: 5000,
+        data: {
+          errorMessage: message,
+        },
+        horizontalPosition: 'end',
+        verticalPosition: 'bottom',
+      });
+    else
+      this.snackBar.openFromComponent(NotifToast, {
+        duration: 5000,
+        data: {
+          message: message,
+        },
+        horizontalPosition: 'end',
+        verticalPosition: 'bottom',
+      });
   }
 
   formatDateAsReadableString(dateString: string | Date | null) {
-    if(!dateString) return ''
+    if (!dateString) return '';
 
     const date = new Date(dateString);
 

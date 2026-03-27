@@ -5,7 +5,7 @@
       <button
         type="button"
         class="p-1 border border-border flex-center justify-center rounded-xs hover:bg-border bg-muted"
-        (click)="goToPreviousLocation()"
+        (click)="goToDocOverviewPage()"
       >
         <ng-icon name="lucideArrowLeft" hlm size="sm" />
       </button>
@@ -29,11 +29,11 @@
         preview
       </button>
       <button type="button" class="nexus-button flex-center gap-2.5 scale-90" (click)="saveDocument()">
-        <ng-icon name="lucideSave" />
         <span>Save</span>
       </button>
-      <button type="button" class="p-2.5 flex-center justify-center rounded-full hover:bg-border">
-        <ng-icon name="lucideUserRound" />
+      <button type="button" class="nexus-button flex-center gap-1.5 scale-90" (click)="submitDocument()">
+        <ng-icon name="lucideSave" />
+        Submit to Registry
       </button>
     </div>
   </section>

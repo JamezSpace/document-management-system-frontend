@@ -3,7 +3,6 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import {
   DocumentApi,
-  emptyDocument,
   InitDocumentApiPayload,
 } from '../../../../../interfaces/documents/Document.api';
 import { LifecycleActions } from '../../../../../interfaces/documents/Document.enum';
@@ -11,12 +10,14 @@ import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interf
 import { ErrorType } from '../../../../../interfaces/shared/Error.interface';
 import { finalize } from 'rxjs';
 import { Delta, Op } from 'quill';
+import { UtilService } from '../../../../system-wide/util-service/util-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DocumentsService {
   private http = inject(HttpClient);
+  private utilService = inject(UtilService);
 
   document = signal<DocumentApi | null>(null);
   staffDocuments = signal<DocumentApi[]>([]);
@@ -83,17 +84,54 @@ export class DocumentsService {
       });
   }
 
-  saveDocument(docId: string, payload: { document: DocumentApi; contentDelta: unknown }) {
+  saveDocument(docId: string, payload: { document: DocumentApi; contentDelta: unknown, actorId: string }) {
     this.loading.set(true);
 
     this.http
       .post<ApiResponse<DocumentApi>>(`${environment.api}/document/${docId}/save`, {
         contentDelta: payload.contentDelta,
-        document: payload.document
+        document: payload.document,
+        actorId: payload.actorId
       })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.document.set(resp.data),
+        error: (err) => this.error.set(err),
+      });
+  }
+
+  docSubmittedSuccess = signal<boolean>(false);
+  submitDocument(staffId: string, doc: DocumentApi) {
+    this.loading.set(true);
+
+    this.http.post<ApiResponse<DocumentApi>>(`${environment.api}/document/${staffId}/submit`, {
+        ...doc
+    })
+    .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => {
+            this.document.set(resp.data)
+
+            this.utilService.showToast('info', 'Correspondence submitted to registry successfully!')
+
+            this.docSubmittedSuccess.set(true)
+        },
+        error: (err) => this.error.set(err),
+      });
+  }
+
+  deleteDocument(id: string) {
+    this.loading.set(true);
+
+    this.http.delete<ApiResponse<void>>(`${environment.api}/document/${id}`)
+    .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => {
+            this.staffDocuments.update(docs => docs.filter(doc => doc.id !== id));
+            
+            
+            console.log('document deleted!')
+        },
         error: (err) => this.error.set(err),
       });
   }

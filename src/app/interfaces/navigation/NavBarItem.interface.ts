@@ -1,8 +1,11 @@
 import { Params } from '@angular/router';
 
+type Capability = string;
+
 interface SubMenu {
   label: string;
   route: Params;
+  requiredCapability: Capability;
 }
 
 interface NavBarItem {
@@ -14,6 +17,10 @@ interface NavBarItem {
   subMenus?: SubMenu[];
   group: NavGroup;
   leadsToExternalService?: boolean;
+  requiredCapability: Capability;
+
+  // for submenu-level control
+  requiredAnyCapabilities?: Capability[];
 }
 
 enum NavGroup {

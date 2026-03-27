@@ -444,7 +444,7 @@ export class DocumentRegistry implements OnInit {
     if (error) {
       this.hideLoader();
 
-      this.utilService.showToast(
+      this.utilService.showToast('error',
         error.code.httpStatusCode === 500 ? 'Internal Server Error' : error.context.message,
       );
     }

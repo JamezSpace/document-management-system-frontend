@@ -2,66 +2,74 @@
   class="rounded-xs button-box-shadow p-1 min-w-40 w-full min-h-56 flex flex-col items-center relative hover:cursor-pointer hover:outline hover:outline-muted"
 >
   <span
-    class="absolute top-1 right-1 text-[10px] text-accent px-2 rounded-xs border border-accent/80 bg-accent/5 uppercase"
+    class="absolute top-1 right-1 text-[10px] px-2 rounded-xs border uppercase font-medium transition-colors {{ statusInfo().classes }}"
   >
-    {{
-    documentItem().currentVersion?.lifecycle?.currentState ?? 'no content yet'
-  }}
+    {{ displayState() }}
   </span>
-  <div class="text-5xl flex-1 flex-center justify-center p-2 text-neutral-700 w-full"  (click)="openDocPane()">
-    @if (documentItem().currentVersion!; as version) {
-      @if (['draft', 'submitted'].includes(version.lifecycle.currentState.toLowerCase())) {
-        <ng-icon name="hugeFile02" />
-      }
-    }
+
+  <div
+    class="text-5xl flex-1 flex-center justify-center p-2 text-neutral-700 w-full"
+    (click)="openDocPane()"
+  >
+    <ng-icon [name]="statusInfo().icon" />
   </div>
+
   <div class="pl-1.5 w-full flex-center justify-between">
     <article>
-      <nexus-spartan-p class="capitalize text-[15px] font-medium hover:underline" (click)="openWorkspaceEditor()">
+      <p class="capitalize text-[15px] font-medium hover:underline" (click)="openWorkspaceEditor()">
         {{ documentItem().title }}
-      </nexus-spartan-p>
-      <!-- <nexus-spartan-muted class="text-xs">
-                @if(documentItem().updatedAt){
-                    Last Modified: {{ 
-                        formatDateAsReadableString(documentItem().updatedAt!)
-                    }}
-                } @else {
-                    Created: {{ 
-                        formatDateAsReadableString(documentItem().createdAt)
-                    }}
-                }
-            </nexus-spartan-muted> -->
+      </p>
     </article>
-    
-      <button
-        class="p-1 flex-center justify-center rounded-full hover:bg-(--muted-foreground)/10"
-        [hlmMenubarTrigger]="docOptions"
-      >
-        <ng-icon name="lucideMoreVertical" />
-      </button>
+
+    <button
+      class="p-1 flex-center justify-center rounded-full hover:bg-(--muted-foreground)/10"
+      [hlmMenubarTrigger]="docOptions"
+    >
+      <ng-icon name="lucideMoreVertical" />
+    </button>
 
     <ng-template #docOptions>
       <hlm-dropdown-menu sideOffset="1.5">
-          <!-- note: add that if document submission was rejected here -->
-          @if (!documentItem().currentVersion || documentItem().currentVersion?.lifecycle?.currentState === 'draft') {
-            <button hlmDropdownMenuItem (click)="openWorkspaceEditor()">
-              Edit
-              <hlm-dropdown-menu-shortcut>⌘</hlm-dropdown-menu-shortcut>
-            </button>
-            <hlm-dropdown-menu-separator />
-
+        @if (!documentItem().currentVersion || documentItem().currentVersion?.lifecycle?.currentState?.toLowerCase() === 'draft') {
+          <button hlmDropdownMenuItem (click)="openWorkspaceEditor()">
+            Edit
+            <hlm-dropdown-menu-shortcut>⌘</hlm-dropdown-menu-shortcut>
+          </button>
+          <hlm-dropdown-menu-separator />
+          <button hlmDropdownMenuItem [hlmAlertDialogTriggerFor]="deleteDocumentAlertDialog">
+            Delete
+          </button>
         }
-        <button hlmDropdownMenuItem>Share</button>
 
         @if (documentItem().currentVersion; as version) {
-          @if (
-            ['approved', 'declared_record', 'archived'].includes(version.lifecycle.currentState)
-          ) {
+          @let state = version.lifecycle.currentState.toLowerCase();
+          
+          @if (['approved', 'declared_record', 'archived'].includes(state)) {
             <hlm-dropdown-menu-separator />
             <button hlmDropdownMenuItem>Print</button>
+          }
+
+          @if (['active', 'approved', 'declared_record'].includes(state)) {
+            <hlm-dropdown-menu-separator />
+            <button hlmDropdownMenuItem>Share</button>
           }
         }
       </hlm-dropdown-menu>
     </ng-template>
   </div>
 </section>
+
+<hlm-alert-dialog #deleteDocumentAlertDialog>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>Are you absolutely sure?</h2>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. This will permanently delete this correspondence.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction (click)="deleteDocument()">Continue</button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

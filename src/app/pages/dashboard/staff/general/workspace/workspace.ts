@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   Component,
   computed,
@@ -89,7 +88,6 @@ import { StaffDetailsService } from '../../../../../services/page-wide/dashboard
 export class Workspace implements OnInit {
   router = inject(Router);
   utilService = inject(UtilService);
-  location = inject(Location);
   activatedRoute = inject(ActivatedRoute);
   workspaceLoading = signal<boolean>(false);
   workspaceService = inject(WorkspaceService);
@@ -106,8 +104,8 @@ export class Workspace implements OnInit {
   sidebarClosed = signal<boolean>(false);
   isDocmentMetadataEditable = signal<boolean>(false);
 
-  goToPreviousLocation() {
-    this.router.navigateByUrl('/office/documents')
+  goToDocOverviewPage() {
+    return this.router.navigateByUrl('/office/documents')
   }
 
   ngOnInit(): void {
@@ -355,12 +353,29 @@ export class Workspace implements OnInit {
   saveDocument() {
     const openedDocument = this.document()!;
     const contentAsDelta = this.retrieveEditorContentsAsSpecificType('delta');
+    const actorId = this.signedInStaff()?.id!
 
     this.documentService.saveDocument(openedDocument.id, {
       document: openedDocument,
       contentDelta: contentAsDelta,
+      actorId
     });
   }
+
+
+  submitDocument() {
+    const staffId = this.signedInStaff()?.id!
+    const openedDocument = this.document()!;    
+
+    this.documentService.submitDocument(staffId, openedDocument)    
+  }
+
+  private documentSubmissionEffect = effect(() => {
+    const submissionStatus = this.documentService.docSubmittedSuccess()
+
+    if(submissionStatus)
+        this.router.navigateByUrl('/office/documents')
+  })
 }
 
 interface SignatureBounds {

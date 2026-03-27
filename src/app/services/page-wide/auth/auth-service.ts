@@ -16,7 +16,7 @@ export class AuthService {
   private router = inject(Router);
   private auth = getAuth(firebase_app);
 
-  // --- Signals for UI State ---
+  //  for UI State
   readonly user = signal<User | null>(null);
   readonly loading = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
@@ -28,12 +28,24 @@ export class AuthService {
   setLoading(isLoading: boolean) {
     this.loading.set(isLoading);
   }
-  
+
   constructor() {
     // Keep the 'user' signal in sync with Firebase automatically
     onAuthStateChanged(this.auth, (u) => {
       this.user.set(u);
     });
+  }
+
+  private capabilities = signal<string[]>([]);
+
+  loadUserContext(data: any) {
+    this.capabilities.set(data.authority.capabilities);
+  }
+
+  hasCapability(cap: string): boolean {
+    console.log(cap)
+    
+    return this.capabilities().includes(cap);
   }
 
   /**
@@ -43,14 +55,14 @@ export class AuthService {
   async waitForUser(): Promise<User | null> {
     return new Promise((resolve) => {
       const unsubscribe = onAuthStateChanged(this.auth, (user) => {
-        unsubscribe(); 
+        unsubscribe();
         resolve(user);
       });
     });
   }
 
   /**
-   * Specifically for the Interceptor. 
+   * Specifically for the Interceptor.
    * Firebase handles the heavy lifting of refreshing the token if it's expired.
    */
   async getValidToken(): Promise<string | null> {
@@ -64,10 +76,10 @@ export class AuthService {
 
     try {
       await signInWithEmailAndPassword(this.auth, authUser.email, authUser.password);
-      
-      // No need to manually set a token signal; 
+
+      // No need to manually set a token signal;
       // the Interceptor will call getValidToken() which is more reliable.
-      
+
       this.router.navigateByUrl('/office');
       return { success: 1 };
     } catch (error: any) {
