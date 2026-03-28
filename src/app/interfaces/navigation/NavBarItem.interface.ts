@@ -29,4 +29,4 @@ enum NavGroup {
   ADMINISTRATION = 'administration',
 }
 
-export { type NavBarItem, NavGroup };
+export { type NavBarItem, type SubMenu, NavGroup };

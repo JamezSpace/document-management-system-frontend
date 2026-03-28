@@ -28,13 +28,17 @@
       <button type="button" class="nexus-button secondary scale-90" (click)="previewDocument()">
         preview
       </button>
-      <button type="button" class="nexus-button flex-center gap-2.5 scale-90" (click)="saveDocument()">
-        <span>Save</span>
-      </button>
-      <button type="button" class="nexus-button flex-center gap-1.5 scale-90" (click)="submitDocument()">
-        <ng-icon name="lucideSave" />
-        Submit to Registry
-      </button>
+      @if (!isDocumentSaved()) {
+          <button type="button" class="nexus-button flex-center gap-2.5 scale-90" (click)="saveDocument()">
+            <span>Save</span>
+          </button>
+      }
+      @if(isDocumentSaved() && document()?.currentVersion?.lifecycle?.currentState === 'draft'){
+          <button type="button" class="nexus-button flex-center gap-1.5 scale-90" (click)="submitDocument()">
+            <ng-icon name="lucideSave" />
+            Advance for Approval
+          </button>
+      }
     </div>
   </section>
 

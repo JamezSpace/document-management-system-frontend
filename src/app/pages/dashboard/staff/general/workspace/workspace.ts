@@ -4,13 +4,14 @@ import {
   effect,
   ElementRef,
   inject,
+  OnDestroy,
   OnInit,
   signal,
   ViewChild,
-  WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideArrowLeft,
@@ -29,6 +30,7 @@ import {
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIcon } from '@spartan-ng/helm/icon';
+import { HlmKbdImports } from '@spartan-ng/helm/kbd';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { MemoBodyEditor } from '../../../../../components/editors/memo-body-editor/memo-body-editor';
@@ -36,17 +38,15 @@ import { MemoTemplate } from '../../../../../components/editors/templates/memo-t
 import { LineLoader } from '../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
+import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
+import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
+import { OrgUnitsService } from '../../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
+import { UnitMembersService } from '../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
+import { DocumentsService } from '../../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { GenericDashboardService } from '../../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
+import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
-import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
-import { DocumentsService } from '../../../../../services/page-wide/dashboard/generic/documents/documents-service';
-import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { HlmKbdImports } from '@spartan-ng/helm/kbd';
-import { UnitMembersService } from '../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
-import { OrgUnitsService } from '../../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
-import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -64,7 +64,7 @@ import { StaffDetailsService } from '../../../../../services/page-wide/dashboard
     HlmButtonImports,
     HlmSelectImports,
     HlmDropdownMenuImports,
-    HlmKbdImports
+    HlmKbdImports,
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
@@ -81,11 +81,11 @@ import { StaffDetailsService } from '../../../../../services/page-wide/dashboard
       lucideLockOpen,
       lucideZoomIn,
       lucideZoomOut,
-      lucideGripVertical
+      lucideGripVertical,
     }),
   ],
 })
-export class Workspace implements OnInit {
+export class Workspace implements OnInit, OnDestroy {
   router = inject(Router);
   utilService = inject(UtilService);
   activatedRoute = inject(ActivatedRoute);
@@ -105,7 +105,9 @@ export class Workspace implements OnInit {
   isDocmentMetadataEditable = signal<boolean>(false);
 
   goToDocOverviewPage() {
-    return this.router.navigateByUrl('/office/documents')
+    this.documentService.resetContext()
+
+    return this.router.navigateByUrl('/office/documents');
   }
 
   ngOnInit(): void {
@@ -119,8 +121,6 @@ export class Workspace implements OnInit {
     }
 
     // user refreshes a stale page
-    const isThereAJustInitializedDocument = this.documentService.document();
-
     const doc = this.documentService.document();
 
     if (!doc) {
@@ -129,6 +129,10 @@ export class Workspace implements OnInit {
 
       this.documentService.fetchDocById(docId);
     }
+  }
+
+  ngOnDestroy() {
+    this.documentService.resetContext()
   }
 
   private workspaceInitEffect = effect(() => {
@@ -148,12 +152,12 @@ export class Workspace implements OnInit {
   });
 
   private effectRunsOnlyNecessarySecondaryItems = effect(() => {
-      const doc = this.document();
+    const doc = this.document();
     const staff = this.signedInStaff();
 
-  if (!doc || !staff) return;
+    if (!doc || !staff) return;
 
-  const staffUnit = staff.unit;
+    const staffUnit = staff.unit;
 
     if (this.document()?.correspondence.direction === 'internal') {
       // ensure unit members are fetched if it doesnt pre-exist
@@ -193,7 +197,7 @@ export class Workspace implements OnInit {
   showUnitLabelRatherThanId = (unitId: string) => {
     if (!unitId) return '';
 
-    const unit = this.units().find(unit => unit.id === unitId);
+    const unit = this.units().find((unit) => unit.id === unitId);
     return unit?.code ?? '';
   };
 
@@ -267,7 +271,6 @@ export class Workspace implements OnInit {
     const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
 
     console.log(htmlContent);
-    
 
     this.editorHtmlContent.set(htmlContent);
 
@@ -350,32 +353,31 @@ export class Workspace implements OnInit {
     this.zoomLevel.set(1.0);
   }
 
+  isDocumentSaved = this.documentService.isDocumentSaved;
   saveDocument() {
     const openedDocument = this.document()!;
     const contentAsDelta = this.retrieveEditorContentsAsSpecificType('delta');
-    const actorId = this.signedInStaff()?.id!
+    const actorId = this.signedInStaff()?.id!;
 
     this.documentService.saveDocument(openedDocument.id, {
       document: openedDocument,
       contentDelta: contentAsDelta,
-      actorId
+      actorId,
     });
   }
 
-
   submitDocument() {
-    const staffId = this.signedInStaff()?.id!
-    const openedDocument = this.document()!;    
+    const staffId = this.signedInStaff()?.id!;
+    const openedDocument = this.document()!;
 
-    this.documentService.submitDocument(staffId, openedDocument)    
+    this.documentService.submitDocument(staffId, openedDocument);
   }
 
   private documentSubmissionEffect = effect(() => {
-    const submissionStatus = this.documentService.docSubmittedSuccess()
+    const submissionStatus = this.documentService.docSubmittedSuccess();
 
-    if(submissionStatus)
-        this.router.navigateByUrl('/office/documents')
-  })
+    if (submissionStatus) this.router.navigateByUrl('/office/documents');
+  });
 }
 
 interface SignatureBounds {

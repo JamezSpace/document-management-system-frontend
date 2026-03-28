@@ -1,16 +1,16 @@
 import {
-  AfterViewInit,
-  Component,
-  effect,
-  ElementRef,
-  inject,
-  OnDestroy,
-  signal,
-  viewChild,
+    AfterViewInit,
+    Component,
+    effect,
+    ElementRef,
+    inject,
+    OnDestroy,
+    signal,
+    viewChild,
 } from '@angular/core';
-import Quill from 'quill';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLock, lucideLockOpen } from '@ng-icons/lucide';
+import Quill from 'quill';
 import { DocumentsService } from '../../../services/page-wide/dashboard/generic/documents/documents-service';
 
 @Component({
@@ -28,8 +28,8 @@ import { DocumentsService } from '../../../services/page-wide/dashboard/generic/
 export class MemoBodyEditor implements AfterViewInit, OnDestroy {
   documentService = inject(DocumentsService);
 
-  quillEditor = viewChild<ElementRef<HTMLDivElement>>('editor');
   quill = signal<Quill | null>(null);
+  quillEditor = viewChild<ElementRef<HTMLDivElement>>('editor');
   editorLocked = signal<boolean>(false);
   private saveTimer: any;
 
@@ -62,6 +62,9 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
           htmlContent: quillInstance.getSemanticHTML(),
         });
       }, 500);
+
+      // toggle saved state
+      this.documentService.isDocumentSaved.set(false);
     });
   }
 
