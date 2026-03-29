@@ -33,7 +33,7 @@
             <span>Save</span>
           </button>
       }
-      @if(isDocumentSaved() && document()?.currentVersion?.lifecycle?.currentState === 'draft'){
+      @if(isDocumentSaved() && document()?.currentVersion?.lifecycle?.currentState?.toLowerCase() === 'draft'){
           <button type="button" class="nexus-button flex-center gap-1.5 scale-90" (click)="submitDocument()">
             <ng-icon name="lucideSave" />
             Advance for Approval

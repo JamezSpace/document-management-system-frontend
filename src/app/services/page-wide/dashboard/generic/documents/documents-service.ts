@@ -23,7 +23,7 @@ export class DocumentsService {
   staffDocuments = signal<DocumentApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
-  isDocumentSaved = signal<boolean>(false);
+  isDocumentSaved = signal<boolean>(true);
 
   quillEditorContent = signal<{
     deltaContent: Delta | null;
@@ -149,7 +149,7 @@ export class DocumentsService {
 
   resetContext() {
     this.document.set(null);
-    this.isDocumentSaved.set(false);
+    this.isDocumentSaved.set(true);
     this.docSubmittedSuccess.set(false);
     this.error.set(null);
 

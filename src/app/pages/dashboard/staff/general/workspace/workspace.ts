@@ -47,6 +47,7 @@ import { GenericDashboardService } from '../../../../../services/page-wide/dashb
 import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
+import { AuthService } from '../../../../../services/page-wide/auth/auth-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -87,6 +88,7 @@ import { UtilService } from '../../../../../services/system-wide/util-service/ut
 })
 export class Workspace implements OnInit, OnDestroy {
   router = inject(Router);
+  authService = inject(AuthService);
   utilService = inject(UtilService);
   activatedRoute = inject(ActivatedRoute);
   workspaceLoading = signal<boolean>(false);
@@ -105,19 +107,22 @@ export class Workspace implements OnInit, OnDestroy {
   isDocmentMetadataEditable = signal<boolean>(false);
 
   goToDocOverviewPage() {
-    this.documentService.resetContext()
+    this.documentService.resetContext();
 
     return this.router.navigateByUrl('/office/documents');
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // this.workspaceService.getSignaturePlaceholder();
 
     // disallow staff if it cant be ascertained if staff is logged in
     const staff = this.signedInStaff();
     if (!staff) {
+      this.documentService.resetContext();
+
+        this.authService.resetContext()
       this.router.navigateByUrl('/auth');
-      return;
+        return;
     }
 
     // user refreshes a stale page
@@ -132,7 +137,7 @@ export class Workspace implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.documentService.resetContext()
+    this.documentService.resetContext();
   }
 
   private workspaceInitEffect = effect(() => {

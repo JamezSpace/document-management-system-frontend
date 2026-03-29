@@ -84,7 +84,7 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
       const currentContents = quill.getContents();
 
       if (JSON.stringify(currentContents) !== JSON.stringify(savedContent.deltaContent)) {
-        quill.setContents(savedContent.deltaContent, 'user');
+        quill.setContents(savedContent.deltaContent, 'silent');
       }
     }
   });

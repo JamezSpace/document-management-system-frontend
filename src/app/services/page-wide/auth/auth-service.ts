@@ -107,4 +107,9 @@ export class AuthService {
         return 'An unexpected error occurred. Please try again.';
     }
   }
+
+  resetContext() {
+    this.loading.set(false);
+    this.errorMessage.set(null);
+  }
 }
