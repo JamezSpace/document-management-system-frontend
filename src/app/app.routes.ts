@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { Auth } from './pages/auth/auth';
 import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
-import { Onboarding } from './pages/onboarding/onboarding';
 import { authGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/shared/unauthorized/unauthorized/unauthorized';
+import { OnboardingEntity } from './pages/onboarding/onboarding-entity/onboarding-entity';
+import { PasswordReset } from './pages/onboarding/password-reset/password-reset';
 
 export const routes: Routes = [
   // public/auth route
@@ -20,7 +21,13 @@ export const routes: Routes = [
   // onboarding
   {
     path: ':entityType/onboarding/:entityId',
-    component: Onboarding,
+    component: OnboardingEntity,
+  },
+
+  // staff password reset
+  {
+    path: 'staff/passwordReset',
+    component: PasswordReset,
   },
 
   // digital office dashboard
@@ -84,6 +91,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/dashboard/staff/operations/hr/staff-registry/staff-registry').then(
             (page) => page.StaffRegistry,
+          ),
+      },
+      {
+        path: 'operations/staff-activation',
+        loadComponent: () =>
+          import('./pages/dashboard/staff/operations/hr/staff-activation/staff-activation').then(
+            (page) => page.StaffActivation,
           ),
       },
     ],

@@ -1,3 +1,5 @@
+import { BaseStaffEntity } from "../../users/office/staff/BaseStaff.api";
+
 enum EntityType {
   STAFF = 'staff',
   DEPARTMENT = 'department',
@@ -10,7 +12,7 @@ interface EntityRequest {
 
 interface EntityResponse {
   type: EntityType;
-  details: any;
+  details: BaseStaffEntity;
 }
 
 export { EntityType};

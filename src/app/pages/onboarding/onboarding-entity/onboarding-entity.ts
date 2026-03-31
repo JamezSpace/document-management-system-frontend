@@ -1,76 +1,55 @@
-import {
-    Component,
-    inject,
-    Input,
-    OnInit,
-    signal,
-    ViewChild
-} from '@angular/core';
-import {
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule
-} from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatStepper, MatStepperModule } from '@angular/material/stepper';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-import { IdCard } from '../../components/dashboard-wide/id-card/id-card';
-import { LineLoader } from "../../components/system-wide/loaders/line-loader/line-loader";
-import { OnboardingNavBar } from '../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
-import type { EntityResponse } from '../../interfaces/onboarding/entities/Entity.api';
-import { EntityType } from '../../interfaces/onboarding/entities/Entity.api';
-import { OnboardingService } from '../../services/page-wide/onboarding/onboarding-service';
-import { UtilService } from '../../services/system-wide/util-service/util-service';
+import { Component, inject, Input, signal, ViewChild } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatStepper, MatStep } from '@angular/material/stepper';
+import { EntityType, EntityResponse } from '../../../interfaces/onboarding/entities/Entity.api';
+import { OnboardingService } from '../../../services/page-wide/onboarding/onboarding-service';
+import { UtilService } from '../../../services/system-wide/util-service/util-service';
+import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
+import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
+import { IdCard } from '../../../components/dashboard-wide/id-card/id-card';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'nexus-onboarding',
+  selector: 'nexus-onboarding-entity',
   imports: [
-    IdCard,
-    NgxExtendedPdfViewerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatStepperModule,
-    MatCheckboxModule,
-    MatTooltipModule,
+    LineLoader,
     OnboardingNavBar,
-    LineLoader
-],
-  templateUrl: './onboarding.html',
-  styleUrl: './onboarding.css',
+    IdCard,
+    MatStepper,
+    MatStep,
+    ReactiveFormsModule,
+    MatTooltip,
+  ],
+  templateUrl: './onboarding-entity.html',
+  styleUrl: './onboarding-entity.css',
 })
-export class Onboarding implements OnInit {
+export class OnboardingEntity {
   // used to create custom or different onboarding pages for different entities
   @Input() entityType!: EntityType;
   @Input() entityId!: string;
   private onboardingService = inject(OnboardingService);
   private utilService = inject(UtilService);
 
-  entity = signal<EntityResponse>({
-    type: EntityType.STAFF,
-    details: {
-      id: '90123',
-      firstName: 'samuel',
-      lastName: 'james',
-      role: 'editor',
-      email: 'adobeclip2003@gmail.com',
-    },
-  });
+  entity = this.onboardingService.entity;
 
   async ngOnInit(): Promise<void> {
-    await this.onboardingService.getEntityDetails({
-      type: this.entityType,
-      id: this.entityId,
-    });
+    // init deps
+
+    // this will most likely be for users just resetting their password
+    if (!this.onboardingService.entity())
+      this.onboardingService.getEntityDetails({
+        type: this.entityType,
+        id: this.entityId,
+      });
   }
 
-  isMobile = this.utilService.isMobile
+  isMobile = this.utilService.isMobile;
 
-  loading = signal<boolean>(false)
+  loading = signal<boolean>(false);
   currentFrame = signal<number>(1);
   isExiting = signal<boolean>(false);
   nextStep() {
-    this.loading.set(true)
+    this.loading.set(true);
 
     // 1. Trigger the "Exit" animation class
     this.isExiting.set(true);
@@ -79,7 +58,7 @@ export class Onboarding implements OnInit {
     setTimeout(() => {
       this.currentFrame.update((n) => n + 1);
       this.isExiting.set(false); // Reset for the new frame
-      this.loading.set(false)
+      this.loading.set(false);
     }, 500); // Match this to your CSS duration
   }
 

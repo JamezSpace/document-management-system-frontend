@@ -59,6 +59,7 @@ export class DocumentItem {
 
   openDocPane() {
     this.registryService.openDocDetails(this.documentItem());
+    
     this.sideModalService.open();
   }
 

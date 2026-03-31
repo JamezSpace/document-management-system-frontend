@@ -16,6 +16,7 @@ import {
   lucidePackageSearch,
   lucideServer,
   lucideUsers,
+  lucideUserCheck,
   lucideZap,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
@@ -64,6 +65,7 @@ import { AuthService } from '../../../../services/page-wide/auth/auth-service';
       lucideExternalLink,
       lucideServer,
       lucideUsers,
+      lucideUserCheck,
       lucideAward,
       lucideCalendarCheck,
       lucideBriefcase,
@@ -94,6 +96,8 @@ export class DashboardOfficeTemplate implements OnInit {
         console.log('Access Granted');
       }
     }
+
+    this.authService.loadUserContext(data);
   });
 
   async ngOnInit(): Promise<void> {
@@ -331,6 +335,15 @@ export class DashboardOfficeTemplate implements OnInit {
       subMenuExists: false,
       group: NavGroup.OPERATIONS,
       requiredCapability: 'staff.view',
+    },
+
+    {
+      icon: 'lucideUserCheck',
+      label: 'Pending Staff Activations',
+      route: 'operations/staff-activation',
+      subMenuExists: false,
+      group: NavGroup.OPERATIONS,
+      requiredCapability: 'staff.activate',
     },
 
     {

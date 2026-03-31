@@ -43,8 +43,9 @@
       type="text"
       name=""
       maxlength="50"
-      placeholder="Search by title, reference number or subject..."
+      placeholder="Search staff by name"
       autocorrect="off"
+      (change)="onSearchChange($event)"
       hlmInputGroupInput
     />
 
@@ -88,6 +89,14 @@
 </div>
 
 <hlm-separator class="my-4" />
+
+@if (filteredStaff().length > 0) {
+  <nexus-staff-list-view [staff]="filteredStaff()" />
+} @else {
+  <section class="w-full flex-center justify-center">
+    <nexus-empty-state [stateData]="emptyState()" />
+  </section>
+}
 
 <!-- alert dialog to select new document type -->
 <hlm-alert-dialog #registerNewStaffAlertDialog>
@@ -167,40 +176,67 @@
           <form [formGroup]="professionalDetailsFormGroup">
             <div class="row">
               <div class="field in-dashboard">
-                <label hlmLabel for="internalUnit">Internal Unit</label>
+                <label hlmLabel for="internalOffice">Internal Office</label>
 
                 <brn-select
                   class="block w-full"
                   placeholder="Select a department"
-                  id="internalUnit"
+                  id="internalOffice"
+                  (valueChange)="onOfficeSelection($event)"
                 >
                   <hlm-select-trigger class="w-full">
                     <hlm-select-value />
                   </hlm-select-trigger>
                   <hlm-select-content>
-                    <hlm-option value="Refresh">Refresh</hlm-option>
-                    <hlm-option value="Settings">Settings</hlm-option>
-                    <hlm-option value="Help">Help</hlm-option>
-                    <hlm-option value="Signout">Sign out</hlm-option>
+                    @for (office of offices(); track $index) {
+                        <hlm-option [value]="office" class="capitalize">{{office.name}}</hlm-option>
+                    }
+                  </hlm-select-content>
+                </brn-select>
+              </div>
+            </div>
+            <div class="row flex-center gap-3.5">
+              <div class="field in-dashboard">
+                <label hlmLabel for="designation">Designation</label>
+                <brn-select
+                  class="block w-full"
+                  placeholder="Select a designation"
+                  id="internalOfficeDesination"
+                  (valueChange)="onOfficeDesignationSelection($event)"
+                >
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+                  <hlm-select-content>
+                    @for (desig of designationsInSelectedOffice(); track $index) {
+                        <hlm-option [value]="desig" class="capitalize">{{desig.title}}</hlm-option>
+                    }
                   </hlm-select-content>
                 </brn-select>
               </div>
             </div>
             <div class="row">
               <div class="field in-dashboard">
-                <label hlmLabel for="designation">Designation</label>
-                <input
-                  hlmInput
-                  type="text"
-                  id="designation"
-                  placeholder="e.g. senior lecturer"
-                  formControlName="designation"
-                />
-              </div>
+                    <label hlmLabel for="employmentType">Employment Type</label>
+
+                <brn-select
+                  class="block w-full"
+                  placeholder="Select the employment Type"
+                  id="employmentType"
+                  (valueChange)="onEmploymentTypeSelection($event)"
+                >
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+                  <hlm-select-content>
+                    @for (type of employmentTypes; track $index) {
+                        <hlm-option [value]="type" class="capitalize">{{type}}</hlm-option>
+                    }
+                  </hlm-select-content>
+                </brn-select>
             </div>
-            <div class="row">
               <div class="field in-dashboard">
-                <label hlmLabel for="staffId">Staff ID</label>
+                <label hlmLabel for="staffId">Staff ID (Matric Number)</label>
                 <div hlmInputGroup>
                   <div hlmInputGroupAddon align="inline-start">
                     <ng-icon name="lucideHash" />
@@ -212,6 +248,7 @@
                     maxlength="50"
                     placeholder="---"
                     autocorrect="off"
+                    formControlName="staffId"
                     hlmInputGroupInput
                   />
                 </div>
@@ -292,6 +329,7 @@
           [class.disabled]="!isFinalStepInCompletingNewStaffRecord()"
           [class.secondary]="!isFinalStepInCompletingNewStaffRecord()"
           [class.w-full]="isFinalStepInCompletingNewStaffRecord()"
+          (click)="submitStaffData()"
         >
           add staff
         </button>

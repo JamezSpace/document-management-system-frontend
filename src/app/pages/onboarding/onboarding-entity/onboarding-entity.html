@@ -4,6 +4,7 @@
     <nexus-line-loader />
 </div>
 
+@if (entity(); as entity) {
 @if (currentFrame() === 1) {
   <div
     class="h-[70dvh] relative fade-in-premium"
@@ -44,10 +45,10 @@
 
     <div class="id-card-container flex-center max-md:flex-col gap-10">
       <div class="w-full">
-        <nexus-id-card idCardPage="front" [staffDetails]="entity().details" />
+        <nexus-id-card idCardPage="front" [staffDetails]="entity.details" />
       </div>
       <div class="w-full">
-        <nexus-id-card idCardPage="back" [staffDetails]="entity().details" />
+        <nexus-id-card idCardPage="back" [staffDetails]="entity.details" />
       </div>
     </div>
 
@@ -300,4 +301,5 @@
       </button>
     </div>
   </div>
+}
 }

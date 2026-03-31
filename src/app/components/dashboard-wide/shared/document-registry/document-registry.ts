@@ -207,6 +207,27 @@ export class DocumentRegistry implements OnInit {
     ],
   };
 
+  emptyState = computed(() => {
+    const list = this.documents();
+
+    if (list.length === 0) {
+      return this.emptyStateDataAsFistTime;
+    }
+
+    if (this.searchQuery() && list.length === 0) {
+      return this.emptyStateDataAsNoData;
+    }
+
+    // fail-safe
+    return this.emptyStateDataAsNoData;
+  });
+
+  searchQuery = signal<string>('');
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
+  }
+
   loading = signal<boolean>(false);
   pageLoading = this.genericDashboardService.loading;
   showLoader() {
@@ -229,17 +250,22 @@ export class DocumentRegistry implements OnInit {
   documents = this.documentService.staffDocuments;
   //   documents = signal<DocumentApi[]>([]);
 
-  filteredDocuments = computed(() => {
+  filteredDocumentsForPageViewAndSearchQuery = computed(() => {
     const mode = this.viewMode();
     const docs = this.documents();
+    const query = this.searchQuery().toLowerCase();
 
     switch (mode) {
-        case 'draft':
-            return docs.filter((doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() === 'draft');
-        case null:
-            return docs;
-        default:
-            return []
+      case 'draft':
+        const docsForDisplay = docs.filter(
+          (doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() === 'draft',
+        );
+
+        return docsForDisplay.filter((doc) => doc.title.toLowerCase().includes(query));
+      case null:
+        return docs.filter((doc) => doc.title.toLowerCase().includes(query));
+      default:
+        return [];
     }
   });
 
@@ -444,7 +470,8 @@ export class DocumentRegistry implements OnInit {
     if (error) {
       this.hideLoader();
 
-      this.utilService.showToast('error',
+      this.utilService.showToast(
+        'error',
         error.code.httpStatusCode === 500 ? 'Internal Server Error' : error.context.message,
       );
     }

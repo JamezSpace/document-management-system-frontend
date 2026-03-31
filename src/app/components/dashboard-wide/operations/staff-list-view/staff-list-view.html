@@ -1,0 +1,230 @@
+<table mat-table [dataSource]="dataSource">
+  <!-- Staff ID -->
+  <ng-container matColumnDef="staffNumber">
+    <th mat-header-cell *matHeaderCellDef>Staff ID</th>
+    <td mat-cell *matCellDef="let staff">{{ staff.staffNumber }}</td>
+  </ng-container>
+
+  <!-- Name -->
+  <ng-container matColumnDef="fullName">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let staff">{{ staff.fullName }}</td>
+  </ng-container>
+
+  <!-- Email -->
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Email</th>
+    <td mat-cell *matCellDef="let staff">{{ staff.email }}</td>
+  </ng-container>
+
+  <!-- Unit -->
+  <ng-container matColumnDef="unit">
+    <th mat-header-cell *matHeaderCellDef>Unit</th>
+    <td mat-cell *matCellDef="let staff">{{ getUnitLabel(staff) }}</td>
+  </ng-container>
+
+  <!-- Designation -->
+  <ng-container matColumnDef="designation">
+    <th mat-header-cell *matHeaderCellDef>Designation</th>
+    <td mat-cell *matCellDef="let staff">{{ getDesignationTitle(staff) }}</td>
+  </ng-container>
+
+  <!-- Status -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Status</th>
+    <td mat-cell *matCellDef="let staff">{{ staff.status }}</td>
+  </ng-container>
+
+  <!-- Actions -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let staff">
+      <button
+        type="button"
+        class="p-1 flex-center justify-center rounded-full hover:bg-(--muted-foreground)/10"
+        [hlmMenubarTrigger]="staffOptions"
+        (click)="$event.stopPropagation(); setActionTarget(staff)"
+      >
+        <ng-icon name="lucideMoreVertical" />
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: columnsToDisplay"
+    class="cursor-pointer"
+    (click)="openStaffDetails(row)"
+  ></tr>
+</table>
+
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+  aria-label="Select page of staff records"
+></mat-paginator>
+
+<ng-template #staffOptions>
+  <hlm-dropdown-menu sideOffset="1.5">
+    @if (selectedStaff(); as staff) {
+      @if (canEdit(staff)) {
+        <button hlmDropdownMenuItem (click)="openUpdateModal()">Update</button>
+      }
+      <hlm-dropdown-menu-separator />
+      <button
+        hlmDropdownMenuItem
+        class="text-red-600"
+        [hlmAlertDialogTriggerFor]="deleteStaffDialog"
+      >
+        Delete
+      </button>
+    }
+  </hlm-dropdown-menu>
+</ng-template>
+
+<nexus-side-modal>
+  <header class="px-1.5 shrink-0">
+    <button
+      class="block w-fit ml-auto text-neutral-500 hover:text-neutral-950"
+      type="button"
+      (click)="closeStaffDetails()"
+    >
+      <ng-icon name="lucideXCircle" size="1.2rem" />
+    </button>
+  </header>
+
+  @if (selectedStaff(); as staff) {
+    <section class="px-1.5">
+      <nexus-spartan-h4 class="capitalize">{{ staff.fullName }}</nexus-spartan-h4>
+      <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted>
+
+      <hlm-separator class="my-3" />
+
+      <div class="grid gap-2.5">
+        <article>
+          <nexus-spartan-muted class="uppercase">staff id</nexus-spartan-muted>
+          <nexus-spartan-p>{{ staff.staffNumber }}</nexus-spartan-p>
+        </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">email</nexus-spartan-muted>
+          <nexus-spartan-p>{{ staff.email }}</nexus-spartan-p>
+        </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">unit</nexus-spartan-muted>
+          <nexus-spartan-p>{{ staff?.unit?.name ?? '--' }}</nexus-spartan-p>
+        </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">designation</nexus-spartan-muted>
+          <nexus-spartan-p>{{ staff.designation?.title ?? '--' }}</nexus-spartan-p>
+        </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">status</nexus-spartan-muted>
+          <nexus-spartan-p>{{ staff.status }}</nexus-spartan-p>
+        </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">created</nexus-spartan-muted>
+          <nexus-spartan-p>{{ formatDate(staff.createdAt) }}</nexus-spartan-p>
+        </article>
+        <article>
+          <nexus-spartan-muted class="uppercase">last updated</nexus-spartan-muted>
+          <nexus-spartan-p>{{ formatDate(staff.updatedAt) }}</nexus-spartan-p>
+        </article>
+      </div>
+
+      @if (editMode()) {
+        <hlm-separator class="my-3" />
+        <form [formGroup]="staffUpdateForm" class="grid gap-2.5">
+          <div class="field">
+            <label hlmLabel for="office">Office</label>
+            <brn-select
+              class="block w-full"
+              placeholder="Select an office"
+              formControlName="officeId"
+            >
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (office of offices(); track office.id) {
+                  <hlm-option [value]="office.id">{{ office.name }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+          <div class="field">
+            <label hlmLabel for="designation">Designation</label>
+            <brn-select
+              class="block w-full"
+              placeholder="Select a designation"
+              formControlName="designationId"
+            >
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (designation of designations(); track designation.id) {
+                  <hlm-option [value]="designation.id">{{ designation.title }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+          <div class="field">
+            <label hlmLabel for="employmentType">Employment Type</label>
+            <brn-select
+              class="block w-full"
+              placeholder="Select employment type"
+              formControlName="employmentType"
+            >
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content>
+                @for (type of employmentTypes; track type) {
+                  <hlm-option [value]="type">{{ type }}</hlm-option>
+                }
+              </hlm-select-content>
+            </brn-select>
+          </div>
+          <div class="field">
+            <label hlmLabel for="staffNumber">Matric/Staff Number</label>
+            <input
+              hlmInput
+              type="text"
+              id="staffNumber"
+              placeholder="Enter staff number"
+              formControlName="staffNumber"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="nexus-button w-full"
+            (click)="saveStaffUpdates()"
+          >
+            Save Updates
+          </button>
+        </form>
+      }
+    </section>
+  } @else {
+    <p class="px-1.5 text-sm">Select a staff member to view details.</p>
+  }
+</nexus-side-modal>
+
+<hlm-alert-dialog #deleteStaffDialog>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>Delete staff account?</h2>
+      <p hlmAlertDialogDescription>
+        This action cannot be undone. The staff record will be permanently removed.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction (click)="deleteSelectedStaff(); ctx.close()">
+        Confirm
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
