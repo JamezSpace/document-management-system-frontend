@@ -4,7 +4,7 @@
 </div>
 
 <div hlmSidebarWrapper class="nexus-sans-font" [class.sidebar-hidden]="isWorkspaceActive()">
-  <hlm-sidebar collapsible="icon">
+  <hlm-sidebar collapsible="icon" class="flex flex-col h-screen">
     <header hlmSidebarHeader>
       <a routerLink="/" class="w-7.5">
         <img src="logo.webp" alt="NexusFons Collapsed Logo" class="w-full" />
@@ -13,7 +13,7 @@
 
     <hlm-separator></hlm-separator>
 
-    <div hlmSidebarGroupContent>
+    <div hlmSidebarGroupContent class="flex-1 overflow-y-auto overflow-x-hidden">
       @for (group of groupedNavItems(); track $index) {
         <section hlmSidebarGroup>
           <div class="capitalize" hlmSidebarGroupLabel>{{ group.groupName }}</div>
@@ -26,7 +26,12 @@
                 >
                   <li hlmSidebarMenuItem>
                     @if (navItem.leadsToExternalService) {
-                      <button type="button" hlmSidebarMenuButton [hlmAlertDialogTriggerFor]="openExternalServiceAlertDialog" (click)="externalUrlToNavigateToNow.set(navItem.route)">
+                      <button
+                        type="button"
+                        hlmSidebarMenuButton
+                        [hlmAlertDialogTriggerFor]="openExternalServiceAlertDialog"
+                        (click)="externalUrlToNavigateToNow.set(navItem.route)"
+                      >
                         <ng-icon hlm [name]="navItem.icon" />
                         <span>{{ navItem.label }}</span>
 
@@ -81,6 +86,45 @@
         </section>
       }
     </div>
+
+    <footer hlmSidebarFooter>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <button type="button" hlmSidebarMenuButton>
+            <ng-icon name="lucideSettings" />
+            Settings
+          </button>
+        </li>
+        <li hlmSidebarMenuItem>
+          <button type="button" hlmSidebarMenuButton [hlmAlertDialogTriggerFor]="logOutDialog">
+            <ng-icon name="lucideLogOut" />
+            Logout
+          </button>
+        </li>
+        <hlm-separator />
+        <li hlmSidebarMenuItem>
+          <div class="flex-center gap-3.5">
+            <div class="profile-pic">
+              <hlm-avatar>
+                <img
+                  hlmAvatarImage
+                  src="/ui-logo.png"
+                  alt="staff profile pic"
+                  class="rounded-full"
+                />
+                <span hlmAvatarFallback>RG</span>
+              </hlm-avatar>
+            </div>
+            <div class="profile-info" [class.hidden]="isSidebarClosed()">
+              <p class="font-medium">{{ staffLoggedIn()!.fullName }}</p>
+              <p class="italic text-[90%]">
+                {{ staffLoggedIn()!.designation?.title || 'no designation' }}
+              </p>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </footer>
   </hlm-sidebar>
 
   <main [class.hidden]="isWorkspaceActive()">
@@ -97,16 +141,45 @@
     <hlm-alert-dialog-header>
       <h2 hlmAlertDialogTitle>Open Student IT Portal?</h2>
       <p hlmAlertDialogDescription>
-        You are about to leave the Digital Office and open the Student IT Portal in a new tab.
-        Any unsaved changes in this workspace will not be affected.
+        You are about to leave the Digital Office and open the Student IT Portal in a new tab. Any
+        unsaved changes in this workspace will not be affected.
       </p>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Stay Here</button>
-      
-      <a [href]="externalUrlToNavigateToNow()" hlmAlertDialogAction target="_blank" rel="noopener noreferrer" class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring">
-  open portal
-</a>
+
+      <a
+        [href]="externalUrlToNavigateToNow()"
+        hlmAlertDialogAction
+        target="_blank"
+        rel="noopener noreferrer"
+        class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring"
+      >
+        open portal
+      </a>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<hlm-alert-dialog #logOutDialog>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>Terminate Session?</h2>
+      <p hlmAlertDialogDescription>
+        You are about to sign out of the <span class="font-bold text-nexus-indigo">NexusFons Digital Office</span>. 
+        Please ensure all pending <span class="italic">Directives</span> or <span class="italic">Memos</span> in your workspace have been saved to drafts.
+      </p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+
+      <button
+        (click)="logout()"
+        hlmAlertDialogAction
+        class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring"
+      >
+        Log Out
+      </button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

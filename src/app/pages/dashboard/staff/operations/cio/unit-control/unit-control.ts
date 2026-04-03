@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -18,6 +18,8 @@ import { SpartanH4 } from '../../../../../../components/system-wide/typography/s
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { SpartanSmall } from '../../../../../../components/system-wide/typography/spartan-small/spartan-small';
+import { UnitMembersService } from '../../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
+import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 
 @Component({
   selector: 'nexus-unit-control',
@@ -53,7 +55,12 @@ import { SpartanSmall } from '../../../../../../components/system-wide/typograph
   ],
 })
 export class UnitControl implements OnInit {
-    activatedRouter = inject(ActivatedRoute);
+  activatedRouter = inject(ActivatedRoute);
+  unitMembersService = inject(UnitMembersService);
+  staffDetailsService = inject(StaffDetailsService);
+
+  unitMembers = this.unitMembersService.data;
+  private unitMembersLoaded = signal<boolean>(false);
 
   directories = signal<string[]>([]);
   ngOnInit(): void {
@@ -64,6 +71,14 @@ export class UnitControl implements OnInit {
       currentPath.replace(',', ' > '),
     ]);
   }
+
+  private unitMembersEffect = effect(() => {
+    const staff = this.staffDetailsService.data();
+    if (!staff || this.unitMembersLoaded()) return;
+
+    this.unitMembersService.fetchUnitMembers(staff.unit.id);
+    this.unitMembersLoaded.set(true);
+  });
 
   priorityLevelSelected = signal<string>('')
   onPriorityLevelSelect(priorityLevelSelected: any) {

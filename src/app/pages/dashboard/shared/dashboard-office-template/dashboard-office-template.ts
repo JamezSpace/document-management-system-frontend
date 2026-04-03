@@ -18,6 +18,8 @@ import {
   lucideUsers,
   lucideUserCheck,
   lucideZap,
+  lucideSettings,
+  lucideLogOut
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
@@ -25,7 +27,8 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCollapsibleImports } from '@spartan-ng/helm/collapsible';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
+import { HlmSidebarImports, HlmSidebarService } from '@spartan-ng/helm/sidebar';
+import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
 import { LineLoader } from '../../../../components/system-wide/loaders/line-loader/line-loader';
 import {
   NavBarItem,
@@ -45,6 +48,7 @@ import { AuthService } from '../../../../services/page-wide/auth/auth-service';
     HlmSidebarImports,
     HlmCollapsibleImports,
     HlmAlertDialogImports,
+    HlmAvatarImports,
     HlmButtonImports,
     HlmSeparator,
     NgIcon,
@@ -73,13 +77,19 @@ import { AuthService } from '../../../../services/page-wide/auth/auth-service';
       lucideClipboardList,
       lucideHardHat,
       lucidePackageSearch,
+      lucideSettings,
+      lucideLogOut
     }),
   ],
 })
 export class DashboardOfficeTemplate implements OnInit {
-  private staffDetailsService = inject(StaffDetailsService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  staffDetailsService = inject(StaffDetailsService);
+  genericDashboardService = inject(GenericDashboardService);
+  authService = inject(AuthService);
+  sidebarService = inject(HlmSidebarService)
+  router = inject(Router);
+
+  staffLoggedIn = this.staffDetailsService.data;
 
   navigateOnDataReadiness = effect(() => {
     const isLoading = this.staffDetailsService.loading();
@@ -91,7 +101,7 @@ export class DashboardOfficeTemplate implements OnInit {
     if (!isLoading) {
       if (!data) {
         this.router.navigateByUrl('/unauthorized');
-        this.authService.resetContext()
+        this.authService.resetContext();
       } else {
         console.log('Access Granted');
       }
@@ -430,7 +440,6 @@ export class DashboardOfficeTemplate implements OnInit {
   }
 
   externalUrlToNavigateToNow = signal<string>('');
-  genericDashboardService = inject(GenericDashboardService);
 
   loading = this.genericDashboardService.loading;
 
@@ -462,5 +471,13 @@ export class DashboardOfficeTemplate implements OnInit {
   onRouteActivate(component: any) {
     // Check if the component being loaded into the outlet is the Workspace
     this.isWorkspaceActive.set(component instanceof Workspace);
+  }
+
+  isSidebarClosed = computed(() => {
+    return !this.sidebarService.open()
+  })
+
+  logout() {
+
   }
 }

@@ -245,52 +245,57 @@
 </hlm-alert-dialog>
 
 <section class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  <div class="card-container min-w-sm">
-    <header class="flex-center gap-x-2.5 mb-2">
-      <div
-        class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
-      >
-        <img src="ui-logo.png" alt="profile picture of staff member" />
-      </div>
-
-      <article>
-        <nexus-spartan-small class="font-black"> Daniel Evans </nexus-spartan-small>
-
-        <nexus-spartan-muted class="-mb-2"> Staff ID: 290075 </nexus-spartan-muted>
-      </article>
-    </header>
-
-    <article class="pt-2">
-      <nexus-spartan-p class="font-medium capitalize underline underline-offset-2"
-        >live assignment</nexus-spartan-p
-      >
-      <p class="mb-2.5">
-        The card component supports a size prop that can be set to "sm" for a more compact
-        appearance.
-      </p>
-      <nexus-spartan-muted class="uppercase">dir-2019/a01</nexus-spartan-muted>
-    </article>
-
-    <div class="mx-auto btn-group" hlmButtonGroup>
-      <div class="flex-center subtle-box-shadow rounded-l-xs rounded-r-xs">
-        <button
-        hlmBtn 
-        variant="outline"
-          [hlmAlertDialogTriggerFor]="issueNewDirectiveDialog"
-          class="flex-center gap-1 px-1.5"
+  @for (member of unitMembers(); track member.id) {
+    <div class="card-container min-w-sm">
+      <header class="flex-center gap-x-2.5 mb-2">
+        <div
+          class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"
         >
-          <ng-icon name="lucideZap" />
-          <span class="capitalize">directive</span>
-        </button>
-        <button class="flex-center gap-1 px-1.5">
-          <ng-icon name="lucideMessageSquare" />
-          <span class="capitalize">comms</span>
-        </button>
-        <button class="flex-center gap-1 px-1.5">
-          <ng-icon name="lucideLogs" />
-          <span class="capitalize">tasks log</span>
-        </button>
+          <img src="ui-logo.png" alt="profile picture of staff member" />
+        </div>
+
+        <article>
+          <nexus-spartan-small class="font-black">{{ member.fullName }}</nexus-spartan-small>
+
+          <nexus-spartan-muted class="-mb-2"> Staff ID: {{ member.staffNumber }} </nexus-spartan-muted>
+        </article>
+      </header>
+
+      <article class="pt-2">
+        <nexus-spartan-p class="font-medium capitalize underline underline-offset-2"
+          >live assignment</nexus-spartan-p
+        >
+        <p class="mb-2.5">
+          Live assignment data will appear here once available.
+        </p>
+        <nexus-spartan-muted class="uppercase">--</nexus-spartan-muted>
+      </article>
+
+      <div class="mx-auto btn-group" hlmButtonGroup>
+        <div class="flex-center subtle-box-shadow rounded-l-xs rounded-r-xs">
+          <button
+            hlmBtn
+            variant="outline"
+            [hlmAlertDialogTriggerFor]="issueNewDirectiveDialog"
+            class="flex-center gap-1 px-1.5"
+          >
+            <ng-icon name="lucideZap" />
+            <span class="capitalize">directive</span>
+          </button>
+          <button class="flex-center gap-1 px-1.5">
+            <ng-icon name="lucideMessageSquare" />
+            <span class="capitalize">comms</span>
+          </button>
+          <button class="flex-center gap-1 px-1.5">
+            <ng-icon name="lucideLogs" />
+            <span class="capitalize">tasks log</span>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  } @empty {
+    <section class="w-full flex-center justify-center">
+      <nexus-spartan-muted>No unit members found.</nexus-spartan-muted>
+    </section>
+  }
 </section>
