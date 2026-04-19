@@ -4,22 +4,22 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMoreVertical, lucideXCircle } from '@ng-icons/lucide';
+import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { BaseStaffEntity } from '../../../../interfaces/users/office/staff/BaseStaff.api';
-import { SideModal } from '../../shared/side-modal/side-modal';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { BaseStaffEntity } from '../../../../interfaces/staff/BaseStaff.api';
+import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { SideModal } from '../../shared/side-modal/side-modal';
 
 @Component({
   selector: 'nexus-staff-list-view',

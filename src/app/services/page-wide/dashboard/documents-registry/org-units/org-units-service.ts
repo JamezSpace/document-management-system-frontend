@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
 import { environment } from '../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { UnitsApi } from '../../../../../interfaces/org units/units.api';
 
 @Injectable({

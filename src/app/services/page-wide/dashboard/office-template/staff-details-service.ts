@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { environment } from '../../../../../environments/environment.development';
 import { finalize } from 'rxjs';
-import { StaffLoginApi } from '../../../../interfaces/users/office/staff/StaffLogin.api';
-import { ApiResponse } from '../../../../interfaces/shared/ApiResponse.interface';
+import { environment } from '../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
+import { StaffLoginApi } from '../../../../interfaces/staff/StaffLogin.api';
 import { AuthService } from '../../auth/auth-service';
 
 @Injectable({

@@ -1,17 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { UtilService } from '../../../../../system-wide/util-service/util-service';
-import { BaseStaffEntity } from '../../../../../../interfaces/users/office/staff/BaseStaff.api';
-import { ErrorType } from '../../../../../../interfaces/shared/Error.interface';
-import { ApiResponse } from '../../../../../../interfaces/shared/ApiResponse.interface';
-import { environment } from '../../../../../../../environments/environment.development';
-import { finalize } from 'rxjs';
-import { StaffDetailsService } from '../../../office-template/staff-details-service';
-import { OfficesApi } from '../../../../../../interfaces/org units/offices.api';
-import { InitStaffPayload } from '../../../../../../interfaces/users/office/staff/InitStaff.api';
-import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
 import { Router } from '@angular/router';
-import { StaffWithMedia } from '../../../../../../interfaces/users/office/staff/StaffWithMedia.api';
+import { finalize } from 'rxjs';
+import { environment } from '../../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../../interfaces/api/ApiResponse.interface';
+import { ErrorType } from '../../../../../../interfaces/api/Error.interface';
+import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
+import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
+import { InitStaffPayload, InviteStaffPayload } from '../../../../../../interfaces/staff/InitStaff.api';
+import { StaffWithMedia } from '../../../../../../interfaces/staff/StaffWithMedia.api';
+import { UtilService } from '../../../../../system-wide/util-service/util-service';
+import { StaffDetailsService } from '../../../office-template/staff-details-service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +23,7 @@ export class StaffService {
 
   initStaff = signal<InitStaffPayload | null>(null);
   staff = signal<StaffWithMedia[]>([]);
-  officesInUnit = signal<OfficesApi[]>([]);
+  officesInUnit = signal<OfficeApi[]>([]);
   officeDesignations = signal<DesignationApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
@@ -47,7 +46,7 @@ export class StaffService {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<OfficesApi[]>>(
+      .get<ApiResponse<OfficeApi[]>>(
         `${environment.api}/identity/${this.loggedInStaff.unit.id}/offices`,
       )
       .pipe(finalize(() => this.loading.set(false)))
@@ -81,6 +80,32 @@ export class StaffService {
           this.newlyAddedStaffId.set(resp.data);
 
           this.router.navigateByUrl('/office/operations/staff');
+        },
+        error: (err) => {
+          this.error.set(err);
+
+          console.log(err);
+
+          this.utilService.showToast(
+            'error',
+            err.error.message || 'Something went wrong. Try again!',
+          );
+        },
+      });
+  }
+
+  inviteSent = signal<boolean>(false);
+  inviteNewStaff(payload: InviteStaffPayload) {
+    this.loading.set(true);
+
+    this.http
+      .post<ApiResponse<string>>(`${environment.api}/identity/staff/invite`, payload)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => {
+          console.log(resp.data);
+
+          this.inviteSent.set(true);
         },
         error: (err) => {
           this.error.set(err);
@@ -155,9 +180,8 @@ export class StaffService {
   deleteStaff(staffId: string) {
     this.loading.set(true);
 
-    // TODO: replace placeholder URL when endpoint is finalized
     this.http
-      .delete<ApiResponse<void>>(`${environment.api}/identity/staff/${staffId}/delete`)
+      .delete<ApiResponse<void>>(`${environment.api}/identity/staff/${staffId}`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {

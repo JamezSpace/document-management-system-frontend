@@ -1,13 +1,14 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    OnInit,
+    signal,
+    ViewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -15,21 +16,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
 import {
-  lucideArrowDownUp,
-  lucideArrowRight,
-  lucideChevronDown,
-  lucideChevronLeft,
-  lucideFileInput,
-  lucideFileOutput,
-  lucideFileText,
-  lucideLayoutTemplate,
-  lucideMail,
-  lucideNetwork,
-  lucidePlus,
-  lucideSearch,
-  lucideStickyNote,
-  lucideUpload,
-  lucideUsers2,
+    lucideArrowDownUp,
+    lucideArrowRight,
+    lucideChevronDown,
+    lucideChevronLeft,
+    lucideFileInput,
+    lucideFileOutput,
+    lucideFileText,
+    lucideLayoutTemplate,
+    lucideMail,
+    lucideNetwork,
+    lucidePlus,
+    lucideSearch,
+    lucideStickyNote,
+    lucideUpload,
+    lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -39,24 +40,28 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmComboboxImports } from '@spartan-ng/helm/combobox';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
+import { DocumentApi } from '../../../../interfaces/documents/Document.api';
 import {
-  CorrespondenceAddressee,
-  SensitivityLevel,
+    CorrespondenceAddressee,
+    SensitivityLevel,
 } from '../../../../interfaces/documents/Document.enum';
+import { UnitsApi } from '../../../../interfaces/org units/units.api';
+import { StaffMember } from '../../../../interfaces/staff/StaffMember.api';
 import { EmptyStateInterface, EmptyStateType } from '../../../../interfaces/system/EmptyState.ui';
 import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
 import { DocumentTypesService } from '../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
 import { OrgUnitsService } from '../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
+import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
 import { UnitMembersService } from '../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
 import { DocumentsService } from '../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
@@ -68,14 +73,9 @@ import { SpartanH3 } from '../../../system-wide/typography/spartan-h3/spartan-h3
 import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { DocumentItem } from '../document-item/document-item';
 import { DocumentDetails } from '../document-details/document-details';
-import { DocumentApi } from '../../../../interfaces/documents/Document.api';
-import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
-import { UnitsApi } from '../../../../interfaces/org units/units.api';
-import { StaffMember } from '../../../../interfaces/users/office/staff/StaffMember.api';
+import { DocumentItem } from '../document-item/document-item';
 import { SideModal } from '../side-modal/side-modal';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'nexus-document-registry',

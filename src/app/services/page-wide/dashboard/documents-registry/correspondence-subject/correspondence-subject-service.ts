@@ -1,8 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { CorrSubjectApi } from '../../../../../interfaces/documents/corrSubject/corrSubject.api';
-import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
 import { HttpClient } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
+import { CorrSubjectApi } from '../../../../../interfaces/documents/corrSubject/corrSubject.api';
 
 @Injectable({
   providedIn: 'root',

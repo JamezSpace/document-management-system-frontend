@@ -1,21 +1,21 @@
 import { AfterViewInit, Component, computed, effect, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch, lucideXCircle } from '@ng-icons/lucide';
-import { MatTooltip } from '@angular/material/tooltip';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { SideModal } from '../../../../../../components/dashboard-wide/shared/side-modal/side-modal';
 import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { StaffWithMedia } from '../../../../../../interfaces/users/office/staff/StaffWithMedia.api';
+import { StaffWithMedia } from '../../../../../../interfaces/staff/StaffWithMedia.api';
 import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';

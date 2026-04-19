@@ -3,13 +3,13 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Delta, Op } from 'quill';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
+import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 import {
-  DocumentApi,
-  InitDocumentApiPayload,
+    DocumentApi,
+    InitDocumentApiPayload,
 } from '../../../../../interfaces/documents/Document.api';
 import { LifecycleActions } from '../../../../../interfaces/documents/Document.enum';
-import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
-import { ErrorType } from '../../../../../interfaces/shared/Error.interface';
 import { UtilService } from '../../../../system-wide/util-service/util-service';
 
 @Injectable({

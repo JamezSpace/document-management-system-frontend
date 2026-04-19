@@ -1,4 +1,4 @@
-interface OfficesApi {
+interface OfficeApi {
     id: string;
     name: string;
     unitId: string;
@@ -6,4 +6,4 @@ interface OfficesApi {
     updatedAt?: Date | null;
 }
 
-export type {OfficesApi};
+export type { OfficeApi };

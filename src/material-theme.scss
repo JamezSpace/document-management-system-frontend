@@ -50,6 +50,7 @@ body {
       header-focus-state-layer-shape: var(--radius-xs),
       header-selected-state-icon-background-color: var(--brand-primary),
       header-selected-state-icon-foreground-color: var(--brand-surface),
+      header-height: 50px
     )
   );
 
@@ -123,4 +124,13 @@ div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-panel {
 .mat-mdc-option.mat-mdc-option {
   padding: 6px 8px;
   min-height: unset;
+}
+
+.mat-horizontal-stepper-header.mat-horizontal-stepper-header  {
+    padding-inline: 8px;
+}
+
+.mat-horizontal-content-container.mat-horizontal-content-container {
+    padding-inline: 8px;
+    padding-block: 16px 0;
 }

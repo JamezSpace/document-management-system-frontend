@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { DirectiveApi } from '../../../../../../interfaces/operations/cio/Directive.api';
 import { DirectiveUi } from '../../../../../../interfaces/operations/cio/Directive.ui';
 import { DirectiveDetailApi } from '../../../../../../interfaces/operations/cio/DirectiveDetail.api';
-import { StaffLoginApi } from '../../../../../../interfaces/users/office/staff/StaffLogin.api';
+import { StaffLoginApi } from '../../../../../../interfaces/staff/StaffLogin.api';
 
 @Injectable({
   providedIn: 'root',

@@ -101,6 +101,9 @@ export class DashboardOfficeTemplate implements OnInit {
     if (!isLoading) {
       if (!data) {
         this.router.navigateByUrl('/unauthorized');
+
+        // this.authService.setLoading(false);
+
         this.authService.resetContext();
       } else {
         console.log('Access Granted');

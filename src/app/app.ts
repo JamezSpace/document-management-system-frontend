@@ -14,7 +14,7 @@ export class App{
 
   private authService = inject(AuthService);
   get isNotLoading() {
-    return this.authService.getLoadingAsASignal();
+    return this.authService.isAppStartingUpWithAuthenticatedUserLoading();
   }
 
 }

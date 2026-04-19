@@ -1,8 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { BussFunctionApi } from '../../../../../interfaces/documents/bussFunction/bussFunction.api';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
+import { BussFunctionApi } from '../../../../../interfaces/documents/bussFunction/bussFunction.api';
 
 @Injectable({
   providedIn: 'root',

@@ -20,7 +20,7 @@ export const routes: Routes = [
 
   // onboarding
   {
-    path: ':entityType/onboarding/:entityId',
+    path: ':entityType/onboarding',
     component: OnboardingEntity,
   },
 
@@ -107,14 +107,14 @@ export const routes: Routes = [
   {
     path: 'unauthorized',
     component: Unauthorized
-  }
-  // fallback
-  //   {
-  //     path: '404',
-  //     loadComponent: () => import('./pages/shared/not-found/not-found').then((m) => m.NotFound),
-  //   },
-  //   {
-  //     path: '**',
-  //     redirectTo: '404',
-  //   },
+  },
+  //fallback
+    {
+      path: '404',
+      loadComponent: () => import('./pages/shared/not-found/not-found').then((m) => m.NotFound),
+    },
+    {
+      path: '**',
+      redirectTo: '404',
+    },
 ];

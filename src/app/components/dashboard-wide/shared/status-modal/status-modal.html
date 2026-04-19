@@ -1,0 +1,29 @@
+<button type="button" class="hidden" [hlmAlertDialogTriggerFor]="statusDialog" #dialogTrigger></button>
+
+<hlm-alert-dialog #statusDialog>
+  <hlm-alert-dialog-content
+    *hlmAlertDialogPortal="let ctx"
+    class="min-w-md gap-0 p-0"
+  >
+    <div class="flex flex-col items-center p-6 text-center">
+      <div class="mb-4 rounded-full bg-nexus-gold/10 p-4">
+        <ng-icon [name]="statusModal().iconName" size="3rem" class="text-nexus-gold"></ng-icon>
+      </div>
+
+      <nexus-spartan-h3>
+        {{ statusModal().title }}
+      </nexus-spartan-h3>
+      <nexus-spartan-p>
+        {{ statusModal().description }}
+      </nexus-spartan-p>
+
+      <!-- <div class="mt-6 w-full rounded border border-dashed border-nexus-slate/20 p-2 bg-white">
+      <span class="text-[10px] font-mono uppercase text-nexus-slate/50">Trace ID: {{ traceId }}</span>
+    </div> -->
+
+      <button hlmBtn class="mt-8 w-full bg-nexus-indigo text-white" (click)="ctx.close()">
+        Back to Workspace
+      </button>
+    </div>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

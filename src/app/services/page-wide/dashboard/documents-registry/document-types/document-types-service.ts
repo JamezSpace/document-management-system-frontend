@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { DocTypeApi } from '../../../../../interfaces/documents/docType/docType.api';
-import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
 import { environment } from '../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
+import { DocTypeApi } from '../../../../../interfaces/documents/docType/docType.api';
 
 @Injectable({
   providedIn: 'root',

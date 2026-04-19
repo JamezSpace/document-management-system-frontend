@@ -18,15 +18,16 @@ export class AuthService {
 
   //  for UI State
   readonly user = signal<User | null>(null);
-  readonly loading = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly appLoading = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
-  getLoadingAsASignal() {
-    return this.loading;
+  isAppStartingUpWithAuthenticatedUserLoading() {
+    return this.appLoading;
   }
 
   setLoading(isLoading: boolean) {
-    this.loading.set(isLoading);
+    this.appLoading.set(isLoading);
   }
 
   constructor() {
@@ -43,8 +44,8 @@ export class AuthService {
   }
 
   hasCapability(cap: string): boolean {
-    console.log(cap)
-    
+    console.log(cap);
+
     return this.capabilities().includes(cap);
   }
 
@@ -77,10 +78,10 @@ export class AuthService {
     try {
       await signInWithEmailAndPassword(this.auth, authUser.email, authUser.password);
 
-      // No need to manually set a token signal;
-      // the Interceptor will call getValidToken() which is more reliable.
-
       this.router.navigateByUrl('/office');
+
+      this.appLoading.set(true);
+
       return { success: 1 };
     } catch (error: any) {
       const friendlyMsg = this.mapFirebaseError(error.code);
@@ -92,7 +93,8 @@ export class AuthService {
 
   async logout() {
     await this.auth.signOut();
-    this.router.navigateByUrl('/login');
+
+    this.router.navigateByUrl('/auth');
   }
 
   private mapFirebaseError(code: string): string {

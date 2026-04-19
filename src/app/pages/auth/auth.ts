@@ -48,9 +48,6 @@ export class Auth {
   });
 
   async submitData() {
-    // this triggers the dashboard setup loader, should only be used when user is about entering dashboard
-    this.authService.setLoading(true);
-
     // login
     const response = await this.authService.login({
       email: this.authFormGroup.getRawValue().email,

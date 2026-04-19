@@ -1,37 +1,50 @@
-import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowDownUp, lucideHash, lucidePlus, lucideSearch } from '@ng-icons/lucide';
+import {
+  lucideArrowDownUp,
+  lucideHash,
+  lucidePlus,
+  lucideSearch,
+  lucideArrowRight,
+  lucideArrowLeft,
+  lucideMail,
+} from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import {
-    HlmInputGroup,
-    HlmInputGroupAddon,
-    HlmInputGroupImports,
+  HlmInputGroup,
+  HlmInputGroupAddon,
+  HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmRadioGroupImports } from '@spartan-ng/helm/radio-group';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { StaffListView } from "../../../../../../components/dashboard-wide/operations/staff-list-view/staff-list-view";
-import { EmptyState } from "../../../../../../components/system-wide/empty-state/empty-state";
+import { StaffListView } from '../../../../../../components/dashboard-wide/operations/staff-list-view/staff-list-view';
+import { EmptyState } from '../../../../../../components/system-wide/empty-state/empty-state';
 import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanH4 } from '../../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { EmploymentType } from '../../../../../../enum/staff/employmentType.enum';
 import {
-    EmptyStateInterface,
-    EmptyStateType,
+  EmptyStateInterface,
+  EmptyStateType,
 } from '../../../../../../interfaces/system/EmptyState.ui';
 import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
+import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
+import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
+import { LineLoader } from '../../../../../../components/system-wide/loaders/line-loader/line-loader';
+import { StatusModal } from '../../../../../../components/dashboard-wide/shared/status-modal/status-modal';
+import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui';
 
 @Component({
   selector: 'nexus-staff-registry',
@@ -58,8 +71,10 @@ import { UtilService } from '../../../../../../services/system-wide/util-service
     ReactiveFormsModule,
     NgIcon,
     EmptyState,
-    StaffListView
-],
+    StaffListView,
+    LineLoader,
+    StatusModal,
+  ],
   templateUrl: './staff-registry.html',
   styleUrl: './staff-registry.css',
   providers: [
@@ -68,6 +83,9 @@ import { UtilService } from '../../../../../../services/system-wide/util-service
       lucideSearch,
       lucideArrowDownUp,
       lucideHash,
+      lucideArrowRight,
+      lucideArrowLeft,
+      lucideMail,
     }),
   ],
 })
@@ -76,7 +94,7 @@ export class StaffRegistry implements OnInit {
   staffService = inject(StaffService);
   staffDetService = inject(StaffDetailsService);
 
-  readonly loggedInStaff = this.staffDetService.data()!
+  readonly loggedInStaff = this.staffDetService.data()!;
 
   directories = signal<string[]>([]);
   isMobile = this.utilService.isMobile;
@@ -120,15 +138,16 @@ export class StaffRegistry implements OnInit {
   offices = this.staffService.officesInUnit;
   officesDesignations = this.staffService.officeDesignations;
   employmentTypes = Object.values(EmploymentType);
+  loading = this.staffService.loading;
 
   designationsInSelectedOffice = computed(() => {
-    const allDesigs = this.officesDesignations()
-    const selectedOffice = this.selectedOffice()
+    const allDesigs = this.officesDesignations();
+    const selectedOffice = this.selectedOffice();
 
-    if(!selectedOffice) return []
+    if (!selectedOffice) return [];
 
-    return allDesigs.filter(desig => desig.officeId === selectedOffice.id)
-  })
+    return allDesigs.filter((desig) => desig.officeId === selectedOffice.id);
+  });
 
   showOfficeLabelRatherThanId = (officeId: string) => {
     if (!officeId) return '';
@@ -157,32 +176,57 @@ export class StaffRegistry implements OnInit {
     return this.staffRegistryNoResults;
   });
 
-   filteredStaff = computed(() => {
+  filteredStaff = computed(() => {
     const allStaff = this.staff();
     const query = this.searchQuery().toLowerCase();
 
-    return allStaff.filter(s => s.fullName.toLowerCase().includes(query));
+    return allStaff.filter((s) => s.fullName.toLowerCase().includes(query));
   });
 
-  staffPersonalInformationFormGroup = new FormGroup({
-    firstName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    lastName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    middleName: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
+  inviteEmailFormGroup = new FormGroup({
     email: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    phoneNum: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
   });
 
-  professionalDetailsFormGroup = new FormGroup({
-    internalOffice: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    designation: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    staffId: new FormControl<number>(0, { nonNullable: true, validators: Validators.required }),
+  officeFormGroup = new FormGroup({
+    office: new FormControl<OfficeApi>(
+      {
+        id: '',
+        name: '',
+        unitId: '',
+        createdAt: new Date(0),
+      },
+      { nonNullable: true, validators: Validators.required },
+    ),
+    designation: new FormControl<DesignationApi>(
+      {
+        value: {
+            id: '',
+            hierarchyLevel: 0,
+            officeId: '',
+            title: ''
+        },
+        disabled: true
+      },
+      { validators: Validators.required },
+    ),
   });
 
-  numberOfStepsToCompleteNewStaffRecord = 2;
+  employmentTypeFormGroup = new FormGroup({
+    employmentType: new FormControl<EmploymentType>(EmploymentType.PERMANENT, {nonNullable: true, validators: Validators.required})
+  });
+
+  numberOfStepsToCompleteNewStaffRecord = 4;
   currentStepInCompletingNewStaffRecord = signal<number>(1);
 
   @ViewChild('stepper')
   stepper!: MatStepper;
+
+  @ViewChild('inviteStaffDialog')
+  inviteStaffDialog!: HlmAlertDialog;
+
+  @ViewChild('inviteSentStatusModal')
+  inviteSentStatusModal!: StatusModal;
+
   proceedToNextStepToCompleteNewStaffRecord() {
     this.currentStepInCompletingNewStaffRecord.update((prev_value) => prev_value + 1);
 
@@ -206,11 +250,16 @@ export class StaffRegistry implements OnInit {
   selectedOffice = signal<any>(null);
   onOfficeSelection(selectedOffice: any) {
     this.selectedOffice.set(selectedOffice);
+
+    this.officeFormGroup.controls.office.setValue(selectedOffice);
+
+    this.officeFormGroup.controls.designation.enable();
   }
 
   selectedOfficeDesignation = signal<any>(null);
   onOfficeDesignationSelection(selectedOfficeDesignation: any) {
     this.selectedOfficeDesignation.set(selectedOfficeDesignation);
+    this.officeFormGroup.controls.designation.setValue(selectedOfficeDesignation);
   }
 
   selectedEmploymentType = signal<any>(null);
@@ -218,19 +267,60 @@ export class StaffRegistry implements OnInit {
     this.selectedEmploymentType.set(selectedEmploymentType);
   }
 
-  submitStaffData() {
-    this.staffService.addNewStaff({
-        firstName: this.staffPersonalInformationFormGroup.getRawValue().firstName,
-        lastName: this.staffPersonalInformationFormGroup.getRawValue().lastName,
-        middleName: this.staffPersonalInformationFormGroup.getRawValue().middleName,
-        email: this.staffPersonalInformationFormGroup.getRawValue().email,
-        phoneNumber: this.staffPersonalInformationFormGroup.getRawValue().phoneNum,
-        staffNumber: this.professionalDetailsFormGroup.getRawValue().staffId,
-        designationId: this.selectedOfficeDesignation().id,
-        officeId: this.selectedOffice().id,
+  pendingInviteEmail = signal<string>('');
+  inviteSentStatusNotification = signal<NotifStatus>({
+    iconName: 'lucideMail',
+    title: 'Invitation Sent',
+    description: 'The onboarding invite has been sent successfully.',
+  });
+
+  sendInvite() {
+    const inviteEmail = this.inviteEmailFormGroup.getRawValue().email;
+    this.pendingInviteEmail.set(inviteEmail);
+
+    this.staffService.inviteNewStaff({
+        email: inviteEmail,
         createdBy: this.loggedInStaff.id,
-        unitId: this.loggedInStaff.unit.id,
-        employmentType: this.selectedEmploymentType()
+        officeId: this.officeFormGroup.getRawValue().office.id,
+        designationId: this.officeFormGroup.getRawValue().designation!.id,
+        employmentType: this.employmentTypeFormGroup.getRawValue().employmentType,
+        unitId: this.loggedInStaff.unit.id
     })
+  }
+
+  inviteSentSuccess = effect(() => {
+    const inviteSent = this.staffService.inviteSent()
+
+    if (!inviteSent) return;
+
+    const invitedEmail = this.pendingInviteEmail();
+    this.inviteSentStatusNotification.set({
+      iconName: 'lucideMail',
+      title: 'Invite Sent',
+      description: invitedEmail
+        ? `An onboarding invite has been sent to ${invitedEmail}.`
+        : 'An onboarding invite has been sent successfully.',
+    });
+
+    this.inviteStaffDialog?.close();
+    this.inviteSentStatusModal?.open();
+    
+    this.staffService.inviteSent.set(false);
+  })
+
+  submitStaffData() {
+    // this.staffService.addNewStaff({
+    //     firstName: this.staffPersonalInformationFormGroup.getRawValue().firstName,
+    //     lastName: this.staffPersonalInformationFormGroup.getRawValue().lastName,
+    //     middleName: this.staffPersonalInformationFormGroup.getRawValue().middleName,
+    //     email: this.staffPersonalInformationFormGroup.getRawValue().email,
+    //     phoneNumber: this.staffPersonalInformationFormGroup.getRawValue().phoneNum,
+    //     staffNumber: this.professionalDetailsFormGroup.getRawValue().staffId,
+    //     designationId: this.selectedOfficeDesignation().id,
+    //     officeId: this.selectedOffice().id,
+    //     createdBy: this.loggedInStaff.id,
+    //     unitId: this.loggedInStaff.unit.id,
+    //     employmentType: this.selectedEmploymentType()
+    // })
   }
 }

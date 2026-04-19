@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { StaffMember } from '../../../../../interfaces/users/office/staff/StaffMember.api';
-import { ApiResponse } from '../../../../../interfaces/shared/ApiResponse.interface';
 import { environment } from '../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
+import { StaffMember } from '../../../../../interfaces/staff/StaffMember.api';
 
 @Injectable({
   providedIn: 'root',
