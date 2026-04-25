@@ -94,32 +94,6 @@ export class StaffService {
       });
   }
 
-  inviteSent = signal<boolean>(false);
-  inviteNewStaff(payload: InviteStaffPayload) {
-    this.loading.set(true);
-
-    this.http
-      .post<ApiResponse<string>>(`${environment.api}/identity/staff/invite`, payload)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (resp) => {
-          console.log(resp.data);
-
-          this.inviteSent.set(true);
-        },
-        error: (err) => {
-          this.error.set(err);
-
-          console.log(err);
-
-          this.utilService.showToast(
-            'error',
-            err.error.message || 'Something went wrong. Try again!',
-          );
-        },
-      });
-  }
-
   activateStaff(staffId: string) {
     this.loading.set(true);
 

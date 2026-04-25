@@ -108,13 +108,14 @@ export const routes: Routes = [
     path: 'unauthorized',
     component: Unauthorized
   },
+
   //fallback
     {
-      path: '404',
-      loadComponent: () => import('./pages/shared/not-found/not-found').then((m) => m.NotFound),
+        path: '404',
+        loadComponent: () => import('./pages/shared/not-found/not-found').then((m) => m.NotFound),
     },
     {
-      path: '**',
-      redirectTo: '404',
+        path: '**',
+        redirectTo: '404',
     },
 ];

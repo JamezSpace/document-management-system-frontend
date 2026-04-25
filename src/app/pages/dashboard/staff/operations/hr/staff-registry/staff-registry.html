@@ -19,8 +19,13 @@
 
 <section class="flex-center justify-between">
   <article>
-    <nexus-spartan-h3>staff personnel registry</nexus-spartan-h3>
-    <nexus-spartan-p> Manage university unit administration and faculty records. </nexus-spartan-p>
+    @if(viewMode() && viewMode()==='invites') {
+        <nexus-spartan-h3>Staff Invites</nexus-spartan-h3>
+        <nexus-spartan-p> Manage staff members you want to add </nexus-spartan-p>
+    } @else {
+        <nexus-spartan-h3>staff personnel registry</nexus-spartan-h3>
+        <nexus-spartan-p> Manage university unit administration and faculty records. </nexus-spartan-p>
+    }
   </article>
   <button
     type="button"
@@ -39,15 +44,27 @@
 <div class="flex-center gap-2.5" aria-label="staff operations e.g. sort, filter, search etc.">
   <!-- search -->
   <div hlmInputGroup>
-    <input
-      type="text"
-      name=""
-      maxlength="50"
-      placeholder="Search staff by name"
-      autocorrect="off"
-      (change)="onSearchChange($event)"
-      hlmInputGroupInput
-    />
+    @if (viewMode() !== 'invites') {
+        <input
+            type="text"
+            name=""
+            maxlength="50"
+            placeholder="Search staff by name"
+            autocorrect="off"
+            (change)="onSearchChange($event)"
+            hlmInputGroupInput
+        />
+    } @else {
+        <input
+            type="email"
+            maxlength="50"
+            placeholder="Search invited persons by email"
+            autocorrect="off"
+            (change)="onSearchChange($event)"
+            hlmInputGroupInput
+        />
+    }
+    
 
     <div hlmInputGroupAddon align="inline-end">
       <ng-icon name="lucideSearch" />
@@ -90,7 +107,9 @@
 
 <hlm-separator class="my-4" />
 
-@if (filteredStaff().length > 0) {
+@if (viewMode() === 'invites') {
+    <nexus-invites-list-view [invites]="filteredInvites()" />
+} @else if (filteredStaff().length > 0) {
   <nexus-staff-list-view [staff]="filteredStaff()" />
 } @else {
   <section class="w-full flex-center justify-center">

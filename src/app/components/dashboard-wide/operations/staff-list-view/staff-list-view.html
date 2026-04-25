@@ -60,6 +60,7 @@
 </table>
 
 <mat-paginator
+    class="mt-5"
   [pageSizeOptions]="[5, 10, 20]"
   showFirstLastButtons
   aria-label="Select page of staff records"
@@ -94,8 +95,12 @@
     </button>
   </header>
 
-  @if (selectedStaff(); as staff) {
+  @if (selectedStaff(); as staff ) {
     <section class="px-1.5">
+      @if (!editMode()) {
+
+        <div>
+
       <nexus-spartan-h4 class="capitalize">{{ staff.fullName }}</nexus-spartan-h4>
       <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted>
 
@@ -131,10 +136,14 @@
           <nexus-spartan-p>{{ formatDate(staff.updatedAt) }}</nexus-spartan-p>
         </article>
       </div>
+        </div>
 
-      @if (editMode()) {
+
+    }@else {
+        <nexus-spartan-h4 class="capitalize">Edit Staff "{{ staff.fullName }}"</nexus-spartan-h4>
+      <!-- <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted> -->
         <hlm-separator class="my-3" />
-        <form [formGroup]="staffUpdateForm" class="grid gap-2.5">
+        <form [formGroup]="staffUpdateForm" class="grid gap-5">
           <div class="field">
             <label hlmLabel for="office">Office</label>
             <brn-select
@@ -187,7 +196,7 @@
             </brn-select>
           </div>
           <div class="field">
-            <label hlmLabel for="staffNumber">Matric/Staff Number</label>
+            <label hlmLabel for="staffNumber">Staff Number</label>
             <input
               hlmInput
               type="text"
@@ -199,7 +208,7 @@
 
           <button
             type="button"
-            class="nexus-button w-full"
+            class="nexus-button w-full mt-2.5"
             (click)="saveStaffUpdates()"
           >
             Save Updates

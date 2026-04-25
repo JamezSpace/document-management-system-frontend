@@ -40,7 +40,7 @@ import { SideModal } from '../../shared/side-modal/side-modal';
     SpartanH4,
     SpartanMuted,
     SpartanP,
-  ],
+],
   templateUrl: './staff-list-view.html',
   styleUrl: './staff-list-view.css',
   providers: [provideIcons({ lucideMoreVertical, lucideXCircle })],
@@ -53,6 +53,8 @@ export class StaffListView implements OnInit, AfterViewInit {
   staff = input.required<BaseStaffEntity[]>();
   selectedStaff = signal<BaseStaffEntity | null>(null);
   editMode = signal<boolean>(false);
+
+  loading = this.staffService.loading;
 
   dataSource = new MatTableDataSource<BaseStaffEntity>([]);
   columnsToDisplay: string[] = [
@@ -72,8 +74,8 @@ export class StaffListView implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.staffService.fetchAllOffices();
-    this.staffService.fetchAllDesignations();
+    if(!this.staffService.officesInUnit) this.staffService.fetchAllOffices();
+    if(!this.staffService.officeDesignations) this.staffService.fetchAllDesignations();
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

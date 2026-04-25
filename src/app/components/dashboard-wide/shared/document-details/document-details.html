@@ -12,7 +12,9 @@
       <ng-icon name="lucideX" />
     </button>
   </article>
+
   <mat-tab-group>
+    <!-- Document Details Tab -->
     <mat-tab label="Details">
       <section class="pt-5">
         <!-- direction -->
@@ -77,6 +79,7 @@
       </section>
     </mat-tab>
 
+    <!-- Document Activity Tab -->
     <mat-tab label="Activity">
         <section class="pt-5">
         @if (documentToShowFullDetails().currentVersion; as version) {

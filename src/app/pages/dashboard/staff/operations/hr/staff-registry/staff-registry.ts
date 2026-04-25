@@ -45,6 +45,10 @@ import { DesignationApi } from '../../../../../../interfaces/org units/designati
 import { LineLoader } from '../../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { StatusModal } from '../../../../../../components/dashboard-wide/shared/status-modal/status-modal';
 import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui';
+import { ActivatedRoute } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { InviteService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/invite-service';
+import { InvitesListView } from "../../../../../../components/dashboard-wide/operations/invites-list-view/invites-list-view";
 
 @Component({
   selector: 'nexus-staff-registry',
@@ -74,7 +78,8 @@ import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui'
     StaffListView,
     LineLoader,
     StatusModal,
-  ],
+    InvitesListView
+],
   templateUrl: './staff-registry.html',
   styleUrl: './staff-registry.css',
   providers: [
@@ -90,9 +95,14 @@ import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui'
   ],
 })
 export class StaffRegistry implements OnInit {
-  utilService = inject(UtilService);
-  staffService = inject(StaffService);
-  staffDetService = inject(StaffDetailsService);
+  private utilService = inject(UtilService);
+  private staffService = inject(StaffService);
+  private inviteService = inject(InviteService);
+  private staffDetService = inject(StaffDetailsService);
+  private activatedRouter = inject(ActivatedRoute);
+
+  private queryParams = toSignal(this.activatedRouter.queryParamMap);
+    viewMode = computed(() => this.queryParams()?.get('view'));
 
   readonly loggedInStaff = this.staffDetService.data()!;
 
@@ -132,9 +142,11 @@ export class StaffRegistry implements OnInit {
     this.staffService.fetchAllStaff();
     this.staffService.fetchAllOffices();
     this.staffService.fetchAllDesignations();
+    this.inviteService.fetchAllInvites()
   }
 
   staff = this.staffService.staff;
+  invites = this.inviteService.invites;
   offices = this.staffService.officesInUnit;
   officesDesignations = this.staffService.officeDesignations;
   employmentTypes = Object.values(EmploymentType);
@@ -181,6 +193,13 @@ export class StaffRegistry implements OnInit {
     const query = this.searchQuery().toLowerCase();
 
     return allStaff.filter((s) => s.fullName.toLowerCase().includes(query));
+  });
+
+  filteredInvites = computed(() => {
+    const allInvites = this.invites();
+    const query = this.searchQuery().toLowerCase();
+
+    return allInvites.filter((invite) => invite.email.toLowerCase().includes(query));
   });
 
   inviteEmailFormGroup = new FormGroup({
@@ -278,7 +297,7 @@ export class StaffRegistry implements OnInit {
     const inviteEmail = this.inviteEmailFormGroup.getRawValue().email;
     this.pendingInviteEmail.set(inviteEmail);
 
-    this.staffService.inviteNewStaff({
+    this.inviteService.initInvite({
         email: inviteEmail,
         createdBy: this.loggedInStaff.id,
         officeId: this.officeFormGroup.getRawValue().office.id,
@@ -289,7 +308,7 @@ export class StaffRegistry implements OnInit {
   }
 
   inviteSentSuccess = effect(() => {
-    const inviteSent = this.staffService.inviteSent()
+    const inviteSent = this.inviteService.inviteSent()
 
     if (!inviteSent) return;
 
@@ -305,7 +324,7 @@ export class StaffRegistry implements OnInit {
     this.inviteStaffDialog?.close();
     this.inviteSentStatusModal?.open();
     
-    this.staffService.inviteSent.set(false);
+    this.inviteService.inviteSent.set(false);
   })
 
   submitStaffData() {

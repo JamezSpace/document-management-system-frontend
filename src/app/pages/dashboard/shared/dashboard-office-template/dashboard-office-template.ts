@@ -345,9 +345,16 @@ export class DashboardOfficeTemplate implements OnInit {
       icon: 'lucideUsers',
       label: 'Staff Records',
       route: 'operations/staff',
-      subMenuExists: false,
+      subMenuExists: true,
       group: NavGroup.OPERATIONS,
       requiredCapability: 'staff.view',
+      subMenus: [
+        {
+          label: 'Invited Staff',
+          route: { view: 'invites' },
+          requiredCapability: 'staff.view',
+        }
+      ]
     },
 
     {
