@@ -1,26 +1,26 @@
 import { Component, effect, inject, input, signal, ViewChild } from '@angular/core';
-import { SideModal } from '../../shared/side-modal/side-modal';
-import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideMoreVertical, lucideXCircle } from '@ng-icons/lucide';
+import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
-import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { InvitesApi } from '../../../../interfaces/staff/Invites.api';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSeparator } from "@spartan-ng/helm/separator";
+import { EmploymentType } from '../../../../enum/staff/employmentType.enum';
+import { InviteApi } from '../../../../interfaces/staff/Invite.api';
 import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { InviteService } from '../../../../services/page-wide/onboarding/invite/invite-service';
+import { UtilService } from '../../../../services/system-wide/util-service/util-service';
+import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
-import { HlmSeparator } from "@spartan-ng/helm/separator";
-import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { EmploymentType } from '../../../../enum/staff/employmentType.enum';
-import { InviteService } from '../../../../services/page-wide/dashboard/operations/hr/staff/invite-service';
-import { lucideMoreVertical, lucideXCircle } from '@ng-icons/lucide';
+import { SideModal } from '../../shared/side-modal/side-modal';
 
 @Component({
   selector: 'nexus-invites-list-view',
@@ -60,11 +60,11 @@ export class InvitesListView {
   designations = this.staffService.officeDesignations;
   employmentTypes = Object.values(EmploymentType);
 
-  invites = input.required<InvitesApi[]>();
-  selectedInvite = signal<InvitesApi | null>(null);
+  invites = input.required<InviteApi[]>();
+  selectedInvite = signal<InviteApi | null>(null);
   editMode = signal<boolean>(false);
 
-  dataSource = new MatTableDataSource<InvitesApi>([]);
+  dataSource = new MatTableDataSource<InviteApi>([]);
   columnsToDisplay: string[] = [
     'email',
     'unit',
@@ -98,19 +98,11 @@ export class InvitesListView {
     employmentType: new FormControl('', Validators.required),
   });
 
-  getUnitLabel(invite: InvitesApi) {
-    return invite.unit?.name ?? '--';
-  }
+  getUnitLabel = this.inviteService.getUnitLabel;
+  getOfficeLabel = this.inviteService.getOfficeLabel;
+  getDesignationTitle = this.inviteService.getDesignationTitle;
 
-  getDesignationTitle(invite: InvitesApi) {
-    return invite.designation?.title ?? '--';
-  }
-
-  getOfficeLabel(invite: InvitesApi) {
-    return invite.office.name ?? '--';
-  }
-
-  setActionTarget(invite: InvitesApi) {
+  setActionTarget(invite: InviteApi) {
     this.selectedInvite.set(invite);
   }
 
@@ -128,7 +120,7 @@ export class InvitesListView {
     this.sideModalService.open();
   }
 
-  openInviteDetails(invite: InvitesApi) {
+  openInviteDetails(invite: InviteApi) {
     this.selectedInvite.set(invite);
     this.editMode.set(false);
     this.sideModalService.open();
@@ -162,7 +154,7 @@ export class InvitesListView {
     const invite = this.selectedInvite();
     if (!invite) return;
 
-    this.inviteService.deleteInvite(invite.id);
+    this.inviteService.nudgeInvite(invite.id);
   }
 
   deleteSelectedInvite() {

@@ -1,15 +1,17 @@
 import { Component, computed, effect, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideArrowDownUp,
-  lucideHash,
-  lucidePlus,
-  lucideSearch,
-  lucideArrowRight,
-  lucideArrowLeft,
-  lucideMail,
+    lucideArrowDownUp,
+    lucideArrowLeft,
+    lucideArrowRight,
+    lucideHash,
+    lucideMail,
+    lucidePlus,
+    lucideSearch,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -17,38 +19,36 @@ import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-di
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmRadioGroupImports } from '@spartan-ng/helm/radio-group';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { InvitesListView } from "../../../../../../components/dashboard-wide/operations/invites-list-view/invites-list-view";
 import { StaffListView } from '../../../../../../components/dashboard-wide/operations/staff-list-view/staff-list-view';
+import { StatusModal } from '../../../../../../components/dashboard-wide/shared/status-modal/status-modal';
 import { EmptyState } from '../../../../../../components/system-wide/empty-state/empty-state';
+import { LineLoader } from '../../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanH4 } from '../../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { EmploymentType } from '../../../../../../enum/staff/employmentType.enum';
+import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
+import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
 import {
-  EmptyStateInterface,
-  EmptyStateType,
+    EmptyStateInterface,
+    EmptyStateType,
 } from '../../../../../../interfaces/system/EmptyState.ui';
+import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui';
 import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { InviteService } from '../../../../../../services/page-wide/onboarding/invite/invite-service';
 import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
-import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
-import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
-import { LineLoader } from '../../../../../../components/system-wide/loaders/line-loader/line-loader';
-import { StatusModal } from '../../../../../../components/dashboard-wide/shared/status-modal/status-modal';
-import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui';
-import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { InviteService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/invite-service';
-import { InvitesListView } from "../../../../../../components/dashboard-wide/operations/invites-list-view/invites-list-view";
 
 @Component({
   selector: 'nexus-staff-registry',
@@ -142,7 +142,7 @@ export class StaffRegistry implements OnInit {
     this.staffService.fetchAllStaff();
     this.staffService.fetchAllOffices();
     this.staffService.fetchAllDesignations();
-    this.inviteService.fetchAllInvites()
+    this.inviteService.fetchAllInvites();
   }
 
   staff = this.staffService.staff;

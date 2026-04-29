@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { UtilService } from '../../../../../system-wide/util-service/util-service';
 import { finalize } from 'rxjs';
-import { environment } from '../../../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../../../interfaces/api/ApiResponse.interface';
-import { InviteStaffPayload } from '../../../../../../interfaces/staff/InitStaff.api';
-import { ErrorType } from '../../../../../../interfaces/api/Error.interface';
-import { InvitesApi } from '../../../../../../interfaces/staff/Invites.api';
+import { environment } from '../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
+import { ErrorType } from '../../../../interfaces/api/Error.interface';
+import { InviteStaffPayload } from '../../../../interfaces/staff/InitStaff.api';
+import { InviteApi } from '../../../../interfaces/staff/Invite.api';
+import { UtilService } from '../../../system-wide/util-service/util-service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,13 +18,26 @@ export class InviteService {
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
 
-  invites = signal<InvitesApi[]>([]);
+  invites = signal<InviteApi[]>([]);
+
+  getUnitLabel(invite: InviteApi) {
+    return invite.unit?.name ?? '--';
+  }
+
+  getDesignationTitle(invite: InviteApi) {
+    return invite.designation?.title ?? '--';
+  }
+
+  getOfficeLabel(invite: InviteApi) {
+    return invite.office.name ?? '--';
+  }
+
   inviteSent = signal<boolean>(false);
   initInvite(payload: InviteStaffPayload) {
     this.loading.set(true);
 
     this.http
-      .post<ApiResponse<string>>(`${environment.api}/identity/staff/invite`, payload)
+      .post<ApiResponse<string>>(`${environment.api}/identity/invite`, payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => {
@@ -47,7 +60,7 @@ export class InviteService {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<InvitesApi[]>>(`${environment.api}/identity/invites`)
+      .get<ApiResponse<InviteApi[]>>(`${environment.api}/identity/invites`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.invites.set(resp.data),
@@ -98,7 +111,7 @@ export class InviteService {
       .delete<ApiResponse<void>>(`${environment.api}/identity/staff/invite/${inviteId}`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: resp => console.log("Deleted Invite:",resp.success),
+        next: (resp) => console.log('Deleted Invite:', resp.success),
         error: (err) => {
           this.error.set(err);
 
@@ -118,7 +131,7 @@ export class InviteService {
       .delete<ApiResponse<void>>(`${environment.api}/identity/invite/nudge/${inviteId}`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: resp => this.nudgeSuccessful.set(true),
+        next: (resp) => this.nudgeSuccessful.set(true),
         error: (err) => {
           this.error.set(err);
 

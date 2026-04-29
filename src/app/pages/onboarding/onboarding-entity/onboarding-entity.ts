@@ -1,28 +1,28 @@
 import { Component, computed, effect, inject, Input, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatStepper, MatStep } from '@angular/material/stepper';
-import { OnboardingService } from '../../../services/page-wide/onboarding/onboarding-service';
-import { UtilService } from '../../../services/system-wide/util-service/util-service';
-import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
-import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
-import { IdCard } from '../../../components/dashboard-wide/id-card/id-card';
+import { MatStep, MatStepper } from '@angular/material/stepper';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EntityType } from '../../../interfaces/onboarding/Entity.api';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideUser,
-  lucideUserRound,
-  lucideContact,
-  lucideIdCard,
-  lucideMail,
-  lucideBadgeCheck,
-  lucideHistory,
-  lucideShieldCheck,
+    lucideBadgeCheck,
+    lucideContact,
+    lucideHistory,
+    lucideIdCard,
+    lucideMail,
+    lucideShieldCheck,
+    lucideUser,
+    lucideUserRound,
 } from '@ng-icons/lucide';
+import { IdCard } from '../../../components/dashboard-wide/id-card/id-card';
+import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
+import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
 import { SpartanH1 } from '../../../components/system-wide/typography/spartan-h1/spartan-h1';
-import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
 import { SpartanH3 } from "../../../components/system-wide/typography/spartan-h3/spartan-h3";
+import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
+import { EntityType } from '../../../interfaces/onboarding/Entity.api';
+import { OnboardingService } from '../../../services/page-wide/onboarding/session/onboarding-service';
+import { UtilService } from '../../../services/system-wide/util-service/util-service';
 
 type PrimaryInformationData = {
   firstName: string;
@@ -198,7 +198,9 @@ export class OnboardingEntity {
             currentStep: currentStep + 1,
           });
 
-          this.onboardingService.completeOnboardingSession(session.id, 3);
+          const invited = this.entity()!.details
+
+          this.onboardingService.completeOnboardingSession(invited.id, session.id, 3);
         }
       }
     }

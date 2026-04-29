@@ -1,13 +1,16 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
   <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
-    <li hlmBreadcrumbItem>
-      <button hlmBreadcrumbLink class="capitalize">operations</button>
-    </li>
-    <li hlmBreadcrumbSeparator></li>
-    <li hlmBreadcrumbItem>
-      <button hlmBreadcrumbLink class="capitalize">staff activation</button>
-    </li>
+    @for (directory of directories(); track $index) {
+      <li hlmBreadcrumbItem>
+        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
+      </li>
+
+      <!-- that is, if there still exists a next directory -->
+      @if ($index + 1 < directories().length) {
+        <li hlmBreadcrumbSeparator>&Backslash;</li>
+      }
+    }
   </ol>
 </nav>
 
@@ -42,49 +45,37 @@
 
 <hlm-separator class="my-4" />
 
-@if (filteredStaff().length > 0) {
+@if (onboardingSessions().length > 0) {
   <table mat-table [dataSource]="dataSource">
-    <!-- Staff ID -->
+    <!-- sn -->
     <ng-container matColumnDef="staffNumber">
-      <th mat-header-cell *matHeaderCellDef>Staff ID</th>
-      <td mat-cell *matCellDef="let staff">{{ staff.staffNumber }}</td>
+      <th mat-header-cell *matHeaderCellDef>S/N</th>
+      <td mat-cell *matCellDef="let invite">1</td>
     </ng-container>
 
-    <!-- Name -->
+    <!-- Full Name -->
     <ng-container matColumnDef="fullName">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let staff">{{ staff.fullName }}</td>
+      <th mat-header-cell *matHeaderCellDef>Full Name</th>
+      <td mat-cell *matCellDef="let invite">{{ invite.fullName }}</td>
     </ng-container>
 
     <!-- Email -->
     <ng-container matColumnDef="email">
       <th mat-header-cell *matHeaderCellDef>Email</th>
-      <td mat-cell *matCellDef="let staff">{{ staff.email }}</td>
+      <td mat-cell *matCellDef="let invite">{{ invite.email }}</td>
     </ng-container>
 
-    <!-- Unit -->
-    <ng-container matColumnDef="unit">
-      <th mat-header-cell *matHeaderCellDef>Unit</th>
-      <td mat-cell *matCellDef="let staff">{{ getUnitLabel(staff) }}</td>
-    </ng-container>
-
-    <!-- Designation -->
-    <ng-container matColumnDef="designation">
-      <th mat-header-cell *matHeaderCellDef>Designation</th>
-      <td mat-cell *matCellDef="let staff">{{ getDesignationTitle(staff) }}</td>
-    </ng-container>
-
-    <!-- Status -->
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let staff">{{ staff.status }}</td>
+    <!-- Initiated On -->
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef>Initiated On</th>
+      <td mat-cell *matCellDef="let invite">{{ formatDate(invite.createdAt) }}</td>
     </ng-container>
 
     <!-- Profile Picture -->
     <ng-container matColumnDef="profilePicture">
       <th mat-header-cell *matHeaderCellDef>Profile Picture</th>
-      <td mat-cell *matCellDef="let staff">
-        @if (hasProfilePicture(staff)) {
+      <td mat-cell *matCellDef="let invite">
+        @if (hasProfilePicture(invite)) {
           <span class="text-emerald-600">Uploaded</span>
         } @else {
           <span class="text-amber-600">Missing</span>
@@ -95,8 +86,8 @@
     <!-- Signature -->
     <ng-container matColumnDef="signature">
       <th mat-header-cell *matHeaderCellDef>Signature</th>
-      <td mat-cell *matCellDef="let staff">
-        @if (hasSignature(staff)) {
+      <td mat-cell *matCellDef="let invite">
+        @if (hasSignature(invite)) {
           <span class="text-emerald-600">Uploaded</span>
         } @else {
           <span class="text-amber-600">Missing</span>
@@ -135,11 +126,13 @@
     </button>
   </header>
 
-  @if (selectedStaff(); as staff) {
+  @if (selectedStaff(); as invite) {
     <section class="px-1.5 flex flex-col gap-3">
+      <div class="flex justify-start">
+        <img [src]="invite.profilePicture" alt="Missing Profile Picture" />
+      </div>
       <div>
-        <nexus-spartan-h3 class="capitalize">{{ staff.fullName }}</nexus-spartan-h3>
-        <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted>
+        <nexus-spartan-h3 class="capitalize">{{ invite.fullName }}</nexus-spartan-h3>
       </div>
 
       <hlm-separator />
@@ -147,86 +140,54 @@
       <div class="grid gap-2.5">
         <article>
           <nexus-spartan-muted class="uppercase">staff id</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.staffNumber }}</nexus-spartan-p>
+          <nexus-spartan-p>{{ invite.staffNumber }}</nexus-spartan-p>
         </article>
         <article>
           <nexus-spartan-muted class="uppercase">email</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.email }}</nexus-spartan-p>
+          <nexus-spartan-p>{{ invite.email }}</nexus-spartan-p>
         </article>
-        <article>
+        <!-- <article>
           <nexus-spartan-muted class="uppercase">unit</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.unit?.name ?? '--' }}</nexus-spartan-p>
+          <nexus-spartan-p>{{ invite.unit.name }}</nexus-spartan-p>
         </article>
         <article>
           <nexus-spartan-muted class="uppercase">designation</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.designation?.title ?? '--' }}</nexus-spartan-p>
+          <nexus-spartan-p>{{ invite.designation?.title ?? '--' }}</nexus-spartan-p>
         </article>
         <article>
           <nexus-spartan-muted class="uppercase">status</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.status }}</nexus-spartan-p>
-        </article>
+          <nexus-spartan-p>{{ invite.status }}</nexus-spartan-p>
+        </article> -->
         <article>
-          <nexus-spartan-muted class="uppercase">created</nexus-spartan-muted>
-          <nexus-spartan-p>{{ formatDate(staff.createdAt) }}</nexus-spartan-p>
+          <nexus-spartan-muted class="uppercase">started</nexus-spartan-muted>
+          <nexus-spartan-p>{{ formatDate(invite.createdAt) }}</nexus-spartan-p>
         </article>
-        <article>
+        @if (invite.completedAt) {
+          <article>
+            <nexus-spartan-muted class="uppercase">Completed</nexus-spartan-muted>
+            <nexus-spartan-p>{{ formatDate(invite.completedAt) }}</nexus-spartan-p>
+          </article>
+        }
+        <!-- <article>
           <nexus-spartan-muted class="uppercase">last updated</nexus-spartan-muted>
-          <nexus-spartan-p>{{ formatDate(staff.updatedAt) }}</nexus-spartan-p>
-        </article>
+          <nexus-spartan-p>{{ formatDate(invite.updatedAt) }}</nexus-spartan-p>
+        </article> -->
       </div>
 
       <hlm-separator />
 
-      <div class="grid gap-3">
-        <article>
-          <nexus-spartan-muted class="uppercase">profile picture</nexus-spartan-muted>
-          @if (hasProfilePicture(staff)) {
-            <img
-              [src]="getProfilePictureUrl(staff)"
-              alt="staff profile picture"
-              class="mt-2 h-20 w-20 rounded-full object-cover border"
-            />
-          } @else {
-            <p class="text-sm text-muted-foreground">Not uploaded.</p>
-          }
-        </article>
-
-        <article>
-          <nexus-spartan-muted class="uppercase">digital signature</nexus-spartan-muted>
-          @if (hasSignature(staff)) {
-            <img
-              [src]="getSignatureUrl(staff)"
-              alt="staff signature"
-              class="mt-2 h-16 w-auto max-w-full border rounded-xs p-1 bg-white"
-            />
-          } @else {
-            <p class="text-sm text-muted-foreground">Not uploaded.</p>
-          }
-        </article>
-      </div>
-
-      @if (staff.status.toLowerCase() !== 'active') {
-        <div class="mt-2">
-          <button
-            type="button"
-            class="nexus-button w-full"
-            [hlmAlertDialogTriggerFor]="activateStaffDialog"
-            [disabled]="!canActivate(staff)"
-          >
-            Activate
-          </button>
-          <button
-            type="button"
-            class="nexus-button outlined w-full mt-2"
-            disabled
-            matTooltip="feature coming soon"
-          >
-            Nudge Staff
-          </button>
-        </div>
-      } @else {
-        <p class="text-sm text-muted-foreground">This staff account is already active.</p>
-      }
+      <article>
+        <nexus-spartan-muted class="uppercase">digital signature</nexus-spartan-muted>
+        @if (hasSignature(invite)) {
+          <img
+            [src]="getSignatureUrl(invite)"
+            alt="invite signature"
+            class="mt-2 h-16 w-auto max-w-full border rounded-xs p-1 bg-white"
+          />
+        } @else {
+          <p class="text-sm text-muted-foreground">Not uploaded.</p>
+        }
+      </article>
     </section>
   } @else {
     <p class="px-1.5 text-sm">Select a staff member to view details.</p>
@@ -237,15 +198,11 @@
   <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
     <hlm-alert-dialog-header>
       <h2 hlmAlertDialogTitle>Activate staff account?</h2>
-      <p hlmAlertDialogDescription>
-        This action will activate the selected staff profile.
-      </p>
+      <p hlmAlertDialogDescription>This action will activate the selected staff profile.</p>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction (click)="confirmActivation(); ctx.close()">
-        Confirm
-      </button>
+      <button hlmAlertDialogAction (click)="confirmActivation(); ctx.close()">Confirm</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

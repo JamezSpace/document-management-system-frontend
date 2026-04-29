@@ -1,8 +1,7 @@
 import { InviteStatus } from '../../enum/invite/status.enum';
 import { EmploymentType } from '../../enum/staff/employmentType.enum';
-import { BaseStaffEntity } from './BaseStaff.api';
 
-interface InvitesApi {
+interface InviteApi {
   id: string;
   email: string;
   unit: {
@@ -47,4 +46,5 @@ interface InvitesApi {
   updatedAt: string | null;
 }
 
-export type { InvitesApi };
+export type { InviteApi };
+

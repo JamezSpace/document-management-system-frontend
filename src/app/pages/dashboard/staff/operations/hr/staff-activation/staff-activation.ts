@@ -1,14 +1,24 @@
-import { AfterViewInit, Component, computed, effect, inject, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
+import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch, lucideXCircle } from '@ng-icons/lucide';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import {
-    HlmInputGroup,
-    HlmInputGroupAddon,
-    HlmInputGroupImports,
+  HlmInputGroup,
+  HlmInputGroupAddon,
+  HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { SideModal } from '../../../../../../components/dashboard-wide/shared/side-modal/side-modal';
@@ -18,7 +28,10 @@ import { SpartanP } from '../../../../../../components/system-wide/typography/sp
 import { StaffWithMedia } from '../../../../../../interfaces/staff/StaffWithMedia.api';
 import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { InviteService } from '../../../../../../services/page-wide/onboarding/invite/invite-service';
 import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
+import { OnboardingService } from '../../../../../../services/page-wide/onboarding/session/onboarding-service';
+import { StaffToActivate } from '../../../../../../interfaces/staff/StaffToActivate.api';
 
 @Component({
   selector: 'nexus-staff-activation',
@@ -31,7 +44,6 @@ import { UtilService } from '../../../../../../services/system-wide/util-service
     HlmSeparator,
     HlmAlertDialogImports,
     NgIcon,
-    MatTooltip,
     SideModal,
     SpartanH3,
     SpartanMuted,
@@ -47,12 +59,12 @@ import { UtilService } from '../../../../../../services/system-wide/util-service
   ],
 })
 export class StaffActivation implements OnInit, AfterViewInit {
-  private staffService = inject(StaffService);
+  private onboardingSessionService = inject(OnboardingService);
   private sideModalService = inject(SideModalService);
   private utilService = inject(UtilService);
+  activatedRouter = inject(ActivatedRoute);
 
-  staff = this.staffService.staff;
-  selectedStaff = signal<StaffWithMedia | null>(null);
+  selectedStaff = signal<StaffToActivate | null>(null);
 
   searchQuery = signal<string>('');
   onSearchChange(event: Event) {
@@ -60,27 +72,12 @@ export class StaffActivation implements OnInit, AfterViewInit {
     this.searchQuery.set(value);
   }
 
-  filteredStaff = computed(() => {
-    const query = this.searchQuery().toLowerCase();
-
-    return this.staff().filter((member) => member.fullName.toLowerCase().includes(query) && member.status === 'pending');
-  });
-
-  dataSource = new MatTableDataSource<StaffWithMedia>([]);
-  columnsToDisplay: string[] = [
-    'staffNumber',
-    'fullName',
-    'email',
-    'unit',
-    'designation',
-    'status',
-    'profilePicture',
-    'signature',
-  ];
+  dataSource = new MatTableDataSource<StaffToActivate>([]);
+  columnsToDisplay: string[] = ['staffNumber', 'fullName', 'email', 'profilePicture', 'signature', 'createdAt'];
 
   constructor() {
     effect(() => {
-      this.dataSource.data = this.filteredStaff();
+      this.dataSource.data = this.onboardingSessions();
     });
   }
 
@@ -89,12 +86,47 @@ export class StaffActivation implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  directories = signal<string[]>([]);
   ngOnInit(): void {
-    this.staffService.fetchAllStaff();
+    const currentPath = this.activatedRouter.snapshot.url.toString();
+
+    this.directories.update((prev_directories) => [...prev_directories, currentPath]);
+
+    this.onboardingSessionService.fetchAllCompleteOnboardingSessions();
   }
 
-  openStaffDetails(staff: StaffWithMedia) {
-    this.selectedStaff.set(staff);
+  onboardingSessions = computed(() => {
+    const allOnboardingSessions = this.onboardingSessionService.onboardingSessions();
+
+    return allOnboardingSessions.map((session) => {
+      const primary_data: {
+        email: string;
+        staffId: number;
+        lastName: string;
+        firstName: string;
+        middleName: string;
+      } = session.primaryData as any;
+
+      return {
+        staffNumber: primary_data.staffId,
+        fullName: new String().concat(
+          primary_data.lastName,
+          ' ',
+          primary_data.firstName,
+          ' ',
+          primary_data.middleName,
+        ),
+        email: primary_data.email,
+        profilePicture: session.profilePictureUrl,
+        signature: session.signatureUrl,
+        createdAt: session.startedAt,
+        completedAt: session.completedAt
+      };
+    });
+  });
+
+  openStaffDetails(invite: StaffToActivate) {
+    this.selectedStaff.set(invite);
 
     this.sideModalService.open();
   }
@@ -107,19 +139,11 @@ export class StaffActivation implements OnInit, AfterViewInit {
     const staff = this.selectedStaff();
     if (!staff) return;
 
-    this.staffService.activateStaff(staff.id);
+    // this.staffService.activateStaff(staff.id);
   }
 
-  canActivate(staff: StaffWithMedia) {
-    return this.hasProfilePicture(staff) && this.hasSignature(staff);
-  }
-
-  getUnitLabel(staff: StaffWithMedia) {
-    return staff.unit?.name ?? '--';
-  }
-
-  getDesignationTitle(staff: StaffWithMedia) {
-    return staff.designation?.title ?? '--';
+  canActivate(inviteSession: StaffToActivate) {
+    return this.hasProfilePicture(inviteSession) && this.hasSignature(inviteSession);
   }
 
   formatDate(date: string | null) {
@@ -142,19 +166,21 @@ export class StaffActivation implements OnInit, AfterViewInit {
     );
   }
 
-  hasProfilePicture(staff: StaffWithMedia) {
-    return !!this.findMediaByRole(staff, ['profile', 'passport', 'photo']);
+  hasProfilePicture(inviteSession: StaffToActivate) {
+    return inviteSession.profilePicture ? true : false;
   }
 
-  hasSignature(staff: StaffWithMedia) {
-    return !!this.findMediaByRole(staff, ['signature', 'sign']);
+  hasSignature(inviteSession: StaffToActivate) {
+    return inviteSession.signature ? true : false;
   }
 
-  getProfilePictureUrl(staff: StaffWithMedia) {
-    return this.findMediaByRole(staff, ['profile', 'passport', 'photo'])?.objectKey ?? '';
+  getProfilePictureUrl(invite: StaffToActivate) {
+    // replace with actual method to get image url in the service
+    return "https://placehold.co/600x400?text=Hello+World";
   }
 
-  getSignatureUrl(staff: StaffWithMedia) {
-    return this.findMediaByRole(staff, ['signature', 'sign'])?.objectKey ?? '';
+  getSignatureUrl(invite: StaffToActivate) {
+    // replace with actual method to get image url in the service
+    return "25";
   }
 }

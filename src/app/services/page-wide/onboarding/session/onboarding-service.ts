@@ -1,21 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import {
-    confirmPasswordReset,
-    getAuth,
-    onAuthStateChanged,
-    User,
-    verifyPasswordResetCode,
+  confirmPasswordReset,
+  getAuth,
+  onAuthStateChanged,
+  User,
+  verifyPasswordResetCode,
 } from 'firebase/auth';
 import { finalize } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
-import { firebase_app } from '../../../app.config';
-import { ApiResponse } from '../../../interfaces/api/ApiResponse.interface';
-import { ErrorType } from '../../../interfaces/api/Error.interface';
-import { EntityResponse } from '../../../interfaces/onboarding/Entity.api';
-import { OnboardingSession } from '../../../interfaces/onboarding/OnboardingSession.api';
-import { StaffInvite } from '../../../interfaces/onboarding/StaffInvite.api';
-import { BaseStaffEntity } from '../../../interfaces/staff/BaseStaff.api';
+import { environment } from '../../../../../environments/environment.development';
+import { firebase_app } from '../../../../app.config';
+import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
+import { ErrorType } from '../../../../interfaces/api/Error.interface';
+import { EntityResponse } from '../../../../interfaces/onboarding/Entity.api';
+import { OnboardingSession, OnboardingSessionView } from '../../../../interfaces/onboarding/OnboardingSession.api';
+import { StaffInvite } from '../../../../interfaces/onboarding/StaffInvite.api';
+import { BaseStaffEntity } from '../../../../interfaces/staff/BaseStaff.api';
+import { OnboardingSessionStatus } from '../../../../enum/onboarding/sessionStatus.enum';
 
 type PrimaryInformationData = {
   firstName: string;
@@ -37,6 +38,7 @@ export class OnboardingService {
   entity = signal<EntityResponse<StaffInvite> | null>(null);
   staffToOnboard = signal<BaseStaffEntity | null>(null);
   onboardingSession = signal<OnboardingSession | null>(null);
+  onboardingSessions = signal<OnboardingSessionView[]>([]);
 
   // creates a writable signal for the user
   private _currentUser = signal<User | null>(null);
@@ -88,17 +90,17 @@ export class OnboardingService {
             details: resp.data.details,
           }),
         error: (err) => {
-            this.error.set({
-                code: {
-                    httpStatusCode: err.status,
-                    codeName: err.statusText
-                },
-                context: {
-                    message: err.error.error.message,
-                    category: null
-                }
-            })  
-        }
+          this.error.set({
+            code: {
+              httpStatusCode: err.status,
+              codeName: err.statusText,
+            },
+            context: {
+              message: err.error.error.message,
+              category: null,
+            },
+          });
+        },
       });
   }
 
@@ -106,10 +108,13 @@ export class OnboardingService {
     this.loading.set(true);
 
     this.http
-      .post<ApiResponse<OnboardingSession>>(`${environment.api}/identity/staff/onboarding/session`, {
-        inviteId,
-        email,
-      })
+      .post<ApiResponse<OnboardingSession>>(
+        `${environment.api}/identity/invite/onboarding/session`,
+        {
+          inviteId,
+          email,
+        },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.onboardingSession.set(resp.data),
@@ -128,7 +133,7 @@ export class OnboardingService {
 
     this.http
       .patch<ApiResponse<OnboardingSession>>(
-        `${environment.api}/identity/staff/onboarding/session/${sessionId}`,
+        `${environment.api}/identity/invite/onboarding/session/${sessionId}`,
         {
           primaryData: payload?.primaryData,
           currentStep: payload?.currentStep,
@@ -161,8 +166,23 @@ export class OnboardingService {
 
     this.http
       .post<ApiResponse<OnboardingSession>>(
-        `${environment.api}/identity/staff/onboarding/${sessionId}/media`,
-            formData
+        `${environment.api}/identity/invite/onboarding/session/${sessionId}/media`,
+        formData,
+      )
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => this.onboardingSession.set(resp.data),
+        error: (err) => this.error.set(err),
+      });
+  }
+
+  async completeOnboardingSession(invitedId: string, sessionId: string, currentStep: number) {
+    this.loading.set(true);
+
+    this.http
+      .patch<ApiResponse<OnboardingSession>>(
+        `${environment.api}/identity/invite/onboarding/session/${sessionId}/completed`,
+        { invitedId, currentStep },
       )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
@@ -174,33 +194,38 @@ export class OnboardingService {
   async fetchOnboardingSessionByInviteId(inviteId: string) {
     this.loading.set(true);
 
-      this.http
-        .get<ApiResponse<OnboardingSession>>(
-          `${environment.api}/identity/staff/onboarding/session/${inviteId}`,
-        )
-        .pipe(finalize(() => this.loading.set(false)))
-        .subscribe({
-          next: (resp) => {
-            this.onboardingSession.set(resp.data);
-          },
-          error: (err) => {
-            this.error.set(err);
-          },
-        });
-  }
-
-  async completeOnboardingSession(sessionId: string, currentStep: number) {
-    this.loading.set(true);
-
     this.http
-      .patch<ApiResponse<OnboardingSession>>(
-        `${environment.api}/identity/staff/onboarding/session/${sessionId}/completed`,
-        { currentStep },
+      .get<ApiResponse<OnboardingSession>>(
+        `${environment.api}/identity/invite/${inviteId}/onboarding/session`,
       )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => this.onboardingSession.set(resp.data),
-        error: (err) => this.error.set(err),
+        next: (resp) => {
+          this.onboardingSession.set(resp.data);
+        },
+        error: (err) => {
+          this.error.set(err);
+        },
+      });
+  }
+
+  async fetchAllCompleteOnboardingSessions() {
+    this.loading.set(true);
+
+    this.http
+      .get<ApiResponse<OnboardingSessionView[]>>(`${environment.api}/identity/invites/onboarding/sessions`)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => {
+          const sessions = resp.data;
+
+          this.onboardingSessions.set(
+            sessions.filter((session) => session.status === OnboardingSessionStatus.COMPLETED),
+          );
+        },
+        error: (err) => {
+          this.error.set(err);
+        },
       });
   }
 }

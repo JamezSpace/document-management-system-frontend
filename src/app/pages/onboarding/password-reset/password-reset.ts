@@ -1,10 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
 import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
-import { OnboardingService } from '../../../services/page-wide/onboarding/onboarding-service';
+import { OnboardingService } from '../../../services/page-wide/onboarding/session/onboarding-service';
 import { UtilService } from '../../../services/system-wide/util-service/util-service';
 
 @Component({
