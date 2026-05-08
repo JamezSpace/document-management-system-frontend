@@ -7,21 +7,50 @@
 
 @plugin "@iconify/tailwind4";
 
+/* =========================
+   CORE DESIGN TOKENS (LOCKED)
+========================= */
 :root {
-  --brand-primary: #001a33;
-  --brand-accent: #c5a059;
-  --brand-accent-shade-1: #9e8047;
-  --brand-accent-shade-2: #766035;
-  --brand-surface: #faf9fd;
-  --brand-surface-shade-1: #c8c7ca;
-  --brand-success: #2d5a27;
-  --brand-text: #2c3e50;
+  /* Primary System */
+  --brand-primary: #2856c3;
+  --brand-primary-hover: #1f46a5;
+  --brand-primary-active: #173b8c;
+
+  /* Structural / Authority */
+  /* --brand-secondary: #1a212c;
+  --brand-secondary-soft: #2a3442; */
+  --brand-secondary: #111827;
+  --brand-secondary-soft: #1f2937;
+
+  /* Surfaces */
+  --brand-background: #f8fafc; 
+  /* --brand-background: #f00;  */
+  --brand-surface: #ffffff;
+  --brand-surface-alt: #e9edf3;
+  --brand-border: #d3dae6;
+
+  /* Text */
+  --brand-text: #1a212c;
+  --brand-text-secondary: #4a5568;
+  --brand-text-muted: #7a8699;
+
+  /* Semantic */
+  --brand-success: #2f855a;
+  --brand-warning: #d69e2e;
+  --brand-error: #e53e3e;
+  --brand-critical: #c53030;
+  --brand-info: #3182ce;
+
+  /* Interaction */
+  --brand-disabled: #a0aec0;
 
   color-scheme: light dark;
   --radius: 0.25rem;
 }
 
-/* global tagname settings first */
+/* =========================
+   GLOBAL ELEMENTS
+========================= */
 html {
   font-style: normal;
   font-optical-sizing: auto;
@@ -29,10 +58,7 @@ html {
 }
 
 input,
-textarea {
-  outline: none;
-}
-
+textarea,
 select {
   outline: none;
 }
@@ -41,8 +67,9 @@ button {
   cursor: pointer;
 }
 
+/* Hover now uses structured system color */
 table tbody tr:hover {
-    background-color: rgb(from var(--brand-accent) r g b /0.05);
+  background-color: color-mix(in oklab, var(--brand-primary) 6%, transparent);
 }
 
 iconify-icon {
@@ -51,24 +78,25 @@ iconify-icon {
   height: 1em;
 }
 
-/* custom scrollbar */
+/* =========================
+   SCROLLBAR
+========================= */
 ::-webkit-scrollbar {
   width: 3.5px;
 }
-/* Track */
 ::-webkit-scrollbar-track {
-    background: #e1e1e1;
+  background: #e1e1e1;
 }
-/* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #aaa;
+  background: #aaa;
 }
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
-/* global class names */
+/* =========================
+   TYPOGRAPHY HELPERS
+========================= */
 .nexus-serif-font {
   font-family: 'Crimson Pro', serif;
 }
@@ -77,6 +105,9 @@ iconify-icon {
   font-family: 'Google Sans', sans-serif;
 }
 
+/* =========================
+   UTILITIES
+========================= */
 .flex-center {
   display: flex;
   align-items: center;
@@ -85,23 +116,26 @@ iconify-icon {
 .pseudo-body {
   height: 120lvh;
   position: relative;
-  background-color: var(--brand-surface);
+  background-color: var(--brand-background);
 }
 
 .custom-box-shadow {
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 3px;
 }
 
 .button-box-shadow {
   box-shadow:
-    rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+    rgba(0, 0, 0, 0.02) 0px 1px 3px,
+    rgba(27, 31, 35, 0.1) 0px 0px 0px 1px;
 }
 
 .subtle-box-shadow {
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px;
 }
 
+/* =========================
+   FORM STRUCTURE
+========================= */
 .row {
   margin-bottom: 20px;
 
@@ -116,65 +150,57 @@ iconify-icon {
     font-family: 'Google Sans', sans-serif;
     font-weight: 500;
     font-size: 14px;
+    color: var(--brand-text-secondary);
   }
 
-  & .field.in-dashboard input.custom-input {
-    border: 1px solid var(--input);
-    box-shadow: var(--shadow-xs);
-    border-radius: var(--radius);
-    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
-  }
-
+  & .field.in-dashboard input.custom-input,
   & .field.in-dashboard select {
-    border: 1px solid var(--input);
-    box-shadow: var(--shadow-xs);
+    border: 1px solid var(--brand-border);
     border-radius: var(--radius);
     padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
   }
 }
 
+/* =========================
+   INPUT FIELD
+========================= */
 .input-field {
-  --field-color: var(--color-neutral-500);
+  --field-color: var(--brand-border);
 
   display: flex;
   align-items: center;
   gap: 10px;
   border: 1.5px solid var(--field-color);
-  box-sizing: content-box;
-  line-height: 1.75;
   border-radius: var(--radius-xs);
-  border: 1.5px solid var(--field-color);
   font-family: 'Google Sans', sans-serif;
   font-weight: 500;
   padding: 7px 14px;
 
-  & :where(:is(svg)) {
+  & svg {
     font-size: 20px;
   }
 
   & input {
     width: 100%;
-    border-radius: var(--radius-xs);
   }
 
   & input::placeholder {
-    color: var(--color-neutral-400);
-    font-family: inherit;
-    letter-spacing: normal;
+    color: var(--brand-text-muted);
   }
-
   & input.filled {
-    color: var(--color-neutral-950);
+    color: var(--brand-text);
   }
 
-  &:where(:has(input:focus)) {
-    outline: 1.5px solid var(--brand-accent-shade-1);
-    letter-spacing: 0.75px;
+  &:has(input:focus) {
+    outline: 1.5px solid var(--brand-primary);
   }
 }
 
+/* =========================
+   BUTTON SYSTEM
+========================= */
 .nexus-button {
-  --bg-color: var(--brand-accent-shade-1);
+  --bg-color: var(--brand-primary);
 
   padding: 12px 24px;
   white-space: nowrap;
@@ -183,92 +209,75 @@ iconify-icon {
   border-radius: 2px;
   font-size: 90%;
   background-color: var(--bg-color);
-  color: var(--color-white);
+  color: #fff;
   font-weight: 500;
   text-transform: capitalize;
-  transition-property: background-color, outline;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: all 250ms ease;
 
   &:hover {
-    --bg-color: var(--brand-accent-shade-2);
-
+    --bg-color: var(--brand-primary-hover);
     background-color: var(--bg-color);
   }
 
+  &:active {
+    --bg-color: var(--brand-primary-active);
+  }
   &:focus {
-    outline: 1px solid #333;
+    outline: 1px solid var(--brand-primary);
   }
 
-  &.disabled {
+  &:disabled {
     pointer-events: none;
     opacity: 0.5;
-    color: var(--color-stone-200);
+    background-color: var(--brand-disabled);
   }
 
   &.red {
-    background-color: var(--destructive);
-    border-color: var(--destructive);
-    color: white;
+    background-color: var(--brand-error);
+    border-color: var(--brand-error);
   }
 
   &.red:hover {
-    background-color: hsl(from var(--destructive) h s calc(l - 10));
+    background-color: color-mix(in oklab, var(--brand-error) 85%, black);
   }
 }
 
 .nexus-button.secondary {
-  --bg-color: var(--muted);
-  --border-color: var(--brand-surface-shade-1);
-  --text-color: var(--accent-foreground);
-
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  font-weight: 500;
+  background-color: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  color: var(--brand-text);
 
   &:hover {
-    background-color: color-mix(in oklab, var(--bg-color) 92%, var(--brand-primary));
-  }
-
-  &:focus {
-    outline: 1px solid var(--ring);
+    background-color: var(--brand-surface-alt);
   }
 }
 
 .nexus-button.outlined {
-  --border-color: var(--brand-accent-shade-1);
-  --text-color: var(--brand-accent-shade-1);
-
   background-color: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  font-weight: 500;
+  border: 1px solid var(--brand-primary);
+  color: var(--brand-primary);
 
   &:hover {
-    background-color: color-mix(in oklab, var(--brand-accent) 8%, transparent);
-  }
-
-  &:focus {
-    outline: 1px solid var(--ring);
+    background-color: color-mix(in oklab, var(--brand-primary) 10%, transparent);
   }
 
   &.red {
-    background-color: transparent;
-    border: 1px solid var(--destructive);
-    color: var(--destructive);
+    border: 1px solid var(--brand-error);
+    color: var(--brand-error);
   }
 
   &.red:hover {
-    background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
+    background-color: color-mix(in oklab, var(--brand-error) 10%, transparent);
   }
 }
 
-/* nexus animations */
+/* =========================
+   ANIMATIONS (UNCHANGED)
+========================= */
 @keyframes nexusFadeIn {
   0% {
     opacity: 0;
-    transform: translateY(10px) scale(1.02); /* Starts slightly larger */
+    transform: translateY(10px) scale(1.02);
     filter: blur(4px);
   }
   100% {
@@ -277,17 +286,25 @@ iconify-icon {
     filter: blur(0);
   }
 }
+
 @keyframes nexusFadeOut {
   0% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+    transform: translateY(0);
   }
   100% {
     opacity: 0;
-    transform: translateY(-10px) scale(0.98);
+    transform: translateY(-10px);
     filter: blur(4px);
   }
+}
+
+.fade-in-premium {
+  animation: nexusFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.fade-out-premium {
+  animation: nexusFadeOut 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
 /* Slide in from right (Entering a new step) */
@@ -326,9 +343,6 @@ iconify-icon {
   }
 }
 
-.fade-in-premium {
-  animation: nexusFadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
 .sweep-in {
   animation: sweepIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
@@ -338,11 +352,7 @@ iconify-icon {
 .soft-fade {
   animation: softFadeIn 0.8s ease-out forwards;
 }
-.fade-out-premium {
-  /* Using a 'Quintic' easing for a luxury feel */
-  animation: nexusFadeOut 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  pointer-events: none; /* Prevents users from clicking things while it's vanishing */
-}
+
 .delay-100 {
   animation-delay: 100ms;
 }
@@ -371,34 +381,56 @@ iconify-icon {
 
     --font-sans:
       -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-      sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      sans-serif;
 
-    --background: var(--brand-surface);
+    /* Core surfaces */
+    --background: var(--brand-background);
     --foreground: var(--brand-text);
+
     --card: var(--brand-surface);
     --card-foreground: var(--brand-text);
+
     --popover: var(--brand-surface);
     --popover-foreground: var(--brand-text);
+
+    /* Primary = ACTION (strict rule) */
     --primary: var(--brand-primary);
-    --primary-foreground: oklch(0.985 0 0);
-    --accent: var(--brand-accent);
-    --accent-foreground: oklch(0.15 0 0);
-    --secondary: var(--brand-surface-1);
+    --primary-foreground: #ffffff;
+
+    /* Secondary = STRUCTURE */
+    --secondary: var(--brand-surface-alt);
     --secondary-foreground: var(--brand-text);
-    --muted: var(--brand-surface-1);
-    --muted-foreground: oklch(0.556 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: var(--brand-accent);
-    --sidebar: var(--brand-surface);
-    --sidebar-foreground: var(--brand-text);
+
+    /* Muted */
+    --muted: var(--brand-surface-alt);
+    --muted-foreground: var(--brand-text-secondary);
+
+    /* Accent */
+    --accent: var(--brand-info);
+    --accent-foreground: #ffffff;
+
+    /* Destructive = violations */
+    --destructive: var(--brand-error);
+
+    /* Borders & inputs */
+    --border: var(--brand-border);
+    --input: var(--brand-border);
+
+    /* Focus ring = action clarity */
+    --ring: var(--brand-primary);
+
+    /* Sidebar (authority zone) */
+    --sidebar: #f7f9fc;
+--sidebar-foreground: var(--brand-text);
+
     --sidebar-primary: var(--brand-primary);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.96 0.008 297.73);
+    --sidebar-primary-foreground: #ffffff;
+
+    --sidebar-accent: var(--brand-surface-alt);
     --sidebar-accent-foreground: var(--brand-text);
-    --sidebar-border: var(--border);
-    --sidebar-ring: var(--ring);
+
+    --sidebar-border: var(--brand-border);
+    --sidebar-ring: var(--brand-primary);
   }
 }
 
@@ -406,24 +438,54 @@ iconify-icon {
   :root {
     color-scheme: dark;
 
-    --background: oklch(0.187 0 0);
-    --foreground: oklch(0.9147 0.0055 297.72);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: var(--brand-accent);
-    --sidebar: oklch(0.187 0.0063 271.07);
-    --sidebar-foreground: oklch(0.9147 0.0055 297.72);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
+    /* Core surfaces */
+    --background: #0f172a; /* deep controlled navy */
+    --foreground: #e2e8f0;
+
+    --card: #111827;
+    --card-foreground: #e2e8f0;
+
+    --popover: #111827;
+    --popover-foreground: #e2e8f0;
+
+    /* Primary stays consistent (important for cognition) */
+    --primary: var(--brand-primary);
+    --primary-foreground: #ffffff;
+
+    /* Secondary surfaces */
+    --secondary: #1e293b;
+    --secondary-foreground: #e2e8f0;
+
+    /* Muted */
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+
+    /* Accent (info only) */
+    --accent: var(--brand-info);
+    --accent-foreground: #ffffff;
+
+    /* Destructive */
+    --destructive: var(--brand-error);
+
+    /* Borders */
+    --border: rgba(255, 255, 255, 0.08);
+    --input: rgba(255, 255, 255, 0.12);
+
+    /* Focus */
+    --ring: var(--brand-primary);
+
+    /* Sidebar (authority zone stays darker) */
+    --sidebar: #020617;
+    --sidebar-foreground: #e2e8f0;
+
+    --sidebar-primary: var(--brand-primary);
+    --sidebar-primary-foreground: #ffffff;
+
+    --sidebar-accent: #1e293b;
+    --sidebar-accent-foreground: #e2e8f0;
+
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-ring: var(--brand-primary);
   }
 }
 
@@ -432,6 +494,6 @@ iconify-icon {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-(--brand-background) text-foreground;
   }
 }

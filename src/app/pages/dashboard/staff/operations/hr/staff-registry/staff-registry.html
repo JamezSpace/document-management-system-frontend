@@ -1,14 +1,15 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1) text-xs flex-center gap-x-0.5
+  ">
     @for (directory of directories(); track $index) {
       <li hlmBreadcrumbItem>
         <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
       </li>
 
       <!-- that is, if there still exists a next directory -->
-      @if ($index + 1 !== directories().length) {
-        <li hlmBreadcrumbSeparator></li>
+      @if ($index + 1 < directories().length) {
+        <li hlmBreadcrumbSeparator>&Backslash;</li>
       }
     }
   </ol>
@@ -19,12 +20,14 @@
 
 <section class="flex-center justify-between">
   <article>
-    @if(viewMode() && viewMode()==='invites') {
-        <nexus-spartan-h3>Staff Invites</nexus-spartan-h3>
-        <nexus-spartan-p> Manage staff members you want to add </nexus-spartan-p>
+    @if (viewMode() && viewMode() === 'invites') {
+      <nexus-spartan-h3>Staff Invites</nexus-spartan-h3>
+      <nexus-spartan-p> Manage staff members you want to add </nexus-spartan-p>
     } @else {
-        <nexus-spartan-h3>staff personnel registry</nexus-spartan-h3>
-        <nexus-spartan-p> Manage university unit administration and faculty records. </nexus-spartan-p>
+      <nexus-spartan-h3>staff personnel registry</nexus-spartan-h3>
+      <nexus-spartan-p>
+        Manage university unit administration and faculty records.
+      </nexus-spartan-p>
     }
   </article>
   <button
@@ -45,26 +48,25 @@
   <!-- search -->
   <div hlmInputGroup>
     @if (viewMode() !== 'invites') {
-        <input
-            type="text"
-            name=""
-            maxlength="50"
-            placeholder="Search staff by name"
-            autocorrect="off"
-            (change)="onSearchChange($event)"
-            hlmInputGroupInput
-        />
+      <input
+        type="text"
+        name=""
+        maxlength="50"
+        placeholder="Search staff by name"
+        autocorrect="off"
+        (change)="onSearchChange($event)"
+        hlmInputGroupInput
+      />
     } @else {
-        <input
-            type="email"
-            maxlength="50"
-            placeholder="Search invited persons by email"
-            autocorrect="off"
-            (change)="onSearchChange($event)"
-            hlmInputGroupInput
-        />
+      <input
+        type="email"
+        maxlength="50"
+        placeholder="Search invited persons by email"
+        autocorrect="off"
+        (change)="onSearchChange($event)"
+        hlmInputGroupInput
+      />
     }
-    
 
     <div hlmInputGroupAddon align="inline-end">
       <ng-icon name="lucideSearch" />
@@ -108,219 +110,236 @@
 <hlm-separator class="my-4" />
 
 @if (viewMode() === 'invites') {
+  @if (filteredInvites().length > 0) {
     <nexus-invites-list-view [invites]="filteredInvites()" />
-} @else if (filteredStaff().length > 0) {
-  <nexus-staff-list-view [staff]="filteredStaff()" />
-} @else {
-  <section class="w-full flex-center justify-center">
-    <nexus-empty-state [stateData]="emptyState()" />
-  </section>
+  } @else {
+    <section class="w-full flex-center justify-center">
+      <nexus-empty-state [stateData]="emptyState()" />
+    </section>
+  }
+} @else if (!viewMode()) {
+  @if (filteredStaff().length > 0) {
+    <nexus-staff-list-view [staff]="filteredStaff()" />
+  } @else {
+    <section class="w-full flex-center justify-center">
+      <nexus-empty-state [stateData]="emptyState()" />
+    </section>
+  }
 }
 
 <!-- alert dialog to initiate process of adding up new staff -->
 <hlm-alert-dialog #inviteStaffDialog>
-  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[65vw] gap-0 p-4">
-     <div class="relative top-0" [class.hidden]="!loading()">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[65vw] gap-0 p-0">
+    <div class="relative top-0" [class.hidden]="!inviteServiceLoading()">
       <p class="opacity-0">.</p>
       <nexus-line-loader />
     </div>
-    
-    <hlm-alert-dialog-header>
-      <nexus-spartan-h4>Invite staff</nexus-spartan-h4>
-      <nexus-spartan-muted>
-        Send an onboarding invitation and assign an official role within the registry.
-      </nexus-spartan-muted>
-    </hlm-alert-dialog-header>
 
-    <hlm-separator />
+    <div class="p-4" [class.pt-0]="inviteServiceLoading()">
+      <hlm-alert-dialog-header>
+        <nexus-spartan-h4>Invite staff</nexus-spartan-h4>
+        <nexus-spartan-muted>
+          Send an onboarding invitation and assign an official role within the registry.
+        </nexus-spartan-muted>
+      </hlm-alert-dialog-header>
 
-    <mat-stepper
-      [linear]="true"
-      [orientation]="isMobile() ? 'vertical' : 'horizontal'"
-      #stepper
-    >
+      <hlm-separator class="my-3" />
 
-      <!-- STEP 1: EMAIL -->
-      <mat-step [stepControl]="inviteEmailFormGroup" label="Email Address">
-        <form [formGroup]="inviteEmailFormGroup">
-          <div class="row">
-            <div class="field w-full">
-              <label hlmLabel for="email">Staff Email Address</label>
-              <input
-                hlmInput
-                type="email"
-                id="email"
-                placeholder="e.g. staff@ui.edu.ng"
-                formControlName="email"
-              />
+      <mat-stepper [linear]="true" [orientation]="isMobile() ? 'vertical' : 'horizontal'" #stepper>
+        <!-- STEP 1: EMAIL -->
+        <mat-step [stepControl]="inviteEmailFormGroup" label="Email Address">
+          <form [formGroup]="inviteEmailFormGroup">
+            <div class="row">
+              <div class="field w-full">
+                <label hlmLabel for="email">Staff Email Address</label>
+                <p class="text-sm text-neutral-500 mt-1.5 mb-3">
+                  An invitation link will be sent to this address to complete onboarding.
+                </p>
+                <input
+                  hlmInput
+                  type="email"
+                  id="email"
+                  placeholder="e.g. staff@ui.edu.ng"
+                  formControlName="email"
+                />
+              </div>
             </div>
-          </div>
+          </form>
+        </mat-step>
 
-          <p class="text-sm text-neutral-500 mt-3">
-            An invitation link will be sent to this address to complete onboarding.
-          </p>
-        </form>
-      </mat-step>
+        <!-- STEP 2: OFFICE & DESIGNATION -->
+        <mat-step [stepControl]="officeFormGroup" label="Office & Designation">
+          <form [formGroup]="officeFormGroup">
+            <div class="row flex-center gap-3.5">
+              <div class="field in-dashboard w-full">
+                <label hlmLabel for="internalOffice">Internal Office</label>
 
-      <!-- STEP 2: OFFICE & DESIGNATION -->
-      <mat-step [stepControl]="officeFormGroup" label="Office & Designation">
-        <form [formGroup]="officeFormGroup">
-          <div class="row flex-center gap-3.5">
-            <div class="field in-dashboard w-full">
-              <label hlmLabel for="internalOffice">Internal Office</label>
+                <brn-select
+                  class="block w-full"
+                  placeholder="Select an office"
+                  id="internalOffice"
+                  (valueChange)="onOfficeSelection($event)"
+                  formControlName="office"
+                >
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
 
-              <brn-select
-                class="block w-full"
-                placeholder="Select an office"
-                id="internalOffice"
-                (valueChange)="onOfficeSelection($event)"
-                formControlName="office"
-              >
-                <hlm-select-trigger class="w-full">
-                  <hlm-select-value />
-                </hlm-select-trigger>
+                  <hlm-select-content>
+                    @for (office of offices(); track $index) {
+                      <hlm-option [value]="office" class="capitalize">
+                        {{ office.name }}
+                      </hlm-option>
+                    }
+                  </hlm-select-content>
+                </brn-select>
+              </div>
+              <div class="field in-dashboard w-full">
+                <label hlmLabel for="designation">Designation</label>
 
-                <hlm-select-content>
-                  @for (office of offices(); track $index) {
-                    <hlm-option [value]="office" class="capitalize">
-                      {{ office.name }}
-                    </hlm-option>
-                  }
-                </hlm-select-content>
-              </brn-select>
+                <brn-select
+                  class="block w-full"
+                  [placeholder]="
+                    selectedOffice() ? 'Select a designation' : 'Select an office first'
+                  "
+                  id="designation"
+                  (valueChange)="onOfficeDesignationSelection($event)"
+                  [disabled]="!selectedOffice()"
+                  formControlName="designation"
+                >
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+
+                  <hlm-select-content>
+                    @for (desig of designationsInSelectedOffice(); track $index) {
+                      <hlm-option [value]="desig" class="capitalize">
+                        {{ desig.title }}
+                      </hlm-option>
+                    }
+                  </hlm-select-content>
+                </brn-select>
+              </div>
             </div>
-            <div class="field in-dashboard w-full">
-              <label hlmLabel for="designation">Designation</label>
 
-              <brn-select
-                class="block w-full"
-                [placeholder]="selectedOffice() ? 'Select a designation' : 'Select an office first'"
-                id="designation"
-                (valueChange)="onOfficeDesignationSelection($event)"
-                [disabled]="!selectedOffice()"
-                formControlName="designation"
-              >
-                <hlm-select-trigger class="w-full">
-                  <hlm-select-value />
-                </hlm-select-trigger>
+            @if (!selectedOffice()) {
+              <p class="text-sm text-neutral-500 mt-3">
+                Select an office first to unlock designations.
+              </p>
+            } @else {
+              <p class="text-sm text-neutral-500 mt-3">
+                Choose the staff's designation within the selected office.
+              </p>
+            }
+          </form>
+        </mat-step>
 
-                <hlm-select-content>
-                  @for (desig of designationsInSelectedOffice(); track $index) {
-                    <hlm-option [value]="desig" class="capitalize">
-                      {{ desig.title }}
-                    </hlm-option>
-                  }
-                </hlm-select-content>
-              </brn-select>
+        <!-- STEP 3: EMPLOYMENT TYPE -->
+        <mat-step [stepControl]="employmentTypeFormGroup" label="Employment Type">
+          <form [formGroup]="employmentTypeFormGroup">
+            <div class="row">
+              <div class="field in-dashboard w-full">
+                <label hlmLabel for="employmentType">Employment Type</label>
+
+                <brn-select
+                  class="block w-full"
+                  placeholder="Select employment type"
+                  id="employmentType"
+                  (valueChange)="onEmploymentTypeSelection($event)"
+                >
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+
+                  <hlm-select-content>
+                    @for (type of employmentTypes; track $index) {
+                      <hlm-option [value]="type" class="capitalize">
+                        {{ type }}
+                      </hlm-option>
+                    }
+                  </hlm-select-content>
+                </brn-select>
+              </div>
             </div>
-          </div>
 
-          @if (!selectedOffice()) {
             <p class="text-sm text-neutral-500 mt-3">
-              Select an office first to unlock designations.
+              This determines the staff’s employment category for onboarding.
             </p>
-          } @else {
-            <p class="text-sm text-neutral-500 mt-3">
-              Choose the staff's designation within the selected office.
+          </form>
+        </mat-step>
+
+        <!-- STEP 4: REVIEW & SEND -->
+        <mat-step label="Send Invite">
+          <div class="text-center mt-5">
+            <h3 class="text-lg font-semibold mb-2">Confirm Invitation</h3>
+
+            <p class="text-neutral-500 mb-5">
+              You are about to invite a staff member with the following assignment:
             </p>
-          }
-        </form>
-      </mat-step>
 
-      <!-- STEP 3: EMPLOYMENT TYPE -->
-      <mat-step [stepControl]="employmentTypeFormGroup" label="Employment Type">
-        <form [formGroup]="employmentTypeFormGroup">
-          <div class="row">
-            <div class="field in-dashboard w-full">
-              <label hlmLabel for="employmentType">Employment Type</label>
-
-              <brn-select
-                class="block w-full"
-                placeholder="Select employment type"
-                id="employmentType"
-                (valueChange)="onEmploymentTypeSelection($event)"
-              >
-                <hlm-select-trigger class="w-full">
-                  <hlm-select-value />
-                </hlm-select-trigger>
-
-                <hlm-select-content>
-                  @for (type of employmentTypes; track $index) {
-                    <hlm-option [value]="type" class="capitalize">
-                      {{ type }}
-                    </hlm-option>
-                  }
-                </hlm-select-content>
-              </brn-select>
+            <div class="bg-(--brand-surface) p-5 rounded-sm text-left max-w-md mx-auto">
+              <p><strong>Email:</strong> {{ inviteEmailFormGroup.value.email }}</p>
+              <p><strong>Office:</strong> {{ selectedOffice()?.name }}</p>
+              <p><strong>Designation:</strong> {{ selectedOfficeDesignation()?.title }}</p>
+              <p><strong>Employment Type:</strong> {{ selectedEmploymentType() }}</p>
             </div>
+
+            <p class="text-sm text-neutral-500 mt-4">
+              The recipient will receive a secure onboarding link to complete their profile.
+            </p>
           </div>
+        </mat-step>
+      </mat-stepper>
 
-          <p class="text-sm text-neutral-500 mt-3">
-            This determines the staff’s employment category for onboarding.
-          </p>
-        </form>
-      </mat-step>
-
-      <!-- STEP 4: REVIEW & SEND -->
-      <mat-step label="Send Invite">
-        <div class="text-center mt-5">
-
-          <h3 class="text-lg font-semibold mb-2">Confirm Invitation</h3>
-
-          <p class="text-neutral-500 mb-5">
-            You are about to invite a staff member with the following assignment:
-          </p>
-
-          <div class="bg-(--brand-surface) p-5 rounded-sm text-left max-w-md mx-auto">
-            <p><strong>Email:</strong> {{ inviteEmailFormGroup.value.email }}</p>
-            <p><strong>Office:</strong> {{ selectedOffice()?.name }}</p>
-            <p><strong>Designation:</strong> {{ selectedOfficeDesignation()?.title }}</p>
-            <p><strong>Employment Type:</strong> {{ selectedEmploymentType() }}</p>
-          </div>
-
-          <p class="text-sm text-neutral-500 mt-4">
-            The recipient will receive a secure onboarding link to complete their profile.
-          </p>
-        </div>
-      </mat-step>
-
-    </mat-stepper>
-
-    <!-- ACTION BUTTONS -->
-    <div class="flex-center gap-5 mt-5">
-      <div class="flex-center gap-2.5 w-full" [class.w-full]="!isFinalStepInCompletingNewStaffRecord()">
-        <button
-          type="button"
-          class="nexus-button outlined gap-2.5"
-          [class]="{ 'flex-center': currentStepInCompletingNewStaffRecord() > 1, hidden: currentStepInCompletingNewStaffRecord() === 1, }"
-          (click)="revertToPreviousStepInCompletingNewStaffRecord()"
+      <!-- ACTION BUTTONS -->
+      <div class="flex-center gap-5 mt-6">
+        <div
+          class="flex-center gap-2.5 w-full"
+          [class.w-full]="!isFinalStepInCompletingNewStaffRecord()"
         >
-          Previous
-          <ng-icon name="lucideArrowLeft" />
-        </button>
+          <button
+            type="button"
+            class="nexus-button outlined gap-2.5"
+            [class]="{
+              'flex-center': currentStepInCompletingNewStaffRecord() > 1,
+              hidden: currentStepInCompletingNewStaffRecord() === 1,
+            }"
+            (click)="revertToPreviousStepInCompletingNewStaffRecord()"
+          >
+            Previous
+            <ng-icon name="lucideArrowLeft" />
+          </button>
+
+          <button
+            type="button"
+            class="nexus-button"
+            [class]="{
+              'flex-center':
+                currentStepInCompletingNewStaffRecord() < numberOfStepsToCompleteNewStaffRecord,
+              hidden:
+                currentStepInCompletingNewStaffRecord() === numberOfStepsToCompleteNewStaffRecord,
+              secondary: isFinalStepInCompletingNewStaffRecord(),
+              'w-full': !isFinalStepInCompletingNewStaffRecord(),
+            }"
+            (click)="proceedToNextStepToCompleteNewStaffRecord()"
+          >
+            Next Step
+            <ng-icon name="lucideArrowRight" />
+          </button>
+        </div>
 
         <button
           type="button"
           class="nexus-button"
-          [class]="{ 'flex-center': currentStepInCompletingNewStaffRecord() < numberOfStepsToCompleteNewStaffRecord, hidden: currentStepInCompletingNewStaffRecord() === numberOfStepsToCompleteNewStaffRecord, secondary: isFinalStepInCompletingNewStaffRecord(), 'w-full': !isFinalStepInCompletingNewStaffRecord(), }"
-          (click)="proceedToNextStepToCompleteNewStaffRecord()"
+          [disabled]="!isFinalStepInCompletingNewStaffRecord()"
+          [class.secondary]="!isFinalStepInCompletingNewStaffRecord()"
+          [class.w-full]="isFinalStepInCompletingNewStaffRecord()"
+          (click)="sendInvite()"
         >
-          Next Step
-          <ng-icon name="lucideArrowRight" />
+          send invitation
         </button>
       </div>
-
-      <button
-        type="button"
-        class="nexus-button"
-        [class.disabled]="!isFinalStepInCompletingNewStaffRecord()" [class.secondary]="!isFinalStepInCompletingNewStaffRecord()" [class.w-full]="isFinalStepInCompletingNewStaffRecord()"
-        (click)="sendInvite()"
-      >
-        send invitation
-      </button>
-
     </div>
-
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
 

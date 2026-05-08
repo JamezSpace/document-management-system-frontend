@@ -157,7 +157,7 @@ export class DocumentRegistry implements OnInit {
   ngOnInit(): void {
     const currentPath = this.activatedRouter.snapshot.url.toString();
 
-    this.directories.update((prev_directories) => [...prev_directories, currentPath]);
+    this.directories.set(currentPath.split(','))
 
     // document init deps
     this.corrSubjectService.fetchCorrSubjects();

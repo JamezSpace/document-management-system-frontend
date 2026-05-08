@@ -10,11 +10,13 @@ import {
 import { firebase_app } from '../../../app.config';
 import { AuthUser } from '../../../interfaces/auth/AuthUser.ui';
 import { Router } from '@angular/router';
+import { UtilService } from '../../system-wide/util-service/util-service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private router = inject(Router);
   private auth = getAuth(firebase_app);
+  private utilService = inject(UtilService);
 
   //  for UI State
   readonly user = signal<User | null>(null);
@@ -84,7 +86,7 @@ export class AuthService {
 
       return { success: 1 };
     } catch (error: any) {
-      const friendlyMsg = this.mapFirebaseError(error.code);
+      const friendlyMsg = this.utilService.mapFirebaseError(error.code);
       this.errorMessage.set(friendlyMsg);
       this.loading.set(false);
       return { success: 0, reason: friendlyMsg };
@@ -95,19 +97,6 @@ export class AuthService {
     await this.auth.signOut();
 
     this.router.navigateByUrl('/auth');
-  }
-
-  private mapFirebaseError(code: string): string {
-    switch (code) {
-      case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
-        return 'Incorrect email or password.';
-      case AuthErrorCodes.USER_DISABLED:
-        return 'This account has been disabled.';
-      case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
-        return 'Too many attempts. Try again later.';
-      default:
-        return 'An unexpected error occurred. Please try again.';
-    }
   }
 
   resetContext() {

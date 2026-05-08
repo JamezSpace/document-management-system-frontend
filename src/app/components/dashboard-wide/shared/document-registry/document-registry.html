@@ -1,14 +1,14 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1) text-xs flex-center gap-x-0.5">
     @for (directory of directories(); track $index) {
       <li hlmBreadcrumbItem>
         <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
       </li>
 
       <!-- that is, if there still exists a next directory -->
-      @if ($index + 1 !== directories().length) {
-        <li hlmBreadcrumbSeparator></li>
+      @if ($index + 1 < directories().length) {
+        <li hlmBreadcrumbSeparator>&Backslash;</li>
       }
     }
   </ol>

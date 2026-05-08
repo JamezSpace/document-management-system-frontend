@@ -40,11 +40,7 @@ export class InviteService {
       .post<ApiResponse<string>>(`${environment.api}/identity/invite`, payload)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => {
-          console.log(resp.data);
-
-          this.inviteSent.set(true);
-        },
+        next: (resp) => this.inviteSent.set(true),
         error: (err) => {
           this.error.set(err);
 

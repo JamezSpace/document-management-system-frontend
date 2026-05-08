@@ -1,6 +1,6 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1) text-xs flex-center gap-x-0.5">
     @for (directory of directories(); track $index) {
       <li hlmBreadcrumbItem>
         <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
@@ -116,37 +116,38 @@
 }
 
 <nexus-side-modal>
-  <header class="px-1.5 shrink-0">
-    <button
-      class="block w-fit ml-auto text-neutral-500 hover:text-neutral-950"
-      type="button"
-      (click)="closeStaffDetails()"
-    >
-      <ng-icon name="lucideXCircle" size="1.2rem" />
-    </button>
-  </header>
+  <div class="flex flex-col h-full">
+    <header class="px-1.5 shrink-0">
+      <button
+        class="block w-fit ml-auto text-neutral-500 hover:text-neutral-950"
+        type="button"
+        (click)="closeStaffDetails()"
+      >
+        <ng-icon name="lucideXCircle" size="1.2rem" />
+      </button>
+    </header>
 
-  @if (selectedStaff(); as invite) {
-    <section class="px-1.5 flex flex-col gap-3">
-      <div class="flex justify-start">
-        <img [src]="invite.profilePicture" alt="Missing Profile Picture" />
-      </div>
-      <div>
-        <nexus-spartan-h3 class="capitalize">{{ invite.fullName }}</nexus-spartan-h3>
-      </div>
+    @if (selectedStaff(); as invite) {
+      <section class="px-1.5 flex flex-col gap-3">
+        <div class="flex justify-start">
+          <img [src]="invite.profilePicture" alt="Missing Profile Picture" />
+        </div>
+        <div>
+          <nexus-spartan-h3 class="capitalize">{{ invite.fullName }}</nexus-spartan-h3>
+        </div>
 
-      <hlm-separator />
+        <hlm-separator />
 
-      <div class="grid gap-2.5">
-        <article>
-          <nexus-spartan-muted class="uppercase">staff id</nexus-spartan-muted>
-          <nexus-spartan-p>{{ invite.staffNumber }}</nexus-spartan-p>
-        </article>
-        <article>
-          <nexus-spartan-muted class="uppercase">email</nexus-spartan-muted>
-          <nexus-spartan-p>{{ invite.email }}</nexus-spartan-p>
-        </article>
-        <!-- <article>
+        <div class="grid gap-2.5">
+          <article>
+            <nexus-spartan-muted class="uppercase">staff id</nexus-spartan-muted>
+            <nexus-spartan-p>{{ invite.staffNumber }}</nexus-spartan-p>
+          </article>
+          <article>
+            <nexus-spartan-muted class="uppercase">email</nexus-spartan-muted>
+            <nexus-spartan-p>{{ invite.email }}</nexus-spartan-p>
+          </article>
+          <!-- <article>
           <nexus-spartan-muted class="uppercase">unit</nexus-spartan-muted>
           <nexus-spartan-p>{{ invite.unit.name }}</nexus-spartan-p>
         </article>
@@ -158,40 +159,55 @@
           <nexus-spartan-muted class="uppercase">status</nexus-spartan-muted>
           <nexus-spartan-p>{{ invite.status }}</nexus-spartan-p>
         </article> -->
-        <article>
-          <nexus-spartan-muted class="uppercase">started</nexus-spartan-muted>
-          <nexus-spartan-p>{{ formatDate(invite.createdAt) }}</nexus-spartan-p>
-        </article>
-        @if (invite.completedAt) {
           <article>
-            <nexus-spartan-muted class="uppercase">Completed</nexus-spartan-muted>
-            <nexus-spartan-p>{{ formatDate(invite.completedAt) }}</nexus-spartan-p>
+            <nexus-spartan-muted class="uppercase">started</nexus-spartan-muted>
+            <nexus-spartan-p>{{ formatDate(invite.createdAt) }}</nexus-spartan-p>
           </article>
-        }
-        <!-- <article>
+          @if (invite.completedAt) {
+            <article>
+              <nexus-spartan-muted class="uppercase">Completed</nexus-spartan-muted>
+              <nexus-spartan-p>{{ formatDate(invite.completedAt) }}</nexus-spartan-p>
+            </article>
+          }
+          <!-- <article>
           <nexus-spartan-muted class="uppercase">last updated</nexus-spartan-muted>
           <nexus-spartan-p>{{ formatDate(invite.updatedAt) }}</nexus-spartan-p>
         </article> -->
-      </div>
+        </div>
 
-      <hlm-separator />
+        <hlm-separator />
 
-      <article>
-        <nexus-spartan-muted class="uppercase">digital signature</nexus-spartan-muted>
-        @if (hasSignature(invite)) {
-          <img
-            [src]="getSignatureUrl(invite)"
-            alt="invite signature"
-            class="mt-2 h-16 w-auto max-w-full border rounded-xs p-1 bg-white"
-          />
+        <article>
+          <nexus-spartan-muted class="uppercase">digital signature</nexus-spartan-muted>
+          @if (hasSignature(invite)) {
+            <img
+              [src]="invite.signature"
+              alt="invite signature"
+              class="mt-2 h-16 w-auto max-w-full border rounded-xs p-1 bg-white"
+            />
+          } @else {
+            <p class="text-sm text-muted-foreground">Not uploaded.</p>
+          }
+        </article>
+      </section>
+      
+      <footer class="mt-auto">
+      <button 
+        type="button" 
+        class="nexus-button w-full"
+        [brnAlertDialogTriggerFor]="activateStaffDialog"
+        [disabled]="!canActivate(invite) || loading() || isInviteMigratedToNewStaff()">
+        @if(loading()) {
+            <hlm-spinner class="text-base md:text-lg" />
         } @else {
-          <p class="text-sm text-muted-foreground">Not uploaded.</p>
+            <span>activate staff</span>
         }
-      </article>
-    </section>
-  } @else {
-    <p class="px-1.5 text-sm">Select a staff member to view details.</p>
-  }
+    </button>
+    </footer>
+    } @else {
+      <p class="px-1.5 text-sm">Select a staff member to view details.</p>
+    }
+  </div>
 </nexus-side-modal>
 
 <hlm-alert-dialog #activateStaffDialog>
@@ -202,7 +218,9 @@
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction (click)="confirmActivation(); ctx.close()">Confirm</button>
+      <button 
+        hlmAlertDialogAction
+        (click)="confirmActivation(); ctx.close()">Confirm</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

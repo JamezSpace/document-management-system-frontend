@@ -1,34 +1,38 @@
 import { Component, computed, effect, inject, Input, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatStep, MatStepper } from '@angular/material/stepper';
+import { MatStepperModule, MatStepper } from '@angular/material/stepper';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-    lucideBadgeCheck,
-    lucideContact,
-    lucideHistory,
-    lucideIdCard,
-    lucideMail,
-    lucideShieldCheck,
-    lucideUser,
-    lucideUserRound,
+  lucideBadgeCheck,
+  lucideContact,
+  lucideHistory,
+  lucideIdCard,
+  lucideMail,
+  lucidePhone,
+  lucideShieldCheck,
+  lucideShieldX,
+  lucideUser,
+  lucideUserRound,
 } from '@ng-icons/lucide';
-import { IdCard } from '../../../components/dashboard-wide/id-card/id-card';
 import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
 import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
 import { SpartanH1 } from '../../../components/system-wide/typography/spartan-h1/spartan-h1';
-import { SpartanH3 } from "../../../components/system-wide/typography/spartan-h3/spartan-h3";
+import { SpartanH3 } from '../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
 import { EntityType } from '../../../interfaces/onboarding/Entity.api';
 import { OnboardingService } from '../../../services/page-wide/onboarding/session/onboarding-service';
 import { UtilService } from '../../../services/system-wide/util-service/util-service';
+import { OnboardingSessionStatus } from '../../../enum/onboarding/sessionStatus.enum';
+import { SpartanH2 } from '../../../components/system-wide/typography/spartan-h2/spartan-h2';
 
 type PrimaryInformationData = {
   firstName: string;
   lastName: string;
   middleName: string;
   email: string;
+  phoneNumber: string;
   staffId: string;
 };
 
@@ -37,16 +41,15 @@ type PrimaryInformationData = {
   imports: [
     LineLoader,
     OnboardingNavBar,
-    IdCard,
-    MatStepper,
-    MatStep,
+    MatStepperModule,
     ReactiveFormsModule,
     MatTooltip,
     NgIcon,
     SpartanH1,
     SpartanP,
-    SpartanH3
-],
+    SpartanH3,
+    SpartanH2,
+  ],
   templateUrl: './onboarding-entity.html',
   styleUrl: './onboarding-entity.css',
   providers: [
@@ -56,9 +59,11 @@ type PrimaryInformationData = {
       lucideContact,
       lucideIdCard,
       lucideMail,
+      lucidePhone,
       lucideBadgeCheck,
       lucideHistory,
       lucideShieldCheck,
+      lucideShieldX,
     }),
   ],
 })
@@ -76,22 +81,29 @@ export class OnboardingEntity {
 
   private sessionSyncDone = signal<boolean>(false);
   private syncFromEntityEffect = effect(() => {
-    const entity = this.onboardingService.entity();
+    let retrievedData = this.onboardingService.extractEntityDetailsFromLocalStrorage();
+
+    let entity = retrievedData.healthy ? retrievedData.entity : null;
+
+    if (!entity) {
+      entity = this.onboardingService.entity();
+    }
 
     if (!entity || this.sessionSyncDone()) return;
 
     const inviteId = entity.details.id;
+
     if (!inviteId) return;
 
+    this.onboardingService.fetchOnboardingSessionByInviteId(inviteId);
+
     const session = this.onboardingService.onboardingSession();
-    if (!session) {
-      this.onboardingService.fetchOnboardingSessionByInviteId(inviteId);
-      return;
-    }
+
+    if (!session) return;
 
     const primaryData =
-      typeof session.primary_data === 'object' && session.primary_data !== null
-        ? (session.primary_data as Partial<PrimaryInformationData>)
+      typeof session.primaryData === 'object' && session.primaryData !== null
+        ? (session.primaryData as Partial<PrimaryInformationData>)
         : {};
 
     this.primaryInformationFormGroup.patchValue({
@@ -99,12 +111,23 @@ export class OnboardingEntity {
       lastName: primaryData.lastName ?? '',
       middleName: primaryData.middleName ?? '',
       email: primaryData.email ?? session.email ?? '',
+      phoneNumber: primaryData.phoneNumber ?? '',
       staffId: primaryData.staffId ?? '',
     });
 
-    const step = Math.max(1, Math.min(this.numberOfStepsToCompleteProfile, session.current_step));
+    this.digitalSignatureImageUploaded.set(!!session.signaturePublicURL);
 
-    this.currentFrame.set(session.current_step > this.numberOfStepsToCompleteProfile ? 3 : 2);
+    if (session.signaturePublicURL) {
+      this.digitalSignatureImageUploadedPath.set(session.signaturePublicURL);
+    }
+
+    this.profilePictureUploaded.set(!!session.profilePicPublicURL);
+
+    if (session.profilePicPublicURL) {
+      this.profilePictureUploadedPath.set(session.profilePicPublicURL);
+    }
+
+    const step = Math.max(1, Math.min(this.numberOfStepsToCompleteProfile, session.currentStep));
 
     this.currentStepInCompletingProfile.set(step);
 
@@ -127,21 +150,33 @@ export class OnboardingEntity {
   serviceLoading = this.onboardingService.loading;
   isBusy = computed(() => this.loading() || this.serviceLoading());
 
-  currentFrame = signal<number>(1);
   isExiting = signal<boolean>(false);
-  nextStep() {
-    this.loading.set(true);
+  currentFrame = computed(() => {
+    const session = this.onboardingService.onboardingSession();
 
-    // trigger the "Exit" animation class
-    this.isExiting.set(true);
+    if (!session) return 1;
 
-    // wait for the CSS animation to finish (e.g., 500ms)
-    setTimeout(() => {
-      this.currentFrame.update((n) => n + 1);
-      this.isExiting.set(false); // reset for the new frame
-      this.loading.set(false);
-    }, 500);
-  }
+    if (session.status === OnboardingSessionStatus.COMPLETED) {
+      return 3;
+    }
+
+    return 2;
+  });
+
+  previousFrame = signal<number>(1);
+  frameTransitionEffect = effect(() => {
+    const current = this.currentFrame();
+    const previous = this.previousFrame();
+
+    if (current !== previous) {
+      this.isExiting.set(true);
+
+      setTimeout(() => {
+        this.isExiting.set(false);
+        this.previousFrame.set(current);
+      }, 500);
+    }
+  });
 
   profilePictureFormGroup = new FormGroup({});
 
@@ -152,6 +187,11 @@ export class OnboardingEntity {
     email: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, Validators.email],
+    }),
+    // TODO: implement strict regex check to allow +234 numbers or 07-, 08-, 09- nigerian numbers
+    phoneNumber: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required],
     }),
     staffId: new FormControl<string>('', {
       nonNullable: true,
@@ -195,20 +235,17 @@ export class OnboardingEntity {
           this.onboardingService.uploadOnboardingMedia(session.id, {
             type: 'signature',
             file,
-            currentStep: currentStep + 1,
+            currentStep,
           });
-
-          const invited = this.entity()!.details
-
-          this.onboardingService.completeOnboardingSession(invited.id, session.id, 3);
         }
       }
     }
 
-    this.currentStepInCompletingProfile.update((prev_value) => prev_value + 1);
+    if (currentStep !== 3)
+      this.currentStepInCompletingProfile.update((prev_value) => prev_value + 1);
 
     // move the stepper to the next step
-    this.stepper.next();
+    // this.stepper.next();
   }
 
   revertToPreviousStepInCompletingProfile() {
@@ -220,6 +257,14 @@ export class OnboardingEntity {
 
   isFinalStepInCompletingProfile() {
     return this.currentStepInCompletingProfile() === this.numberOfStepsToCompleteProfile;
+  }
+
+  isAllFieldsValid() {
+    return (
+      this.primaryInformationFormGroup.valid &&
+      this.digitalSignatureImageUploaded() &&
+      this.profilePictureUploaded()
+    );
   }
 
   profilePictureUploaded = signal<boolean>(false);
@@ -251,19 +296,29 @@ export class OnboardingEntity {
     if (!this.entity()) return;
     const invited = this.entity()!.details;
 
-    // proceed to first step
-    this.nextStep();
-
     // init the session
     this.onboardingService.initOnboardingSession(invited.id, invited.email);
   }
 
   isOnboardingProcessCompleted = signal<boolean>(false);
+
+  completeOnboardingProcessEffect = effect(() => {
+    const session = this.onboardingService.onboardingSession();
+
+    if (
+      session?.status !== OnboardingSessionStatus.COMPLETED &&
+      session?.profilePicPublicURL &&
+      session.signaturePublicURL
+    ) {
+      this.onboardingService.completeOnboardingSession(session.inviteId, session.id);
+    }
+  });
+
   completedOnboardingProcess = effect(() => {
     const onboardingSession = this.onboardingService.onboardingSession();
 
-    if (!onboardingSession) return
-    if(onboardingSession.current_step >= 3)
-        this.isOnboardingProcessCompleted.set(true);
+    if (!onboardingSession) return;
+    if (onboardingSession.status === OnboardingSessionStatus.COMPLETED)
+      this.isOnboardingProcessCompleted.set(true);
   });
 }

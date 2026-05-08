@@ -4,7 +4,7 @@
   <nexus-line-loader />
 </div>
 
-@if (entity(); as entity) {
+@if (!isOnboardingProcessCompleted() && entity(); as entity) {
   @if (currentFrame() === 1) {
     <div
       class="h-[70dvh] relative fade-in-premium"
@@ -27,14 +27,16 @@
           verification process.
         </p>
 
-        <button class="nexus-button mt-5" (click)="startOnboardingProcess()">begin official onboarding</button>
+        <button class="nexus-button mt-5" (click)="startOnboardingProcess()">
+          begin official onboarding
+        </button>
       </div>
     </div>
   }
 
   @if (currentFrame() === 2) {
     <p class="text-[10px] uppercase tracking-widest text-neutral-400 mt-3 mb-3 text-center">
-      Step 1 of 3: Profile Finalization & Verification
+      Step 2 of 3: Profile Finalization & Verification
     </p>
     <div
       class="profile-form-container p-7.5 max-sm:p-3.75 rounded-xs bg-white w-4/5 mx-auto fade-in-premium"
@@ -52,6 +54,10 @@
         [selectedIndex]="currentStepInCompletingProfile() - 1"
         #stepper
       >
+        <ng-template matStepperIcon="edit">
+          <ng-icon name="lucideBadgeCheck" class="text-2xl" />
+        </ng-template>
+
         <!-- primary information -->
         <mat-step [stepControl]="primaryInformationFormGroup" label="Primary Information">
           <form [formGroup]="primaryInformationFormGroup">
@@ -122,9 +128,25 @@
                 </div>
               </div>
 
+              <!-- phone number -->
+              <div class="field">
+                <label for="phone">Phone Number</label>
+                <div class="input-field px-2.5 py-1.5">
+                  <ng-icon name="lucidePhone" />
+
+                  <input
+                    type="text"
+                    id="phone"
+                    placeholder="e.g. 080234567891"
+                    formControlName="phoneNumber"
+                    required
+                  />
+                </div>
+              </div>
+
               <!-- staff id -->
               <div class="field">
-                <label for="staffId">staffId</label>
+                <label for="staffId">staff ID</label>
                 <div class="input-field px-2.5 py-1.5">
                   <ng-icon name="lucideIdCard" />
 
@@ -140,9 +162,9 @@
             </div>
           </form>
         </mat-step>
-        
+
         <!-- profile picture -->
-        <mat-step [stepControl]="profilePictureFormGroup" label="Profile Picture Upload">
+        <mat-step [stepControl]="profilePictureFormGroup" [completed]="profilePictureUploaded()" label="Profile Picture Upload">
           <form [formGroup]="profilePictureFormGroup">
             <div class="row">
               <div class="text-center">
@@ -179,7 +201,7 @@
         </mat-step>
 
         <!-- digital signature -->
-        <mat-step [stepControl]="digitalSignatureFormGroup" label="Digital Signature">
+        <mat-step [stepControl]="digitalSignatureFormGroup" [completed]="digitalSignatureImageUploaded()" label="Digital Signature">
           <form [formGroup]="digitalSignatureFormGroup">
             <div class="row">
               <div class="field">
@@ -193,7 +215,11 @@
                   to maintain clarity across all document sizes. Once downloaded, simply upload it
                   here.
                 </p>
-                <a href="https://autographlab.app/" class="text-sm underline underline-offset-4 text-(--brand-accent-shade-2)">Click to sign now...</a>
+                <a
+                  href="https://autographlab.app/"
+                  class="text-sm underline underline-offset-4 text-(--brand-accent-shade-2)"
+                  >Click to sign now...</a
+                >
                 @if (digitalSignatureImageUploaded()) {
                   <div class="relative hover:blur-[0.5px]">
                     <img
@@ -299,7 +325,7 @@
         <button
           type="button"
           class="nexus-button"
-          [class.disabled]="!isFinalStepInCompletingProfile()"
+          [disabled]="!isFinalStepInCompletingProfile() || !isAllFieldsValid()"
           [class.secondary]="!isFinalStepInCompletingProfile()"
           [class.w-full]="isFinalStepInCompletingProfile()"
           (click)="proceedToNextStepToCompleteProfile()"
@@ -309,124 +335,96 @@
       </div>
     </div>
   }
-
-  @if (currentFrame() === 3) {
-    <div
-      class="px-12 max-sm:px-6 mt-10 mx-auto text-center pb-5 fade-in-premium"
-      [class.sweep-exit]="isExiting()"
-      id="complete-profile-section"
-    >
-      <p class="text-[10px] uppercase tracking-widest text-neutral-400 mt-3">
-        Step 2 of 3: Identity Verification
-      </p>
-      <p class="text-2xl capitalize mb-5">Here is a preview of your official identity card</p>
-
-      <div class="id-card-container flex-center max-md:flex-col gap-10">
-        <div class="w-full">
-          <nexus-id-card idCardPage="front" [staffDetails]="entity.details" />
-        </div>
-        <div class="w-full">
-          <nexus-id-card idCardPage="back" [staffDetails]="entity.details" />
-        </div>
-      </div>
-
-      <p class="mt-3.5">
-        Notice an error in your HR records?
-        <a href="mailto:hr@ui.edu.ng" class="font-medium inline-flex items-center hover:underline"
-          >Report data error to HR<svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="1em"
-            height="1em"
-            viewBox="0 0 12 12"
-          >
-            <rect width="12" height="12" fill="none" />
-            <path
-              fill="currentColor"
-              d="M4 3a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V7a.5.5 0 0 1 1 0v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h1a.5.5 0 0 1 0 1zm3 0a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .5.5V5a.5.5 0 0 1-1 0V3.707L7.354 5.354a.5.5 0 1 1-.708-.708L8.293 3z"
-            />
-          </svg>
-        </a>
-      </p>
-
-      <div class="mt-10 mb-5">
-        <button class="nexus-button px-10 flex-center gap-2.5 mx-auto" (click)="nextStep()">
-          Confirm details & proceed
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
-            <path
-              fill="currentColor"
-              d="m14.475 12l-3.9-3.9q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l4.6 4.6q.15.15.213.325t.062.375q0 .2-.062.375t-.213.325l-4.6 4.6q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7z"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-  }
-}@else if (errorFetchingEntity()?.context?.message?.includes('expired')) {
+} @else if (errorFetchingEntity()?.context?.message?.includes('expired')) {
   <article class="text-center my-12 flex flex-col items-center space-y-4 max-w-md mx-auto">
     <div class="p-4 bg-red-50 rounded-full mb-2">
       <ng-icon name="lucideHistory" size="2.5rem" class="text-red-700"></ng-icon>
     </div>
 
-    <nexus-spartan-h3 class="text-3xl">
-      Invitation Expired
-    </nexus-spartan-h3>
+    <nexus-spartan-h3 class="text-3xl"> Invitation Expired </nexus-spartan-h3>
 
     <nexus-spartan-p class="leading-relaxed">
-      For security reasons, digital office invitations are time-bound. This specific link is no longer valid within the 
+      For security reasons, digital office invitations are time-bound. This specific link is no
+      longer valid within the
       <span class="font-bold">NexusFons Registry</span>.
     </nexus-spartan-p>
 
     <div class="pt-4 w-full">
-      <button hlmBtn variant="outline" class="w-full uppercase tracking-widest text-[11px] font-bold">
+      <button
+        hlmBtn
+        variant="outline"
+        class="w-full uppercase tracking-widest text-[11px] font-bold"
+      >
         Contact Administrator
       </button>
     </div>
   </article>
-} @else if (isOnboardingProcessCompleted()) {
+} @else if (errorFetchingEntity()?.code?.httpStatusCode === 404) {
+  <article class="text-center my-12 flex flex-col items-center space-y-4 max-w-md mx-auto">
+    <div class="p-4 bg-red-50 rounded-full mb-2 flex-center justify-center">
+      <ng-icon name="lucideShieldX" size="1.5rem" class="text-red-700"></ng-icon>
+    </div>
+
+    <nexus-spartan-h2> Invalid Invite </nexus-spartan-h2>
+
+    <nexus-spartan-p class="leading-relaxed">
+      This specific link is not valid within the
+      <span class="font-bold">NexusFons Registry</span>.
+    </nexus-spartan-p>
+
+    <div class="pt-4 w-full">
+      <button
+        hlmBtn
+        variant="outline"
+        class="w-full uppercase tracking-widest text-[11px] font-bold"
+      >
+        Contact Administrator
+      </button>
+    </div>
+  </article>
+}
+
+@if (isOnboardingProcessCompleted()) {
   <article class="text-center my-12 flex flex-col items-center space-y-6 max-w-lg mx-auto">
     <div class="relative mb-2">
       <div class="p-5 bg-nexus-gold/10 rounded-full">
         <ng-icon name="lucideShieldCheck" size="4rem"></ng-icon>
       </div>
       <span class="absolute top-0 right-0 flex h-4 w-4">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-nexus-gold opacity-75"></span>
+        <span
+          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-nexus-gold opacity-75"
+        ></span>
         <span class="relative inline-flex rounded-full h-4 w-4 bg-nexus-gold"></span>
       </span>
     </div>
 
     <div class="space-y-2">
-      <nexus-spartan-h1 class="text-nexus-indigo font-serif text-3xl">
-        Onboarding Submitted
-      </nexus-spartan-h1>
-      <p class="text-nexus-slate/60 text-[10px] uppercase tracking-[0.2em] font-bold">
+      <nexus-spartan-h1 class="text-3xl"> Onboarding Submitted </nexus-spartan-h1>
+      <p class="text-[10px] uppercase tracking-[0.2em] font-bold mt-2.5">
         Status: Awaiting Administrative Clearance
       </p>
     </div>
 
-    <nexus-spartan-p class="text-nexus-slate leading-relaxed">
-      Your personnel profile and credentials have been successfully uploaded to the 
-      <span class="font-bold text-nexus-indigo">NexusFons Registry</span>. 
-      To maintain system integrity, your account is now undergoing a formal 
+    <nexus-spartan-p class="leading-relaxed">
+      Your personnel profile and credentials have been successfully uploaded to the
+      <span class="font-bold text-(--brand-accent-shade-1)">NexusFons Registry</span>. To maintain
+      system integrity, your account is now undergoing a formal
       <span class="italic">Verification Exercise</span>.
     </nexus-spartan-p>
 
-    <div class="w-full bg-white border border-nexus-slate/10 p-5 rounded-xl shadow-sm text-left flex items-start gap-4">
-      <ng-icon name="lucideMail" size="1.5rem" class="text-nexus-indigo mt-1"></ng-icon>
+    <div class="w-full bg-white border p-5 rounded-xl shadow-sm text-left flex items-start gap-4">
+      <div>
+        <ng-icon name="lucideMail" size="1.5rem" class="mt-1"></ng-icon>
+      </div>
+
       <div>
         <p class="text-sm font-bold text-nexus-indigo">What happens next?</p>
         <p class="text-xs text-nexus-slate mt-1">
-          An administrator will review your submission. Once verified, a 
-          <span class="font-bold text-nexus-gold">Final Activation Link</span> 
+          An administrator will review your submission. Once verified, a
+          <span class="font-bold text-nexus-gold">Final Activation Link</span>
           will be dispatched to your registered email address.
         </p>
       </div>
-    </div>
-
-    <div class="pt-4">
-      <a hlmBtn variant="ghost" routerLink="/login" class="text-nexus-slate hover:text-nexus-indigo flex items-center gap-2">
-        <ng-icon name="lucideArrowLeft" size="1rem"></ng-icon>
-        Return to Login
-      </a>
     </div>
   </article>
 }

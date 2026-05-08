@@ -1,37 +1,36 @@
 import {
-  AfterViewInit,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
+    AfterViewInit,
+    Component,
+    computed,
+    effect,
+    inject,
+    OnInit,
+    signal,
+    ViewChild,
 } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch, lucideXCircle } from '@ng-icons/lucide';
+import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { SideModal } from '../../../../../../components/dashboard-wide/shared/side-modal/side-modal';
 import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { StaffWithMedia } from '../../../../../../interfaces/staff/StaffWithMedia.api';
+import { StaffToActivate } from '../../../../../../interfaces/staff/StaffToActivate.api';
 import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { InviteService } from '../../../../../../services/page-wide/onboarding/invite/invite-service';
-import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
 import { OnboardingService } from '../../../../../../services/page-wide/onboarding/session/onboarding-service';
-import { StaffToActivate } from '../../../../../../interfaces/staff/StaffToActivate.api';
+import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
+import { HlmSpinner } from "@spartan-ng/helm/spinner";
 
 @Component({
   selector: 'nexus-staff-activation',
@@ -39,16 +38,19 @@ import { StaffToActivate } from '../../../../../../interfaces/staff/StaffToActiv
     MatTableModule,
     MatPaginatorModule,
     HlmInputGroupImports,
+    HlmAlertDialogImports,
+    BrnAlertDialogContent,
+    BrnAlertDialogTrigger,
     HlmInputGroup,
     HlmInputGroupAddon,
     HlmSeparator,
-    HlmAlertDialogImports,
     NgIcon,
     SideModal,
     SpartanH3,
     SpartanMuted,
     SpartanP,
-  ],
+    HlmSpinner
+],
   templateUrl: './staff-activation.html',
   styleUrl: './staff-activation.css',
   providers: [
@@ -61,10 +63,12 @@ import { StaffToActivate } from '../../../../../../interfaces/staff/StaffToActiv
 export class StaffActivation implements OnInit, AfterViewInit {
   private onboardingSessionService = inject(OnboardingService);
   private sideModalService = inject(SideModalService);
+  private staffService = inject(StaffService);
   private utilService = inject(UtilService);
   activatedRouter = inject(ActivatedRoute);
 
   selectedStaff = signal<StaffToActivate | null>(null);
+  loading = this.staffService.loading;
 
   searchQuery = signal<string>('');
   onSearchChange(event: Event) {
@@ -90,39 +94,61 @@ export class StaffActivation implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const currentPath = this.activatedRouter.snapshot.url.toString();
 
-    this.directories.update((prev_directories) => [...prev_directories, currentPath]);
+    this.directories.set(currentPath.split(','))
 
     this.onboardingSessionService.fetchAllCompleteOnboardingSessions();
+    this.staffService.fetchAllUsers();
   }
 
   onboardingSessions = computed(() => {
     const allOnboardingSessions = this.onboardingSessionService.onboardingSessions();
+    const allUsers = this.staffService.users();
+    const normalizeEmail = (email: string | undefined | null) =>
+      email?.trim().toLowerCase();
+    const userEmails = new Set(
+      allUsers
+        .map((user) => normalizeEmail(user.email))
+        .filter((email): email is string => !!email),
+    );
 
-    return allOnboardingSessions.map((session) => {
-      const primary_data: {
-        email: string;
-        staffId: number;
-        lastName: string;
-        firstName: string;
-        middleName: string;
-      } = session.primaryData as any;
+    return allOnboardingSessions
+      .filter((session) => {
+        const primaryData: {
+          email: string;
+          staffId: number;
+          lastName: string;
+          firstName: string;
+          middleName: string;
+        } = session.primaryData as any;
 
-      return {
-        staffNumber: primary_data.staffId,
-        fullName: new String().concat(
-          primary_data.lastName,
-          ' ',
-          primary_data.firstName,
-          ' ',
-          primary_data.middleName,
-        ),
-        email: primary_data.email,
-        profilePicture: session.profilePictureUrl,
-        signature: session.signatureUrl,
-        createdAt: session.startedAt,
-        completedAt: session.completedAt
-      };
-    });
+        return !userEmails.has(normalizeEmail(primaryData.email) ?? '');
+      })
+      .map((session) => {
+        const primaryData: {
+          email: string;
+          staffId: number;
+          lastName: string;
+          firstName: string;
+          middleName: string;
+        } = session.primaryData as any;
+
+        return {
+          inviteId: session.inviteId,
+          staffNumber: primaryData.staffId,
+          fullName: new String().concat(
+            primaryData.lastName,
+            ' ',
+            primaryData.firstName,
+            ' ',
+            primaryData.middleName,
+          ),
+          email: primaryData.email,
+          profilePicture: session.profilePicPublicURL,
+          signature: session.signaturePublicURL,
+          createdAt: session.startedAt,
+          completedAt: session.completedAt,
+        };
+      });
   });
 
   openStaffDetails(invite: StaffToActivate) {
@@ -135,35 +161,20 @@ export class StaffActivation implements OnInit, AfterViewInit {
     this.sideModalService.close();
   }
 
+  isInviteMigratedToNewStaff = this.staffService.isInviteMigratedToNewStaff;
   confirmActivation() {
     const staff = this.selectedStaff();
     if (!staff) return;
 
-    // this.staffService.activateStaff(staff.id);
+    this.staffService.migrateInviteToNewStaff(staff.inviteId);
   }
 
   canActivate(inviteSession: StaffToActivate) {
     return this.hasProfilePicture(inviteSession) && this.hasSignature(inviteSession);
   }
 
-  formatDate(date: string | null) {
+  formatDate(date: Date | string | null) {
     return this.utilService.formatDateAsReadableString(date);
-  }
-
-  private normalizeMedia(staff: StaffWithMedia) {
-    const media: any = (staff as any).media;
-    if (!media) return [];
-    return Array.isArray(media) ? media : [media];
-  }
-
-  private findMediaByRole(staff: StaffWithMedia, keywords: string[]) {
-    const mediaList = this.normalizeMedia(staff);
-    return (
-      mediaList.find((m: any) => {
-        const role = (m?.assetRole ?? '').toLowerCase();
-        return keywords.some((k) => role.includes(k));
-      }) ?? null
-    );
   }
 
   hasProfilePicture(inviteSession: StaffToActivate) {
@@ -172,15 +183,5 @@ export class StaffActivation implements OnInit, AfterViewInit {
 
   hasSignature(inviteSession: StaffToActivate) {
     return inviteSession.signature ? true : false;
-  }
-
-  getProfilePictureUrl(invite: StaffToActivate) {
-    // replace with actual method to get image url in the service
-    return "https://placehold.co/600x400?text=Hello+World";
-  }
-
-  getSignatureUrl(invite: StaffToActivate) {
-    // replace with actual method to get image url in the service
-    return "25";
   }
 }

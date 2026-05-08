@@ -8,15 +8,14 @@
 html {
   height: 100%;
   @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: 'Google Sans',
-      density: 0,
-    )
-  );
+  (
+    color: (
+      primary: mat.$blue-palette, // fallback only
+    ),
+    typography: 'Google Sans',
+    density: 0,
+  )
+);
 }
 
 body {
@@ -38,11 +37,35 @@ body {
 }
 
 :root {
+     /* Surface mapping */
+  --mat-sys-surface: var(--brand-background);
+  --mat-sys-surface-container: var(--brand-surface);
+  --mat-sys-surface-container-low: var(--brand-surface-alt);
+
+  /* Text */
+  --mat-sys-on-surface: var(--brand-text);
+  --mat-sys-on-surface-variant: var(--brand-text-secondary);
+
+  /* Primary (actions) */
+  --mat-sys-primary: var(--brand-primary);
+  --mat-sys-on-primary: #ffffff;
+
+  /* Secondary (structure) */
+  --mat-sys-secondary: var(--brand-surface-alt);
+  --mat-sys-on-secondary: var(--brand-text);
+
+  /* Outline / borders */
+  --mat-sys-outline: var(--brand-border);
+
+  /* Error */
+  --mat-sys-error: var(--brand-error);
+  --mat-sys-on-error: #ffffff;
+
   // mat stepper overrides
   @include mat.stepper-overrides(
     (
       container-color: transparent,
-      header-icon-background-color: var(--brand-surface-shade-1),
+      header-icon-background-color: var(--brand-surface-alt),
       header-edit-state-icon-background-color: var(--accent-shade-1),
       header-hover-state-layer-color: var(--sidebar-accent),
       header-focus-state-layer-color: var(--sidebar-accent),
@@ -79,10 +102,10 @@ body {
       with-icon-handle-size: '18px',
       selected-icon-size: '12px',
       unselected-icon-size: '12px',
-      selected-track-color: var(--brand-accent-shade-1),
-      selected-hover-track-color: var(--brand-accent-shade-1),
-      selected-focus-track-color: var(--brand-accent-shade-1),
-      selected-pressed-track-color: var(--brand-accent-shade-1),
+      selected-track-color: var(--brand-primary),
+      selected-hover-track-color: var(--brand-primary),
+      selected-focus-track-color: var(--brand-primary),
+      selected-pressed-track-color: var(--brand-primary),
       state-layer-size: '28px',
       selected-icon-color: var(--brand-surface),
     )
@@ -90,9 +113,9 @@ body {
 
   @include mat.tabs-overrides(
     (
-      active-indicator-color: var(--brand-accent-shade-1),
-      active-focus-indicator-color: var(--brand-accent-shade-1),
-      active-hover-indicator-color: rgb(from var(--brand-accent-shade-1) r g b / 0.45),
+      active-indicator-color: var(--brand-primary),
+      active-focus-indicator-color: var(--brand-primary),
+      active-hover-indicator-color: rgb(from var(--brand-primary) r g b / 0.45),
     )
   );
 
@@ -104,14 +127,14 @@ body {
 
   @include mat.form-field-overrides(
     (
-      outlined-focus-outline-color: var(--brand-accent-shade-1),
+      outlined-focus-outline-color: var(--brand-primary),
       outlined-container-shape: var(--radius-xs)
     )
   );
 
   @include mat.select-overrides(
     (
-      focused-arrow-color: var(--brand-accent-shade-1),
+      focused-arrow-color: var(--brand-primary),
       panel-background-color: var(--brand-surface),
     )
   );

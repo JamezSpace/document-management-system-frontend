@@ -1,28 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import {
-  confirmPasswordReset,
-  getAuth,
-  onAuthStateChanged,
-  User,
-  verifyPasswordResetCode,
+    confirmPasswordReset,
+    getAuth,
+    onAuthStateChanged,
+    User,
+    verifyPasswordResetCode,
 } from 'firebase/auth';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { firebase_app } from '../../../../app.config';
+import { OnboardingSessionStatus } from '../../../../enum/onboarding/sessionStatus.enum';
 import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
 import { ErrorType } from '../../../../interfaces/api/Error.interface';
 import { EntityResponse } from '../../../../interfaces/onboarding/Entity.api';
-import { OnboardingSession, OnboardingSessionView } from '../../../../interfaces/onboarding/OnboardingSession.api';
+import {
+    OnboardingSession
+} from '../../../../interfaces/onboarding/OnboardingSession.api';
 import { StaffInvite } from '../../../../interfaces/onboarding/StaffInvite.api';
 import { BaseStaffEntity } from '../../../../interfaces/staff/BaseStaff.api';
-import { OnboardingSessionStatus } from '../../../../enum/onboarding/sessionStatus.enum';
+import { UtilService } from '../../../system-wide/util-service/util-service';
 
 type PrimaryInformationData = {
   firstName: string;
   lastName: string;
   middleName: string;
   email: string;
+  phoneNumber: string;
   staffId: string;
 };
 
@@ -30,15 +34,16 @@ type PrimaryInformationData = {
   providedIn: 'root',
 })
 export class OnboardingService {
+    private http = inject(HttpClient);
   private auth = getAuth(firebase_app);
-  private http = inject(HttpClient);
+  private utilService = inject(UtilService);
 
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
   entity = signal<EntityResponse<StaffInvite> | null>(null);
   staffToOnboard = signal<BaseStaffEntity | null>(null);
   onboardingSession = signal<OnboardingSession | null>(null);
-  onboardingSessions = signal<OnboardingSessionView[]>([]);
+  onboardingSessions = signal<OnboardingSession[]>([]);
 
   // creates a writable signal for the user
   private _currentUser = signal<User | null>(null);
@@ -73,22 +78,58 @@ export class OnboardingService {
 
       return true;
     } catch (error: any) {
+
+        if(error.code === 'auth/password-does-not-meet-requirements')
+            this.utilService.showToast('error', 'Password does not meet requirements')
+
+        this.loading.set(false)
+        
       return false;
     }
+  }
+
+  extractEntityDetailsFromLocalStrorage() {
+    let data = localStorage.getItem('entity');
+
+    let entity = data ? (JSON.parse(data) as EntityResponse<StaffInvite>) : null;
+    let healthy: boolean = false;
+
+    if (entity && entity.type && entity.details) healthy = true;
+
+    return {
+      entity,
+      healthy,
+    };
+  }
+
+  clearEntityDetailsFromLocalStorage() {
+    localStorage.removeItem('entity');
   }
 
   async getEntityByToken(token: string) {
     this.loading.set(true);
 
+    const { entity, healthy: isEntityHealthy } = this.extractEntityDetailsFromLocalStrorage();
+
+    if (isEntityHealthy && entity?.details.token === token) {
+      this.entity.set(entity);
+      return;
+    }
+
     this.http
       .get<ApiResponse<EntityResponse<StaffInvite>>>(`${environment.api}/identity/entity/${token}`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) =>
-          this.entity.set({
+        next: (resp) => {
+          let data = {
             type: resp.data.type,
             details: resp.data.details,
-          }),
+          };
+
+          this.entity.set(data);
+
+          localStorage.setItem('entity', JSON.stringify(data));
+        },
         error: (err) => {
           this.error.set({
             code: {
@@ -171,20 +212,28 @@ export class OnboardingService {
       )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => this.onboardingSession.set(resp.data),
+        next: (resp) =>
+            this.onboardingSession.update((current) =>
+                current ? { ...current, ...resp.data } : resp.data,
+        ),
         error: (err) => this.error.set(err),
       });
   }
 
-  async completeOnboardingSession(invitedId: string, sessionId: string, currentStep: number) {
+  async completeOnboardingSession(inviteId: string, sessionId: string) {
     this.loading.set(true);
 
     this.http
       .patch<ApiResponse<OnboardingSession>>(
         `${environment.api}/identity/invite/onboarding/session/${sessionId}/completed`,
-        { invitedId, currentStep },
+        { inviteId },
       )
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(
+        finalize(() => {
+          this.loading.set(false);
+          this.clearEntityDetailsFromLocalStorage();
+        }),
+      )
       .subscribe({
         next: (resp) => this.onboardingSession.set(resp.data),
         error: (err) => this.error.set(err),
@@ -213,7 +262,9 @@ export class OnboardingService {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<OnboardingSessionView[]>>(`${environment.api}/identity/invites/onboarding/sessions`)
+      .get<ApiResponse<OnboardingSession[]>>(
+        `${environment.api}/identity/invites/onboarding/sessions`,
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => {

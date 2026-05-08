@@ -105,15 +105,32 @@
         <li hlmSidebarMenuItem>
           <div class="flex-center gap-3.5">
             <div class="profile-pic">
-              <hlm-avatar>
-                <img
-                  hlmAvatarImage
-                  src="/ui-logo.png"
-                  alt="staff profile pic"
-                  class="rounded-full"
-                />
-                <span hlmAvatarFallback>RG</span>
-              </hlm-avatar>
+                @if(staffLoggedIn(); as staff){
+                    @if(staff.media) {
+                    <hlm-avatar>
+                        <img
+                        hlmAvatarImage
+                        [src]="staff.media.profilePicUrl"
+                        alt="staff profile pic"
+                        class="rounded-full"
+                        />
+                        <span hlmAvatarFallback>
+                            {{ getStaffNameInitials(staff.fullName) }}
+                        </span>
+                    </hlm-avatar>
+                } @else {
+                    <hlm-avatar>
+                        <img
+                        hlmAvatarImage
+                        
+                        alt="staff profile pic"
+                        class="rounded-full"
+                        />
+                        <span hlmAvatarFallback>
+                            {{ getStaffNameInitials(staff.fullName) }}
+                        </span>
+                    </hlm-avatar>
+                }}
             </div>
             <div class="profile-info" [class.hidden]="isSidebarClosed()">
               <p class="font-medium">{{ staffLoggedIn()!.fullName }}</p>

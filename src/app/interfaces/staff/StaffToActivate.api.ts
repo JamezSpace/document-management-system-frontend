@@ -1,11 +1,12 @@
 interface StaffToActivate {
+    inviteId: string;
     staffNumber: number;
     fullName: string;
     email: string;
     profilePicture: string | null;
     signature: string | null;
     createdAt: string;
-    completedAt: string | null;
+    completedAt: Date | null;
 }
 
 export type {StaffToActivate}

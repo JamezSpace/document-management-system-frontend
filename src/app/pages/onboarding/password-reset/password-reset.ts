@@ -5,6 +5,7 @@ import { LineLoader } from '../../../components/system-wide/loaders/line-loader/
 import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
 import { OnboardingService } from '../../../services/page-wide/onboarding/session/onboarding-service';
 import { UtilService } from '../../../services/system-wide/util-service/util-service';
+import { StaffService } from '../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 
 @Component({
   selector: 'nexus-password-reset',
@@ -15,6 +16,7 @@ import { UtilService } from '../../../services/system-wide/util-service/util-ser
 export class PasswordReset implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private staffService = inject(StaffService);
   onboardingService = inject(OnboardingService);
   utilService = inject(UtilService);
 
@@ -25,6 +27,7 @@ export class PasswordReset implements OnInit {
   oobCode = signal<string>('');
   email = signal<string>('');
   staffId = signal<string>('');
+  inviteId = signal<string>('');
   isFirstTimeSetup = signal<boolean>(false);
   staffToOnboard = this.onboardingService.staffToOnboard;
 
@@ -35,12 +38,15 @@ export class PasswordReset implements OnInit {
 
   async ngOnInit() {
     const code = this.route.snapshot.queryParams['oobCode'];
-    const staffId = this.route.snapshot.queryParams['id'];
+    const staffId = this.route.snapshot.queryParams['sid'];
+    const inviteId = this.route.snapshot.queryParams['iid'];
 
-    if (!code || !staffId) return;
+    if (!code || !staffId || !inviteId) return;
+
     this.oobCode.set(code);
     this.staffId.set(staffId);
-    this.isFirstTimeSetup.set(true)
+    this.inviteId.set(inviteId);
+    this.isFirstTimeSetup.set(true);
 
     // verify firebase reset link
     const email = await this.onboardingService.verifyPasswordResetLink(code);
@@ -60,11 +66,16 @@ export class PasswordReset implements OnInit {
       this.currentFrame.update((n) => n + 1);
       this.isExiting.set(false);
       this.loading.set(false);
-    }, 500);
 
-    if (this.currentFrame() === 3 && this.isFirstTimeSetup() && this.staffId())
-      this.router.navigateByUrl(`staff/onboarding/${this.staffId()}`);
-    else this.router.navigateByUrl('/auth');
+    
+    if (this.currentFrame() === 3 && this.isFirstTimeSetup() && this.staffId()) {
+        // activate staff
+        this.staffService.activateNewStaff(this.staffId(), this.inviteId())
+    }
+
+    // navigate to login page
+    this.router.navigateByUrl('/auth');
+    }, 500);
   }
 
   async submitPassword() {
@@ -79,11 +90,13 @@ export class PasswordReset implements OnInit {
       return;
     }
 
-    const status = await this.onboardingService.setPasswordForFirstTimeUser(
-      this.oobCode(),
-      password,
-    );
+        const status = await this.onboardingService.setPasswordForFirstTimeUser(
+            this.oobCode(),
+            password,
+        );
 
+    console.log("STATUS:", status);
+    
     if (status) this.nextStep();
   }
 

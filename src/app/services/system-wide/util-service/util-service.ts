@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { map } from 'rxjs';
 import { ErrorToast } from '../../../components/system-wide/toast/error-toast/error-toast';
 import { NotifToast } from '../../../components/system-wide/toast/notif-toast/notif-toast';
+import { AuthErrorCodes } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -48,5 +49,18 @@ export class UtilService {
     const date = new Date(dateString);
 
     return date.toLocaleString();
+  }
+
+   mapFirebaseError(code: string): string {
+    switch (code) {
+      case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
+        return 'Incorrect email or password.';
+      case AuthErrorCodes.USER_DISABLED:
+        return 'This account has been disabled.';
+      case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
+        return 'Too many attempts. Try again later.';
+      default:
+        return 'An unexpected error occurred. Please try again.';
+    }
   }
 }

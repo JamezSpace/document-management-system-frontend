@@ -7,8 +7,9 @@ import { ApiResponse } from '../../../../../../interfaces/api/ApiResponse.interf
 import { ErrorType } from '../../../../../../interfaces/api/Error.interface';
 import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
 import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
-import { InitStaffPayload, InviteStaffPayload } from '../../../../../../interfaces/staff/InitStaff.api';
+import { InitStaffPayload } from '../../../../../../interfaces/staff/InitStaff.api';
 import { StaffWithMedia } from '../../../../../../interfaces/staff/StaffWithMedia.api';
+import { Users } from '../../../../../../interfaces/users/users.api';
 import { UtilService } from '../../../../../system-wide/util-service/util-service';
 import { StaffDetailsService } from '../../../office-template/staff-details-service';
 
@@ -23,12 +24,25 @@ export class StaffService {
 
   initStaff = signal<InitStaffPayload | null>(null);
   staff = signal<StaffWithMedia[]>([]);
+  users = signal<Users[]>([]);
   officesInUnit = signal<OfficeApi[]>([]);
   officeDesignations = signal<DesignationApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
 
   readonly loggedInStaff = this.staffDetailsService.data()!;
+
+  fetchAllUsers() {
+        this.loading.set(true);
+
+        this.http
+        .get<ApiResponse<Users[]>>(`${environment.api}/identity/users`)
+        .pipe(finalize(() => this.loading.set(false)))
+        .subscribe({
+            next: (resp) => this.users.set(resp.data),
+            error: (err) => this.error.set(err),
+        });
+    }
 
   fetchAllStaff() {
     this.loading.set(true);
@@ -94,17 +108,43 @@ export class StaffService {
       });
   }
 
-  activateStaff(staffId: string) {
+  isInviteMigratedToNewStaff = signal<boolean>(false);
+  migrateInviteToNewStaff(inviteId: string) {
     this.loading.set(true);
 
-    // TODO: replace placeholder URL when endpoint is finalized
     this.http
-      .post<ApiResponse<void>>(`${environment.api}/identity/staff/${staffId}/activate`, {})
+      .post<ApiResponse<void>>(`${environment.api}/identity/staff/invite`, {
+        inviteId
+      })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => {
+        next: (resp) => {
           this.utilService.showToast('info', 'Staff account activated successfully.');
+          
+            this.isInviteMigratedToNewStaff.set(true);
+
+          console.log(resp.data);          
         },
+        error: (err) => {
+          this.error.set(err);
+          this.utilService.showToast(
+            'error',
+            err.error?.message || 'Unable to activate staff account.',
+          );
+        },
+      });
+  }
+
+  activateNewStaff(staffId: string, inviteId: string) {
+    this.loading.set(true);
+
+    this.http
+      .patch<ApiResponse<void>>(`${environment.api}/identity/staff/${staffId}/activate`, {
+         inviteId
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => console.log(resp.data),
         error: (err) => {
           this.error.set(err);
           this.utilService.showToast(

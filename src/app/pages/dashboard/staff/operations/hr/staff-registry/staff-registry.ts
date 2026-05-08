@@ -5,13 +5,14 @@ import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-    lucideArrowDownUp,
-    lucideArrowLeft,
-    lucideArrowRight,
-    lucideHash,
-    lucideMail,
-    lucidePlus,
-    lucideSearch,
+  lucideArrowDownUp,
+  lucideArrowLeft,
+  lucideArrowRight,
+  lucideHash,
+  lucideMail,
+  lucidePlus,
+  lucideSearch,
+  lucideUserPlus,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -19,16 +20,16 @@ import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-di
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import {
-    HlmInputGroup,
-    HlmInputGroupAddon,
-    HlmInputGroupImports,
+  HlmInputGroup,
+  HlmInputGroupAddon,
+  HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmRadioGroupImports } from '@spartan-ng/helm/radio-group';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { InvitesListView } from "../../../../../../components/dashboard-wide/operations/invites-list-view/invites-list-view";
+import { InvitesListView } from '../../../../../../components/dashboard-wide/operations/invites-list-view/invites-list-view';
 import { StaffListView } from '../../../../../../components/dashboard-wide/operations/staff-list-view/staff-list-view';
 import { StatusModal } from '../../../../../../components/dashboard-wide/shared/status-modal/status-modal';
 import { EmptyState } from '../../../../../../components/system-wide/empty-state/empty-state';
@@ -41,8 +42,8 @@ import { EmploymentType } from '../../../../../../enum/staff/employmentType.enum
 import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
 import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
 import {
-    EmptyStateInterface,
-    EmptyStateType,
+  EmptyStateInterface,
+  EmptyStateType,
 } from '../../../../../../interfaces/system/EmptyState.ui';
 import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui';
 import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
@@ -78,13 +79,14 @@ import { UtilService } from '../../../../../../services/system-wide/util-service
     StaffListView,
     LineLoader,
     StatusModal,
-    InvitesListView
-],
+    InvitesListView,
+  ],
   templateUrl: './staff-registry.html',
   styleUrl: './staff-registry.css',
   providers: [
     provideIcons({
       lucidePlus,
+      lucideUserPlus,
       lucideSearch,
       lucideArrowDownUp,
       lucideHash,
@@ -102,7 +104,7 @@ export class StaffRegistry implements OnInit {
   private activatedRouter = inject(ActivatedRoute);
 
   private queryParams = toSignal(this.activatedRouter.queryParamMap);
-    viewMode = computed(() => this.queryParams()?.get('view'));
+  viewMode = computed(() => this.queryParams()?.get('view'));
 
   readonly loggedInStaff = this.staffDetService.data()!;
 
@@ -138,11 +140,15 @@ export class StaffRegistry implements OnInit {
   };
 
   ngOnInit(): void {
+    const currentPath = this.activatedRouter.snapshot.url.toString();
+
+    this.directories.set(currentPath.split(','))
+
     // staff init deps
     this.staffService.fetchAllStaff();
     this.staffService.fetchAllOffices();
     this.staffService.fetchAllDesignations();
-    this.inviteService.fetchAllInvites();
+    this.inviteService.fetchAllInvites();    
   }
 
   staff = this.staffService.staff;
@@ -150,7 +156,8 @@ export class StaffRegistry implements OnInit {
   offices = this.staffService.officesInUnit;
   officesDesignations = this.staffService.officeDesignations;
   employmentTypes = Object.values(EmploymentType);
-  loading = this.staffService.loading;
+  staffServiceLoading = this.staffService.loading;
+  inviteServiceLoading = this.inviteService.loading;
 
   designationsInSelectedOffice = computed(() => {
     const allDesigs = this.officesDesignations();
@@ -175,10 +182,10 @@ export class StaffRegistry implements OnInit {
   }
 
   emptyState = computed(() => {
-    const list = this.staff();
+    const list = this.viewMode() === 'invites' ? this.invites() : this.staff()
 
     if (list.length === 0) {
-      return this.staffRegistryFirstTime;
+        return this.staffRegistryFirstTime;
     }
 
     if (this.searchQuery() && list.length === 0) {
@@ -219,19 +226,22 @@ export class StaffRegistry implements OnInit {
     designation: new FormControl<DesignationApi>(
       {
         value: {
-            id: '',
-            hierarchyLevel: 0,
-            officeId: '',
-            title: ''
+          id: '',
+          hierarchyLevel: 0,
+          officeId: '',
+          title: '',
         },
-        disabled: true
+        disabled: true,
       },
       { validators: Validators.required },
     ),
   });
 
   employmentTypeFormGroup = new FormGroup({
-    employmentType: new FormControl<EmploymentType>(EmploymentType.PERMANENT, {nonNullable: true, validators: Validators.required})
+    employmentType: new FormControl<EmploymentType>(EmploymentType.PERMANENT, {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
   });
 
   numberOfStepsToCompleteNewStaffRecord = 4;
@@ -298,17 +308,17 @@ export class StaffRegistry implements OnInit {
     this.pendingInviteEmail.set(inviteEmail);
 
     this.inviteService.initInvite({
-        email: inviteEmail,
-        createdBy: this.loggedInStaff.id,
-        officeId: this.officeFormGroup.getRawValue().office.id,
-        designationId: this.officeFormGroup.getRawValue().designation!.id,
-        employmentType: this.employmentTypeFormGroup.getRawValue().employmentType,
-        unitId: this.loggedInStaff.unit.id
-    })
+      email: inviteEmail,
+      createdBy: this.loggedInStaff.id,
+      officeId: this.officeFormGroup.getRawValue().office.id,
+      designationId: this.officeFormGroup.getRawValue().designation!.id,
+      employmentType: this.employmentTypeFormGroup.getRawValue().employmentType,
+      unitId: this.loggedInStaff.unit.id,
+    });
   }
 
   inviteSentSuccess = effect(() => {
-    const inviteSent = this.inviteService.inviteSent()
+    const inviteSent = this.inviteService.inviteSent();
 
     if (!inviteSent) return;
 
@@ -323,9 +333,9 @@ export class StaffRegistry implements OnInit {
 
     this.inviteStaffDialog?.close();
     this.inviteSentStatusModal?.open();
-    
+
     this.inviteService.inviteSent.set(false);
-  })
+  });
 
   submitStaffData() {
     // this.staffService.addNewStaff({
