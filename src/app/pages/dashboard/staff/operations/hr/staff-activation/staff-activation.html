@@ -128,9 +128,9 @@
     </header>
 
     @if (selectedStaff(); as invite) {
-      <section class="px-1.5 flex flex-col gap-3">
+      <section class="px-1.5 flex flex-col gap-3 overflow-y-auto">
         <div class="flex justify-start">
-          <img [src]="invite.profilePicture" alt="Missing Profile Picture" />
+          <img [src]="invite.profilePicture" alt="Missing Profile Picture" class="max-h-40 object-cover" />
         </div>
         <div>
           <nexus-spartan-h3 class="capitalize">{{ invite.fullName }}</nexus-spartan-h3>

@@ -169,7 +169,7 @@ export class Workspace implements OnInit, OnDestroy {
       if (!this.unitMembersService.data()) this.unitMembersService.fetchUnitMembers(staffUnit.id);
     } else {
       // ensure units are fetched if they dont pre-exist
-      if (!this.unitService.data()) this.unitService.fetchOrgUnits();
+      if (!this.unitService.units()) this.unitService.fetchOrgUnits();
     }
   });
 
@@ -183,7 +183,7 @@ export class Workspace implements OnInit, OnDestroy {
     return type?.code === 'memo' && doc ? doc : null;
   });
 
-  units = this.unitService.data;
+  units = this.unitService.units;
   unitMembers = this.unitMembersService.data;
   academicUnits = computed(() =>
     this.units().filter((unit) => unit.sector === OrgUnitCategory.ACADEMIC),

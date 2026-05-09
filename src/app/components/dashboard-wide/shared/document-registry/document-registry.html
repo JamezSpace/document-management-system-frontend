@@ -264,7 +264,7 @@
                 id="unitSelected"
                 placeholder="Select the unit"
                 aria-label="unit addressed to"
-                formControlName="to"
+                formControlName="recipientUnitId"
                 [matAutocomplete]="unitAuto"
                 class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
                 (input)="updateUnitSearch($event)"
@@ -290,16 +290,12 @@
 
               <input
                 type="text"
-                formControlName="to"
-                [placeholder]="
-                  initDocument()?.direction === 'internal'
-                    ? 'Who is this addressed to?'
-                    : 'What unit is this addressed to?'
-                "
+                formControlName="addressedToStaffId"
+                placeholder="Who is this addressed to?"
                 aria-label="adressee of the document"
                 [matAutocomplete]="addresseeAutoComplete"
                 class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-                (input)="updateAddresseeName($event)"
+                (input)="updateAddressee($event)"
               />
 
               <mat-autocomplete
@@ -310,7 +306,7 @@
               >
                 @for (addressee of filteredUnitMembers(); track addressee.id) {
                   <mat-option [value]="addressee.id">
-                    <span class="text-sm">{{ addressee.fullName }}</span>
+                    <span class="text-sm">{{ addressee.designation?.title }}</span>
                   </mat-option>
                 }
               </mat-autocomplete>

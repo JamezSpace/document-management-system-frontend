@@ -25,13 +25,22 @@
           </p>
         </article>
 
-        <!-- recipient -->
-        <article class="mb-2">
-          <span class="descriptor">addressed to</span>
-          <p class="capitalize">
-            {{ addressedTo() }}
-          </p>
-        </article>
+        @if (documentToShowFullDetails().correspondence.direction === 'external' && documentToShowFullDetails().correspondence.recipientUnitId) {
+          <article class="mb-2">
+            <span class="descriptor">recipient unit</span>
+            <p class="capitalize">
+              {{ recipientUnit()?.code?.toUpperCase() ?? '--' }}
+            </p>
+          </article>
+        } @else {   
+            <!-- recipient -->
+            <article class="mb-2">
+                <span class="descriptor">addressed to</span>
+                <p class="capitalize">
+                    {{ addressedTo() ?? '--' }}
+                </p>
+            </article>
+        }
 
         <!-- type -->
         <article class="mb-2">
@@ -45,7 +54,7 @@
         <article class="mb-2">
           <span class="descriptor">correspondence subject</span>
           <p>
-            {{ corrService()?.name ?? '--' }}
+            {{ corrSubject()?.name ?? '--' }}
           </p>
         </article>
 
@@ -81,25 +90,29 @@
 
     <!-- Document Activity Tab -->
     <mat-tab label="Activity">
-        <section class="pt-5">
+      <section class="pt-5">
         @if (documentToShowFullDetails().currentVersion; as version) {
-            <ul>
-                <li>
-                    <p>Correspondence is currently in {{ version.lifecycle.currentState.toUpperCase() }} state, entered this state at {{ utilService.formatDateAsReadableString(version.lifecycle.stateEnteredAt) }}.</p>
-                </li>
-            </ul>
+          <ul>
+            <li>
+              <p>
+                Correspondence is currently in
+                {{ version.lifecycle.currentState.toUpperCase() }} state, entered this state at
+                {{ utilService.formatDateAsReadableString(version.lifecycle.stateEnteredAt) }}.
+              </p>
+            </li>
+          </ul>
 
-            @if (version.lifecycle.currentState.toLowerCase() === 'draft') {
-                <p class="text-xs font-medium mt-5">
-                    Correspondence hasn't been submited yet for approval.
-                </p>
-            }
-        } @else {
-            <p class="text-xs font-medium text-(--brand-accent-shade-2)">
-                Correspondence has no content!
+          @if (version.lifecycle.currentState.toLowerCase() === 'draft') {
+            <p class="text-xs font-medium mt-5">
+              Correspondence hasn't been submited yet for approval.
             </p>
+          }
+        } @else {
+          <p class="text-xs font-medium text-(--brand-accent-shade-2)">
+            Correspondence has no content!
+          </p>
         }
-        </section>
+      </section>
     </mat-tab>
   </mat-tab-group>
 </section>

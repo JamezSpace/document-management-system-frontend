@@ -111,7 +111,7 @@
   @if (selectedInvite(); as invite) {
     <section class="px-1.5 h-full">
       @if (!editMode()) {
-        <div class="h-full">
+        <div class="h-full flex flex-col">
           <nexus-spartan-h4 class="capitalize">{{ invite.email }}</nexus-spartan-h4>
           <nexus-spartan-muted class="uppercase"
             >{{ invite.employmentType }} staff</nexus-spartan-muted
@@ -119,7 +119,7 @@
 
           <hlm-separator class="my-3" />
 
-          <div class="grid gap-2.5 overflow-auto">
+          <div class="flex flex-col gap-2.5 overflow-auto">
             <article>
               <nexus-spartan-muted class="uppercase">Email</nexus-spartan-muted>
               <nexus-spartan-p>{{ invite.email }}</nexus-spartan-p>
@@ -165,9 +165,9 @@
           @if(invite.status === 'pending'){
           <button
             type="button"
-            class="nexus-button w-full mt-2.5"
+            class="nexus-button w-full mt-auto"
             (click)="nudgeInvite()"
-            disabled
+            [disabled]="loading()"
           >
             Nudge To Accept Invite
           </button>

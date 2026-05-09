@@ -12,6 +12,7 @@ import { RegistryService } from '../../../../services/page-wide/dashboard/docume
 import { DocumentTypesService } from '../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
 import { UnitMembersService } from '../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
 import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { OrgUnitsService } from '../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
 
 
 @Component({
@@ -30,8 +31,17 @@ export class DocumentDetails {
     bussFunctionService = inject(BusinessFunctionService);
     corrSubjectService = inject(CorrespondenceSubjectService);
     docTypesService = inject(DocumentTypesService)
+    unitService = inject(OrgUnitsService);
     unitMembersService = inject(UnitMembersService);
     documentToShowFullDetails = input.required<DocumentApi>();
+
+    recipientUnit = computed(() => {
+        const recipientUnitId = this.documentToShowFullDetails().correspondence.recipientUnitId;
+
+        if(!recipientUnitId) return;
+
+        return this.unitService.units().find(unit => unit.id === recipientUnitId)
+    })
 
     businessFuntion = computed(() => {
         const bussFunctionId = this.documentToShowFullDetails().classification.functionCodeId;
@@ -39,7 +49,7 @@ export class DocumentDetails {
         return this.bussFunctionService.bussFunctions().find(bussFunction => bussFunction.id === bussFunctionId)
     })
 
-    corrService = computed(() => {
+    corrSubject = computed(() => {
         const subjectId = this.documentToShowFullDetails().correspondence.subjectCodeId;
 
         return this.corrSubjectService.corrSubjects().find(corrSubject => corrSubject.id === subjectId)
@@ -52,9 +62,9 @@ export class DocumentDetails {
     })
 
     addressedTo = computed(() => {
-        const recipientId = this.documentToShowFullDetails().correspondence.recipientCode;
+        const recipientId = this.documentToShowFullDetails().correspondence.addressedToStaffId;
 
-        return recipientId;
+        return this.unitMembersService.data().find(member => member.id === recipientId)?.designation?.title;
     })
 
     closeDocPane() {

@@ -1,9 +1,16 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1) text-xs flex-center gap-x-0.5">
+    @for (directory of directories(); track $index) {
       <li hlmBreadcrumbItem>
-        <button hlmBreadcrumbLink class="capitalize">notices</button>
+        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
       </li>
+
+      <!-- that is, if there still exists a next directory -->
+      @if ($index + 1 < directories().length) {
+        <li hlmBreadcrumbSeparator>&Backslash;</li>
+      }
+    }
   </ol>
 </nav>
 
@@ -13,17 +20,17 @@
 <section class="flex-center justify-between">
   <article>
     <nexus-spartan-h3>Notices</nexus-spartan-h3>
-    <nexus-spartan-p>
-      All Notifications are detailed here.
-    </nexus-spartan-p>
+    <nexus-spartan-p> All Notifications are detailed here. </nexus-spartan-p>
   </article>
 </section>
 
 <hlm-separator class="my-4" />
 
-<div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
-  <!-- search -->
-  <div hlmInputGroup>
+<!-- might not need this -->
+<div>
+  <div class="flex-center gap-2.5" aria-label="document operations e.g. sort, filter, search etc.">
+    <!-- search -->
+    <!-- <div hlmInputGroup>
     <input
       type="text"
       name=""
@@ -36,10 +43,10 @@
     <div hlmInputGroupAddon align="inline-end">
       <ng-icon name="lucideSearch" />
     </div>
-  </div>
+  </div> -->
 
-  <!-- sort -->
-  <hlm-menubar>
+    <!-- sort -->
+    <!-- <hlm-menubar>
     <button type="button" [hlmMenubarTrigger]="sortOptions">
       <ng-icon name="lucideArrowDownUp" />
       <span class="capitalize ml-2.5">sort</span>
@@ -69,10 +76,10 @@
         Descending
       </button>
     </hlm-dropdown-menu>
-  </ng-template>
+  </ng-template> -->
 
-  <!-- view -->
-  <hlm-menubar>
+    <!-- view -->
+    <!-- <hlm-menubar>
     <button type="button" [hlmMenubarTrigger]="viewOptions">
       <ng-icon name="hugeGridView" />
       <span class="capitalize ml-2.5">view</span>
@@ -96,7 +103,7 @@
       <button hlmDropdownMenuItem>Medium</button>
       <button hlmDropdownMenuItem>Small</button>
     </hlm-dropdown-menu-sub>
-  </ng-template>
+  </ng-template> -->
+  </div>
+  <!-- <hlm-separator class="my-4" /> -->
 </div>
-
-<hlm-separator class="my-4" />

@@ -22,6 +22,10 @@ export class MemoTemplate {
 
   documentToRender = input.required<DocumentApi>()
   formattedDate(date: string | Date) {
-    return new Date(date).toLocaleDateString();
+    return new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })
   }
 }

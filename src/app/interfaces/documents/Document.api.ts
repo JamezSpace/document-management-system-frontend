@@ -9,11 +9,11 @@ interface InitDocumentApiPayload {
   createdBy: string;
   documentTypeId: string;
   direction: string;
-  addressedTo: string;
 
   // correspondence
   originatingUnitId: string;
-  recipientUnitId: string;
+  recipientUnitId: string | null;
+  addressedToStaffId: string | null;
   subjectCodeId: string;
   subjectCode: string;
 
@@ -53,7 +53,8 @@ const emptyDocument: DocumentApi = {
   },
   correspondence: {
     originatingUnitId: '',
-    recipientCode: '',
+    recipientUnitId: null,
+    addressedToStaffId: null,
     subjectCodeId: '',
     direction: '',
   },

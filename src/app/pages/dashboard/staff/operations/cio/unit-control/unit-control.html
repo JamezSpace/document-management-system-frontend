@@ -1,14 +1,14 @@
 <!-- breadcrumb at the top -->
 <nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1)">
+  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1) text-xs flex-center gap-x-0.5">
     @for (directory of directories(); track $index) {
       <li hlmBreadcrumbItem>
         <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
       </li>
 
       <!-- that is, if there still exists a next directory -->
-      @if ($index + 1 !== directories().length) {
-        <li hlmBreadcrumbSeparator></li>
+      @if ($index + 1 < directories().length) {
+        <li hlmBreadcrumbSeparator>&Backslash;</li>
       }
     }
   </ol>
@@ -244,9 +244,9 @@
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
 
-<section class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<section class="grid sm:grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6">
   @for (member of unitMembers(); track member.id) {
-    <div class="card-container min-w-sm">
+    <div class="card-container min-w-[320px] max-w-sm w-full">
       <header class="flex-center gap-x-2.5 mb-2">
         <div
           class="profile-picture-container rounded-full w-10 h-10 flex-center justify-center border"

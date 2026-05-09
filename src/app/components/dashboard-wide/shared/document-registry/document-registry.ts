@@ -1,12 +1,12 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    inject,
-    OnInit,
-    signal,
-    ViewChild,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,21 +16,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
 import {
-    lucideArrowDownUp,
-    lucideArrowRight,
-    lucideChevronDown,
-    lucideChevronLeft,
-    lucideFileInput,
-    lucideFileOutput,
-    lucideFileText,
-    lucideLayoutTemplate,
-    lucideMail,
-    lucideNetwork,
-    lucidePlus,
-    lucideSearch,
-    lucideStickyNote,
-    lucideUpload,
-    lucideUsers2,
+  lucideArrowDownUp,
+  lucideArrowRight,
+  lucideChevronDown,
+  lucideChevronLeft,
+  lucideFileInput,
+  lucideFileOutput,
+  lucideFileText,
+  lucideLayoutTemplate,
+  lucideMail,
+  lucideNetwork,
+  lucidePlus,
+  lucideSearch,
+  lucideStickyNote,
+  lucideUpload,
+  lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -40,9 +40,9 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmComboboxImports } from '@spartan-ng/helm/combobox';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
-    HlmInputGroup,
-    HlmInputGroupAddon,
-    HlmInputGroupImports,
+  HlmInputGroup,
+  HlmInputGroupAddon,
+  HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
@@ -51,8 +51,8 @@ import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { DocumentApi } from '../../../../interfaces/documents/Document.api';
 import {
-    CorrespondenceAddressee,
-    SensitivityLevel,
+  CorrespondenceAddressee,
+  SensitivityLevel,
 } from '../../../../interfaces/documents/Document.enum';
 import { UnitsApi } from '../../../../interfaces/org units/units.api';
 import { StaffMember } from '../../../../interfaces/staff/StaffMember.api';
@@ -157,7 +157,7 @@ export class DocumentRegistry implements OnInit {
   ngOnInit(): void {
     const currentPath = this.activatedRouter.snapshot.url.toString();
 
-    this.directories.set(currentPath.split(','))
+    this.directories.set(currentPath.split(','));
 
     // document init deps
     this.corrSubjectService.fetchCorrSubjects();
@@ -246,7 +246,7 @@ export class DocumentRegistry implements OnInit {
   docTypes = this.documentTypesService.allDocTypes;
   corrSubjects = this.corrSubjectService.corrSubjects;
   unitMembers = this.unitMembersService.data;
-  orgUnits = this.orgUnitService.data;
+  orgUnits = this.orgUnitService.units;
   documents = this.documentService.staffDocuments;
   //   documents = signal<DocumentApi[]>([]);
 
@@ -330,7 +330,7 @@ export class DocumentRegistry implements OnInit {
     );
 
     // disables the 'disable' state on the field
-    this.initDocFormGroup.controls.to.enable({ emitEvent: false });
+    // this.initDocFormGroup.controls.addressedTostaffId.enable({ emitEvent: false });
   }
 
   searchUnitValue = signal<string>('');
@@ -345,18 +345,26 @@ export class DocumentRegistry implements OnInit {
     return this.unitsView().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
   });
 
-  searchAddresseeNameValue = signal<string>('');
-  updateAddresseeName(event: any) {
+  searchAddresseeValue = signal<string>('');
+  updateAddressee(event: any) {
     const typedWord = event.target.value;
 
-    this.searchAddresseeNameValue.set(typedWord);
+    this.searchAddresseeValue.set(typedWord);
   }
 
   filteredUnitMembers = computed(() => {
-    const typedValue = this.searchAddresseeNameValue().toLowerCase();
+    const typedValue = this.searchAddresseeValue().toLowerCase();
 
     return (this.unitMembers() ?? [])
-      .filter((member) => member.fullName.toLowerCase().includes(typedValue))
+      .filter((member) => {
+        // this excludes the current staff that is logged
+        if (this.signedInStaff() && member.id === this.signedInStaff()?.id) return;
+
+        // this removed staffs with null designation
+        if (member.designation && member.designation.id)
+          return member.designation.title.toLowerCase().includes(typedValue);
+        else return;
+      })
       .map((data) => {
         const { identityId, ...uiData } = data;
         return uiData;
@@ -367,7 +375,7 @@ export class DocumentRegistry implements OnInit {
     if (!staffId) return '';
 
     const member = this.unitMembers().find((m) => m.id === staffId);
-    return member?.fullName ?? '';
+    return member?.designation?.title ?? '';
   };
 
   showUnitLabelRatherThanId = (unitId: string) => {
@@ -389,13 +397,8 @@ export class DocumentRegistry implements OnInit {
 
   initDocFormGroup = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    to: new FormControl<string>(
-      {
-        value: '',
-        disabled: this.initDocument()?.direction === 'external' && this.orgUnits().length === 0,
-      },
-      { nonNullable: true, validators: Validators.required },
-    ),
+    recipientUnitId: new FormControl<string | null>(null),
+    addressedToStaffId: new FormControl<string | null>(null),
     subjectCodeObject: new FormControl<any>('', {
       nonNullable: true,
       validators: Validators.required,
@@ -416,42 +419,42 @@ export class DocumentRegistry implements OnInit {
   submitDocInitData() {
     this.showLoader();
 
-    if (!this.initDocument()) return;
+    const staff = this.signedInStaff();
+    const initializedDoc = this.initDocument();
+    if (!initializedDoc || !staff) return;
 
-    const recipientId = this.initDocFormGroup.getRawValue().to,
-      functionCodeObject = this.initDocFormGroup.getRawValue().functionCodeObject,
-      subjectCodeObject = this.initDocFormGroup.getRawValue().subjectCodeObject,
-      title = this.initDocFormGroup.getRawValue().title,
-      sensitivity = this.initDocFormGroup.getRawValue().sensitivity.toLowerCase(),
+    const docForm = this.initDocFormGroup;
+
+    const originatingUnitId = staff.unit.id!,
+      recipientUnitId =
+        initializedDoc.direction === 'internal'
+          ? originatingUnitId
+          : docForm.getRawValue().recipientUnitId,
+      functionCodeObject = docForm.getRawValue().functionCodeObject,
       functionCodeId = functionCodeObject.id,
       functionCode = functionCodeObject.code,
+      subjectCodeObject = docForm.getRawValue().subjectCodeObject,
       subjectCodeId = subjectCodeObject.id,
       subjectCode = subjectCodeObject.code,
-      direction = this.initDocument()?.direction!,
-      recipient =
-        direction === 'internal'
-          ? this.unitMembers().find((member) => member.id === recipientId)!
-          : this.orgUnits().find((unit) => unit.id === recipientId)!,
-      originatingUnitId = this.signedInStaff()?.unit.id!,
-      addressedTo =
-        direction === 'internal' ? CorrespondenceAddressee.UNIT : CorrespondenceAddressee.EXTERNAL,
-      documentTypeId = this.initDocument()?.docTypeId!;
-
-    console.log(recipientId);
+      title = docForm.getRawValue().title,
+      sensitivity = docForm.getRawValue().sensitivity.toLowerCase(),
+      direction = initializedDoc.direction,
+      documentTypeId = initializedDoc.docTypeId,
+      addressedToStaffId = docForm.getRawValue().addressedToStaffId;
 
     this.documentService.initDocument({
       title,
       documentTypeId,
       direction,
-      addressedTo,
-      functionCode,
-      functionCodeId,
-      subjectCode,
-      subjectCodeId,
-      sensitivity,
       originatingUnitId,
-      recipientUnitId: direction === 'internal' ? (recipient as StaffMember).unit.id : recipient.id,
-      createdBy: this.signedInStaff()?.id!,
+      recipientUnitId,
+      addressedToStaffId,
+      subjectCodeId,
+      subjectCode,
+      functionCodeId,
+      functionCode,
+      sensitivity,
+      createdBy: staff!.id,
     });
   }
 

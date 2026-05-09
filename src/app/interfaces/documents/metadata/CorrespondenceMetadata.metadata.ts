@@ -1,6 +1,7 @@
 interface CorrespondenceMetadata {
 	originatingUnitId: string;
-	recipientCode: string
+	recipientUnitId: string | null;
+    addressedToStaffId: string | null;
 	subjectCodeId: string;
     direction: string;
 }

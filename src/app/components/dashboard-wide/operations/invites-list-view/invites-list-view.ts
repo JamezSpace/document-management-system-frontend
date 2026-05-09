@@ -60,9 +60,10 @@ export class InvitesListView {
   designations = this.staffService.officeDesignations;
   employmentTypes = Object.values(EmploymentType);
 
+  editMode = signal<boolean>(false);
+  loading = this.inviteService.loading;
   invites = input.required<InviteApi[]>();
   selectedInvite = signal<InviteApi | null>(null);
-  editMode = signal<boolean>(false);
 
   dataSource = new MatTableDataSource<InviteApi>([]);
   columnsToDisplay: string[] = [

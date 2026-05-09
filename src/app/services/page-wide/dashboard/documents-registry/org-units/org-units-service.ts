@@ -10,13 +10,13 @@ import { UnitsApi } from '../../../../../interfaces/org units/units.api';
 export class OrgUnitsService {
   private http = inject(HttpClient);
 
-  data = signal<UnitsApi[]>([]);
+  units = signal<UnitsApi[]>([]);
   error = signal<any>(null);
 
   fetchOrgUnits() {
     this.http.get<ApiResponse<UnitsApi[]>>(`${environment.api}/identity/units`)
     .subscribe({
-        next: (resp) => this.data.set(resp.data),
+        next: (resp) => this.units.set(resp.data),
         error: (err) => this.error.set(err)
     })
   }
