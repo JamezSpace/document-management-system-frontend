@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { BussFunctionApi } from '../../../../interfaces/documents/bussFunction/bussFunction.api';
-import { CorrSubjectApi } from '../../../../interfaces/documents/corrSubject/corrSubject.api';
-import { DocTypeApi } from '../../../../interfaces/documents/docType/docType.api';
+import { BussFunctionApi } from '../../../../interfaces/api/documents/bussFunction/bussFunction.api';
+import { CorrSubjectApi } from '../../../../interfaces/api/documents/corrSubject/corrSubject.api';
+import { DocTypeApi } from '../../../../interfaces/api/documents/docType/docType.api';
 
 @Injectable({
   providedIn: 'root',

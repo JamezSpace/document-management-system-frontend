@@ -1,9 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
-import { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../interfaces/workspace/signature/signature.ui';
-import { HttpClient } from '@angular/common/http';
+import { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../interfaces/api/workspace/signature/signature.ui';
 
 @Injectable({
   providedIn: 'root',

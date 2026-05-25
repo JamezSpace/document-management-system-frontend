@@ -1,31 +1,31 @@
 import { Component, computed, effect, inject, Input, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatStepperModule, MatStepper } from '@angular/material/stepper';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideBadgeCheck,
-  lucideContact,
-  lucideHistory,
-  lucideIdCard,
-  lucideMail,
-  lucidePhone,
-  lucideShieldCheck,
-  lucideShieldX,
-  lucideUser,
-  lucideUserRound,
+    lucideBadgeCheck,
+    lucideContact,
+    lucideHistory,
+    lucideIdCard,
+    lucideMail,
+    lucidePhone,
+    lucideShieldCheck,
+    lucideShieldX,
+    lucideUser,
+    lucideUserRound,
 } from '@ng-icons/lucide';
 import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
 import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
 import { SpartanH1 } from '../../../components/system-wide/typography/spartan-h1/spartan-h1';
+import { SpartanH2 } from '../../../components/system-wide/typography/spartan-h2/spartan-h2';
 import { SpartanH3 } from '../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanP } from '../../../components/system-wide/typography/spartan-p/spartan-p';
-import { EntityType } from '../../../interfaces/onboarding/Entity.api';
+import { OnboardingSessionStatus } from '../../../enum/onboarding/sessionStatus.enum';
+import { EntityType } from '../../../interfaces/api/onboarding/Entity.api';
 import { OnboardingService } from '../../../services/page-wide/onboarding/session/onboarding-service';
 import { UtilService } from '../../../services/system-wide/util-service/util-service';
-import { OnboardingSessionStatus } from '../../../enum/onboarding/sessionStatus.enum';
-import { SpartanH2 } from '../../../components/system-wide/typography/spartan-h2/spartan-h2';
 
 type PrimaryInformationData = {
   firstName: string;

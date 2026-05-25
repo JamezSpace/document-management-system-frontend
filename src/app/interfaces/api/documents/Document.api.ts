@@ -1,5 +1,6 @@
 import { SensitivityLevel } from './Document.enum';
 import { DocumentVersion } from './DocumentVersion.api';
+import { AddresseeMetadata } from './metadata/AddresseeMetadata.metadata';
 import { ClassificationMetadata } from './metadata/ClassificationMetadata.metadata';
 import { CorrespondenceMetadata } from './metadata/CorrespondenceMetadata.metadata';
 import { RetentionMetadata } from './metadata/RetentionMetadata.metadata';
@@ -12,8 +13,8 @@ interface InitDocumentApiPayload {
 
   // correspondence
   originatingUnitId: string;
-  recipientUnitId: string | null;
-  addressedToStaffId: string | null;
+  recipientUnitId: string;
+  addressedToDesignationId: string;
   subjectCodeId: string;
   subjectCode: string;
 
@@ -30,7 +31,8 @@ interface DocumentApi {
   currentVersion?: DocumentVersion;
   referenceNumber?: string;
 
-  // Governance Domains (Value Objects)
+  // governance domains
+  addressees: AddresseeMetadata[];
   classification: ClassificationMetadata;
   correspondence: CorrespondenceMetadata;
   retention: RetentionMetadata;
@@ -44,6 +46,11 @@ const emptyDocument: DocumentApi = {
   ownerId: '',
   title: '',
   // Governance Domains initialized with safe defaults
+  addressees: [{
+    addressedToDesignationId: '',
+    recipientUnitId: '',
+    isPrimary: false
+  }],
   classification: {
     sensitivity: SensitivityLevel.INTERNAL, 
     functionCodeId: '',

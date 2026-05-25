@@ -8,8 +8,8 @@ import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 import {
     DocumentApi,
     InitDocumentApiPayload,
-} from '../../../../../interfaces/documents/Document.api';
-import { LifecycleActions } from '../../../../../interfaces/documents/Document.enum';
+} from '../../../../../interfaces/api/documents/Document.api';
+import { LifecycleActions } from '../../../../../interfaces/api/documents/Document.enum';
 import { UtilService } from '../../../../system-wide/util-service/util-service';
 
 @Injectable({
@@ -21,6 +21,7 @@ export class DocumentsService {
 
   document = signal<DocumentApi | null>(null);
   staffDocuments = signal<DocumentApi[]>([]);
+  sharedDocuments = signal<DocumentApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
   isDocumentSaved = signal<boolean>(true);
@@ -50,7 +51,7 @@ export class DocumentsService {
       });
   }
 
-  fetchDocsByStaff(staffId: string) {
+  fetchDocumentsAuthoredByStaff(staffId: string) {
     this.loading.set(true);
 
     this.http
@@ -58,6 +59,18 @@ export class DocumentsService {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.staffDocuments.set(resp.data),
+        error: (err) => this.error.set(err),
+      });
+  }
+
+  fetchAddressedToStaff(staffId: string) {
+    this.loading.set(true);
+
+    this.http
+      .get<ApiResponse<DocumentApi[]>>(`${environment.api}/document/documents/shared/${staffId}`)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => this.sharedDocuments.set(resp.data),
         error: (err) => this.error.set(err),
       });
   }

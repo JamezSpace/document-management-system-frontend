@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    inject,
+    OnInit,
+    signal,
+    ViewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,21 +16,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeGridView } from '@ng-icons/huge-icons';
 import {
-  lucideArrowDownUp,
-  lucideArrowRight,
-  lucideChevronDown,
-  lucideChevronLeft,
-  lucideFileInput,
-  lucideFileOutput,
-  lucideFileText,
-  lucideLayoutTemplate,
-  lucideMail,
-  lucideNetwork,
-  lucidePlus,
-  lucideSearch,
-  lucideStickyNote,
-  lucideUpload,
-  lucideUsers2,
+    lucideArrowDownUp,
+    lucideArrowRight,
+    lucideChevronDown,
+    lucideChevronLeft,
+    lucideFileInput,
+    lucideFileOutput,
+    lucideFileText,
+    lucideLayoutTemplate,
+    lucideMail,
+    lucideNetwork,
+    lucidePlus,
+    lucideSearch,
+    lucideStickyNote,
+    lucideUpload,
+    lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -40,23 +40,22 @@ import { HlmButton } from '@spartan-ng/helm/button';
 import { HlmComboboxImports } from '@spartan-ng/helm/combobox';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
-import { DocumentApi } from '../../../../interfaces/documents/Document.api';
+import { DocumentApi } from '../../../../interfaces/api/documents/Document.api';
+import { SensitivityLevel } from '../../../../interfaces/api/documents/Document.enum';
+import { UnitsApi } from '../../../../interfaces/api/org units/units.api';
 import {
-  CorrespondenceAddressee,
-  SensitivityLevel,
-} from '../../../../interfaces/documents/Document.enum';
-import { UnitsApi } from '../../../../interfaces/org units/units.api';
-import { StaffMember } from '../../../../interfaces/staff/StaffMember.api';
-import { EmptyStateInterface, EmptyStateType } from '../../../../interfaces/system/EmptyState.ui';
+    EmptyStateInterface,
+    EmptyStateType,
+} from '../../../../interfaces/ui/global/EmptyState.ui';
 import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
 import { DocumentTypesService } from '../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
@@ -66,6 +65,7 @@ import { UnitMembersService } from '../../../../services/page-wide/dashboard/doc
 import { DocumentsService } from '../../../../services/page-wide/dashboard/generic/documents/documents-service';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
+import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 import { EmptyState } from '../../../system-wide/empty-state/empty-state';
 import { LineLoader } from '../../../system-wide/loaders/line-loader/line-loader';
@@ -136,7 +136,7 @@ import { SideModal } from '../side-modal/side-modal';
 })
 export class DocumentRegistry implements OnInit {
   private utilService = inject(UtilService);
-  private staffDetService = inject(StaffDetailsService);
+  private staffDetailsService = inject(StaffDetailsService);
   registryService = inject(RegistryService);
   genericDashboardService = inject(GenericDashboardService);
   businessFunctionService = inject(BusinessFunctionService);
@@ -144,11 +144,12 @@ export class DocumentRegistry implements OnInit {
   unitMembersService = inject(UnitMembersService);
   documentTypesService = inject(DocumentTypesService);
   orgUnitService = inject(OrgUnitsService);
+  staffService = inject(StaffService);
   documentService = inject(DocumentsService);
   activatedRouter = inject(ActivatedRoute);
   router = inject(Router);
 
-  readonly signedInStaff = this.staffDetService.data;
+  readonly signedInStaff = this.staffDetailsService.data;
 
   private queryParams = toSignal(this.activatedRouter.queryParamMap);
   viewMode = computed(() => this.queryParams()?.get('view'));
@@ -164,6 +165,7 @@ export class DocumentRegistry implements OnInit {
     this.businessFunctionService.fetchBussFunctions();
     this.documentTypesService.fetchDocTypes();
     this.orgUnitService.fetchOrgUnits();
+    this.staffService.fetchAllDesignations();
   }
 
   private afterInitEffect = effect(() => {
@@ -177,7 +179,8 @@ export class DocumentRegistry implements OnInit {
       this.unitMembersService.fetchUnitMembers(staff.unit.id);
     }
 
-    this.documentService.fetchDocsByStaff(staff.id);
+    this.documentService.fetchDocumentsAuthoredByStaff(staff.id);
+    this.documentService.fetchAddressedToStaff(staff.id);
   });
 
   emptyStateDataAsFistTime: EmptyStateInterface = {
@@ -248,22 +251,35 @@ export class DocumentRegistry implements OnInit {
   unitMembers = this.unitMembersService.data;
   orgUnits = this.orgUnitService.units;
   documents = this.documentService.staffDocuments;
-  //   documents = signal<DocumentApi[]>([]);
+  sharedDocuments = this.documentService.sharedDocuments;
+  designations = this.staffService.officesDesignations;
 
   filteredDocumentsForPageViewAndSearchQuery = computed(() => {
     const mode = this.viewMode();
     const docs = this.documents();
+    const sharedDocs = this.sharedDocuments();
     const query = this.searchQuery().toLowerCase();
+    const staff = this.signedInStaff();
+
+    if (!staff) return;
 
     switch (mode) {
       case 'draft':
-        const docsForDisplay = docs.filter(
+        const drafts = docs.filter(
           (doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() === 'draft',
         );
 
-        return docsForDisplay.filter((doc) => doc.title.toLowerCase().includes(query));
+        return drafts.filter((doc) => doc.title.toLowerCase().includes(query));
+      case 'in-progress':
+        const nonDrafts = docs.filter(
+          (doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() !== 'draft',
+        );
+
+        return nonDrafts.filter((doc) => doc.title.toLowerCase().includes(query));
+      case 'shared':
+        return sharedDocs.filter((doc) => doc.title.toLowerCase().includes(query));
       case null:
-        return docs.filter((doc) => doc.title.toLowerCase().includes(query));
+        return docs.filter((doc) => doc.title.toLowerCase().includes(query)) && sharedDocs.filter((doc) => doc.title.toLowerCase().includes(query));
       default:
         return [];
     }
@@ -371,11 +387,16 @@ export class DocumentRegistry implements OnInit {
       });
   });
 
-  showStaffLabelRatherThanId = (staffId: string) => {
-    if (!staffId) return '';
+  showDesignationTitleRatherThanId = (designationId: string) => {
+    const designation = this.designations().find((desig) => desig.id === designationId);
+    const designationTitle = designation?.title;
 
-    const member = this.unitMembers().find((m) => m.id === staffId);
-    return member?.designation?.title ?? '';
+    if (!designationTitle) return '';
+
+    return `The ${designationTitle
+      .split(' ')
+      .map((title) => title[0].toUpperCase() + title.slice(1))
+      .join(' ')}`;
   };
 
   showUnitLabelRatherThanId = (unitId: string) => {
@@ -397,8 +418,14 @@ export class DocumentRegistry implements OnInit {
 
   initDocFormGroup = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
-    recipientUnitId: new FormControl<string | null>(null),
-    addressedToStaffId: new FormControl<string | null>(null),
+    recipientUnitId: new FormControl<string>('', {
+      nonNullable: this.initDocument()?.direction === 'internal' ? false : true,
+      validators: Validators.required,
+    }),
+    addressedToDesignationId: new FormControl<string>('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
     subjectCodeObject: new FormControl<any>('', {
       nonNullable: true,
       validators: Validators.required,
@@ -429,7 +456,7 @@ export class DocumentRegistry implements OnInit {
       recipientUnitId =
         initializedDoc.direction === 'internal'
           ? originatingUnitId
-          : docForm.getRawValue().recipientUnitId,
+          : docForm.getRawValue().recipientUnitId!,
       functionCodeObject = docForm.getRawValue().functionCodeObject,
       functionCodeId = functionCodeObject.id,
       functionCode = functionCodeObject.code,
@@ -440,7 +467,7 @@ export class DocumentRegistry implements OnInit {
       sensitivity = docForm.getRawValue().sensitivity.toLowerCase(),
       direction = initializedDoc.direction,
       documentTypeId = initializedDoc.docTypeId,
-      addressedToStaffId = docForm.getRawValue().addressedToStaffId;
+      addressedToDesignationId = docForm.getRawValue().addressedToDesignationId;
 
     this.documentService.initDocument({
       title,
@@ -448,7 +475,7 @@ export class DocumentRegistry implements OnInit {
       direction,
       originatingUnitId,
       recipientUnitId,
-      addressedToStaffId,
+      addressedToDesignationId,
       subjectCodeId,
       subjectCode,
       functionCodeId,

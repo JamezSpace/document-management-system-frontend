@@ -290,7 +290,7 @@
 
               <input
                 type="text"
-                formControlName="addressedToStaffId"
+                formControlName="addressedToDesignationId"
                 placeholder="Who is this addressed to?"
                 aria-label="adressee of the document"
                 [matAutocomplete]="addresseeAutoComplete"
@@ -302,11 +302,11 @@
                 autoActiveFirstOption
                 requireSelection
                 #addresseeAutoComplete="matAutocomplete"
-                [displayWith]="showStaffLabelRatherThanId"
+                [displayWith]="showDesignationTitleRatherThanId"
               >
                 @for (addressee of filteredUnitMembers(); track addressee.id) {
-                  <mat-option [value]="addressee.id">
-                    <span class="text-sm">{{ addressee.designation?.title }}</span>
+                  <mat-option [value]="addressee.designation.id">
+                    <span class="text-sm">{{ addressee.designation.title }}</span>
                   </mat-option>
                 }
               </mat-autocomplete>

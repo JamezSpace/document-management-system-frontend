@@ -12,7 +12,6 @@ import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from "@spartan-ng/helm/separator";
 import { EmploymentType } from '../../../../enum/staff/employmentType.enum';
-import { InviteApi } from '../../../../interfaces/staff/Invite.api';
 import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { InviteService } from '../../../../services/page-wide/onboarding/invite/invite-service';
@@ -21,6 +20,7 @@ import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 import { SideModal } from '../../shared/side-modal/side-modal';
+import { InviteApi } from '../../../../interfaces/api/staff/Invite.api';
 
 @Component({
   selector: 'nexus-invites-list-view',
@@ -57,7 +57,7 @@ export class InvitesListView {
   private inviteService = inject(InviteService);
 
   offices = this.staffService.officesInUnit;
-  designations = this.staffService.officeDesignations;
+  designations = this.staffService.officesDesignations;
   employmentTypes = Object.values(EmploymentType);
 
   editMode = signal<boolean>(false);
@@ -85,7 +85,7 @@ export class InvitesListView {
 
   ngOnInit(): void {
     if (!this.staffService.officesInUnit) this.staffService.fetchAllOffices();
-    if (!this.staffService.officeDesignations) this.staffService.fetchAllDesignations();
+    if (!this.staffService.officesDesignations) this.staffService.fetchAllDesignations();
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

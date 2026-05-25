@@ -1,5 +1,5 @@
-import { InviteStatus } from "../../enum/invite/status.enum";
-import { EmploymentType } from "../../enum/staff/employmentType.enum";
+import { InviteStatus } from "../../../enum/invite/status.enum";
+import { EmploymentType } from "../../../enum/staff/employmentType.enum";
 
 interface StaffInvite {
     id: string;
@@ -18,4 +18,4 @@ interface StaffInvite {
     updatedAt?: Date | null;
 }
 
-export type {StaffInvite};
+export type { StaffInvite };

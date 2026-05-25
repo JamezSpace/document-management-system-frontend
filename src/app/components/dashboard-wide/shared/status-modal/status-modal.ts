@@ -1,7 +1,7 @@
 import { Component, ElementRef, input, ViewChild } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
-import { NotifStatus } from '../../../../interfaces/system/NotifStatus.ui';
+import { NotifStatus } from '../../../../interfaces/ui/global/NotifStatus.ui';
 import { SpartanH3 } from "../../../system-wide/typography/spartan-h3/spartan-h3";
 import { SpartanP } from "../../../system-wide/typography/spartan-p/spartan-p";
 

@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { HlmSidebarService } from '@spartan-ng/helm/sidebar';
-import { DocumentApi, emptyDocument } from '../../../../../interfaces/documents/Document.api';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HlmSidebarService } from '@spartan-ng/helm/sidebar';
+import { DocumentApi, emptyDocument } from '../../../../../interfaces/api/documents/Document.api';
 
 @Injectable({
   providedIn: 'root',

@@ -8,7 +8,7 @@ import {
   getIdToken,
 } from 'firebase/auth';
 import { firebase_app } from '../../../app.config';
-import { AuthUser } from '../../../interfaces/auth/AuthUser.ui';
+import { AuthUser } from '../../../interfaces/ui/auth/AuthUser.ui';
 import { Router } from '@angular/router';
 import { UtilService } from '../../system-wide/util-service/util-service';
 
@@ -27,6 +27,8 @@ export class AuthService {
   isAppStartingUpWithAuthenticatedUserLoading() {
     return this.appLoading;
   }
+
+  
 
   setLoading(isLoading: boolean) {
     this.appLoading.set(isLoading);
@@ -87,8 +89,10 @@ export class AuthService {
       return { success: 1 };
     } catch (error: any) {
       const friendlyMsg = this.utilService.mapFirebaseError(error.code);
+
       this.errorMessage.set(friendlyMsg);
       this.loading.set(false);
+
       return { success: 0, reason: friendlyMsg };
     }
   }
@@ -97,6 +101,8 @@ export class AuthService {
     await this.auth.signOut();
 
     this.router.navigateByUrl('/auth');
+
+    this.resetContext();
   }
 
   resetContext() {

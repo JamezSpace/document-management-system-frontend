@@ -1,33 +1,33 @@
 <article>
   <p class="text-center uppercase font-times-new-roman font-bold text-lg">university of ibadan</p>
-  <p class="text-center capitalize font-medium">{{ memoDetails.fromDept }}</p>
+  <p class="text-center capitalize font-medium">{{ correspondence().origin.unit.name }}</p>
   <div class="flex-center justify-center h-14 mt-1.5">
     <img src="ui-logo.png" alt="ui's logo" class="h-full" />
   </div>
   <nexus-spartan-p class="text-center">
     <span class="uppercase font-bold">
-      {{ documentToRender().correspondence.direction }} memorandum</span
+      {{ correspondence().document.correspondence.direction }} memorandum</span
     >
   </nexus-spartan-p>
 
-  @if (documentToRender().correspondence.direction === 'external') {
-    <nexus-spartan-p><b>FROM:</b> {{ memoDetails.from }}</nexus-spartan-p>
+  @if (correspondence().document.correspondence.direction === 'external') {
+    <nexus-spartan-p><b>FROM:</b> {{ correspondence().origin.designation.title }}</nexus-spartan-p>
   }
 
   <!-- <nexus-spartan-p><b>TO:</b> {{ memoDetails.to }}</nexus-spartan-p> -->
   <nexus-spartan-p
     ><b>DATE:</b>
     {{
-      formattedDate(documentToRender().updatedAt ?? documentToRender().createdAt)
+      formattedDate(correspondence().document.updatedAt ?? correspondence().document.createdAt)
     }}</nexus-spartan-p
   >
   <nexus-spartan-p class="uppercase"
-    ><b>REF. NO:</b> {{ documentToRender().referenceNumber }}</nexus-spartan-p
+    ><b>REF. NO:</b> {{ correspondence().document.referenceNumber }}</nexus-spartan-p
   >
 
   <hlm-separator />
 
   <nexus-spartan-p class="capitalize underline font-bold">{{
-    documentToRender().title
+    correspondence().document.title
   }}</nexus-spartan-p>
 </article>

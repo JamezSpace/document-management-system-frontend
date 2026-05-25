@@ -1,5 +1,5 @@
-import { InviteStatus } from '../../enum/invite/status.enum';
-import { EmploymentType } from '../../enum/staff/employmentType.enum';
+import { InviteStatus } from "../../../enum/invite/status.enum";
+import { EmploymentType } from "../../../enum/staff/employmentType.enum";
 
 interface InviteApi {
   id: string;

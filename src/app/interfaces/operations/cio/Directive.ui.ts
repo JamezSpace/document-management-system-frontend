@@ -1,4 +1,4 @@
-import { Staff } from "../../onboarding/Staff.api";
+import { Staff } from "../../api/onboarding/Staff.api";
 
 interface DirectiveUi {
     id: string;
@@ -12,3 +12,4 @@ interface DirectiveUi {
 }
 
 export type { DirectiveUi };
+

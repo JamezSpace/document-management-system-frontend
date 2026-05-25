@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
-import { StaffMember } from '../../../../../interfaces/staff/StaffMember.api';
+import { StaffMember } from '../../../../../interfaces/api/staff/StaffMember.api';
 
 @Injectable({
   providedIn: 'root',

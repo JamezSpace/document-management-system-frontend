@@ -20,7 +20,10 @@
 <section class="flex-center justify-between">
   <article>
     <nexus-spartan-h3>Notices</nexus-spartan-h3>
-    <nexus-spartan-p> All Notifications are detailed here. </nexus-spartan-p>
+    <nexus-spartan-p
+      >Official administrative record of document status, department notices, and system
+      updates.</nexus-spartan-p
+    >
   </article>
 </section>
 
@@ -107,3 +110,27 @@
   </div>
   <!-- <hlm-separator class="my-4" /> -->
 </div>
+
+<section>
+  @for (entry of sortedNotificationsEntries(); track $index) {
+    <div class="flex flex-col w-full gap-3.5">
+      <nexus-spartan-muted>{{ entry[0] }}</nexus-spartan-muted>
+
+      @for (notif of entry[1]; track $index) {
+        <section class="notif-container">
+          <div class="actions">
+            <button class="flex-center justify-center w-full h-full" hlmTooltip="Mark as Read">
+              <ng-icon name="hugeTickDouble02" size="1.2rem" />
+            </button>
+          </div>
+          <article class="p-4">
+            <p class="capitalize font-bold text-[110%]">{{ notif.inAppSubjectName }}</p>
+            <p class="mt-1">
+              {{ notif.messageTemplate }}
+            </p>
+          </article>
+        </section>
+      }
+    </div>
+  }
+</section>

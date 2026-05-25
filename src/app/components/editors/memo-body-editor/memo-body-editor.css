@@ -3,7 +3,7 @@
     min-height: 24px;
     max-height: 57%;
     font-family: "Google Sans", sans-serif;
-    color: var(--sidebar-primary) !important;
+    color: var(--foreground) !important;
     overflow-y: auto;
 
     .ql-editor {
@@ -12,10 +12,10 @@
 }
 
 .ql-editor.ql-blank::before {
-        color: var(--sidebar-primary);
+        color: var(--foreground);
 }
 .ql-snow .ql-picker {
-        color: var(--sidebar-primary);
+        color: var(--foreground);
 }
 
 .disabled {

@@ -25,12 +25,12 @@ import { SideModal } from '../../../../../../components/dashboard-wide/shared/si
 import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { StaffToActivate } from '../../../../../../interfaces/staff/StaffToActivate.api';
 import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { OnboardingService } from '../../../../../../services/page-wide/onboarding/session/onboarding-service';
 import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
 import { HlmSpinner } from "@spartan-ng/helm/spinner";
+import { StaffToActivate } from '../../../../../../interfaces/api/staff/StaffToActivate.api';
 
 @Component({
   selector: 'nexus-staff-activation',

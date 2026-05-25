@@ -1,32 +1,36 @@
 import {
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  ViewChild,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
+    ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideArrowLeft,
-  lucideFile,
-  lucideGripVertical,
-  lucideLock,
-  lucideLockOpen,
-  lucidePanelLeftClose,
-  lucidePanelRightClose,
-  lucidePlus,
-  lucideSave,
-  lucideUserRound,
-  lucideZoomIn,
-  lucideZoomOut,
+    lucideArrowLeft,
+    lucideFile,
+    lucideFileLock,
+    lucideGripVertical,
+    lucideLock,
+    lucideLockOpen,
+    lucidePanelLeftClose,
+    lucidePanelRightClose,
+    lucidePlus,
+    lucideSave,
+    lucideSend,
+    lucideUserRound,
+    lucideZoomIn,
+    lucideZoomOut,
 } from '@ng-icons/lucide';
+import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIcon } from '@spartan-ng/helm/icon';
@@ -39,6 +43,8 @@ import { LineLoader } from '../../../../../components/system-wide/loaders/line-l
 import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
+import { DocumentApi } from '../../../../../interfaces/api/documents/Document.api';
+import { AuthService } from '../../../../../services/page-wide/auth/auth-service';
 import { DocumentTypesService } from '../../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
 import { OrgUnitsService } from '../../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
 import { UnitMembersService } from '../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
@@ -47,7 +53,6 @@ import { GenericDashboardService } from '../../../../../services/page-wide/dashb
 import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
-import { AuthService } from '../../../../../services/page-wide/auth/auth-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -62,6 +67,9 @@ import { AuthService } from '../../../../../services/page-wide/auth/auth-service
     ReactiveFormsModule,
     HlmIcon,
     HlmSeparator,
+    BrnAlertDialogContent,
+    BrnAlertDialogTrigger,
+    HlmAlertDialogImports,
     HlmButtonImports,
     HlmSelectImports,
     HlmDropdownMenuImports,
@@ -74,10 +82,12 @@ import { AuthService } from '../../../../../services/page-wide/auth/auth-service
       lucideArrowLeft,
       lucideFile,
       lucideSave,
+      lucideSend,
       lucideUserRound,
       lucidePlus,
       lucidePanelLeftClose,
       lucidePanelRightClose,
+      lucideFileLock,
       lucideLock,
       lucideLockOpen,
       lucideZoomIn,
@@ -91,7 +101,6 @@ export class Workspace implements OnInit, OnDestroy {
   authService = inject(AuthService);
   utilService = inject(UtilService);
   activatedRoute = inject(ActivatedRoute);
-  workspaceLoading = signal<boolean>(false);
   workspaceService = inject(WorkspaceService);
   documentService = inject(DocumentsService);
   docTypesService = inject(DocumentTypesService);
@@ -99,12 +108,14 @@ export class Workspace implements OnInit, OnDestroy {
   unitMembersService = inject(UnitMembersService);
   staffDetailsService = inject(StaffDetailsService);
   genericDashboardService = inject(GenericDashboardService);
+  workspaceLoading = signal<boolean>(false);
+  documentLoading = this.documentService.loading;
+  sidebarClosed = signal<boolean>(false);
+  isDocmentMetadataEditable = signal<boolean>(false);
 
   readonly signedInStaff = this.staffDetailsService.data;
   document = this.documentService.document;
 
-  sidebarClosed = signal<boolean>(false);
-  isDocmentMetadataEditable = signal<boolean>(false);
 
   goToDocOverviewPage() {
     this.documentService.resetContext();
@@ -120,19 +131,25 @@ export class Workspace implements OnInit, OnDestroy {
     if (!staff) {
       this.documentService.resetContext();
 
-        this.authService.resetContext()
+      this.authService.resetContext();
       this.router.navigateByUrl('/auth');
-        return;
+      return;
     }
 
     // user refreshes a stale page
     const doc = this.documentService.document();
 
     if (!doc) {
-      const segments = this.activatedRoute.snapshot.url;
-      const docId = segments[segments.length - 1].path;
+      const docId = this.activatedRoute.snapshot.paramMap.get('id');
 
+      if (!docId) {
+        this.router.navigateByUrl('404');
+        return;
+      }
+
+      // fetch necessary data
       this.documentService.fetchDocById(docId);
+      this.unitMembersService.fetchUnitMembers(staff.unit.id);
     }
   }
 
@@ -142,34 +159,31 @@ export class Workspace implements OnInit, OnDestroy {
 
   private workspaceInitEffect = effect(() => {
     // auto-close sidebar
-    if (this.isMobile()) this.sidebarClosed.set(true);
-    else this.sidebarClosed.set(false);
+    this.sidebarClosed.set(this.isMobile());
 
-    // fetch document
-    const documentFetchedById = this.documentService.document();
-
-    if (!documentFetchedById) return;
-
-    // fetch document type
-    const typeId = this.documentService.document()!.classification.documentTypeId;
-
-    if (!this.docTypesService.docType()) this.docTypesService.fetchDocTypeById(typeId);
-  });
-
-  private effectRunsOnlyNecessarySecondaryItems = effect(() => {
     const doc = this.document();
     const staff = this.signedInStaff();
 
     if (!doc || !staff) return;
 
+    // fetch document type
+    const typeId = doc.classification.documentTypeId;
+    if (this.docTypesService.docType()?.id !== typeId) {
+      this.docTypesService.fetchDocTypeById(typeId);
+    }
+
     const staffUnit = staff.unit;
 
-    if (this.document()?.correspondence.direction === 'internal') {
+    if (doc.correspondence.direction === 'internal') {
       // ensure unit members are fetched if it doesnt pre-exist
-      if (!this.unitMembersService.data()) this.unitMembersService.fetchUnitMembers(staffUnit.id);
+      if (!this.unitMembersService.data().length) {
+        this.unitMembersService.fetchUnitMembers(staffUnit.id);
+      }
     } else {
       // ensure units are fetched if they dont pre-exist
-      if (!this.unitService.units()) this.unitService.fetchOrgUnits();
+      if (!this.unitService.units().length) {
+        this.unitService.fetchOrgUnits();
+      }
     }
   });
 
@@ -179,9 +193,41 @@ export class Workspace implements OnInit, OnDestroy {
   memoDocument = computed(() => {
     const doc = this.document();
     const type = this.documentType();
+    const staff = this.signedInStaff();
 
-    return type?.code === 'memo' && doc ? doc : null;
+    if (!staff || !doc || !type) return;
+    const originUnit = staff.unit;
+    const designation =
+      doc.correspondence.direction.toLowerCase() === 'external'
+        ? { id: 'mxm', title: 'director' }
+        : staff.designation!;
+
+    return type.code === 'memo'
+      ? {
+          document: doc,
+          origin: {
+            unit: originUnit,
+            designation,
+          },
+        }
+      : null;
   });
+
+  isExternalMemo(doc: DocumentApi | null) {
+    return doc && doc.correspondence.direction === 'external' ? true : false;
+  }
+
+  getAddresseeDesignation(doc: DocumentApi) {
+    const staffId = doc.correspondence.addressedToStaffId;
+
+    if(!staffId) return
+
+    const foundStaff = this.unitMembers().find(member => member.id === staffId);
+
+    if(!foundStaff) return
+
+    return foundStaff.designation?.title
+  }
 
   units = this.unitService.units;
   unitMembers = this.unitMembersService.data;
@@ -192,7 +238,7 @@ export class Workspace implements OnInit, OnDestroy {
     this.units().filter((unit) => unit.sector === OrgUnitCategory.NON_ACADEMIC),
   );
 
-  showStaffLabelRatherThanId = (staffId: string) => {
+  showDesignationTitleRatherThanId = (staffId: string) => {
     if (!staffId) return '';
 
     const member = this.unitMembers().find((m) => m.id === staffId);

@@ -20,7 +20,7 @@ interface BaseStaffEntity {
   designation: {
     id: string;
     title: string;
-  } | null;
+  };
   status: string;
   createdAt: string;
   updatedAt: string | null;

@@ -3,8 +3,8 @@ import { inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
-import { StaffLoginApi } from '../../../../interfaces/staff/StaffLogin.api';
 import { AuthService } from '../../auth/auth-service';
+import { StaffLoginApi } from '../../../../interfaces/api/staff/StaffLogin.api';
 
 @Injectable({
   providedIn: 'root',

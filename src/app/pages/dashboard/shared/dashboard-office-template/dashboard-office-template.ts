@@ -19,7 +19,8 @@ import {
   lucideUserCheck,
   lucideZap,
   lucideSettings,
-  lucideLogOut
+  lucideLogOut,
+  lucideBellDot,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
@@ -34,11 +35,13 @@ import {
   NavBarItem,
   NavGroup,
   SubMenu,
-} from '../../../../interfaces/navigation/NavBarItem.interface';
+} from '../../../../interfaces/ui/navigation/NavBarItem.interface';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { Workspace } from '../../staff/general/workspace/workspace';
 import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { AuthService } from '../../../../services/page-wide/auth/auth-service';
+import { NoticesService } from '../../../../services/page-wide/dashboard/generic/notices/notices-service';
+import { NotificationPreference, NotificationState } from '../../../../enum/notices/notices.enum';
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -64,6 +67,7 @@ import { AuthService } from '../../../../services/page-wide/auth/auth-service';
       lucideLayoutDashboard,
       lucideFileLock,
       lucideBell,
+      lucideBellDot,
       lucideCheckSquare,
       lucideChevronRight,
       lucideExternalLink,
@@ -78,39 +82,59 @@ import { AuthService } from '../../../../services/page-wide/auth/auth-service';
       lucideHardHat,
       lucidePackageSearch,
       lucideSettings,
-      lucideLogOut
+      lucideLogOut,
     }),
   ],
 })
 export class DashboardOfficeTemplate implements OnInit {
   staffDetailsService = inject(StaffDetailsService);
+  noticeService = inject(NoticesService);
   genericDashboardService = inject(GenericDashboardService);
   authService = inject(AuthService);
-  sidebarService = inject(HlmSidebarService)
+  sidebarService = inject(HlmSidebarService);
   router = inject(Router);
 
   staffLoggedIn = this.staffDetailsService.data;
+  unreadNotificationsPresent = signal<boolean>(false);
+
+  private hasFetchedNotices = false;
 
   navigateOnDataReadiness = effect(() => {
     const isLoading = this.staffDetailsService.loading();
-    const data = this.staffDetailsService.data();
-    const error = this.staffDetailsService.error();
+    const staff = this.staffDetailsService.data();
 
     this.authService.setLoading(isLoading);
 
-    if (!isLoading) {
-      if (!data) {
-        this.router.navigateByUrl('/unauthorized');
-
-        // this.authService.setLoading(false);
-
-        this.authService.resetContext();
-      } else {
-        console.log('Access Granted');
+    if (!isLoading && staff) {
+      if (!this.hasFetchedNotices) {
+        this.hasFetchedNotices = true;
+        this.noticeService.fetchNotices(staff.id);
       }
     }
 
-    this.authService.loadUserContext(data);
+    if (!isLoading && !staff) {
+      this.router.navigateByUrl('/unauthorized');
+      this.authService.resetContext();
+    }
+  });
+
+  trackUnreadNotifications = effect(() => {
+    const notices = this.noticeService.notices();
+
+    const unread = notices.filter(
+      (notif) =>
+        notif.channel === NotificationPreference.IN_APP && notif.state !== NotificationState.READ,
+    );
+
+    this.unreadNotificationsPresent.set(unread.length > 0);
+  });
+
+  loadContext = effect(() => {
+    const staff = this.staffDetailsService.data();
+
+    if (staff) {
+      this.authService.loadUserContext(staff);
+    }
   });
 
   async ngOnInit(): Promise<void> {
@@ -241,8 +265,8 @@ export class DashboardOfficeTemplate implements OnInit {
           label: 'Invited Staff',
           route: { view: 'invites' },
           requiredCapability: 'staff.view',
-        }
-      ]
+        },
+      ],
     },
 
     {
@@ -337,10 +361,12 @@ export class DashboardOfficeTemplate implements OnInit {
     return filtered.length ? filtered : undefined;
   }
 
-
   getStaffNameInitials(fullName: string) {
-    return fullName.split(' ').map(nm => nm[0]).join()
-}
+    return fullName
+      .split(' ')
+      .map((nm) => nm[0])
+      .join();
+  }
 
   externalUrlToNavigateToNow = signal<string>('');
 
@@ -377,10 +403,10 @@ export class DashboardOfficeTemplate implements OnInit {
   }
 
   isSidebarClosed = computed(() => {
-    return !this.sidebarService.open()
-  })
+    return !this.sidebarService.open();
+  });
 
   logout() {
-    this.authService.logout()
+    this.authService.logout();
   }
 }

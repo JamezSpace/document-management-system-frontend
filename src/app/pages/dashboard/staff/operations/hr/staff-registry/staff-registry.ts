@@ -5,14 +5,14 @@ import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideArrowDownUp,
-  lucideArrowLeft,
-  lucideArrowRight,
-  lucideHash,
-  lucideMail,
-  lucidePlus,
-  lucideSearch,
-  lucideUserPlus,
+    lucideArrowDownUp,
+    lucideArrowLeft,
+    lucideArrowRight,
+    lucideHash,
+    lucideMail,
+    lucidePlus,
+    lucideSearch,
+    lucideUserPlus,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
@@ -20,9 +20,9 @@ import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-di
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import {
-  HlmInputGroup,
-  HlmInputGroupAddon,
-  HlmInputGroupImports,
+    HlmInputGroup,
+    HlmInputGroupAddon,
+    HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
@@ -39,13 +39,13 @@ import { SpartanH4 } from '../../../../../../components/system-wide/typography/s
 import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { EmploymentType } from '../../../../../../enum/staff/employmentType.enum';
-import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
-import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
+import { DesignationApi } from '../../../../../../interfaces/api/org units/designation.api';
+import { OfficeApi } from '../../../../../../interfaces/api/org units/offices.api';
 import {
-  EmptyStateInterface,
-  EmptyStateType,
-} from '../../../../../../interfaces/system/EmptyState.ui';
-import { NotifStatus } from '../../../../../../interfaces/system/NotifStatus.ui';
+    EmptyStateInterface,
+    EmptyStateType,
+} from '../../../../../../interfaces/ui/global/EmptyState.ui';
+import { NotifStatus } from '../../../../../../interfaces/ui/global/NotifStatus.ui';
 import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { InviteService } from '../../../../../../services/page-wide/onboarding/invite/invite-service';
@@ -100,13 +100,13 @@ export class StaffRegistry implements OnInit {
   private utilService = inject(UtilService);
   private staffService = inject(StaffService);
   private inviteService = inject(InviteService);
-  private staffDetService = inject(StaffDetailsService);
+  private staffDetailsService = inject(StaffDetailsService);
   private activatedRouter = inject(ActivatedRoute);
 
   private queryParams = toSignal(this.activatedRouter.queryParamMap);
   viewMode = computed(() => this.queryParams()?.get('view'));
 
-  readonly loggedInStaff = this.staffDetService.data()!;
+  readonly loggedInStaff = this.staffDetailsService.data()!;
 
   directories = signal<string[]>([]);
   isMobile = this.utilService.isMobile;
@@ -154,7 +154,7 @@ export class StaffRegistry implements OnInit {
   staff = this.staffService.staff;
   invites = this.inviteService.invites;
   offices = this.staffService.officesInUnit;
-  officesDesignations = this.staffService.officeDesignations;
+  officesDesignations = this.staffService.officesDesignations;
   employmentTypes = Object.values(EmploymentType);
   staffServiceLoading = this.staffService.loading;
   inviteServiceLoading = this.inviteService.loading;

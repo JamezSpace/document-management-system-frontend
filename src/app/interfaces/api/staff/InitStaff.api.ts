@@ -1,4 +1,4 @@
-import { EmploymentType } from "../../enum/staff/employmentType.enum"
+import { EmploymentType } from "../../../enum/staff/employmentType.enum";
 
 interface InitStaffPayload {
     firstName: string,

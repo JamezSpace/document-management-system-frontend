@@ -13,13 +13,13 @@ import { firebase_app } from '../../../../app.config';
 import { OnboardingSessionStatus } from '../../../../enum/onboarding/sessionStatus.enum';
 import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
 import { ErrorType } from '../../../../interfaces/api/Error.interface';
-import { EntityResponse } from '../../../../interfaces/onboarding/Entity.api';
+import { EntityResponse } from '../../../../interfaces/api/onboarding/Entity.api';
 import {
     OnboardingSession
-} from '../../../../interfaces/onboarding/OnboardingSession.api';
-import { StaffInvite } from '../../../../interfaces/onboarding/StaffInvite.api';
-import { BaseStaffEntity } from '../../../../interfaces/staff/BaseStaff.api';
+} from '../../../../interfaces/api/onboarding/OnboardingSession.api';
+import { StaffInvite } from '../../../../interfaces/api/onboarding/StaffInvite.api';
 import { UtilService } from '../../../system-wide/util-service/util-service';
+import { BaseStaffEntity } from '../../../../interfaces/api/staff/BaseStaff.api';
 
 type PrimaryInformationData = {
   firstName: string;

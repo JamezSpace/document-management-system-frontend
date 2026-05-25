@@ -5,13 +5,13 @@ import { finalize } from 'rxjs';
 import { environment } from '../../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../../interfaces/api/ApiResponse.interface';
 import { ErrorType } from '../../../../../../interfaces/api/Error.interface';
-import { DesignationApi } from '../../../../../../interfaces/org units/designation.api';
-import { OfficeApi } from '../../../../../../interfaces/org units/offices.api';
-import { InitStaffPayload } from '../../../../../../interfaces/staff/InitStaff.api';
-import { StaffWithMedia } from '../../../../../../interfaces/staff/StaffWithMedia.api';
-import { Users } from '../../../../../../interfaces/users/users.api';
+import { DesignationApi } from '../../../../../../interfaces/api/org units/designation.api';
+import { OfficeApi } from '../../../../../../interfaces/api/org units/offices.api';
+import { Users } from '../../../../../../interfaces/api/users/users.api';
 import { UtilService } from '../../../../../system-wide/util-service/util-service';
 import { StaffDetailsService } from '../../../office-template/staff-details-service';
+import { InitStaffPayload } from '../../../../../../interfaces/api/staff/InitStaff.api';
+import { StaffWithMedia } from '../../../../../../interfaces/api/staff/StaffWithMedia.api';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +26,7 @@ export class StaffService {
   staff = signal<StaffWithMedia[]>([]);
   users = signal<Users[]>([]);
   officesInUnit = signal<OfficeApi[]>([]);
-  officeDesignations = signal<DesignationApi[]>([]);
+  officesDesignations = signal<DesignationApi[]>([]);
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
 
@@ -74,10 +74,10 @@ export class StaffService {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<DesignationApi[]>>(`${environment.api}/identity/office/designations`)
+      .get<ApiResponse<DesignationApi[]>>(`${environment.api}/identity/offices/designations`)
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => this.officeDesignations.set(resp.data),
+        next: (resp) => this.officesDesignations.set(resp.data),
         error: (err) => this.error.set(err),
       });
   }

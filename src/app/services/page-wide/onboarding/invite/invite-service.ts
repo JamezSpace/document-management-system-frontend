@@ -4,9 +4,9 @@ import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../interfaces/api/ApiResponse.interface';
 import { ErrorType } from '../../../../interfaces/api/Error.interface';
-import { InviteStaffPayload } from '../../../../interfaces/staff/InitStaff.api';
-import { InviteApi } from '../../../../interfaces/staff/Invite.api';
 import { UtilService } from '../../../system-wide/util-service/util-service';
+import { InviteApi } from '../../../../interfaces/api/staff/Invite.api';
+import { InviteStaffPayload } from '../../../../interfaces/api/staff/InitStaff.api';
 
 @Injectable({
   providedIn: 'root',

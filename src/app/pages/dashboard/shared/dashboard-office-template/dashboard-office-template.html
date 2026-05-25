@@ -48,6 +48,9 @@
                         <ng-icon hlm [name]="navItem.icon" />
                         <span>{{ navItem.label }}</span>
 
+                        @if(navItem.route === 'notices' && unreadNotificationsPresent()) {
+                            <span class="uppercase py-0.5 px-1.5 text-[8px] border-[1.5px] border-(--brand-primary)/80 bg-(--brand-primary)/10 rounded-2xl flex-center justify-center text-(--brand-primary)/80 ml-auto" style="line-height: normal;">new</span>
+                        }
                         @if (navItem.subMenuExists) {
                           <ng-icon
                             name="lucideChevronRight"
@@ -135,7 +138,7 @@
             <div class="profile-info" [class.hidden]="isSidebarClosed()">
               <p class="font-medium">{{ staffLoggedIn()!.fullName }}</p>
               <p class="italic text-[90%]">
-                {{ staffLoggedIn()!.designation?.title || 'no designation' }}
+                {{ staffLoggedIn()!.designation.title || 'no designation' }}
               </p>
             </div>
           </div>

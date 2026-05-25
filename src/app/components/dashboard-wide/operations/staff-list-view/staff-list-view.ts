@@ -12,7 +12,6 @@ import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { BaseStaffEntity } from '../../../../interfaces/staff/BaseStaff.api';
 import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { UtilService } from '../../../../services/system-wide/util-service/util-service';
@@ -20,6 +19,7 @@ import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4
 import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 import { SideModal } from '../../shared/side-modal/side-modal';
+import { BaseStaffEntity } from '../../../../interfaces/api/staff/BaseStaff.api';
 
 @Component({
   selector: 'nexus-staff-list-view',
@@ -75,7 +75,7 @@ export class StaffListView implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     if(!this.staffService.officesInUnit) this.staffService.fetchAllOffices();
-    if(!this.staffService.officeDesignations) this.staffService.fetchAllDesignations();
+    if(!this.staffService.officesDesignations) this.staffService.fetchAllDesignations();
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -91,7 +91,7 @@ export class StaffListView implements OnInit, AfterViewInit {
   });
 
   offices = this.staffService.officesInUnit;
-  designations = this.staffService.officeDesignations;
+  designations = this.staffService.officesDesignations;
   employmentTypes = ['full-time', 'part-time', 'contract'];
 
   setActionTarget(staff: BaseStaffEntity) {

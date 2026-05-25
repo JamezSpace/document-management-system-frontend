@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
-import { UnitsApi } from '../../../../../interfaces/org units/units.api';
+import { UnitsApi } from '../../../../../interfaces/api/org units/units.api';
 
 @Injectable({
   providedIn: 'root',

@@ -1,17 +1,17 @@
-import { Component, inject, input, ViewChild, computed } from '@angular/core';
-import { DocumentApi } from '../../../../interfaces/documents/Document.api';
+import { Component, computed, inject, input, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { hugeFile02, hugeFileSearch, hugeFileValidation } from '@ng-icons/huge-icons';
 import { lucideMoreVertical } from '@ng-icons/lucide';
+import { BrnAlertDialog } from '@spartan-ng/brain/alert-dialog';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
-import { hugeFile02, hugeFileSearch, hugeFileValidation } from '@ng-icons/huge-icons';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
+import { DocumentApi } from '../../../../interfaces/api/documents/Document.api';
 import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
-import { ActivatedRoute } from '@angular/router';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { DocumentsService } from '../../../../services/page-wide/dashboard/generic/documents/documents-service';
-import { BrnAlertDialog } from '@spartan-ng/brain/alert-dialog';
+import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 
 @Component({
   selector: 'nexus-document-item',
@@ -56,7 +56,6 @@ export class DocumentItem {
   );
 
   // --- ACTIONS ---
-
   openDocPane() {
     this.registryService.openDocDetails(this.documentItem());
     

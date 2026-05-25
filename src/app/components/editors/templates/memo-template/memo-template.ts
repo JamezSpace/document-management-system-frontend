@@ -1,8 +1,8 @@
-import { Component, inject, input, WritableSignal } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { CorrespondenceToBeRendered } from '../../../../interfaces/api/workspace/correspondence/correspondence.api';
+import { OrgUnitsService } from '../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
 import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { DocumentsService } from '../../../../services/page-wide/dashboard/generic/documents/documents-service';
-import { DocumentApi } from '../../../../interfaces/documents/Document.api';
 
 @Component({
   selector: 'nexus-memo-template',
@@ -11,21 +11,27 @@ import { DocumentApi } from '../../../../interfaces/documents/Document.api';
   styleUrl: './memo-template.css',
 })
 export class MemoTemplate {
-  memoDetails: { fromDept: string; from: string; to: string; refNo: string; date: string; title: string; } = {
-    fromDept: 'industrial training coordinating centre',
-    from: 'Deputy Registrar',
-    to: 'ITEMS-MIS',
-    refNo: '2026/ITCC/ITEMS-MIS/PERS/0050',
-    date: '01/12/26',
-    title: 'issues with hunger'
-  };
+  unitService = inject(OrgUnitsService); 
 
-  documentToRender = input.required<DocumentApi>()
+//   ngOnInit() {
+//     if(!this.unitService.units()) 
+//         this.unitService.fetchOrgUnits();
+//   }
+
+//   private initEffect = effect(() => {
+//     const units = this.unitService.units();
+
+
+//   })
+
+
+  correspondence = input.required<CorrespondenceToBeRendered>();
+  
   formattedDate(date: string | Date) {
     return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    })
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   }
 }

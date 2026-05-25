@@ -1,0 +1,38 @@
+.notif-container {
+    display: grid;
+    grid-template-areas: 'actions content';
+    grid-template-columns: 0 1fr;
+    column-gap: 5px;
+    transition: grid-template-columns 200ms ease-in-out;
+
+    &:hover {
+        grid-template-columns: 10% 1fr;
+
+        & .actions {
+            border-radius: 2px 0 0 2px;
+        }
+
+        & > article {
+            border-radius: 0 2px 2px 0;
+            box-shadow: none;
+        }
+    }
+
+    & .actions {
+        grid-area: actions;
+        color: var(--brand-surface);
+        background-color: rgb(from var(--brand-success) r g b/0.7);
+        transition-property: background-color, color;
+        transition-duration:  200ms ;
+        transition-timing-function: ease;
+
+        &:hover {
+            background-color: rgb(from var(--brand-success) r g b/0.85);
+        }
+    }
+
+    & > article {
+        grid-area: content;
+        border: 1px solid var(--brand-border);
+    }
+}
