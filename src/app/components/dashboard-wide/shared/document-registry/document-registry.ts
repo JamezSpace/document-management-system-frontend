@@ -50,7 +50,7 @@ import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { DocumentApi } from '../../../../interfaces/api/documents/Document.api';
-import { SensitivityLevel } from '../../../../interfaces/api/documents/Document.enum';
+import { SensitivityLevel } from '../../../../enum/document/document.enum';
 import { UnitsApi } from '../../../../interfaces/api/org units/units.api';
 import {
     EmptyStateInterface,
@@ -76,6 +76,7 @@ import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
 import { DocumentDetails } from '../document-details/document-details';
 import { DocumentItem } from '../document-item/document-item';
 import { SideModal } from '../side-modal/side-modal';
+import { MinutesService } from '../../../../services/page-wide/dashboard/documents-registry/minutes/minutes-service';
 
 @Component({
   selector: 'nexus-document-registry',
@@ -146,6 +147,7 @@ export class DocumentRegistry implements OnInit {
   orgUnitService = inject(OrgUnitsService);
   staffService = inject(StaffService);
   documentService = inject(DocumentsService);
+  minutesService = inject(MinutesService);
   activatedRouter = inject(ActivatedRoute);
   router = inject(Router);
 
@@ -153,6 +155,14 @@ export class DocumentRegistry implements OnInit {
 
   private queryParams = toSignal(this.activatedRouter.queryParamMap);
   viewMode = computed(() => this.queryParams()?.get('view'));
+  selectedViewMode = computed(() => this.viewMode() ?? 'all');
+
+  viewChips: Array<{ label: string; value: 'all' | 'draft' | 'in-progress' | 'shared' }> = [
+    { label: 'All', value: 'all' },
+    { label: 'Drafts', value: 'draft' },
+    { label: 'In Progress', value: 'in-progress' },
+    { label: 'Shared', value: 'shared' },
+  ];
 
   directories = signal<string[]>([]);
   ngOnInit(): void {
@@ -211,9 +221,10 @@ export class DocumentRegistry implements OnInit {
   };
 
   emptyState = computed(() => {
-    const list = this.documents();
+    const list = this.filteredDocumentsForPageViewAndSearchQuery() ?? [];
+    const hasAnyDocuments = [...this.documents(), ...this.sharedDocuments()].length > 0;
 
-    if (list.length === 0) {
+    if (!hasAnyDocuments) {
       return this.emptyStateDataAsFistTime;
     }
 
@@ -229,6 +240,14 @@ export class DocumentRegistry implements OnInit {
   onSearchChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
+  }
+
+  setRegistryView(view: 'all' | 'draft' | 'in-progress' | 'shared') {
+    return this.router.navigate([], {
+      relativeTo: this.activatedRouter,
+      queryParams: view === 'all' ? { view: null } : { view },
+      queryParamsHandling: 'merge',
+    });
   }
 
   loading = signal<boolean>(false);
@@ -263,25 +282,63 @@ export class DocumentRegistry implements OnInit {
 
     if (!staff) return;
 
+    const allDocs = [
+      ...docs.map((doc) => ({ ...doc, shared: false })),
+      ...sharedDocs.map((doc) => ({ ...doc, shared: true })),
+    ].filter(
+      (doc, index, self) =>
+        self.findIndex((candidate) => candidate.id === doc.id) === index,
+    );
+
+    const filteredAllDocs = allDocs.filter(
+      (doc) =>
+        doc.title.toLowerCase().includes(query) ||
+        doc.referenceNumber?.toLowerCase().includes(query) ||
+        doc.classification.documentTypeId.toLowerCase().includes(query) ||
+        doc.correspondence.subjectCodeId.toLowerCase().includes(query),
+    );
+
+    const filteredSharedDocs = sharedDocs
+      .filter(
+        (doc) =>
+          doc.title.toLowerCase().includes(query) ||
+          doc.referenceNumber?.toLowerCase().includes(query) ||
+          doc.classification.documentTypeId.toLowerCase().includes(query) ||
+          doc.correspondence.subjectCodeId.toLowerCase().includes(query),
+      )
+      .map((doc) => ({ ...doc, shared: true }));
+
     switch (mode) {
       case 'draft':
         const drafts = docs.filter(
           (doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() === 'draft',
         );
 
-        return drafts.filter((doc) => doc.title.toLowerCase().includes(query));
+        return drafts.filter(
+          (doc) =>
+            doc.title.toLowerCase().includes(query) ||
+            doc.referenceNumber?.toLowerCase().includes(query) ||
+            doc.classification.documentTypeId.toLowerCase().includes(query) ||
+            doc.correspondence.subjectCodeId.toLowerCase().includes(query),
+        );
       case 'in-progress':
         const nonDrafts = docs.filter(
           (doc) => doc.currentVersion?.lifecycle.currentState.toLowerCase() !== 'draft',
         );
 
-        return nonDrafts.filter((doc) => doc.title.toLowerCase().includes(query));
+        return nonDrafts.filter(
+          (doc) =>
+            doc.title.toLowerCase().includes(query) ||
+            doc.referenceNumber?.toLowerCase().includes(query) ||
+            doc.classification.documentTypeId.toLowerCase().includes(query) ||
+            doc.correspondence.subjectCodeId.toLowerCase().includes(query),
+        );
       case 'shared':
-        return sharedDocs.filter((doc) => doc.title.toLowerCase().includes(query));
+        return filteredSharedDocs;
       case null:
-        return docs.filter((doc) => doc.title.toLowerCase().includes(query)) && sharedDocs.filter((doc) => doc.title.toLowerCase().includes(query));
+        return filteredAllDocs;
       default:
-        return [];
+        return filteredAllDocs;
     }
   });
 

@@ -1,4 +1,4 @@
-import { SensitivityLevel } from './Document.enum';
+import { SensitivityLevel } from '../../../enum/document/document.enum';
 import { DocumentVersion } from './DocumentVersion.api';
 import { AddresseeMetadata } from './metadata/AddresseeMetadata.metadata';
 import { ClassificationMetadata } from './metadata/ClassificationMetadata.metadata';
@@ -41,6 +41,10 @@ interface DocumentApi {
   updatedAt: Date | null;
 }
 
+interface DocumentApiWithSharedTag extends DocumentApi {
+    shared?: boolean;
+}
+
 const emptyDocument: DocumentApi = {
   id: '',
   ownerId: '',
@@ -76,5 +80,5 @@ const emptyDocument: DocumentApi = {
   updatedAt: null,
 };
 
-export {emptyDocument, type DocumentApi, type InitDocumentApiPayload };
+export {emptyDocument, type DocumentApi, type DocumentApiWithSharedTag, type InitDocumentApiPayload };
 

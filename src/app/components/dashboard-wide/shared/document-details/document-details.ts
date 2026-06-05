@@ -12,11 +12,14 @@ import { UnitMembersService } from '../../../../services/page-wide/dashboard/doc
 import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { UtilService } from '../../../../services/system-wide/util-service/util-service';
 import { SpartanLarge } from "../../../system-wide/typography/spartan-large/spartan-large";
+import { SpartanMuted } from "../../../system-wide/typography/spartan-muted/spartan-muted";
+import { MinutesService } from '../../../../services/page-wide/dashboard/documents-registry/minutes/minutes-service';
+import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 
 
 @Component({
   selector: 'nexus-document-details',
-  imports: [MatTabsModule, SpartanLarge, NgIcon],
+  imports: [MatTabsModule, SpartanLarge, NgIcon, SpartanMuted, HlmSpinnerImports],
   templateUrl: './document-details.html',
   styleUrl: './document-details.css',
   providers: [
@@ -32,7 +35,18 @@ export class DocumentDetails {
     docTypesService = inject(DocumentTypesService)
     unitService = inject(OrgUnitsService);
     unitMembersService = inject(UnitMembersService);
+    minutesService = inject(MinutesService);
     documentToShowFullDetails = input.required<DocumentApi>();
+
+    minuteServiceInOperation = this.minutesService.loading;
+    minutes = this.minutesService.minutes;
+
+    ngOnInit() {
+        const documentId = this.documentToShowFullDetails().id;
+
+        // fetch deps
+        this.minutesService.fetchMinutesForCorrespondence(documentId);
+    }
 
     recipientUnit = computed(() => {
         const recipientUnitId = this.documentToShowFullDetails().correspondence.recipientUnitId;
@@ -61,14 +75,26 @@ export class DocumentDetails {
     })
 
     addressedTo = computed(() => {
-        const recipientId = this.documentToShowFullDetails().correspondence.addressedToStaffId;
+        console.log(this.documentToShowFullDetails());
+        
+        const recipients = this.documentToShowFullDetails().addressees;
 
-        return this.unitMembersService.data().find(member => member.id === recipientId)?.designation?.title;
+        let addressees = recipients.map(addr => {            
+            return this.unitMembersService.data().find(member => member.designation.id === addr.addressedToDesignationId)?.designation.title;
+        })
+
+        console.log(addressees);
+        
+        return addressees;
     })
 
     closeDocPane() {
         this.sideModalService.close()
 
         this.registryService.closeDocDetails()
+    }
+
+    resolveStaffDesignationTitle(staffId: string) {
+        this.unitMembersService.data().find(member => member.id === staffId)?.designation.title;
     }
 }

@@ -6,7 +6,7 @@
     transition: grid-template-columns 200ms ease-in-out;
 
     &:hover {
-        grid-template-columns: 10% 1fr;
+        grid-template-columns: 5% 1fr;
 
         & .actions {
             border-radius: 2px 0 0 2px;
@@ -21,13 +21,13 @@
     & .actions {
         grid-area: actions;
         color: var(--brand-surface);
-        background-color: rgb(from var(--brand-success) r g b/0.7);
+        background-color: rgb(from var(--brand-success) r g b/0.8);
         transition-property: background-color, color;
         transition-duration:  200ms ;
         transition-timing-function: ease;
 
         &:hover {
-            background-color: rgb(from var(--brand-success) r g b/0.85);
+            background-color: rgb(from var(--brand-success) r g b/0.95);
         }
     }
 

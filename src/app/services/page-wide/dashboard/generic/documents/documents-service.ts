@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { Delta, Op } from 'quill';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 import {
-    DocumentApi,
-    InitDocumentApiPayload,
+  DocumentApi,
+  InitDocumentApiPayload,
 } from '../../../../../interfaces/api/documents/Document.api';
-import { LifecycleActions } from '../../../../../interfaces/api/documents/Document.enum';
+import { LifecycleActions } from '../../../../../enum/document/document.enum';
 import { UtilService } from '../../../../system-wide/util-service/util-service';
 
 @Injectable({
@@ -25,6 +25,36 @@ export class DocumentsService {
   loading = signal<boolean>(false);
   error = signal<ErrorType | null>(null);
   isDocumentSaved = signal<boolean>(true);
+  workspaceMode = signal<'author' | 'reviewer'>('reviewer');
+
+  readonly isDocumentActive = computed(
+    () => this.document()?.currentVersion?.lifecycle?.currentState?.toLowerCase() === 'active',
+  );
+  readonly isReadOnly = computed(
+    () => this.workspaceMode() === 'reviewer' || this.isDocumentActive(),
+  );
+
+  readonly autoPrintPreview = computed(() => this.isReadOnly());
+  private manualPrintPreview = signal<boolean>(false);
+  public get getManualPrintPreview(): boolean {
+    return this.manualPrintPreview();
+  }
+
+  public set setManualPrintPreview(value: boolean) {
+    if (this.workspaceMode() === 'author' || !this.isDocumentActive())
+      this.manualPrintPreview.set(value);
+  }
+
+
+  showPrintPreviewMenuOptions = computed(() => {
+    // reviewers MUST NOT trigger menu button to escape print preview
+    if (this.workspaceMode() === 'reviewer') return false;
+
+    // author can only escape print preview so long the document is not in active lifecycle state
+    if (!this.isDocumentActive()) return true;
+
+    return false;
+  });
 
   quillEditorContent = signal<{
     deltaContent: Delta | null;
@@ -35,6 +65,15 @@ export class DocumentsService {
     textContent: '',
     htmlContent: '',
   });
+
+  resetContext() {
+    this.document.set(null);
+    this.isDocumentSaved.set(true);
+    this.docSubmittedSuccess.set(false);
+    this.error.set(null);
+
+    this.quillEditorContent.set({ deltaContent: null, textContent: '', htmlContent: '' });
+  }
 
   initDocument(newDocumentPayload: InitDocumentApiPayload) {
     this.loading.set(true);
@@ -158,14 +197,5 @@ export class DocumentsService {
         },
         error: (err) => this.error.set(err),
       });
-  }
-
-  resetContext() {
-    this.document.set(null);
-    this.isDocumentSaved.set(true);
-    this.docSubmittedSuccess.set(false);
-    this.error.set(null);
-
-    this.quillEditorContent.set({ deltaContent: null, textContent: '', htmlContent: '' });
   }
 }

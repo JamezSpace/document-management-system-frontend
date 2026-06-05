@@ -1,16 +1,22 @@
 <section
-  class="rounded-xs button-box-shadow p-1 min-w-40 w-full min-h-56 flex flex-col items-center relative hover:cursor-pointer hover:outline hover:outline-muted"
->
-  <span
-    class="absolute top-1 right-1 text-[10px] px-2 rounded-xs border uppercase font-medium transition-colors {{ statusInfo().classes }}"
-  >
-    {{ displayState() }}
-  </span>
+  class="rounded-xs button-box-shadow p-1 min-w-40 w-full min-h-56 flex flex-col items-center relative transition-transform hover:cursor-pointer hover:outline hover:scale-95">
+  @if (documentItem().shared) {
+    <span
+      class="absolute top-1 right-1 text-[10px] px-2 rounded-xs border uppercase font-medium transition-colors border-emerald-500/50 bg-emerald-500/10 text-emerald-600">
+      shared
+    </span>
+  } @else {
+    <span
+      class="absolute top-1 right-1 text-[10px] px-2 rounded-xs border uppercase font-medium transition-colors {{
+        statusInfo().classes
+      }}">
+      {{ displayState() }}
+    </span>
+  }
 
   <div
     class="text-5xl flex-1 flex-center justify-center p-2 text-neutral-700 w-full"
-    (click)="openDocPane()"
-  >
+    (click)="openDocPane()">
     <ng-icon [name]="statusInfo().icon" />
   </div>
 
@@ -30,7 +36,10 @@
 
     <ng-template #docOptions>
       <hlm-dropdown-menu sideOffset="1.5">
-        @if (!documentItem().currentVersion || documentItem().currentVersion?.lifecycle?.currentState?.toLowerCase() === 'draft') {
+        @if (
+          !documentItem().currentVersion ||
+          documentItem().currentVersion?.lifecycle?.currentState?.toLowerCase() === 'draft'
+        ) {
           <button hlmDropdownMenuItem (click)="openWorkspaceEditor()">
             Edit
             <hlm-dropdown-menu-shortcut>⌘</hlm-dropdown-menu-shortcut>
@@ -43,7 +52,7 @@
 
         @if (documentItem().currentVersion; as version) {
           @let state = version.lifecycle.currentState.toLowerCase();
-          
+
           @if (['approved', 'declared_record', 'archived'].includes(state)) {
             <hlm-dropdown-menu-separator />
             <button hlmDropdownMenuItem>Print</button>

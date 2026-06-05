@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DocumentsVault } from './documents-vault';
+import { MinutesService } from './minutes-service';
 
-describe('DocumentsVault', () => {
-  let service: DocumentsVault;
+describe('MinutesService', () => {
+  let service: MinutesService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DocumentsVault);
+    service = TestBed.inject(MinutesService);
   });
 
   it('should be created', () => {

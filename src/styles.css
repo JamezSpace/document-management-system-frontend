@@ -230,6 +230,7 @@ iconify-icon {
     pointer-events: none;
     opacity: 0.5;
     background-color: var(--brand-disabled);
+    border-color: var(--brand-disabled);
   }
 
   &.red {

@@ -117,6 +117,24 @@
   </ng-template>
 </div>
 
+<div class="flex flex-wrap items-center gap-2 mt-4">
+  @for (chip of viewChips; track chip.value) {
+    <button
+      type="button"
+      class="px-3 py-1.5 rounded-xs text-sm border transition-colors"
+      [class.border-primary]="selectedViewMode() === chip.value"
+      [class.bg-primary]="selectedViewMode() === chip.value"
+      [class.text-white]="selectedViewMode() === chip.value"
+      [class.border-border]="selectedViewMode() !== chip.value"
+      [class.bg-transparent]="selectedViewMode() !== chip.value"
+      [class.text-muted-foreground]="selectedViewMode() !== chip.value"
+      (click)="setRegistryView(chip.value)"
+    >
+      {{ chip.label }}
+    </button>
+  }
+</div>
+
 <hlm-separator class="my-4" />
 
 <section class="flex items-start flex-wrap w-full gap-3.5 p-px">

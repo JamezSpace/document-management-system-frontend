@@ -5,10 +5,11 @@ import { SpartanP } from '../../../../../components/system-wide/typography/spart
 import { SpartanH4 } from '../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
+import { SpartanH1 } from "../../../../../components/system-wide/typography/spartan-h1/spartan-h1";
 
 @Component({
   selector: 'nexus-overview',
-  imports: [HlmCardImports, SpartanH2, SpartanP, SpartanH4, HlmSeparator],
+  imports: [HlmCardImports, SpartanH2, SpartanP, SpartanH4, HlmSeparator, SpartanH1],
   templateUrl: './overview.html',
   styleUrl: './overview.css',
 })

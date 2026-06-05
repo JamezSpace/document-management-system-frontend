@@ -1,47 +1,62 @@
 import {
-    Component,
-    computed,
-    effect,
-    ElementRef,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-    lucideArrowLeft,
-    lucideFile,
-    lucideFileLock,
-    lucideGripVertical,
-    lucideLock,
-    lucideLockOpen,
-    lucidePanelLeftClose,
-    lucidePanelRightClose,
-    lucidePlus,
-    lucideSave,
-    lucideSend,
-    lucideUserRound,
-    lucideZoomIn,
-    lucideZoomOut,
+  lucideArrowLeft,
+  lucideFile,
+  lucideFileLock,
+  lucideGripVertical,
+  lucideHistory,
+  lucideLock,
+  lucideLockOpen,
+  lucidePanelLeftClose,
+  lucidePanelRightClose,
+  lucidePlus,
+  lucidePrinter,
+  lucideSave,
+  lucideSend,
+  lucideUserRound,
+  lucideZoomIn,
+  lucideZoomOut,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
-import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmKbdImports } from '@spartan-ng/helm/kbd';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
+import { HlmCheckboxImports } from '@spartan-ng/helm/checkbox';
+import { HlmAccordionImports } from '@spartan-ng/helm/accordion';
+import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { MemoBodyEditor } from '../../../../../components/editors/memo-body-editor/memo-body-editor';
 import { MemoTemplate } from '../../../../../components/editors/templates/memo-template/memo-template';
 import { LineLoader } from '../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
 import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
+import { MinuteAction } from '../../../../../enum/document/minute.enum';
 import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
 import { DocumentApi } from '../../../../../interfaces/api/documents/Document.api';
 import { AuthService } from '../../../../../services/page-wide/auth/auth-service';
@@ -53,6 +68,8 @@ import { GenericDashboardService } from '../../../../../services/page-wide/dashb
 import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
+import { StaffService } from '../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { MinutesService } from '../../../../../services/page-wide/dashboard/documents-registry/minutes/minutes-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -64,6 +81,8 @@ import { UtilService } from '../../../../../services/system-wide/util-service/ut
     MemoTemplate,
     MemoBodyEditor,
     MatAutocompleteModule,
+    MatSlideToggleModule,
+    FormsModule,
     ReactiveFormsModule,
     HlmIcon,
     HlmSeparator,
@@ -73,7 +92,12 @@ import { UtilService } from '../../../../../services/system-wide/util-service/ut
     HlmButtonImports,
     HlmSelectImports,
     HlmDropdownMenuImports,
+    HlmCheckboxImports,
     HlmKbdImports,
+    HlmTextareaImports,
+    HlmSpinnerImports,
+    HlmAccordionImports,
+    HlmCardImports
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
@@ -85,6 +109,7 @@ import { UtilService } from '../../../../../services/system-wide/util-service/ut
       lucideSend,
       lucideUserRound,
       lucidePlus,
+      lucidePrinter,
       lucidePanelLeftClose,
       lucidePanelRightClose,
       lucideFileLock,
@@ -92,7 +117,7 @@ import { UtilService } from '../../../../../services/system-wide/util-service/ut
       lucideLockOpen,
       lucideZoomIn,
       lucideZoomOut,
-      lucideGripVertical,
+      lucideGripVertical, lucideHistory
     }),
   ],
 })
@@ -105,6 +130,8 @@ export class Workspace implements OnInit, OnDestroy {
   documentService = inject(DocumentsService);
   docTypesService = inject(DocumentTypesService);
   unitService = inject(OrgUnitsService);
+  staffService = inject(StaffService);
+  minutesService = inject(MinutesService);
   unitMembersService = inject(UnitMembersService);
   staffDetailsService = inject(StaffDetailsService);
   genericDashboardService = inject(GenericDashboardService);
@@ -116,6 +143,19 @@ export class Workspace implements OnInit, OnDestroy {
   readonly signedInStaff = this.staffDetailsService.data;
   document = this.documentService.document;
 
+  minuteServiceInOperation = this.minutesService.loading;
+  minutes = this.minutesService.minutes;
+
+  workspaceMode = this.documentService.workspaceMode;
+
+  isReadOnly = this.documentService.isReadOnly;
+  isDocumentActive = this.documentService.isDocumentActive;
+  manualPrintPreview = this.documentService.getManualPrintPreview;
+  showPrintPreviewMenuOptions = this.documentService.showPrintPreviewMenuOptions;
+
+  readonly isPrintPreview = computed(
+    () => this.documentService.autoPrintPreview() || this.manualPrintPreview,
+  );
 
   goToDocOverviewPage() {
     this.documentService.resetContext();
@@ -150,6 +190,8 @@ export class Workspace implements OnInit, OnDestroy {
       // fetch necessary data
       this.documentService.fetchDocById(docId);
       this.unitMembersService.fetchUnitMembers(staff.unit.id);
+      this.staffService.fetchAllDesignations();
+      this.minutesService.fetchMinutesForCorrespondence(docId);
     }
   }
 
@@ -158,13 +200,13 @@ export class Workspace implements OnInit, OnDestroy {
   }
 
   private workspaceInitEffect = effect(() => {
-    // auto-close sidebar
-    this.sidebarClosed.set(this.isMobile());
-
     const doc = this.document();
     const staff = this.signedInStaff();
 
     if (!doc || !staff) return;
+    this.workspaceMode.set(doc.ownerId === staff.id ? 'author' : 'reviewer');
+    // keep the attachments pane visible whenever the workspace is locked for editing
+    this.sidebarClosed.set(this.isMobile());
 
     // fetch document type
     const typeId = doc.classification.documentTypeId;
@@ -217,16 +259,34 @@ export class Workspace implements OnInit, OnDestroy {
     return doc && doc.correspondence.direction === 'external' ? true : false;
   }
 
+  attachedDocuments = computed(() => {
+    const doc = this.document();
+
+    if (!doc || !this.isDocumentActive()) return [];
+
+    const mediaId = doc.currentVersion?.mediaId?.trim();
+    if (!mediaId) return [];
+
+    return [
+      {
+        id: mediaId,
+        title: doc.title || 'Attached document',
+        description: `Version ${doc.currentVersion?.versionNumber ?? 1} attachment`,
+        mediaId,
+      },
+    ];
+  });
+
   getAddresseeDesignation(doc: DocumentApi) {
     const staffId = doc.correspondence.addressedToStaffId;
 
-    if(!staffId) return
+    if (!staffId) return;
 
-    const foundStaff = this.unitMembers().find(member => member.id === staffId);
+    const foundStaff = this.unitMembers().find((member) => member.id === staffId);
 
-    if(!foundStaff) return
+    if (!foundStaff) return;
 
-    return foundStaff.designation?.title
+    return foundStaff.designation?.title;
   }
 
   units = this.unitService.units;
@@ -237,13 +297,6 @@ export class Workspace implements OnInit, OnDestroy {
   nonacademicUnits = computed(() =>
     this.units().filter((unit) => unit.sector === OrgUnitCategory.NON_ACADEMIC),
   );
-
-  showDesignationTitleRatherThanId = (staffId: string) => {
-    if (!staffId) return '';
-
-    const member = this.unitMembers().find((m) => m.id === staffId);
-    return member?.fullName ?? '';
-  };
 
   showUnitLabelRatherThanId = (unitId: string) => {
     if (!unitId) return '';
@@ -270,6 +323,16 @@ export class Workspace implements OnInit, OnDestroy {
     addressee: new FormControl(''),
   });
 
+  isMinuting = false;
+  minuteContentToBeAdded = signal<string>('');
+  isMinuteAdded = computed(() => this.minuteContentToBeAdded().trim().length === 0);
+
+  changeMinute(event: any) {
+    const data = event.target.value;
+
+    this.minuteContentToBeAdded.set(data);
+  }
+
   searchUnitValue = signal<string>('');
   searchUnitMemberValue = signal<string>('');
   searchVolValue = signal<string>('');
@@ -280,21 +343,44 @@ export class Workspace implements OnInit, OnDestroy {
     return this.units().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
   });
 
-  filteredUnitsMembers = computed(() => {
-    const filterValue = this.searchUnitMemberValue().toLowerCase();
+  searchAddresseeValue = signal<string>('');
+  updateAddressee(event: any) {
+    const typedWord = event.target.value;
 
-    return this.unitMembers().filter((unitMember) =>
-      unitMember.fullName.toLowerCase().includes(filterValue),
-    );
+    this.searchAddresseeValue.set(typedWord);
+  }
+
+  filteredUnitMembers = computed(() => {
+    const typedValue = this.searchAddresseeValue().toLowerCase();
+
+    return (this.unitMembers() ?? [])
+      .filter((member) => {
+        // this excludes the current staff that is logged
+        if (this.signedInStaff() && member.id === this.signedInStaff()?.id) return;
+
+        // this removed staffs with null designation
+        if (member.designation && member.designation.id)
+          return member.designation.title.toLowerCase().includes(typedValue);
+        else return;
+      })
+      .map((data) => {
+        const { identityId, ...uiData } = data;
+        return uiData;
+      });
   });
 
-  //   filteredVolumes = computed(() => {
-  //     const filterValue = this.searchVolValue().toLowerCase();
+  designations = this.staffService.officesDesignations;
+  showDesignationTitleRatherThanId = (designationId: string) => {
+    const designation = this.designations().find((desig) => desig.id === designationId);
+    const designationTitle = designation?.title;
 
-  //     return this.correspondenceVolumes().filter((vol) =>
-  //       vol.name.toLowerCase().includes(filterValue),
-  //     );
-  //   });
+    if (!designationTitle) return '';
+
+    return `The ${designationTitle
+      .split(' ')
+      .map((title) => title[0].toUpperCase() + title.slice(1))
+      .join(' ')}`;
+  };
 
   updateDeptSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
@@ -308,9 +394,6 @@ export class Workspace implements OnInit, OnDestroy {
   // scans for signature placeholder
   signaturePlaceholderBounds = computed(() => this.scanForSignaturePlaceholderAndReturnBounds());
 
-  isPrintPreview = signal(false);
-  editorHtmlContent = signal<string>('');
-
   previewDocument() {
     // store previous zoom level
     this.previousZoomLevel.set(this.zoomLevel());
@@ -318,17 +401,15 @@ export class Workspace implements OnInit, OnDestroy {
     //reset zoom level
     this.resetZoom();
 
-    // retrieve content as html
-    const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
+    // // retrieve content as html
+    // const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
 
-    console.log(htmlContent);
-
-    this.editorHtmlContent.set(htmlContent);
+    // this.editorHtmlContent.set(htmlContent);
 
     // checks if signature exists
     const signatureExists = this.signaturePlaceholderBounds().exists;
 
-    this.isPrintPreview.set(true);
+    this.documentService.setManualPrintPreview = true;
   }
 
   exitPreview() {
@@ -337,12 +418,24 @@ export class Workspace implements OnInit, OnDestroy {
 
     this.paperViewControls.set(false);
 
-    this.isPrintPreview.set(false);
+    this.documentService.setManualPrintPreview = false;
+  }
+
+  printCorrespondence() {
+    this.documentService.setManualPrintPreview = true;
+
+    setTimeout(() => window.print(), 0);
   }
 
   paperViewControls = signal<boolean>(false);
   @ViewChild('workspaceRoot')
   workspaceRoot!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('addMinuteDialog')
+  addMinuteDialog!: HlmAlertDialog;
+
+  @ViewChild('forwardDocumentDialog')
+  forwardDocumentDialog!: HlmAlertDialog;
 
   onMouseEnter() {
     if (this.isPrintPreview()) {
@@ -429,6 +522,102 @@ export class Workspace implements OnInit, OnDestroy {
 
     if (submissionStatus) this.router.navigateByUrl('/office/documents');
   });
+
+  resolveStaffDesignationTitle(staffId: string) {
+    const signedInStaffId = this.signedInStaff()?.id;
+    const staff = this.unitMembersService.data().find((member) => member.id === staffId);
+
+    if (!staff || !signedInStaffId) return 'n/a';
+    else if (signedInStaffId === staff.id) return 'you';
+
+    return 'the ' + staff.designation.title;
+  }
+
+  resolveMinuteAction(action: MinuteAction) {
+    switch (action) {
+      case MinuteAction.ACKNOWLEDGE:
+        return 'acknowledged';
+      case MinuteAction.COMMENT:
+        return 'minuted';
+      default:
+        return 'acknowledged';
+    }
+  }
+
+  resolveMinuteContent(content: string | null) {
+    if (!content) return '';
+
+    return content;
+  }
+
+  formatDate = this.utilService.formatDateAsReadableString;
+
+  forwardCorrespondenceFormGroup = new FormGroup({
+    forwardToDesignationId: new FormControl<string>('', {
+      nonNullable: true,
+      validators: Validators.required,
+    }),
+  });
+
+  getStaffMinuteIfExistsBefore() {
+    const staffId = this.signedInStaff()?.id;
+
+    if (!staffId) return {
+        existsBefore: false,
+        foundMinute: null
+    };
+
+    const foundMinute = this.minutes().find(mn => mn.authorStaffId === staffId);
+
+    return foundMinute ? {
+        existsBefore: true,
+        foundMinute
+    } : {
+        existsBefore: false,
+        foundMinute: null
+    };
+  }
+
+  addMinuteToCorrespondence() {
+      const openedDocument = this.document();
+    const staffId = this.signedInStaff()?.id;
+    const content = this.minuteContentToBeAdded().trim();
+
+    if (!openedDocument || !staffId) return;
+    const staffMinuteExistsBefore = this.getStaffMinuteIfExistsBefore()
+
+    this.minutesService.addMinuteToCorrespondence(openedDocument.id, {
+      authorStaffId: staffId,
+      action: content.length === 0 ? MinuteAction.ACKNOWLEDGE : MinuteAction.COMMENT ,
+      content: content.length === 0 ? null : content,
+      parentMinuteId: 
+        staffMinuteExistsBefore.existsBefore ? staffMinuteExistsBefore.foundMinute!.id : null
+    });
+    
+    this.minuteContentToBeAdded.set('');
+    this.isMinuting = false;
+}
+
+    isForwarding = false;
+  forwardDocument() {
+    const openedDocument = this.document();
+    const staffId = this.signedInStaff()?.id;
+    const forwardToDesignationId = this.forwardCorrespondenceFormGroup
+      .getRawValue()
+      .forwardToDesignationId.trim();
+    const forwardToTitle =
+      this.showDesignationTitleRatherThanId(forwardToDesignationId) || forwardToDesignationId;
+
+    if (!openedDocument || !staffId || !forwardToDesignationId) return;
+
+    this.minutesService.addMinuteToCorrespondence(openedDocument.id, {
+      authorStaffId: staffId,
+      action: MinuteAction.FORWARD,
+      content: forwardToTitle,
+    });
+
+    this.addMinuteToCorrespondence();
+  }
 }
 
 interface SignatureBounds {

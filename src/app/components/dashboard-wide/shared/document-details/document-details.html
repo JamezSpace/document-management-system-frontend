@@ -25,21 +25,28 @@
           </p>
         </article>
 
-        @if (documentToShowFullDetails().correspondence.direction === 'external' && documentToShowFullDetails().correspondence.recipientUnitId) {
+        @if (
+          documentToShowFullDetails().correspondence.direction === 'external' &&
+          documentToShowFullDetails().correspondence.recipientUnitId
+        ) {
           <article class="mb-2">
             <span class="descriptor">recipient unit</span>
             <p class="capitalize">
               {{ recipientUnit()?.code?.toUpperCase() ?? '--' }}
             </p>
           </article>
-        } @else {   
-            <!-- recipient -->
-            <article class="mb-2">
-                <span class="descriptor">addressed to</span>
-                <p class="capitalize">
-                    {{ addressedTo() ?? '--' }}
-                </p>
-            </article>
+        } @else {
+          <!-- recipient -->
+          <article class="mb-2">
+            <span class="descriptor">addressed to</span>
+            <ul>
+              @for (addresee of addressedTo(); track $index) {
+                <li>
+                  <p class="capitalize">The {{ addresee }}</p>
+                </li>
+              }
+            </ul>
+          </article>
         }
 
         <!-- type -->
@@ -91,27 +98,52 @@
     <!-- Document Activity Tab -->
     <mat-tab label="Activity">
       <section class="pt-5">
-        @if (documentToShowFullDetails().currentVersion; as version) {
-          <ul>
-            <li>
-              <p>
-                Correspondence is currently in
-                {{ version.lifecycle.currentState.toUpperCase() }} state, entered this state at
-                {{ utilService.formatDateAsReadableString(version.lifecycle.stateEnteredAt) }}.
-              </p>
-            </li>
-          </ul>
+        <article>
+          <p class="section-descriptor">lifecycle history</p>
+          @if (documentToShowFullDetails().currentVersion; as version) {
+            <ul>
+              <li>
+                <p>
+                  Correspondence is currently in
+                  {{ version.lifecycle.currentState.toUpperCase() }} state, entered this state at
+                  {{ utilService.formatDateAsReadableString(version.lifecycle.stateEnteredAt) }}.
+                </p>
+              </li>
+            </ul>
 
-          @if (version.lifecycle.currentState.toLowerCase() === 'draft') {
-            <p class="text-xs font-medium mt-5">
-              Correspondence hasn't been submited yet for approval.
+            @if (version.lifecycle.currentState.toLowerCase() === 'draft') {
+              <p class="text-xs font-medium mt-5">
+                Correspondence hasn't been submited yet for approval.
+              </p>
+            }
+          } @else {
+            <p class="text-xs font-medium text-(--brand-accent-shade-2)">
+              Correspondence has no content!
             </p>
           }
-        } @else {
-          <p class="text-xs font-medium text-(--brand-accent-shade-2)">
-            Correspondence has no content!
-          </p>
-        }
+        </article>
+
+        <article class="mt-3">
+          <p class="section-descriptor">minutes history</p>
+
+          @if (minuteServiceInOperation()) {
+            <hlm-spinner class="text-base md:text-lg" />
+          } @else if(!minuteServiceInOperation() && minutes()) {
+            <ul>
+            @for (minute of minutes(); track $index) {
+                <li>
+                <p>
+                    {{ resolveStaffDesignationTitle(minute.authorStaffId) }} minuted "{{ minute.content }}"
+                </p>
+                </li>
+            }
+            </ul>
+          }@else {
+            <p class="text-xs font-medium text-(--brand-accent-shade-2)">
+              No minute exists for record
+            </p>
+          }
+        </article>
       </section>
     </mat-tab>
   </mat-tab-group>

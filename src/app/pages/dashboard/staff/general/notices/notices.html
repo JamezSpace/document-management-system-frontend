@@ -113,7 +113,7 @@
 
 <section>
   @for (entry of sortedNotificationsEntries(); track $index) {
-    <div class="flex flex-col w-full gap-3.5">
+    <div class="flex flex-col w-full gap-3.5 mb-2.5">
       <nexus-spartan-muted>{{ entry[0] }}</nexus-spartan-muted>
 
       @for (notif of entry[1]; track $index) {

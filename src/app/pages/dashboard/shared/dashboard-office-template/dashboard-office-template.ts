@@ -305,6 +305,28 @@ export class DashboardOfficeTemplate implements OnInit {
       group: NavGroup.OPERATIONS,
       requiredCapability: 'staff.create',
     },
+
+    // SECRETARY
+    {
+      icon: 'lucideScanFace', // or lucideQrCode / lucideFolderInput
+      label: 'Registry Intake',
+      route: 'operations/registry-intake',
+      subMenuExists: true,
+      group: NavGroup.OPERATIONS,
+      requiredCapability: 'record.archive',
+      subMenus: [
+        {
+          label: 'Scan New Influx',
+          route: { view: 'ingest' },
+          requiredCapability: 'record.archive',
+        },
+        {
+          label: 'External Logbook',
+          route: { view: 'external-history' },
+          requiredCapability: 'record.archive',
+        },
+      ],
+    },
   ];
 
   readonly navItems = computed(() => {

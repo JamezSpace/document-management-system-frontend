@@ -1,4 +1,4 @@
-import { SensitivityLevel } from "../Document.enum";
+import { SensitivityLevel } from "../../../../enum/document/document.enum";
 
 interface ClassificationMetadata {
   sensitivity: SensitivityLevel

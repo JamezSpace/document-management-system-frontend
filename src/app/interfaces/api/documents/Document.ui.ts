@@ -1,4 +1,4 @@
-import { DocumentState, DocumentType } from "./Document.enum";
+import { DocumentState, DocumentType } from "../../../enum/document/document.enum";
 
 interface DocumentUi {
     id: string;
