@@ -8,4 +8,11 @@ interface DesignationApi {
   updatedAt?: Date | undefined;
 }
 
-export type { DesignationApi };
+const emptyDesignation: DesignationApi = {
+    hierarchyLevel: 0,
+    id: '',
+    officeId: '',
+    title: ''
+}
+
+export { type DesignationApi, emptyDesignation };

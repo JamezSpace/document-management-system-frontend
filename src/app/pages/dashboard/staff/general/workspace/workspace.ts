@@ -16,7 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -49,7 +49,6 @@ import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { HlmCheckboxImports } from '@spartan-ng/helm/checkbox';
 import { HlmAccordionImports } from '@spartan-ng/helm/accordion';
 import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
-import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { MemoBodyEditor } from '../../../../../components/editors/memo-body-editor/memo-body-editor';
 import { MemoTemplate } from '../../../../../components/editors/templates/memo-template/memo-template';
@@ -70,6 +69,10 @@ import { WorkspaceService } from '../../../../../services/page-wide/dashboard/wo
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
 import { StaffService } from '../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { MinutesService } from '../../../../../services/page-wide/dashboard/documents-registry/minutes/minutes-service';
+import { MatChipsModule } from '@angular/material/chips';
+import { hugeCancelCircle } from '@ng-icons/huge-icons';
+import { emptyAddressee } from '../../../../../interfaces/api/documents/metadata/AddresseeMetadata.metadata';
+import { emptyDesignation } from '../../../../../interfaces/api/org units/designation.api';
 
 @Component({
   selector: 'nexus-workspace',
@@ -81,6 +84,7 @@ import { MinutesService } from '../../../../../services/page-wide/dashboard/docu
     MemoTemplate,
     MemoBodyEditor,
     MatAutocompleteModule,
+    MatChipsModule,
     MatSlideToggleModule,
     FormsModule,
     ReactiveFormsModule,
@@ -96,8 +100,7 @@ import { MinutesService } from '../../../../../services/page-wide/dashboard/docu
     HlmKbdImports,
     HlmTextareaImports,
     HlmSpinnerImports,
-    HlmAccordionImports,
-    HlmCardImports
+    HlmAccordionImports
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
@@ -117,7 +120,8 @@ import { MinutesService } from '../../../../../services/page-wide/dashboard/docu
       lucideLockOpen,
       lucideZoomIn,
       lucideZoomOut,
-      lucideGripVertical, lucideHistory
+      lucideGripVertical, lucideHistory,
+      hugeCancelCircle
     }),
   ],
 })
@@ -369,18 +373,56 @@ export class Workspace implements OnInit, OnDestroy {
       });
   });
 
-  designations = this.staffService.officesDesignations;
-  showDesignationTitleRatherThanId = (designationId: string) => {
-    const designation = this.designations().find((desig) => desig.id === designationId);
-    const designationTitle = designation?.title;
+  primaryAddressee = computed(() => {
+    const doc = this.document();
 
-    if (!designationTitle) return '';
+    if(!doc) return emptyDesignation
+    const designationId = doc.addressees.find(d => d.isPrimary)!.addressedToDesignationId
+
+    return this.getDesignationFromId(designationId);
+  })
+
+  filteredUnitMembersForCC = computed(() => {
+
+    // exclude primary addressee from the list
+    return this.filteredUnitMembers().filter(member => {
+        const primaryAddresseeId = this.primaryAddressee()?.id;
+
+        member.id !== primaryAddresseeId
+    })
+  })
+
+  designations = this.staffService.officesDesignations;
+  getDesignationFromId(designationId: string) {
+    return this.designations().find(d => d.id === designationId) ?? emptyDesignation;
+  }
+  showDesignationTitleRatherThanId = (designationId: string) => {
+    const designationTitle = this.getDesignationFromId(designationId).title;
 
     return `The ${designationTitle
       .split(' ')
       .map((title) => title[0].toUpperCase() + title.slice(1))
       .join(' ')}`;
   };
+
+  selectedDesignationsForCC = signal<string[]>([]);
+  selected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedDesignationsForCC.update(selectedDesignationsForCC => [...selectedDesignationsForCC, event.option.viewValue]);
+    
+    event.option.deselect();
+  }
+  
+  remove(designationId: string): void {
+    this.selectedDesignationsForCC.update(selectedDesignationsForCC => {
+      const index = selectedDesignationsForCC.indexOf(designationId);
+      if (index < 0) {
+        return selectedDesignationsForCC;
+      }
+
+      selectedDesignationsForCC.splice(index, 1);
+      return [...selectedDesignationsForCC];
+    });
+  }
 
   updateDeptSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;

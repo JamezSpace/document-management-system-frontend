@@ -174,27 +174,46 @@
                     </mat-autocomplete>
                   </div>
                 } @else {
+                    @if(primaryAddressee(); as p) {
+                  <div class="field mb-3">
+                      <p class="font-medium mb-1 text-xs">Primary Addressee</p>
+                        <div class="card pointer-events-none opacity-50 font-medium capitalize">
+                            The {{ p.title }}
+                        </div>
+                  </div>
+                }
                   <div class="field">
-                    <nexus-spartan-p>CC:</nexus-spartan-p>
+                    <p class="font-medium mb-1 text-xs">CC:</p>
+
+                    <mat-chip-grid #chipGrid aria-label="Designation addressee selection for CC">
+                      @for (selectedDesignation of selectedDesignationsForCC(); track $index) {
+                        <mat-chip-row (removed)="remove(selectedDesignation)">
+                          {{ getDesignationFromId(selectedDesignation).title }}
+                          <button matChipRemove [attr.aria-label]="'remove ' + getDesignationFromId(selectedDesignation).title">
+                            <ng-icon name="hugeCancelCircle" />
+                          </button>
+                        </mat-chip-row>
+                      }
+                    </mat-chip-grid>
 
                     <input
                       type="text"
                       placeholder="Select the addressee"
                       aria-label="Change who this internal correspondence is addressed to"
                       formControlName="addressee"
+                      [matChipInputFor]="chipGrid"
                       [matAutocomplete]="addresseeAuto"
                       class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
                       (input)="updateDeptSearch($event)"
                     />
 
                     <mat-autocomplete
-                      autoActiveFirstOption
                       #addresseeAuto="matAutocomplete"
                       [displayWith]="showDesignationTitleRatherThanId"
                     >
-                      @for (unitMember of filteredUnitMembers(); track unitMember) {
-                        <mat-option [value]="unitMember.fullName">
-                          <span class="text-sm">{{ unitMember.id }}</span>
+                      @for (unitMember of filteredUnitMembersForCC(); track unitMember) {
+                        <mat-option [value]="unitMember.designation.id">
+                          <span class="text-sm">{{ unitMember.designation.title }}</span>
                         </mat-option>
                       }
                     </mat-autocomplete>
@@ -285,15 +304,14 @@
                     </div>
                   </li>
                 } @empty {
-                  <div
-                    class="empty-state-card">
-                        <ng-icon name="lucideFile" class="text-2xl" />
+                  <div class="empty-state-card">
+                    <ng-icon name="lucideFile" class="text-2xl" />
 
-                        <h3 class="mt-3 mb-1 font-semibold">No attached documents yet</h3>
-                        <p class="text-xs text-center">
-                          Once a file is linked to this active document, it will appear here.
-                        </p>
-                      </div>
+                    <h3 class="mt-3 mb-1 font-semibold">No attached documents yet</h3>
+                    <p class="text-xs text-center">
+                      Once a file is linked to this active document, it will appear here.
+                    </p>
+                  </div>
                 }
               </div>
             } @else {
@@ -380,9 +398,7 @@
                     </hlm-accordion-content>
                   </hlm-accordion-item>
                 } @empty {
-                  <div
-                    class="empty-state-card"
-                  >
+                  <div class="empty-state-card">
                     <ng-icon name="lucideHistory" class="text-2xl" />
                     <h3 class="mt-3 mb-1 font-semibold">Clean Ledger</h3>
 

@@ -108,6 +108,12 @@ main {
     backdrop-filter: blur(4px);
 }
 
+.card {
+    padding: 8px;
+    border-radius: var(--radius-xs);
+    border: 2px solid rgb(from var(--brand-border) r g b/0.5);
+}
+
 /* Show only paper */
 .print-preview #paper,
 .print-preview #paper * {
