@@ -70,8 +70,11 @@
             class="nexus-button flex-center gap-2.5 scale-90"
             (click)="saveDocument()"
           >
-            @if(!saveDocumentLoading()) {<span>Save</span>}
-            @else {<hlm-spinner class="text-base md:text-lg" />}
+            @if (!saveDocumentLoading()) {
+              <span>Save</span>
+            } @else {
+              <hlm-spinner class="text-base md:text-lg" />
+            }
           </button>
         }
         @if (
@@ -148,49 +151,40 @@
 
             <form [formGroup]="documentMetadata" [class.disabled]="!isDocmentMetadataEditable()">
               <div class="mb-2">
-                @if (document()?.correspondence?.direction === 'external') {
-                  <div class="field">
-                    <nexus-spartan-p> Recipient Unit </nexus-spartan-p>
+                <div class="field mb-3">
+                  <p class="font-medium mb-1 text-xs">Primary Addressee</p>
+                  <div class="card pointer-events-none opacity-70 font-medium capitalize">
+                    @if (
+                      documentDirection() === 'internal' && primaryAddresseeForInternalDocs();
+                      as p
+                    ) {
+                      The {{ p.title }}
+                    } @else if (
+                      documentDirection() === 'external' && primaryAddresseeForExternalDocs();
+                      as p
+                    ) {
+                      {{ p.fullName }}
+                    }
+                  </div>
+                </div>
 
-                    <input
-                      type="text"
-                      placeholder="Select the department"
-                      aria-label="Department"
-                      formControlName="department"
-                      [matAutocomplete]="deptAuto"
-                      class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-                      (input)="updateDeptSearch($event)"
-                    />
+                <div class="field">
+                  <p class="font-medium mb-1 text-xs">CC:</p>
 
-                    <mat-autocomplete
-                      autoActiveFirstOption
-                      #deptAuto="matAutocomplete"
-                      [displayWith]="showUnitLabelRatherThanId"
+                  @if (documentDirection() === 'internal') {
+                    <mat-chip-grid
+                      #chipGridForInternalDocs
+                      aria-label="Designation addressee selection for CC"
                     >
-                      @for (dept of filteredUnits(); track dept.id) {
-                        <mat-option [value]="dept.id">
-                          <span class="text-sm">{{ dept.code }}</span>
-                        </mat-option>
-                      }
-                    </mat-autocomplete>
-                  </div>
-                } @else {
-                    @if(primaryAddressee(); as p) {
-                  <div class="field mb-3">
-                      <p class="font-medium mb-1 text-xs">Primary Addressee</p>
-                        <div class="card pointer-events-none opacity-50 font-medium capitalize">
-                            The {{ p.title }}
-                        </div>
-                  </div>
-                }
-                  <div class="field">
-                    <p class="font-medium mb-1 text-xs">CC:</p>
-
-                    <mat-chip-grid #chipGrid aria-label="Designation addressee selection for CC">
                       @for (selectedDesignation of selectedDesignationsForCC(); track $index) {
-                        <mat-chip-row (removed)="remove(selectedDesignation)">
+                        <mat-chip-row (removed)="removeDesig(selectedDesignation)">
                           {{ getDesignationFromId(selectedDesignation).title }}
-                          <button matChipRemove [attr.aria-label]="'remove ' + getDesignationFromId(selectedDesignation).title">
+                          <button
+                            matChipRemove
+                            [attr.aria-label]="
+                              'remove ' + getDesignationFromId(selectedDesignation).title
+                            "
+                          >
                             <ng-icon name="hugeCancelCircle" />
                           </button>
                         </mat-chip-row>
@@ -200,17 +194,18 @@
                     <input
                       type="text"
                       placeholder="Select the addressee"
-                      aria-label="Change who this internal correspondence is addressed to"
-                      formControlName="addressee"
-                      [matChipInputFor]="chipGrid"
-                      [matAutocomplete]="addresseeAuto"
+                      aria-label="Adds to the list of all this internal correspondence is addressed to"
+                      formControlName="addresseesForInternalDocs"
+                      [matChipInputFor]="chipGridForInternalDocs"
+                      [matAutocomplete]="addresseeAutoForInternalDocs"
                       class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-                      (input)="updateDeptSearch($event)"
                     />
+                    <!-- (input)="updateDeptSearch($event)" -->
 
                     <mat-autocomplete
-                      #addresseeAuto="matAutocomplete"
+                      #addresseeAutoForInternalDocs="matAutocomplete"
                       [displayWith]="showDesignationTitleRatherThanId"
+                      (optionSelected)="selectedDesig($event)"
                     >
                       @for (unitMember of filteredUnitMembersForCC(); track unitMember) {
                         <mat-option [value]="unitMember.designation.id">
@@ -218,8 +213,48 @@
                         </mat-option>
                       }
                     </mat-autocomplete>
-                  </div>
-                }
+                  } @else {
+                    <mat-chip-grid
+                      #chipGridForExternalDocs
+                      aria-label="Units addressee selection for CC"
+                    >
+                      @for (selectedUnit of selectedUnitsForCC(); track $index) {
+                        <mat-chip-row (removed)="removeUnit(selectedUnit)">
+                          {{ getUnitFromId(selectedUnit).code }}
+                          <button
+                            matChipRemove
+                            [attr.aria-label]="'remove ' + getUnitFromId(selectedUnit).code"
+                          >
+                            <ng-icon name="hugeCancelCircle" />
+                          </button>
+                        </mat-chip-row>
+                      }
+                    </mat-chip-grid>
+
+                    <input
+                      type="text"
+                      placeholder="Select additional addressees"
+                      aria-label="Adds to list of units this internal correspondence is addressed to"
+                      formControlName="addresseesForExternalDocs"
+                      [matChipInputFor]="chipGridForExternalDocs"
+                      [matAutocomplete]="addresseeAutoForExternalDocs"
+                      class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
+                      (input)="updateUnitSearch($event)"
+                    />
+
+                    <mat-autocomplete
+                      #addresseeAutoForExternalDocs="matAutocomplete"
+                      [displayWith]="showUnitLabelRatherThanId"
+                      (optionSelected)="selectedUnit($event);"
+                    >
+                      @for (unit of filteredUnitsForCC(); track unit) {
+                        <mat-option [value]="unit.id">
+                          <span class="text-sm">{{ unit.code }}</span>
+                        </mat-option>
+                      }
+                    </mat-autocomplete>
+                  }
+                </div>
               </div>
               <!-- <div>
               <div class="field">

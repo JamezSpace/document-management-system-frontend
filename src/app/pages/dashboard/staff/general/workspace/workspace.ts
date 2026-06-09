@@ -1,24 +1,24 @@
 import {
-    Component,
-    computed,
-    effect,
-    ElementRef,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
 } from '@angular/core';
 import {
-    FormControl,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import {
-    MatAutocompleteModule,
-    MatAutocompleteSelectedEvent,
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -26,22 +26,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeCancelCircle } from '@ng-icons/huge-icons';
 import {
-    lucideArrowLeft,
-    lucideFile,
-    lucideFileLock,
-    lucideGripVertical,
-    lucideHistory,
-    lucideLock,
-    lucideLockOpen,
-    lucidePanelLeftClose,
-    lucidePanelRightClose,
-    lucidePlus,
-    lucidePrinter,
-    lucideSave,
-    lucideSend,
-    lucideUserRound,
-    lucideZoomIn,
-    lucideZoomOut,
+  lucideArrowLeft,
+  lucideFile,
+  lucideFileLock,
+  lucideGripVertical,
+  lucideHistory,
+  lucideLock,
+  lucideLockOpen,
+  lucidePanelLeftClose,
+  lucidePanelRightClose,
+  lucidePlus,
+  lucidePrinter,
+  lucideSave,
+  lucideSend,
+  lucideUserRound,
+  lucideZoomIn,
+  lucideZoomOut,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { HlmAccordionImports } from '@spartan-ng/helm/accordion';
@@ -59,7 +59,6 @@ import { MemoBodyEditor } from '../../../../../components/editors/memo-body-edit
 import { MemoTemplate } from '../../../../../components/editors/templates/memo-template/memo-template';
 import { LineLoader } from '../../../../../components/system-wide/loaders/line-loader/line-loader';
 import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { MinuteAction } from '../../../../../enum/document/minute.enum';
 import { OrgUnitCategory } from '../../../../../enum/identity/unitCategory.enum';
 import { DocumentApi } from '../../../../../interfaces/api/documents/Document.api';
@@ -75,13 +74,13 @@ import { StaffDetailsService } from '../../../../../services/page-wide/dashboard
 import { StaffService } from '../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { WorkspaceService } from '../../../../../services/page-wide/dashboard/workspace/workspace-service';
 import { UtilService } from '../../../../../services/system-wide/util-service/util-service';
+import { emptyUnit } from '../../../../../interfaces/api/org units/units.api';
 
 @Component({
   selector: 'nexus-workspace',
   imports: [
     NgIcon,
     SpartanMuted,
-    SpartanP,
     LineLoader,
     MemoTemplate,
     MemoBodyEditor,
@@ -162,12 +161,12 @@ export class Workspace implements OnInit, OnDestroy {
     const a = this.documentService.isValidToShowPrintPreviewMenuOptions();
     const b = this.paperViewControls();
 
-    console.log("service computation: ",a);
-    console.log("eligible print preview: ", this.isEligibleForPrintPreview());
-    console.log("hover: ",b);
-    
-    return a && b
-});
+    console.log('service computation: ', a);
+    console.log('eligible print preview: ', this.isEligibleForPrintPreview());
+    console.log('hover: ', b);
+
+    return a && b;
+  });
 
   readonly isEligibleForPrintPreview = computed(
     () => this.documentService.autoPrintPreview() || this.manualPrintPreview(),
@@ -243,10 +242,13 @@ export class Workspace implements OnInit, OnDestroy {
         this.unitService.fetchOrgUnits();
       }
     }
+
+    this.documentDirection.set(doc.correspondence.direction);
   });
 
   isMobile = this.utilService.isMobile;
   documentType = this.docTypesService.docType;
+  documentDirection = signal<string>('');
 
   memoDocument = computed(() => {
     const doc = this.document();
@@ -257,10 +259,12 @@ export class Workspace implements OnInit, OnDestroy {
     const originUnit = staff.unit;
     const primaryAddressee = doc.addressees.find((addr) => addr.isPrimary)!;
 
-    const recipientUnit = this.units().find(unit => unit.id === primaryAddressee.recipientUnitId);
-    const recipientDesignation = this.designations().find(desig => desig.id === primaryAddressee.addressedToDesignationId);
+    const recipientUnit = this.units().find((unit) => unit.id === primaryAddressee.recipientUnitId);
+    const recipientDesignation = this.designations().find(
+      (desig) => desig.id === primaryAddressee.addressedToDesignationId,
+    );
 
-    if(!recipientUnit || !recipientDesignation) return;
+    if (!recipientUnit || !recipientDesignation) return;
 
     return type.code === 'memo'
       ? {
@@ -269,14 +273,14 @@ export class Workspace implements OnInit, OnDestroy {
             unit: originUnit,
           },
           recipient: {
-            unit: { 
-                id: primaryAddressee.recipientUnitId,
-                name: recipientUnit.fullName
-             },
-            designation: { 
-                id: primaryAddressee.addressedToDesignationId,
-                title: recipientDesignation.title
-             },
+            unit: {
+              id: primaryAddressee.recipientUnitId,
+              name: recipientUnit.fullName,
+            },
+            designation: {
+              id: primaryAddressee.addressedToDesignationId,
+              title: recipientDesignation.title,
+            },
           },
         }
       : null;
@@ -345,9 +349,14 @@ export class Workspace implements OnInit, OnDestroy {
   }
 
   documentMetadata = new FormGroup({
-    department: new FormControl(''),
-    volume: new FormControl(''),
-    addressee: new FormControl(''),
+    addresseesForInternalDocs: new FormControl<string>('', {
+      nonNullable: this.documentDirection() === 'internal' ? true : false,
+      validators: Validators.required,
+    }),
+    addresseesForExternalDocs: new FormControl<string>('', {
+      nonNullable: this.documentDirection() === 'external' ? true : false,
+      validators: Validators.required,
+    }),
   });
 
   isMinuting = false;
@@ -368,6 +377,15 @@ export class Workspace implements OnInit, OnDestroy {
     const filterValue = this.searchUnitValue().toLowerCase();
 
     return this.units().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
+  });
+
+  filteredUnitsForCC = computed(() => {
+    // exclude origin unit from the list
+    return this.filteredUnits().filter((unit) => {
+      const primaryAddresseeUnitId = this.primaryAddresseeForExternalDocs().id;
+
+      unit.id !== primaryAddresseeUnitId;
+    });
   });
 
   searchAddresseeValue = signal<string>('');
@@ -395,8 +413,17 @@ export class Workspace implements OnInit, OnDestroy {
         return uiData;
       });
   });
+  
+  filteredUnitMembersForCC = computed(() => {
+    // exclude primary addressee from the list
+    return this.filteredUnitMembers().filter((member) => {
+      const primaryAddresseeId = this.primaryAddresseeForInternalDocs().id;
 
-  primaryAddressee = computed(() => {
+      member.id !== primaryAddresseeId;
+    });
+  });
+
+  primaryAddresseeForInternalDocs = computed(() => {
     const doc = this.document();
 
     if (!doc) return emptyDesignation;
@@ -405,19 +432,25 @@ export class Workspace implements OnInit, OnDestroy {
     return this.getDesignationFromId(designationId);
   });
 
-  filteredUnitMembersForCC = computed(() => {
-    // exclude primary addressee from the list
-    return this.filteredUnitMembers().filter((member) => {
-      const primaryAddresseeId = this.primaryAddressee()?.id;
+  primaryAddresseeForExternalDocs = computed(() => {
+    const doc = this.document();
 
-      member.id !== primaryAddresseeId;
-    });
+    if (!doc) return emptyUnit;
+
+    const unitId = doc.addressees.find((d) => d.isPrimary)!.recipientUnitId;
+
+    return this.getUnitFromId(unitId);
   });
+
 
   designations = this.staffService.officesDesignations;
   getDesignationFromId(designationId: string) {
     return this.designations().find((d) => d.id === designationId) ?? emptyDesignation;
   }
+  getUnitFromId(unitId: string) {
+    return this.units().find((unit) => unit.id === unitId) ?? emptyUnit;
+  }
+
   showDesignationTitleRatherThanId = (designationId: string) => {
     const designationTitle = this.getDesignationFromId(designationId).title;
 
@@ -427,8 +460,9 @@ export class Workspace implements OnInit, OnDestroy {
       .join(' ')}`;
   };
 
+  selectedUnitsForCC = signal<string[]>([]);
   selectedDesignationsForCC = signal<string[]>([]);
-  selected(event: MatAutocompleteSelectedEvent): void {
+  selectedDesig(event: MatAutocompleteSelectedEvent): void {
     this.selectedDesignationsForCC.update((selectedDesignationsForCC) => [
       ...selectedDesignationsForCC,
       event.option.viewValue,
@@ -436,8 +470,16 @@ export class Workspace implements OnInit, OnDestroy {
 
     event.option.deselect();
   }
+  selectedUnit(event: MatAutocompleteSelectedEvent): void {
+    this.selectedUnitsForCC.update((selectedUnitsForCC) => [
+      ...selectedUnitsForCC,
+      event.option.viewValue,
+    ]);
 
-  remove(designationId: string): void {
+    event.option.deselect();
+  }
+
+  removeDesig(designationId: string): void {
     this.selectedDesignationsForCC.update((selectedDesignationsForCC) => {
       const index = selectedDesignationsForCC.indexOf(designationId);
       if (index < 0) {
@@ -449,14 +491,23 @@ export class Workspace implements OnInit, OnDestroy {
     });
   }
 
-  updateDeptSearch(event: Event) {
+  removeUnit(unitId: string): void {
+    this.selectedUnitsForCC.update((selectedUnitsForCC) => {
+      const index = selectedUnitsForCC.indexOf(unitId);
+      if (index < 0) {
+        return selectedUnitsForCC;
+      }
+
+      selectedUnitsForCC.splice(index, 1);
+      return [...selectedUnitsForCC];
+    });
+  }
+
+  updateUnitSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchUnitValue.set(value);
   }
-  updateVolSearch(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchVolValue.set(value);
-  }
+
 
   // scans for signature placeholder
   signaturePlaceholderBounds = computed(() => this.scanForSignaturePlaceholderAndReturnBounds());

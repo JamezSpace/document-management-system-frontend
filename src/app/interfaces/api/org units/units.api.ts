@@ -1,5 +1,5 @@
 interface UnitsApi {
-  id: string;
+  id: '';
   code: string;
   fullName: string;
   description: string;
@@ -10,4 +10,15 @@ interface UnitsApi {
   subunits: UnitsApi[];
 }
 
-export type { UnitsApi };
+const emptyUnit: UnitsApi = {
+  id: '',
+  code: '',
+  fullName: '',
+  description: '',
+  sector: '',
+  parentId: '',
+  createdAt: new Date(),
+  subunits: []
+};
+
+export { type UnitsApi, emptyUnit };
