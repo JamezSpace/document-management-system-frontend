@@ -39,8 +39,9 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
 
   workspaceMode = this.documentService.workspaceMode;
   isReadOnly = this.documentService.isReadOnly;
-readonly isPrintPreview = computed(
-    () =>  this.documentService.autoPrintPreview() || this.documentService.getManualPrintPreview);
+  readonly isPrintPreview = computed(
+    () => this.documentService.autoPrintPreview() || this.documentService.getManualPrintPreview()
+  );
 
   ngAfterViewInit(): void {
     this.initializeQuillWhenReady();
@@ -49,14 +50,14 @@ readonly isPrintPreview = computed(
   ngOnDestroy(): void {
     if (this.saveTimer) {
       clearTimeout(this.saveTimer);
-      
+
       // trigger the service update here if needed
     }
 
     this.previewRenderer = null;
   }
 
-  private memoEditorContentEffect = effect(() => {
+  MemoEditorContentEffect = effect(() => {
     const quill = this.quill();
 
     const savedContent = this.documentService.quillEditorContent();
@@ -88,7 +89,7 @@ readonly isPrintPreview = computed(
     return this.previewRenderer.getSemanticHTML();
   });
 
-  private readonly lockEffect = effect(() => {
+  LockEffect = effect(() => {
     const quill = this.quill();
 
     if (!quill) return;

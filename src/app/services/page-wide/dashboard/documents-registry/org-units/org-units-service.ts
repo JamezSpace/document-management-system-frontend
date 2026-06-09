@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { UnitsApi } from '../../../../../interfaces/api/org units/units.api';
+import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class OrgUnitsService {
   private http = inject(HttpClient);
 
   units = signal<UnitsApi[]>([]);
-  error = signal<any>(null);
+  error = signal<ErrorType | null>(null);
 
   fetchOrgUnits() {
     this.http.get<ApiResponse<UnitsApi[]>>(`${environment.api}/identity/units`)

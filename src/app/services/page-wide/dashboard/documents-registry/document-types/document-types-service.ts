@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { DocTypeApi } from '../../../../../interfaces/api/documents/docType/docType.api';
+import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class DocumentTypesService {
 
   allDocTypes = signal<DocTypeApi[]>([]);
   docType = signal<DocTypeApi | null>(null);
-  error = signal<any>(null);
+  error = signal<ErrorType | null>(null);
 
   fetchDocTypes() {
     this.http.get<ApiResponse<DocTypeApi[]>>(`${environment.api}/document/types`)

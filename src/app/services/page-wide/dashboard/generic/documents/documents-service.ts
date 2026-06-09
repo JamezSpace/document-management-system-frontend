@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Delta, Op } from 'quill';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
+import { LifecycleActions } from '../../../../../enum/document/document.enum';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 import {
-  DocumentApi,
-  InitDocumentApiPayload,
+    DocumentApi,
+    InitDocumentApiPayload,
 } from '../../../../../interfaces/api/documents/Document.api';
-import { LifecycleActions } from '../../../../../enum/document/document.enum';
 import { UtilService } from '../../../../system-wide/util-service/util-service';
 
 @Injectable({
@@ -36,8 +36,8 @@ export class DocumentsService {
 
   readonly autoPrintPreview = computed(() => this.isReadOnly());
   private manualPrintPreview = signal<boolean>(false);
-  public get getManualPrintPreview(): boolean {
-    return this.manualPrintPreview();
+  public get getManualPrintPreview(): WritableSignal<boolean> {
+    return this.manualPrintPreview;
   }
 
   public set setManualPrintPreview(value: boolean) {
@@ -46,7 +46,7 @@ export class DocumentsService {
   }
 
 
-  showPrintPreviewMenuOptions = computed(() => {
+  isValidToShowPrintPreviewMenuOptions = computed(() => {
     // reviewers MUST NOT trigger menu button to escape print preview
     if (this.workspaceMode() === 'reviewer') return false;
 
@@ -137,11 +137,12 @@ export class DocumentsService {
       });
   }
 
+  saveDocumentLoading = signal<boolean>(false);
   saveDocument(
     docId: string,
     payload: { document: DocumentApi; contentDelta: unknown; actorId: string },
   ) {
-    this.loading.set(true);
+    this.saveDocumentLoading.set(true);
 
     this.http
       .post<ApiResponse<DocumentApi>>(`${environment.api}/document/${docId}/save`, {
@@ -149,7 +150,7 @@ export class DocumentsService {
         document: payload.document,
         actorId: payload.actorId,
       })
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(finalize(() => this.saveDocumentLoading.set(false)))
       .subscribe({
         next: (resp) => {
           // set data

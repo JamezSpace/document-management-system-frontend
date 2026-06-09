@@ -1,4 +1,4 @@
-<div [class.print-preview]="isPrintPreview()" #workspaceRoot>
+<div [class.print-preview]="isEligibleForPrintPreview()" #workspaceRoot>
   <!-- top bar -->
   <section class="flex-center justify-between px-2.5 py-2 top-bar">
     <div id="left-section" class="flex-center gap-4">
@@ -70,7 +70,8 @@
             class="nexus-button flex-center gap-2.5 scale-90"
             (click)="saveDocument()"
           >
-            <span>Save</span>
+            @if(!saveDocumentLoading()) {<span>Save</span>}
+            @else {<hlm-spinner class="text-base md:text-lg" />}
           </button>
         }
         @if (
@@ -166,7 +167,7 @@
                       #deptAuto="matAutocomplete"
                       [displayWith]="showUnitLabelRatherThanId"
                     >
-                      @for (dept of filteredUnits(); track dept) {
+                      @for (dept of filteredUnits(); track dept.id) {
                         <mat-option [value]="dept.id">
                           <span class="text-sm">{{ dept.code }}</span>
                         </mat-option>
@@ -531,7 +532,7 @@
           class="rounded-xs origin-top-center relative"
           [style.transform]="canvasTransform()"
         >
-          <div class="paper-actions" [class.visible]="showPrintPreviewMenuOptions()">
+          <div class="paper-actions" [class.visible]="isValidToShowPrintPreviewMenuOptions()">
             <button
               class="flex-center p-2 rounded-full bg-muted-foreground/5"
               [hlmDropdownMenuTrigger]="dropdownMenu"

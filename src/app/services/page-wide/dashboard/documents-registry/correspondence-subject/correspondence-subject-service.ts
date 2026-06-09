@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { CorrSubjectApi } from '../../../../../interfaces/api/documents/corrSubject/corrSubject.api';
+import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class CorrespondenceSubjectService {
   private http = inject(HttpClient);
 
   corrSubjects = signal<CorrSubjectApi[]>([]);
-  error = signal<any>(null);
+  error = signal<ErrorType | null>(null);
 
   fetchCorrSubjects() {
     this.http.get<ApiResponse<CorrSubjectApi[]>>(`${environment.api}/document/subjects`)

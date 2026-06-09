@@ -11,10 +11,12 @@
   </nexus-spartan-p>
 
   @if (correspondence().document.correspondence.direction === 'external') {
-    <nexus-spartan-p><b>FROM:</b> {{ correspondence().origin.designation.title }}</nexus-spartan-p>
+    <nexus-spartan-p><b>TO:</b> 
+        The <span class="capitalize">{{ correspondence().recipient.designation.title }}</span>, 
+        <span>{{ correspondence().recipient.unit.name }}</span>
+    </nexus-spartan-p>
   }
 
-  <!-- <nexus-spartan-p><b>TO:</b> {{ memoDetails.to }}</nexus-spartan-p> -->
   <nexus-spartan-p
     ><b>DATE:</b>
     {{

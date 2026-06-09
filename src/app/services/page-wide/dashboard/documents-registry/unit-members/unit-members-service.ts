@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { StaffMember } from '../../../../../interfaces/api/staff/StaffMember.api';
+import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class UnitMembersService {
   private http = inject(HttpClient);
 
   data = signal<StaffMember[]>([]);
-  error = signal<any>(null);
+  error = signal<ErrorType | null>(null);
 
   fetchUnitMembers(unitId: string) {
   this.http

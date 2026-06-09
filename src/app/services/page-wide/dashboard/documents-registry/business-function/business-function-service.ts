@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
 import { BussFunctionApi } from '../../../../../interfaces/api/documents/bussFunction/bussFunction.api';
+import { ErrorType } from '../../../../../interfaces/api/Error.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class BusinessFunctionService {
   private http = inject(HttpClient);
 
   bussFunctions = signal<BussFunctionApi[]>([]);
-  error = signal<any>(null);
+  error = signal<ErrorType | null>(null);
 
   fetchBussFunctions() {
     this.http.get<ApiResponse<BussFunctionApi[]>>(`${environment.api}/document/functions`)

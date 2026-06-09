@@ -8,12 +8,17 @@ interface CorrespondenceToBeRendered {
       name: string;
       id: string;
     };
-    designation: {
-      id: string;
-      title: string;
-    };
   };
+  recipient: {
+    unit: {
+      id: string;
+      name: string;
+    };
+    designation: {
+        id: string;
+        title: string;
+    }
+  }
 }
 
 export type { CorrespondenceToBeRendered };
-

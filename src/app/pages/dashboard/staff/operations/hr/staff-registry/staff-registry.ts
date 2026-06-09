@@ -227,7 +227,6 @@ export class StaffRegistry implements OnInit {
       {
         value: {
           id: '',
-          hierarchyLevel: 0,
           officeId: '',
           title: '',
         },
