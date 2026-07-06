@@ -37,7 +37,7 @@ import {
   SubMenu,
 } from '../../../../interfaces/ui/navigation/NavBarItem.interface';
 import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
-import { Workspace } from '../../staff/general/workspace/workspace';
+import { Workspace } from '../../../../features/workspace/page/workspace';
 import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
 import { AuthService } from '../../../../services/page-wide/auth/auth-service';
 import { NoticesService } from '../../../../services/page-wide/dashboard/generic/notices/notices-service';
@@ -118,7 +118,7 @@ export class DashboardOfficeTemplate implements OnInit {
     }
   });
 
-  trackUnreadNotifications = effect(() => {
+  TrackUnreadNotificationsEffect = effect(() => {
     const notices = this.noticeService.notices();
 
     const unread = notices.filter(
@@ -129,7 +129,7 @@ export class DashboardOfficeTemplate implements OnInit {
     this.unreadNotificationsPresent.set(unread.length > 0);
   });
 
-  loadContext = effect(() => {
+  LoadContextEffect = effect(() => {
     const staff = this.staffDetailsService.data();
 
     if (staff) {

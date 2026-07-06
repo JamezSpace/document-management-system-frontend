@@ -46,3 +46,4 @@ Thumbs.db
 src/environments/environment.development.ts
 src/environments/environment.ts
 gen-commit.ps1
+src/pre-structural-change.md

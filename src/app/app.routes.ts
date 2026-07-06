@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { Auth } from './pages/auth/auth';
+import { Auth } from './features/auth/page/auth';
 import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
 import { authGuard } from './guards/auth-guard';
 import { Unauthorized } from './pages/shared/unauthorized/unauthorized/unauthorized';
