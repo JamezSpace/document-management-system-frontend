@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
 import { DocTypeApi } from '../../../../models/api/documents/docType/docType.api';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 
 
 @Injectable({
@@ -14,7 +14,7 @@ export class DocumentTypesService {
 
   allDocTypes = signal<DocTypeApi[]>([]);
   docType = signal<DocTypeApi | null>(null);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
 
   fetchDocTypes() {
     this.http.get<ApiResponse<DocTypeApi[]>>(`${environment.api}/document/types`)

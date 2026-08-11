@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { Auth } from './features/auth/page/auth';
 import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
-import { authGuard } from './guards/auth-guard';
+import { authGuard } from './core/guards/auth-guard';
 import { Unauthorized } from './pages/shared/unauthorized/unauthorized/unauthorized';
-import { OnboardingEntity } from './pages/onboarding/onboarding-entity/onboarding-entity';
-import { PasswordReset } from './pages/onboarding/password-reset/password-reset';
+import { OnboardingEntity } from './features/onboarding/pages/onboarding-entity/onboarding-entity';
+import { PasswordReset } from './features/onboarding/pages/password-reset/password-reset';
 
 export const routes: Routes = [
   // public/auth route
@@ -49,16 +49,12 @@ export const routes: Routes = [
       {
         path: 'documents',
         loadComponent: () =>
-          import('./pages/dashboard/staff/general/documents/documents').then(
-            (page) => page.Documents,
-          ),
+          import('./features/documents/page/document-registry').then((page) => page.DocumentRegistry),
       },
       {
         path: 'documents/workspace/:id',
         loadComponent: () =>
-          import('./pages/dashboard/staff/general/workspace/workspace').then(
-            (page) => page.Workspace,
-          ),
+          import('./features/workspace/page/workspace').then((page) => page.Workspace),
       },
       {
         path: 'notices',

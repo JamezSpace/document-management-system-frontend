@@ -1,0 +1,11 @@
+<div class="flex-center absolute right-3.5 top-2.5 z-5">
+     <button (click)="zoomOut()"
+          class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center">
+          <ng-icon name="lucideZoomOut" />
+     </button>
+     <span class="mx-2.5">{{ (zoomLevel() * 100).toFixed(0) }}%</span>
+     <button (click)="zoomIn()"
+          class="rounded-full bg-border/30 hover:bg-border w-7.5 h-7.5 flex-center justify-center">
+          <ng-icon name="lucideZoomIn" />
+     </button>
+</div>

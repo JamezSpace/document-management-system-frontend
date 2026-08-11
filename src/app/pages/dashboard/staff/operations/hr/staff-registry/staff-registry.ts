@@ -29,27 +29,25 @@ import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmRadioGroupImports } from '@spartan-ng/helm/radio-group';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { InvitesListView } from '../../../../../../components/dashboard-wide/operations/invites-list-view/invites-list-view';
-import { StaffListView } from '../../../../../../components/dashboard-wide/operations/staff-list-view/staff-list-view';
-import { StatusModal } from '../../../../../../components/dashboard-wide/shared/status-modal/status-modal';
-import { EmptyState } from '../../../../../../components/system-wide/empty-state/empty-state';
-import { LineLoader } from '../../../../../../components/system-wide/loaders/line-loader/line-loader';
-import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { EmploymentType } from '../../../../../../enum/staff/employmentType.enum';
-import { DesignationApi } from '../../../../../../interfaces/api/org units/designation.api';
-import { OfficeApi } from '../../../../../../interfaces/api/org units/offices.api';
-import {
-    EmptyStateInterface,
-    EmptyStateType,
-} from '../../../../../../interfaces/ui/global/EmptyState.ui';
-import { NotifStatus } from '../../../../../../interfaces/ui/global/NotifStatus.ui';
-import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
-import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { InviteService } from '../../../../../../services/page-wide/onboarding/invite/invite-service';
-import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
+import { CurrentStaffService } from '../../../../../../features/shared/services/current-staff/current-staff-service';
+import { StaffService } from '../../../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { EmploymentType } from '../../../../../../enums/staff/employmentType.enum';
+import { InviteService } from '../../../../../../features/onboarding/services/invite/invite-service';
+import { DesignationApi } from '../../../../../../models/api/organization/designation.api';
+import { OfficeApi } from '../../../../../../models/api/organization/offices.api';
+import { EmptyStateInterface, EmptyStateType } from '../../../../../../models/ui/global/EmptyState.ui';
+import { NotifStatus } from '../../../../../../models/ui/global/NotifStatus.ui';
+import { InvitesListView } from '../../../../../../shared/components/dashboard-wide/operations/invites-list-view/invites-list-view';
+import { StaffListView } from '../../../../../../shared/components/dashboard-wide/operations/staff-list-view/staff-list-view';
+import { EmptyState } from '../../../../../../shared/components/empty-state/empty-state';
+import { LineLoader } from '../../../../../../shared/components/loaders/line-loader/line-loader';
+import { StatusModal } from '../../../../../../shared/components/status-modal/status-modal';
+import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
+import { SpartanH4 } from '../../../../../../shared/typography/spartan-h4/spartan-h4';
+import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
+import { UtilService } from '../../../../../../shared/utils/service/util-service';
+import { OrganizationService } from '../../../../../../features/shared/services/organization/organization-service';
 
 @Component({
   selector: 'nexus-staff-registry',
@@ -98,15 +96,16 @@ import { UtilService } from '../../../../../../services/system-wide/util-service
 })
 export class StaffRegistry implements OnInit {
   private utilService = inject(UtilService);
-  private staffService = inject(StaffService);
-  private inviteService = inject(InviteService);
-  private staffDetailsService = inject(StaffDetailsService);
-  private activatedRouter = inject(ActivatedRoute);
+  staffService = inject(StaffService);
+  organizationService = inject(OrganizationService);
+  inviteService = inject(InviteService);
+  currentStaffService = inject(CurrentStaffService);
+  activatedRouter = inject(ActivatedRoute);
 
   private queryParams = toSignal(this.activatedRouter.queryParamMap);
   viewMode = computed(() => this.queryParams()?.get('view'));
 
-  readonly loggedInStaff = this.staffDetailsService.data()!;
+  readonly loggedInStaff = this.currentStaffService.data()!;
 
   directories = signal<string[]>([]);
   isMobile = this.utilService.isMobile;
@@ -146,8 +145,8 @@ export class StaffRegistry implements OnInit {
 
     // staff init deps
     this.staffService.fetchAllStaff();
-    this.staffService.fetchAllOffices();
-    this.staffService.fetchAllDesignations();
+    this.organizationService.fetchAllOffices(this.loggedInStaff.unit.id);
+    this.organizationService.fetchAllDesignations();
     this.inviteService.fetchAllInvites();    
   }
 

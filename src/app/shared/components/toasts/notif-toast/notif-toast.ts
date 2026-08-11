@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBarLabel } from '@angular/material/snack-bar';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { hugeInformationSquare, hugeTick04 } from '@ng-icons/huge-icons';
 
 @Component({
   selector: 'nexus-notif-toast',
-  imports: [NgIcon],
+  imports: [NgIcon, MatSnackBarLabel],
   templateUrl: './notif-toast.html',
   styleUrl: './notif-toast.css',
   providers: [

@@ -1,4 +1,4 @@
-import { NotificationPreference, NotificationPriority, NotificationRecipientType, NotificationState } from "../../../enum/notices/notices.enum";
+import { NotificationRecipientType, NotificationPreference, NotificationPriority, NotificationState } from "../../../enums/notices/notices.enum";
 
 interface NoticesApi {
      notificationId: string;

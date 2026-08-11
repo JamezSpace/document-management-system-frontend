@@ -4,8 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LineLoader } from '../../../../shared/components/loaders/line-loader/line-loader';
 import { UtilService } from '../../../../shared/utils/service/util-service';
 import { OnboardingService } from '../../services/session/onboarding-service';
-import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
-import { StaffService } from '../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { StaffService } from '../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { OnboardingNavBar } from '../../../../shared/components/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
+
 
 @Component({
   selector: 'nexus-password-reset',

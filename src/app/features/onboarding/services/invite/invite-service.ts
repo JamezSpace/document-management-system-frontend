@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 import { InviteStaffPayload } from '../../../../models/api/staff/InitStaff.api';
 import { InviteApi } from '../../../../models/api/staff/Invite.api';
 import { UtilService } from '../../../../shared/utils/service/util-service';
@@ -17,7 +17,7 @@ export class InviteService {
   private utilService = inject(UtilService);
 
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
 
   invites = signal<InviteApi[]>([]);
 
@@ -42,12 +42,12 @@ export class InviteService {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.inviteSent.set(true),
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
 
           this.utilService.showToast(
             'error',
-            err.error.message || 'Something went wrong. Try again!',
+            err.message || 'Something went wrong. Try again!',
           );
         },
       });
@@ -109,12 +109,12 @@ export class InviteService {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => console.log('Deleted Invite:', resp.success),
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
 
           this.utilService.showToast(
             'error',
-            err.error.message || 'Something went wrong. Try again!',
+            err.message || 'Something went wrong. Try again!',
           );
         },
       });
@@ -129,12 +129,12 @@ export class InviteService {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.nudgeSuccessful.set(true),
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
 
           this.utilService.showToast(
             'error',
-            err.error.message || 'Something went wrong. Try again!',
+            err.message || 'Something went wrong. Try again!',
           );
         },
       });

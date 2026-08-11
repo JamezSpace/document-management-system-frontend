@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 import { StaffMember } from '../../../../models/api/staff/StaffMember.api';
 
 
@@ -13,7 +13,7 @@ export class UnitMembersService {
   private http = inject(HttpClient);
 
   data = signal<StaffMember[]>([]);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
 
   fetchUnitMembers(unitId: string) {
   this.http

@@ -1,0 +1,101 @@
+nexus-print-preview {
+  display: block;
+  width: 100%;
+}
+
+nexus-print-preview main {
+  --paper-color: #fff;
+
+  overflow-y: auto;
+  display: block;
+  width: 100%;
+  height: 100dvh;
+  background-color: var(--brand-surface-alt);
+  padding-block: 50px;
+}
+
+nexus-print-preview #paper {
+  --dynamic-shadow: oklch(from var(--paper-color) calc(l - 0.1) c h);
+
+  aspect-ratio: 1 / 1.4142;
+  width: 100%;
+  max-width: 800px;
+  margin-inline: auto;
+  padding: 2.5%;
+  background-color: var(--paper-color);
+  box-shadow: 0 0 30px -5px var(--dynamic-shadow);
+  border: 1px solid oklch(from var(--paper-color) calc(l + 0.05) c h);
+}
+
+nexus-print-preview .paper-wrapper {
+  position: relative;
+}
+
+nexus-print-preview .paper-actions {
+  position: absolute;
+  z-index: 5;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+nexus-print-preview .paper-actions.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+nexus-print-preview.print-preview {
+  background: oklch(0.95 0 0);
+}
+
+nexus-print-preview.print-preview main {
+  padding: 0;
+  background: transparent;
+  height: unset;
+}
+
+nexus-print-preview.print-preview #paper {
+  position: relative;
+  margin: 40px auto;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 10mm;
+  background: white;
+  box-shadow: 0 0 0.6cm rgba(0, 0, 0, 0.3);
+  max-width: none;
+  height: auto;
+  aspect-ratio: auto;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  nexus-print-preview #paper,
+  nexus-print-preview #paper * {
+    visibility: visible;
+  }
+
+  nexus-print-preview #paper {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 20mm;
+    width: auto;
+    min-height: auto;
+    box-shadow: none;
+    border: none;
+  }
+
+  nexus-print-preview .paper-actions {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+}

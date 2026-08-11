@@ -4,19 +4,17 @@ import { hugeSignature, hugeTimer01 } from '@ng-icons/huge-icons';
 import { saxTickCircleBold } from '@ng-icons/iconsax/bold';
 import { lucideScrollText } from '@ng-icons/lucide';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { DirectiveDetailApi } from '../../../../interfaces/operations/cio/DirectiveDetail.api';
-import { DirectivesService } from '../../../../services/page-wide/dashboard/operations/cio/directives/directives-service';
-import { SpartanH3 } from '../../../system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { HlmAlertDialog, HlmAlertDialogContent, HlmAlertDialogImports } from "@spartan-ng/helm/alert-dialog";
-import { BrnDialogTrigger } from "@spartan-ng/brain/dialog";
-import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
+import { HlmAlertDialogImports } from "@spartan-ng/helm/alert-dialog";
+import { DirectivesService } from '../../../../../core/services/page-wide/dashboard/operations/cio/directives/directives-service';
+import { DirectiveDetailApi } from '../../../../../models/api/directive/DirectiveDetail.api';
+import { SpartanH3 } from '../../../../typography/spartan-h3/spartan-h3';
+import { SpartanMuted } from '../../../../typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-directive-detail',
-  imports: [NgIcon, SpartanP, HlmSeparator, SpartanMuted, SpartanH3, HlmAlertDialog, BrnAlertDialogContent,
-    BrnAlertDialogTrigger, HlmAlertDialogImports,],
+  imports: [NgIcon, SpartanP, HlmSeparator, SpartanMuted, SpartanH3,
+    HlmAlertDialogImports],
   templateUrl: './directive-detail.html',
   styleUrl: './directive-detail.css',
   providers: [provideIcons({ saxTickCircleBold, hugeTimer01, hugeSignature, lucideScrollText })],

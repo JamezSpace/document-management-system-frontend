@@ -1,4 +1,4 @@
-import { MinuteAction } from "../../../../enum/document/minute.enum";
+import { MinuteAction } from "../../../../enums/document/minute.enum";
 
 interface MinuteApi {
     id: string;

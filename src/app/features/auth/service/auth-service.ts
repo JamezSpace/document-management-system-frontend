@@ -32,22 +32,10 @@ export class AuthService {
   }
 
   constructor() {
-    // Keep the 'user' signal in sync with Firebase automatically
+    // keep the 'user' signal in sync with Firebase automatically
     onAuthStateChanged(this.auth, (u) => {
       this.user.set(u);
     });
-  }
-
-  private capabilities = signal<string[]>([]);
-
-  loadUserContext(data: any) {
-    this.capabilities.set(data.authority.capabilities);
-  }
-
-  hasCapability(cap: string): boolean {
-    console.log(cap);
-
-    return this.capabilities().includes(cap);
   }
 
   /**
@@ -78,8 +66,6 @@ export class AuthService {
 
     try {
       await signInWithEmailAndPassword(this.auth, authUser.email, authUser.password);
-
-      this.router.navigateByUrl('/office');
 
       this.appLoading.set(true);
 

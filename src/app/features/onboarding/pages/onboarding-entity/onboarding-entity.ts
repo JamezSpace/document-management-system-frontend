@@ -25,7 +25,8 @@ import { UtilService } from '../../../../shared/utils/service/util-service';
 import { OnboardingService } from '../../services/session/onboarding-service';
 import { OnboardingSessionStatus } from '../../../../enums/onboarding/sessionStatus.enum';
 import { EntityType } from '../../../../models/api/onboarding/Entity.api';
-import { OnboardingNavBar } from '../../../components/system-wide/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
+import { OnboardingNavBar } from '../../../../shared/components/nav-bars/onboarding-nav-bar/onboarding-nav-bar';
+
 
 type PrimaryInformationData = {
   firstName: string;

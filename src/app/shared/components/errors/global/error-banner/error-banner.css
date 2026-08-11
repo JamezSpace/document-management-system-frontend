@@ -1,0 +1,7 @@
+:host { display: contents; }
+.error-banner { position: relative; z-index: 100; display: flex; align-items: center; gap: .75rem; padding: .75rem 1rem; border-bottom: 1px solid #fecaca; color: #991b1b; background: #fef2f2; }
+.error-banner div { display: flex; flex: 1; flex-wrap: wrap; gap: .25rem .75rem; }
+.error-banner span { color: #7f1d1d; }
+button { border: 0; background: transparent; color: inherit; cursor: pointer; }
+.action { display: inline-flex; align-items: center; gap: .375rem; font-weight: 650; }
+.dismiss { display: grid; place-items: center; padding: .25rem; }

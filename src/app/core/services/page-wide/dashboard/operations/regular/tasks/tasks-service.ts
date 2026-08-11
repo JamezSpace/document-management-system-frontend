@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { DirectiveUi } from '../../../../../../interfaces/operations/cio/Directive.ui';
+import { DirectiveUi } from '../../../../../../../models/api/directive/Directive.ui';
 
 @Injectable({
   providedIn: 'root',

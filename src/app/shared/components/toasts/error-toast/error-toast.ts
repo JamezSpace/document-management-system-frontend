@@ -17,6 +17,6 @@ import { lucideAlertOctagon } from '@ng-icons/lucide';
 export class ErrorToast {
   constructor(
     @Inject(MAT_SNACK_BAR_DATA)
-    public data: {errorMessage: string},
+    public data: {message: string},
   ) {}
 }

@@ -2,16 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
-import { environment } from '../../../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../../../interfaces/api/ApiResponse.interface';
-import { ErrorType } from '../../../../../../interfaces/api/Error.interface';
-import { DesignationApi } from '../../../../../../interfaces/api/org units/designation.api';
-import { OfficeApi } from '../../../../../../interfaces/api/org units/offices.api';
-import { Users } from '../../../../../../interfaces/api/users/users.api';
-import { UtilService } from '../../../../../system-wide/util-service/util-service';
-import { StaffDetailsService } from '../../../office-template/staff-details-service';
-import { InitStaffPayload } from '../../../../../../interfaces/api/staff/InitStaff.api';
-import { StaffWithMedia } from '../../../../../../interfaces/api/staff/StaffWithMedia.api';
+import { environment } from '../../../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../../../models/api/ApiResponse.api';
+import type { AppError } from '../../../../../../../models/ui/global/ErrorPresentation.ui';
+import { DesignationApi } from '../../../../../../../models/api/organization/designation.api';
+import { OfficeApi } from '../../../../../../../models/api/organization/offices.api';
+import { InitStaffPayload } from '../../../../../../../models/api/staff/InitStaff.api';
+import { StaffWithMedia } from '../../../../../../../models/api/staff/StaffWithMedia.api';
+import { Users } from '../../../../../../../models/api/users/users.api';
+import { UtilService } from '../../../../../../../shared/utils/service/util-service';
+import { CurrentStaffService } from '../../../../../../../features/shared/services/current-staff/current-staff-service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ import { StaffWithMedia } from '../../../../../../interfaces/api/staff/StaffWith
 export class StaffService {
   private http = inject(HttpClient);
   private utilService = inject(UtilService);
-  private staffDetailsService = inject(StaffDetailsService);
+  private currentStaffService = inject(CurrentStaffService);
   private router = inject(Router);
 
   initStaff = signal<InitStaffPayload | null>(null);
@@ -28,9 +28,9 @@ export class StaffService {
   officesInUnit = signal<OfficeApi[]>([]);
   officesDesignations = signal<DesignationApi[]>([]);
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
 
-  readonly loggedInStaff = this.staffDetailsService.data()!;
+  readonly loggedInStaff = this.currentStaffService.data()!;
 
   fetchAllUsers() {
         this.loading.set(true);
@@ -56,32 +56,6 @@ export class StaffService {
       });
   }
 
-  fetchAllOffices() {
-    this.loading.set(true);
-
-    this.http
-      .get<ApiResponse<OfficeApi[]>>(
-        `${environment.api}/identity/${this.loggedInStaff.unit.id}/offices`,
-      )
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (resp) => this.officesInUnit.set(resp.data),
-        error: (err) => this.error.set(err),
-      });
-  }
-
-  fetchAllDesignations() {
-    this.loading.set(true);
-
-    this.http
-      .get<ApiResponse<DesignationApi[]>>(`${environment.api}/identity/offices/designations`)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (resp) => this.officesDesignations.set(resp.data),
-        error: (err) => this.error.set(err),
-      });
-  }
-
   newlyAddedStaffId = signal<string>('');
   addNewStaff(payload: InitStaffPayload) {
     this.loading.set(true);
@@ -95,14 +69,14 @@ export class StaffService {
 
           this.router.navigateByUrl('/office/operations/staff');
         },
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
 
           console.log(err);
 
           this.utilService.showToast(
             'error',
-            err.error.message || 'Something went wrong. Try again!',
+            err.message || 'Something went wrong. Try again!',
           );
         },
       });
@@ -125,11 +99,11 @@ export class StaffService {
 
           console.log(resp.data);          
         },
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
           this.utilService.showToast(
             'error',
-            err.error?.message || 'Unable to activate staff account.',
+            err.message || 'Unable to activate staff account.',
           );
         },
       });
@@ -145,11 +119,11 @@ export class StaffService {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => console.log(resp.data),
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
           this.utilService.showToast(
             'error',
-            err.error?.message || 'Unable to activate staff account.',
+            err.message || 'Unable to activate staff account.',
           );
         },
       });
@@ -181,11 +155,11 @@ export class StaffService {
           );
           this.utilService.showToast('info', 'Staff record updated successfully.');
         },
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
           this.utilService.showToast(
             'error',
-            err.error?.message || 'Unable to update staff record.',
+            err.message || 'Unable to update staff record.',
           );
         },
       });
@@ -202,11 +176,11 @@ export class StaffService {
           this.staff.update((list) => list.filter((item) => item.id !== staffId));
           this.utilService.showToast('info', 'Staff record deleted successfully.');
         },
-        error: (err) => {
+        error: (err: AppError) => {
           this.error.set(err);
           this.utilService.showToast(
             'error',
-            err.error?.message || 'Unable to delete staff record.',
+            err.message || 'Unable to delete staff record.',
           );
         },
       });

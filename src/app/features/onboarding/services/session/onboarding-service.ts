@@ -11,8 +11,8 @@ import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { firebase_app } from '../../../../app.config';
 import { OnboardingSessionStatus } from '../../../../enums/onboarding/sessionStatus.enum';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 import { EntityResponse } from '../../../../models/api/onboarding/Entity.api';
 import { OnboardingSession } from '../../../../models/api/onboarding/OnboardingSession.api';
 import { StaffInvite } from '../../../../models/api/onboarding/StaffInvite.api';
@@ -38,7 +38,7 @@ export class OnboardingService {
   private utilService = inject(UtilService);
 
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
   entity = signal<EntityResponse<StaffInvite> | null>(null);
   staffToOnboard = signal<BaseStaffEntity | null>(null);
   onboardingSession = signal<OnboardingSession | null>(null);
@@ -129,18 +129,7 @@ export class OnboardingService {
 
           localStorage.setItem('entity', JSON.stringify(data));
         },
-        error: (err) => {
-          this.error.set({
-            code: {
-              httpStatusCode: err.status,
-              codeName: err.statusText,
-            },
-            context: {
-              message: err.error.error.message,
-              category: null,
-            },
-          });
-        },
+        error: (error: AppError) => this.error.set(error),
       });
   }
 

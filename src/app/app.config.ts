@@ -9,7 +9,8 @@ import { getAnalytics } from 'firebase/analytics';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
 import { environment } from '../environments/environment.development';
 import { routes } from './app.routes';
-import { authInterceptor } from './interceptors/auth/auth-interceptor';
+import { authInterceptor } from './core/interceptors/auth/auth-interceptor';
+import { errorInterceptor } from './core/interceptors/error/error-interceptor';
 
 // init firebase
 const firebaseConfig: FirebaseOptions = {
@@ -29,6 +30,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
   ],
 };

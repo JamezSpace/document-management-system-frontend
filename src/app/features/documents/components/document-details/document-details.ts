@@ -2,24 +2,24 @@ import { Component, computed, inject, input } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { lucideX } from '@ng-icons/lucide';
-import { DocumentApi } from '../../../../interfaces/api/documents/Document.api';
-import { BusinessFunctionService } from '../../../../services/page-wide/dashboard/documents-registry/business-function/business-function-service';
-import { CorrespondenceSubjectService } from '../../../../services/page-wide/dashboard/documents-registry/correspondence-subject/correspondence-subject-service';
-import { DocumentTypesService } from '../../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
-import { OrgUnitsService } from '../../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
-import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
-import { UnitMembersService } from '../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
-import { SpartanLarge } from "../../../system-wide/typography/spartan-large/spartan-large";
-import { SpartanMuted } from "../../../system-wide/typography/spartan-muted/spartan-muted";
-import { MinutesService } from '../../../../services/page-wide/dashboard/documents-registry/minutes/minutes-service';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
+import { SideModalService } from '../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { DocumentApi } from '../../../../models/api/documents/Document.api';
+import { SpartanLarge } from '../../../../shared/typography/spartan-large/spartan-large';
+import { SpartanMuted } from '../../../../shared/typography/spartan-muted/spartan-muted';
+import { UtilService } from '../../../../shared/utils/service/util-service';
+import { BusinessFunctionService } from '../../service/business-function/business-function-service';
+import { CorrespondenceSubjectService } from '../../service/correspondence-subject/correspondence-subject-service';
+import { DocumentTypesService } from '../../service/document-types/document-types-service';
+import { MinutesService } from '../../service/minutes/minutes-service';
+import { RegistryService } from '../../service/registry/registry-service';
+import { UnitMembersService } from '../../service/unit-members/unit-members-service';
+import { OrganizationService } from '../../../shared/services/organization/organization-service';
 
 
 @Component({
   selector: 'nexus-document-details',
-  imports: [MatTabsModule, SpartanLarge, NgIcon, SpartanMuted, HlmSpinnerImports],
+  imports: [MatTabsModule, SpartanLarge, NgIcon, HlmSpinnerImports],
   templateUrl: './document-details.html',
   styleUrl: './document-details.css',
   providers: [
@@ -33,7 +33,7 @@ export class DocumentDetails {
     bussFunctionService = inject(BusinessFunctionService);
     corrSubjectService = inject(CorrespondenceSubjectService);
     docTypesService = inject(DocumentTypesService)
-    unitService = inject(OrgUnitsService);
+    organizationService = inject(OrganizationService);
     unitMembersService = inject(UnitMembersService);
     minutesService = inject(MinutesService);
     documentToShowFullDetails = input.required<DocumentApi>();
@@ -53,7 +53,7 @@ export class DocumentDetails {
 
         if(!recipientUnitId) return;
 
-        return this.unitService.units().find(unit => unit.id === recipientUnitId)
+        return this.organizationService.units().find(unit => unit.id === recipientUnitId)
     })
 
     businessFuntion = computed(() => {

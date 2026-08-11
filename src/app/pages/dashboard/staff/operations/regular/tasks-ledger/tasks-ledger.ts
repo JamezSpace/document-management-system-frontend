@@ -1,16 +1,16 @@
 import { Component, effect, inject, OnInit, signal, ViewChild } from '@angular/core';
-import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { ActivatedRoute } from '@angular/router';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { DirectiveUi } from '../../../../../../interfaces/operations/cio/Directive.ui';
-import { NgIcon } from "@ng-icons/core";
-import { TaskDetail } from "../../../../../../components/dashboard-wide/operations/task-detail/task-detail";
-import { TasksService } from '../../../../../../services/page-wide/dashboard/operations/regular/tasks/tasks-service';
 import { BrnAvatar } from "@spartan-ng/brain/avatar";
-import { SpartanMuted } from "../../../../../../components/system-wide/typography/spartan-muted/spartan-muted";
+import { NgIcon } from '@ng-icons/core';
+import { TasksService } from '../../../../../../core/services/page-wide/dashboard/operations/regular/tasks/tasks-service';
+import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
+import { TaskDetail } from '../../../../../../shared/components/dashboard-wide/operations/task-detail/task-detail';
+import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
+import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
+import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-tasks-ledger',

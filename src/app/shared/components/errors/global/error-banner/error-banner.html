@@ -1,0 +1,14 @@
+@if (banner.error(); as error) {
+  <aside class="error-banner" role="alert" aria-live="assertive">
+    <ng-icon name="lucideTriangleAlert" aria-hidden="true" />
+    <div><strong>{{ error.title }}</strong><span>{{ error.message }}</span></div>
+    @if (hasRecovery()) {
+      <button type="button" class="action" (click)="recover()">
+        <ng-icon name="lucideRefreshCw" /> Recover
+      </button>
+    }
+    <button type="button" class="dismiss" aria-label="Dismiss error" (click)="banner.dismiss()">
+      <ng-icon name="lucideX" />
+    </button>
+  </aside>
+}

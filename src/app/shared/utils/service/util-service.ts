@@ -2,16 +2,14 @@ import { map } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthErrorCodes } from 'firebase/auth';
-import { ErrorToast } from '../../components/toasts/error-toast/error-toast';
-import { NotifToast } from '../../components/toasts/notif-toast/notif-toast';
+import { ToastService } from '../../../core/services/notifications/toast-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UtilService {
-  private snackBar = inject(MatSnackBar);
+  private readonly toastService = inject(ToastService);
   private breakpointObserver = inject(BreakpointObserver);
 
   // a signal that is true when we are on a small screen (e.g., Handset)
@@ -22,25 +20,13 @@ export class UtilService {
     { initialValue: false },
   );
 
-  showToast(type: 'error' | 'info', message: string) {
-    if (type === 'error')
-      this.snackBar.openFromComponent(ErrorToast, {
-        duration: 5000,
-        data: {
-          errorMessage: message,
-        },
-        horizontalPosition: 'end',
-        verticalPosition: 'bottom',
-      });
-    else
-      this.snackBar.openFromComponent(NotifToast, {
-        duration: 5000,
-        data: {
-          message: message,
-        },
-        horizontalPosition: 'end',
-        verticalPosition: 'bottom',
-      });
+  showToast(type: 'error' | 'info', message: string): void {
+    if (type === 'error') {
+      this.toastService.error(message);
+      return;
+    }
+
+    this.toastService.info(message);
   }
 
   formatDateAsReadableString(dateString: string | Date | null) {
@@ -51,7 +37,7 @@ export class UtilService {
     return date.toLocaleString();
   }
 
-   mapFirebaseError(code: string): string {
+  mapFirebaseError(code: string): string {
     switch (code) {
       case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
         return 'Incorrect email or password.';

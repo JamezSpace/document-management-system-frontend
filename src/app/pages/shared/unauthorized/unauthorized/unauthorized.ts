@@ -1,7 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { SpartanH1 } from '../../../../components/system-wide/typography/spartan-h1/spartan-h1';
-import { SpartanP } from "../../../../components/system-wide/typography/spartan-p/spartan-p";
+import { SpartanH1 } from '../../../../shared/typography/spartan-h1/spartan-h1';
+import { SpartanP } from '../../../../shared/typography/spartan-p/spartan-p';
+
 
 @Component({
   selector: 'nexus-unauthorized',

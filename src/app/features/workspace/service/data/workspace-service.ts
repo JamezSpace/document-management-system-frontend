@@ -1,22 +1,22 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { finalize, Observable } from 'rxjs';
-import { environment } from '../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
 import { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../models/api/workspace/signature/signature.ui';
 import { WorkspaceContextApi } from '../../../../models/api/workspace/WorkspaceContext.api';
+import { ERROR_SURFACE } from '../../../../core/interceptors/error/error-context';
+import { ErrorSurface } from '../../../../enums/global/errorSurface.enum';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 import { WorkspaceActions } from '../../../../enums/workspace/actions.enum';
-import DocumentService from '../../../shared/services/DocumentService';
 import { Router } from '@angular/router';
 import { WorkspaceUiService } from '../ui/workspace-ui-service';
+import DocumentService from '../../../shared/services/document/DocumentService';
+import { CurrentStaffService } from '../../../shared/services/current-staff/current-staff-service';
+import { environment } from '../../../../../environments/environment.development';
+import { OrganizationService } from '../../../shared/services/organization/organization-service';
+import { WorkspacePrimaryAction } from '../../../../models/ui/workspace/WorkspacePrimaryAction.ui';
 
-interface WorkspacePrimaryAction {
-  label: string;
-  action: string;
-  icon?: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +26,12 @@ export class WorkspaceService {
   private http = inject(HttpClient);
   documentService = inject(DocumentService);
   workspaceUiService = inject(WorkspaceUiService);
+  currentStaffService = inject(CurrentStaffService);
+  organizationService = inject(OrganizationService);
+  
 
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
   workspaceContext = signal<WorkspaceContextApi | null>(null);
   readonly workspaceContextDocument = computed(() => this.workspaceContext()?.metadata.document);
   readonly isAuthor = computed(() => this.workspaceContext()?.metadata.isAuthor ?? false);
@@ -112,12 +115,36 @@ export class WorkspaceService {
     return null;
   });
 
+  /** WORKSPACE FUNCTIONALITY */
   exitWorkspace() {
     this.documentService.resetContext();
 
     return this.router.navigateByUrl('/office/documents');
   }
 
+  /** CROSS-ENTITY OPERATIONS */
+  saveDocument() {
+     const context = this.workspaceContext();
+     const actor = this.currentStaffService.data()
+
+      if (!context || !actor) return;
+
+      const delta =
+          this.workspaceUiService
+              .getQuillEditorContent()()
+              .deltaContent;
+
+      this.documentService.saveDocument(
+          context.metadata.document.id,
+          {
+              document: context.metadata.document,
+              actorId: actor.id,
+              contentDelta: delta
+          }
+      );
+  }
+
+  /** DATA FETCHING */
   // signaturePlaceholder !: WritableSignal<SignaturePlaceHolderForBaseLevelAuthorityUi>
   signaturePlaceholder = signal<SignaturePlaceHolderForBaseLevelAuthorityUi>({
     id: 'akhskash',
@@ -133,17 +160,21 @@ export class WorkspaceService {
     if (signalData()) this.signaturePlaceholder.set(signalData()!);
   }
 
-  async fetchWorkspaceContext(documentId: string) {
+  fetchWorkspaceContext(documentId: string): void {
     this.loading.set(true);
+    this.error.set(null);
 
     this.http
-      .get<ApiResponse<WorkspaceContextApi>>(`${environment.api}/workspace/${documentId}`)
+      .get<ApiResponse<WorkspaceContextApi>>(
+        `${environment.api}/workspace/${documentId}`,
+        {
+          context: new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE)
+        },
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => {
-          this.workspaceContext.set(resp.data);
-        },
-        error: (err) => this.error.set(err),
+        next: (response) => this.workspaceContext.set(response.data),
+        error: (error: AppError) => this.error.set(error),
       });
   }
 }

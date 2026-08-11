@@ -1,0 +1,2 @@
+:host { display: block; }
+p { display: flex; align-items: center; gap: .375rem; margin: .375rem 0 0; color: #b91c1c; font-size: .8125rem; }

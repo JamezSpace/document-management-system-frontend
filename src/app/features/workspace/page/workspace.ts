@@ -1,764 +1,222 @@
-import {
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  MatAutocompleteModule,
-  MatAutocompleteSelectedEvent,
-} from '@angular/material/autocomplete';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { hugeCancelCircle } from '@ng-icons/huge-icons';
-import {
-  lucideArrowLeft,
-  lucideFile,
-  lucideFileLock,
-  lucideGripVertical,
-  lucideHistory,
-  lucideLock,
-  lucideLockOpen,
-  lucidePanelLeftClose,
-  lucidePanelRightClose,
-  lucidePlus,
-  lucidePrinter,
-  lucideSave,
-  lucideSend,
-  lucideUserRound,
-  lucideZoomIn,
-  lucideZoomOut,
-} from '@ng-icons/lucide';
-import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
-import { HlmAccordionImports } from '@spartan-ng/helm/accordion';
-import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
-import { HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmCheckboxImports } from '@spartan-ng/helm/checkbox';
-import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
-import { HlmIcon } from '@spartan-ng/helm/icon';
-import { HlmKbdImports } from '@spartan-ng/helm/kbd';
-import { HlmSelectImports } from '@spartan-ng/helm/select';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
-import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
-import { MemoBodyEditor } from '../../../components/editors/memo-body-editor/memo-body-editor';
-import { MemoTemplate } from '../../../components/editors/templates/memo-template/memo-template';
-import { LineLoader } from '../../../components/system-wide/loaders/line-loader/line-loader';
-import { SpartanMuted } from '../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { MinuteAction } from '../../../enum/document/minute.enum';
-import { OrgUnitCategory } from '../../../enum/identity/unitCategory.enum';
-import { DocumentApi } from '../../../interfaces/api/documents/Document.api';
-import { emptyDesignation } from '../../../interfaces/api/org units/designation.api';
-import { AuthService } from '../../../services/page-wide/auth/auth-service';
-import { DocumentTypesService } from '../../../services/page-wide/dashboard/documents-registry/document-types/document-types-service';
-import { MinutesService } from '../../../services/page-wide/dashboard/documents-registry/minutes/minutes-service';
-import { OrgUnitsService } from '../../../services/page-wide/dashboard/documents-registry/org-units/org-units-service';
-import { UnitMembersService } from '../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
-import { DocumentsService } from '../../../services/page-wide/dashboard/generic/documents/documents-service';
-import { GenericDashboardService } from '../../../services/page-wide/dashboard/generic/generic-dashboard-service';
-import { StaffDetailsService } from '../../../services/page-wide/dashboard/office-template/staff-details-service';
-import { StaffService } from '../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { WorkspaceService } from '../../../services/page-wide/dashboard/workspace/workspace-service';
-import { UtilService } from '../../../services/system-wide/util-service/util-service';
-import { emptyUnit } from '../../../interfaces/api/org units/units.api';
-import { WorkspaceActions } from '../../../interfaces/api/workspace/WorkspaceContext.api';
-import { WorkspaceUiService } from '../service/ui/workspace-ui-service';
+import { lucideFileLock, lucideSend } from '@ng-icons/lucide';
+import { BrnAlertDialogContent } from '@spartan-ng/brain/alert-dialog';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
+import { WorkspaceActions } from '../../../enums/workspace/actions.enum';
+import { DocumentApi } from '../../../models/api/documents/Document.api';
+import { LineLoader } from '../../../shared/components/loaders/line-loader/line-loader';
+import { UtilService } from '../../../shared/utils/service/util-service';
+import { AuthService } from '../../auth/service/auth-service';
+import { DocumentService } from '../../documents/service/document/document-service';
+import { DocumentTypesService } from '../../documents/service/document-types/document-types-service';
+import { MinutesService } from '../../documents/service/minutes/minutes-service';
+import { UnitMembersService } from '../../documents/service/unit-members/unit-members-service';
+import { CurrentStaffService } from '../../shared/services/current-staff/current-staff-service';
+import { OrganizationService } from '../../shared/services/organization/organization-service';
+import { MemoBodyEditor } from '../components/editor/actual editors/memo-body-editor/memo-body-editor';
+import { PaperControls } from '../components/editor/paper-controls/paper-controls';
+import { PrintPreview } from '../components/editor/print-preview/print-preview';
+import { MemoTemplate } from '../components/editor/templates/memo-template/memo-template';
+import { Sidebar } from '../components/sidebar/sidebar';
+import { Toolbar } from '../components/toolbar/toolbar';
+import { WorkspaceService } from '../service/data/workspace-service';
+import { MemoViewModel } from '../../../models/ui/workspace/MemoViewModel.ui';
+import { PageError } from '../../../shared/components/errors/local/page-error/page-error';
 
 @Component({
   selector: 'nexus-workspace',
   imports: [
     NgIcon,
-    SpartanMuted,
     LineLoader,
+    BrnAlertDialogContent,
+    HlmAlertDialogImports,
+    Toolbar,
+    Sidebar,
+    PaperControls,
+    PrintPreview,
     MemoTemplate,
     MemoBodyEditor,
-    MatAutocompleteModule,
-    MatChipsModule,
-    MatSlideToggleModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HlmIcon,
-    HlmSeparator,
-    BrnAlertDialogContent,
-    BrnAlertDialogTrigger,
-    HlmAlertDialogImports,
-    HlmButtonImports,
-    HlmSelectImports,
-    HlmDropdownMenuImports,
-    HlmCheckboxImports,
-    HlmKbdImports,
-    HlmTextareaImports,
-    HlmSpinnerImports,
-    HlmAccordionImports,
+    PageError,
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
-  providers: [
-    provideIcons({
-      lucideArrowLeft,
-      lucideFile,
-      lucideSave,
-      lucideSend,
-      lucideUserRound,
-      lucidePlus,
-      lucidePrinter,
-      lucidePanelLeftClose,
-      lucidePanelRightClose,
-      lucideFileLock,
-      lucideLock,
-      lucideLockOpen,
-      lucideZoomIn,
-      lucideZoomOut,
-      lucideGripVertical,
-      lucideHistory,
-      hugeCancelCircle,
-    }),
-  ],
+  providers: [provideIcons({ lucideFileLock, lucideSend })],
 })
 export class Workspace implements OnInit, OnDestroy {
-  router = inject(Router);
-  authService = inject(AuthService);
-  utilService = inject(UtilService);
-  activatedRoute = inject(ActivatedRoute);
-  workspaceService = inject(WorkspaceService);
-  workspaceUiService = inject(WorkspaceUiService);
-  documentService = inject(DocumentsService);
-  docTypesService = inject(DocumentTypesService);
-  unitService = inject(OrgUnitsService);
-  staffService = inject(StaffService);
-  minutesService = inject(MinutesService);
-  unitMembersService = inject(UnitMembersService);
-  staffDetailsService = inject(StaffDetailsService);
-  genericDashboardService = inject(GenericDashboardService);
+  @ViewChild(PaperControls) private paperControls?: PaperControls;
 
-  workspaceLoading = signal<boolean>(false);
-  documentLoading = this.documentService.loading;
-  sidebarClosed = signal<boolean>(false);
-  isDocmentMetadataEditable = signal<boolean>(false);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly utilService = inject(UtilService);
+  private readonly workspaceService = inject(WorkspaceService);
+  private readonly documentService = inject(DocumentService);
+  private readonly documentTypesService = inject(DocumentTypesService);
+  private readonly unitMembersService = inject(UnitMembersService);
+  private readonly minutesService = inject(MinutesService);
+  private readonly currentStaffService = inject(CurrentStaffService);
+  private readonly organizationService = inject(OrganizationService);
 
-  readonly signedInStaff = this.staffDetailsService.data;
+  readonly workspaceLoading = this.workspaceService.loading;
+  readonly workspaceError = this.workspaceService.error;
+  readonly documentLoading = this.documentService.loading;
+  readonly signedInStaff = this.currentStaffService.data;
   readonly workspaceContext = this.workspaceService.workspaceContext;
-  readonly workspaceContextDoc = computed(() => this.workspaceContext()?.metadata.document);
+  readonly document = computed(() => this.workspaceContext()?.metadata.document ?? null);
   readonly workspaceActions = computed(() => new Set(this.workspaceContext()?.authorizedActions ?? []));
   readonly isReadOnly = computed(() => this.workspaceContext()?.mode === 'readonly');
   readonly isEditable = computed(() => this.workspaceContext()?.mode === 'edit');
   readonly isAuthor = computed(() => this.workspaceContext()?.metadata.isAuthor ?? false);
+  readonly workspaceMode = signal<'author' | 'reviewer'>('reviewer');
+  readonly sidebarClosed = signal(false);
+  readonly documentDirection = signal('');
+  readonly documentType = this.documentTypesService.docType;
+  readonly units = this.organizationService.units;
+  readonly designations = this.organizationService.officesDesignations;
+
+  readonly memoVm = computed<MemoViewModel | null>(() => {
+    const document = this.document();
+    const staff = this.signedInStaff();
+    const documentType = this.documentType();
+
+    if (!document || !staff || !documentType || documentType.code !== 'memo') return null;
+
+    const primaryAddressee = document.addressees.find((addressee) => addressee.isPrimary);
+    if (!primaryAddressee) return null;
+
+    if (document.correspondence.direction !== 'external') {
+      return {
+        document,
+        origin: { unit: staff.unit },
+        recipient: null,
+      };
+    }
+
+    const recipientUnit = this.units().find((unit) => unit.id === primaryAddressee.recipientUnitId);
+    const recipientDesignation = this.designations().find(
+      (designation) => designation.id === primaryAddressee.addressedToDesignationId,
+    );
+
+    if (!recipientUnit || !recipientDesignation) return null;
+
+    return {
+      document,
+      origin: { unit: staff.unit },
+      recipient: {
+        unit: { id: recipientUnit.id, name: recipientUnit.fullName },
+        designation: { id: recipientDesignation.id, title: recipientDesignation.title },
+      },
+    };
+  });
 
   can(action: WorkspaceActions): boolean {
     return this.workspaceActions().has(action);
   }
 
-  minuteServiceInOperation = this.minutesService.loading;
-  minutes = this.minutesService.minutes;
-
-
-  isDocumentActive = this.documentService.isDocumentActive;
-  manualPrintPreview = this.documentService.getManualPrintPreview;
-  isValidToShowPrintPreviewMenuOptions = computed(() => {
-    const a = this.documentService.isValidToShowPrintPreviewMenuOptions();
-    const b = this.paperViewControls();
-
-    console.log('service computation: ', a);
-    console.log('eligible print preview: ', this.isEligibleForPrintPreview());
-    console.log('hover: ', b);
-
-    return a && b;
-  });
-
-  readonly isEligibleForPrintPreview = computed(
-    () => this.documentService.autoPrintPreview() || this.manualPrintPreview(),
-  );
-
-  
-
-  async ngOnInit(): Promise<void> {
-    // this.workspaceService.getSignaturePlaceholder();
-
-    // disallow staff if it cant be ascertained if staff is logged in
+  ngOnInit(): void {
     const staff = this.signedInStaff();
     if (!staff) {
       this.documentService.resetContext();
-
       this.authService.resetContext();
-      this.router.navigateByUrl('/auth');
+      void this.router.navigateByUrl('/auth');
       return;
     }
 
-    // user refreshes a stale page
-    const doc = this.workspaceContext()?.metadata.document;
+    if (this.document()) return;
 
-    if (!doc) {
-      const docId = this.activatedRoute.snapshot.paramMap.get('id');
-
-      if (!docId) {
-        this.router.navigateByUrl('404');
-        return;
-      }
-
-      // fetch necessary data
-      this.workspaceService.fetchWorkspaceContext(docId);
-      this.unitMembersService.fetchUnitMembers(staff.unit.id);
-      this.staffService.fetchAllDesignations();
-      this.minutesService.fetchMinutesForCorrespondence(docId);
+    const documentId = this.activatedRoute.snapshot.paramMap.get('id');
+    if (!documentId) {
+      void this.router.navigateByUrl('/404');
+      return;
     }
+
+    this.workspaceService.fetchWorkspaceContext(documentId);
+    this.minutesService.fetchMinutesForCorrespondence(documentId);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.documentService.resetContext();
   }
 
-  WorkspaceInitEffect = effect(() => {
-    const workspaceContext = this.workspaceContext();
+  reloadWorkspace(): void {
+    const documentId = this.activatedRoute.snapshot.paramMap.get('id');
+    if (documentId) this.workspaceService.fetchWorkspaceContext(documentId);
+  }
 
-    if (!workspaceContext) {
-      this.router.navigateByUrl('/404');
-      return;
-    }
+  goBack(): void {
+    void this.router.navigateByUrl('/office/documents');
+  }
 
-    const doc = workspaceContext.metadata.document;
+  previewDocument(): void {
+    this.paperControls?.previewDocument();
+  }
+
+  printCorrespondence(): void {
+    this.paperControls?.printCorrespondence();
+  }
+
+  /** Establishes workspace-level UI state once the context and actor are available. */
+  readonly workspaceBootEffect = effect(() => {
+    const document = this.document();
     const staff = this.signedInStaff();
+    if (!document || !staff) return;
 
-    if (!staff) return;
+    this.workspaceMode.set(document.ownerId === staff.id ? 'author' : 'reviewer');
+    this.sidebarClosed.set(this.utilService.isMobile());
+    this.documentDirection.set(document.correspondence.direction);
+  });
 
-    this.workspaceMode.set(doc.ownerId === staff.id ? 'author' : 'reviewer');
-    // keep the attachments pane visible whenever the workspace is locked for editing
-    this.sidebarClosed.set(this.isMobile());
+  /** Keeps the document type lookup in sync with the opened document. */
+  readonly documentTypeEffect = effect(() => {
+    const documentTypeId = this.document()?.classification.documentTypeId;
+    if (!documentTypeId || this.documentType()?.id === documentTypeId) return;
 
-    // fetch document type
-    const typeId = doc.classification.documentTypeId;
-    if (this.docTypesService.docType()?.id !== typeId) {
-      this.docTypesService.fetchDocTypeById(typeId);
-    }
+    this.documentTypesService.fetchDocTypeById(documentTypeId);
+  });
 
-    const staffUnit = staff.unit;
+  /** Loads only the lookup data required by the current correspondence. */
+  readonly lookupEffect = effect(() => {
+    const document = this.document();
+    const staff = this.signedInStaff();
+    if (!document || !staff) return;
 
-    if (doc.correspondence.direction === 'internal') {
-      // ensure unit members are fetched if it doesnt pre-exist
+    if (document.correspondence.direction === 'internal') {
       if (!this.unitMembersService.data().length) {
-        this.unitMembersService.fetchUnitMembers(staffUnit.id);
+        this.unitMembersService.fetchUnitMembers(staff.unit.id);
       }
-    } else {
-      // ensure units are fetched if they dont pre-exist
-      if (!this.unitService.units().length) {
-        this.unitService.fetchOrgUnits();
-      }
+    } else if (!this.units().length && !this.organizationService.loading()) {
+      this.organizationService.fetchUnits();
     }
 
-    this.documentDirection.set(doc.correspondence.direction);
-  });
-
-  isMobile = this.utilService.isMobile;
-  documentType = this.docTypesService.docType;
-  documentDirection = signal<string>('');
-
-  memoDocument = computed(() => {
-    const doc = this.workspaceContext()!.metadata.document;
-    const type = this.documentType();
-    const staff = this.signedInStaff();
-
-    if (!staff || !doc || !type) return;
-    const originUnit = staff.unit;
-    const primaryAddressee = doc.addressees.find((addr) => addr.isPrimary)!;
-
-    const recipientUnit = this.units().find((unit) => unit.id === primaryAddressee.recipientUnitId);
-    const recipientDesignation = this.designations().find(
-      (desig) => desig.id === primaryAddressee.addressedToDesignationId,
-    );
-
-    if (!recipientUnit || !recipientDesignation) return;
-
-    return type.code === 'memo'
-      ? {
-          document: doc,
-          origin: {
-            unit: originUnit,
-          },
-          recipient: {
-            unit: {
-              id: primaryAddressee.recipientUnitId,
-              name: recipientUnit.fullName,
-            },
-            designation: {
-              id: primaryAddressee.addressedToDesignationId,
-              title: recipientDesignation.title,
-            },
-          },
-        }
-      : null;
-  });
-
-  attachedDocuments = computed(() => {
-    const doc = this.document();
-
-    if (!doc || !this.isDocumentActive()) return [];
-
-    const mediaId = doc.currentVersion?.mediaId?.trim();
-    if (!mediaId) return [];
-
-    return [
-      {
-        id: mediaId,
-        title: doc.title || 'Attached document',
-        description: `Version ${doc.currentVersion?.versionNumber ?? 1} attachment`,
-        mediaId,
-      },
-    ];
-  });
-
-  getAddresseeDesignation(doc: DocumentApi) {
-    const staffId = doc.correspondence.addressedToStaffId;
-
-    if (!staffId) return;
-
-    const foundStaff = this.unitMembers().find((member) => member.id === staffId);
-
-    if (!foundStaff) return;
-
-    return foundStaff.designation?.title;
-  }
-
-  units = this.unitService.units;
-  unitMembers = this.unitMembersService.data;
-  academicUnits = computed(() =>
-    this.units().filter((unit) => unit.sector === OrgUnitCategory.ACADEMIC),
-  );
-  nonacademicUnits = computed(() =>
-    this.units().filter((unit) => unit.sector === OrgUnitCategory.NON_ACADEMIC),
-  );
-
-  showUnitLabelRatherThanId = (unitId: string) => {
-    if (!unitId) return '';
-
-    const unit = this.units().find((unit) => unit.id === unitId);
-    return unit?.code ?? '';
-  };
-
-  numOfFilesAttached = signal<number>(0);
-  fileUploaded = signal<File | null>(null);
-  onUploadAttachment(event: any) {
-    this.workspaceLoading.set(true);
-    const uploadedFile = event.target.files[0];
-
-    // perform check and scan on this document
-
-    // update component with file uploaded
-    this.fileUploaded.set(uploadedFile);
-    this.numOfFilesAttached.update((n) => ++n);
-    this.workspaceLoading.set(false);
-  }
-
-  documentMetadata = new FormGroup({
-    addresseesForInternalDocs: new FormControl<string>('', {
-      nonNullable: this.documentDirection() === 'internal' ? true : false,
-      validators: Validators.required,
-    }),
-    addresseesForExternalDocs: new FormControl<string>('', {
-      nonNullable: this.documentDirection() === 'external' ? true : false,
-      validators: Validators.required,
-    }),
-  });
-
-  isMinuting = false;
-  minuteContentToBeAdded = signal<string>('');
-  isMinuteAdded = computed(() => this.minuteContentToBeAdded().trim().length === 0);
-
-  changeMinute(event: any) {
-    const data = event.target.value;
-
-    this.minuteContentToBeAdded.set(data);
-  }
-
-  searchUnitValue = signal<string>('');
-  searchUnitMemberValue = signal<string>('');
-  searchVolValue = signal<string>('');
-
-  filteredUnits = computed(() => {
-    const filterValue = this.searchUnitValue().toLowerCase();
-
-    return this.units().filter((unit) => unit.fullName.toLowerCase().includes(filterValue));
-  });
-
-  filteredUnitsForCC = computed(() => {
-    // exclude origin unit from the list
-    return this.filteredUnits().filter((unit) => {
-      const primaryAddresseeUnitId = this.primaryAddresseeForExternalDocs().id;
-
-      unit.id !== primaryAddresseeUnitId;
-    });
-  });
-
-  searchAddresseeValue = signal<string>('');
-  updateAddressee(event: any) {
-    const typedWord = event.target.value;
-
-    this.searchAddresseeValue.set(typedWord);
-  }
-
-  filteredUnitMembers = computed(() => {
-    const typedValue = this.searchAddresseeValue().toLowerCase();
-
-    return (this.unitMembers() ?? [])
-      .filter((member) => {
-        // this excludes the current staff that is logged
-        if (this.signedInStaff() && member.id === this.signedInStaff()?.id) return;
-
-        // this removed staffs with null designation
-        if (member.designation && member.designation.id)
-          return member.designation.title.toLowerCase().includes(typedValue);
-        else return;
-      })
-      .map((data) => {
-        const { identityId, ...uiData } = data;
-        return uiData;
-      });
-  });
-
-  filteredUnitMembersForCC = computed(() => {
-    // exclude primary addressee from the list
-    return this.filteredUnitMembers().filter((member) => {
-      const primaryAddresseeId = this.primaryAddresseeForInternalDocs().id;
-
-      member.id !== primaryAddresseeId;
-    });
-  });
-
-  primaryAddresseeForInternalDocs = computed(() => {
-    const doc = this.document();
-
-    if (!doc) return emptyDesignation;
-    const designationId = doc.addressees.find((d) => d.isPrimary)!.addressedToDesignationId;
-
-    return this.getDesignationFromId(designationId);
-  });
-
-  primaryAddresseeForExternalDocs = computed(() => {
-    const doc = this.document();
-
-    if (!doc) return emptyUnit;
-
-    const unitId = doc.addressees.find((d) => d.isPrimary)!.recipientUnitId;
-
-    return this.getUnitFromId(unitId);
-  });
-
-  designations = this.staffService.officesDesignations;
-  getDesignationFromId(designationId: string) {
-    return this.designations().find((d) => d.id === designationId) ?? emptyDesignation;
-  }
-  getUnitFromId(unitId: string) {
-    return this.units().find((unit) => unit.id === unitId) ?? emptyUnit;
-  }
-
-  showDesignationTitleRatherThanId = (designationId: string) => {
-    const designationTitle = this.getDesignationFromId(designationId).title;
-
-    return `The ${designationTitle
-      .split(' ')
-      .map((title) => title[0].toUpperCase() + title.slice(1))
-      .join(' ')}`;
-  };
-
-  selectedUnitsForCC = signal<string[]>([]);
-  selectedDesignationsForCC = signal<string[]>([]);
-  selectedDesig(event: MatAutocompleteSelectedEvent): void {
-    this.selectedDesignationsForCC.update((selectedDesignationsForCC) => [
-      ...selectedDesignationsForCC,
-      event.option.viewValue,
-    ]);
-
-    event.option.deselect();
-  }
-  selectedUnit(event: MatAutocompleteSelectedEvent): void {
-    this.selectedUnitsForCC.update((selectedUnitsForCC) => [
-      ...selectedUnitsForCC,
-      event.option.viewValue,
-    ]);
-
-    event.option.deselect();
-  }
-
-  removeDesig(designationId: string): void {
-    this.selectedDesignationsForCC.update((selectedDesignationsForCC) => {
-      const index = selectedDesignationsForCC.indexOf(designationId);
-      if (index < 0) {
-        return selectedDesignationsForCC;
-      }
-
-      selectedDesignationsForCC.splice(index, 1);
-      return [...selectedDesignationsForCC];
-    });
-  }
-
-  removeUnit(unitId: string): void {
-    this.selectedUnitsForCC.update((selectedUnitsForCC) => {
-      const index = selectedUnitsForCC.indexOf(unitId);
-      if (index < 0) {
-        return selectedUnitsForCC;
-      }
-
-      selectedUnitsForCC.splice(index, 1);
-      return [...selectedUnitsForCC];
-    });
-  }
-
-  updateUnitSearch(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchUnitValue.set(value);
-  }
-
-  // scans for signature placeholder
-  signaturePlaceholderBounds = computed(() => this.scanForSignaturePlaceholderAndReturnBounds());
-
-  previewDocument() {
-    // store previous zoom level
-    this.previousZoomLevel.set(this.zoomLevel());
-
-    //reset zoom level
-    this.resetZoom();
-
-    // // retrieve content as html
-    // const htmlContent = this.retrieveEditorContentsAsSpecificType('html') as string;
-
-    // this.editorHtmlContent.set(htmlContent);
-
-    // checks if signature exists
-    const signatureExists = this.signaturePlaceholderBounds().exists;
-
-    this.documentService.setManualPrintPreview = true;
-  }
-
-  exitPreview() {
-    // set current zoom level to the previous value
-    this.zoomLevel.set(this.previousZoomLevel());
-
-    this.paperViewControls.set(false);
-
-    this.documentService.setManualPrintPreview = false;
-  }
-
-  printCorrespondence() {
-    this.documentService.setManualPrintPreview = true;
-
-    setTimeout(() => window.print(), 0);
-  }
-
-  paperViewControls = signal<boolean>(false);
-  @ViewChild('workspaceRoot')
-  workspaceRoot!: ElementRef<HTMLDivElement>;
-
-  @ViewChild('addMinuteDialog')
-  addMinuteDialog!: HlmAlertDialog;
-
-  @ViewChild('forwardDocumentDialog')
-  forwardDocumentDialog!: HlmAlertDialog;
-
-  onMouseEnter() {
-    if (this.isEligibleForPrintPreview()) {
-      this.paperViewControls.set(true);
+    if (!this.designations().length && !this.organizationService.loading()) {
+      this.organizationService.fetchAllDesignations();
     }
-  }
-
-  onMouseLeave() {
-    if (this.isEligibleForPrintPreview()) {
-      this.paperViewControls.set(false);
-    }
-  }
-
-  retrieveEditorContentsAsSpecificType(desiredType: 'delta' | 'text' | 'html') {
-    const quillEditorContent = this.workspaceUiService.getQuillEditorContent();
-
-    if (desiredType === 'delta') return quillEditorContent().deltaContent;
-    else if (desiredType === 'html') return quillEditorContent().htmlContent;
-    else if (desiredType === 'text') return quillEditorContent().textContent;
-
-    return '';
-  }
-
-  signaturePlaceholder = this.workspaceService.signaturePlaceholder;
-  scanForSignaturePlaceholderAndReturnBounds(): SignatureBounds {
-      const quillEditorContent = this.workspaceUiService.getQuillEditorContent();
-      const editorContentText = quillEditorContent().textContent;
-
-    const signaturePlaceholderFormat = this.signaturePlaceholder().format;
-
-    const beginIndexOfPlaceholder = editorContentText.indexOf(signaturePlaceholderFormat);
-
-    if (beginIndexOfPlaceholder < 0) return { exists: false };
-
-    return {
-      exists: true,
-      details: {
-        begin: beginIndexOfPlaceholder,
-        end: beginIndexOfPlaceholder + signaturePlaceholderFormat.length - 1,
-      },
-    };
-  }
-
-  // 1.0 is 100%, 0.5 is 50%, etc.
-  zoomLevel = signal<number>(1.0);
-  previousZoomLevel = signal<number>(1);
-
-  // Compute the transform string for the template
-  canvasTransform = computed(() => `scale(${this.zoomLevel()})`);
-
-  zoomIn() {
-    this.zoomLevel.update((z) => Math.min(z + 0.1, 2.0)); // Cap at 200%
-  }
-
-  zoomOut() {
-    this.zoomLevel.update((z) => Math.max(z - 0.1, 0.5)); // Floor at 50%
-  }
-
-  resetZoom() {
-    this.zoomLevel.set(1.0);
-  }
-
-  isDocumentSaved = this.documentService.isDocumentSaved;
-  saveDocumentLoading = this.documentService.saveDocumentLoading;
-  saveDocument() {
-    const openedDocument = this.workspaceContext()!.metadata.document;
-    const contentAsDelta = this.retrieveEditorContentsAsSpecificType('delta');
-    const actorId = this.signedInStaff()?.id!;
-
-    this.documentService.saveDocument(openedDocument.id, {
-      document: openedDocument,
-      contentDelta: contentAsDelta,
-      actorId,
-    });
-  }
-
-  submitDocument() {
-    const staffId = this.signedInStaff()?.id!;
-    const openedDocument = this.document()!;
-
-    this.documentService.submitDocument(staffId, openedDocument);
-  }
-
-  DocumentSubmissionEffect = effect(() => {
-    const submissionStatus = this.documentService.docSubmittedSuccess();
-
-    if (submissionStatus) this.router.navigateByUrl('/office/documents');
   });
 
-  resolveStaffDesignationTitle(staffId: string) {
-    const signedInStaffId = this.signedInStaff()?.id;
-    const staff = this.unitMembersService.data().find((member) => member.id === staffId);
-
-    if (!staff || !signedInStaffId) return 'n/a';
-    else if (signedInStaffId === staff.id) return 'you';
-
-    return 'the ' + staff.designation.title;
+  isExternalMemo(document: DocumentApi | null): boolean {
+    return document?.correspondence.direction === 'external';
   }
 
-  resolveMinuteAction(action: MinuteAction) {
-    switch (action) {
-      case MinuteAction.ACKNOWLEDGE:
-        return 'acknowledged';
-      case MinuteAction.COMMENT:
-        return 'minuted';
-      default:
-        return 'acknowledged';
-    }
+  getAddresseeDesignation(document: DocumentApi): string {
+    const staffId = document.correspondence.addressedToStaffId;
+    if (!staffId) return '';
+
+    return this.unitMembersService.data().find((member) => member.id === staffId)?.designation?.title ?? '';
   }
 
-  resolveMinuteContent(content: string | null) {
-    if (!content) return '';
-
-    return content;
-  }
-
-  formatDate = this.utilService.formatDateAsReadableString;
-
-  forwardCorrespondenceFormGroup = new FormGroup({
-    forwardToDesignationId: new FormControl<string>('', {
-      nonNullable: true,
-      validators: Validators.required,
-    }),
-  });
-
-  getStaffMinuteIfExistsBefore() {
+  submitDocument(): void {
+    const document = this.document();
     const staffId = this.signedInStaff()?.id;
+    if (!document || !staffId) return;
 
-    if (!staffId)
-      return {
-        existsBefore: false,
-        foundMinute: null,
-      };
-
-    const foundMinute = this.minutes().find((mn) => mn.authorStaffId === staffId);
-
-    return foundMinute
-      ? {
-          existsBefore: true,
-          foundMinute,
-        }
-      : {
-          existsBefore: false,
-          foundMinute: null,
-        };
+    this.documentService.submitDocument(staffId, document);
   }
 
-  addMinuteToCorrespondence() {
-    const openedDocument = this.document();
-    const staffId = this.signedInStaff()?.id;
-    const content = this.minuteContentToBeAdded().trim();
-
-    if (!openedDocument || !staffId) return;
-    const staffMinuteExistsBefore = this.getStaffMinuteIfExistsBefore();
-
-    this.minutesService.addMinuteToCorrespondence(openedDocument.id, {
-      authorStaffId: staffId,
-      action: content.length === 0 ? MinuteAction.ACKNOWLEDGE : MinuteAction.COMMENT,
-      content: content.length === 0 ? null : content,
-      parentMinuteId: staffMinuteExistsBefore.existsBefore
-        ? staffMinuteExistsBefore.foundMinute!.id
-        : null,
-    });
-
-    this.minuteContentToBeAdded.set('');
-    this.isMinuting = false;
-  }
-
-  isForwarding = false;
-  forwardDocument() {
-    const openedDocument = this.document();
-    const staffId = this.signedInStaff()?.id;
-    const forwardToDesignationId = this.forwardCorrespondenceFormGroup
-      .getRawValue()
-      .forwardToDesignationId.trim();
-    const forwardToTitle =
-      this.showDesignationTitleRatherThanId(forwardToDesignationId) || forwardToDesignationId;
-
-    if (!openedDocument || !staffId || !forwardToDesignationId) return;
-
-    this.minutesService.addMinuteToCorrespondence(openedDocument.id, {
-      authorStaffId: staffId,
-      action: MinuteAction.FORWARD,
-      content: forwardToTitle,
-    });
-
-    this.addMinuteToCorrespondence();
-  }
-}
-
-interface SignatureBounds {
-  exists: boolean;
-  details?: {
-    begin: number;
-    end: number;
-  };
+  readonly documentSubmissionEffect = effect(() => {
+    if (this.documentService.docSubmittedSuccess()) {
+      void this.router.navigateByUrl('/office/documents');
+    }
+  });
 }

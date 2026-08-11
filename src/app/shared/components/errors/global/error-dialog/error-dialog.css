@@ -1,0 +1,7 @@
+:host { display: block; min-width: min(28rem, 85vw); padding-top: 1rem; }
+.heading { display: flex; align-items: center; gap: .5rem; padding: 0 1.5rem; color: #b91c1c; }
+h2[mat-dialog-title] { margin: 0; padding: 0; color: #0f172a; }
+p { color: #475569; line-height: 1.55; }
+small { color: #64748b; font-family: monospace; }
+button { border: 1px solid #cbd5e1; border-radius: .375rem; padding: .5rem .875rem; background: white; cursor: pointer; }
+button.primary { border-color: var(--brand-secondary, #312e81); background: var(--brand-secondary, #312e81); color: white; }

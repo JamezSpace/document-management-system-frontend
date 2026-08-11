@@ -21,16 +21,16 @@ import {
     HlmInputGroupImports,
 } from '@spartan-ng/helm/input-group';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { SideModal } from '../../../../../../components/dashboard-wide/shared/side-modal/side-modal';
-import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { StaffService } from '../../../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { OnboardingService } from '../../../../../../services/page-wide/onboarding/session/onboarding-service';
-import { UtilService } from '../../../../../../services/system-wide/util-service/util-service';
 import { HlmSpinner } from "@spartan-ng/helm/spinner";
-import { StaffToActivate } from '../../../../../../interfaces/api/staff/StaffToActivate.api';
+import { SideModalService } from '../../../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { StaffService } from '../../../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { OnboardingService } from '../../../../../../features/onboarding/services/session/onboarding-service';
+import { StaffToActivate } from '../../../../../../models/api/staff/StaffToActivate.api';
+import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
+import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
+import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
+import { UtilService } from '../../../../../../shared/utils/service/util-service';
 
 @Component({
   selector: 'nexus-staff-activation',

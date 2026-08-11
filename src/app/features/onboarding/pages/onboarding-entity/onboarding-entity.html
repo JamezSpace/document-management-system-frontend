@@ -335,7 +335,7 @@
       </div>
     </div>
   }
-} @else if (errorFetchingEntity()?.context?.message?.includes('expired')) {
+  } @else if (errorFetchingEntity()?.message?.includes('expired')) {
   <article class="text-center my-12 flex flex-col items-center space-y-4 max-w-md mx-auto">
     <div class="p-4 bg-red-50 rounded-full mb-2">
       <ng-icon name="lucideHistory" size="2.5rem" class="text-red-700"></ng-icon>
@@ -359,7 +359,7 @@
       </button>
     </div>
   </article>
-} @else if (errorFetchingEntity()?.code?.httpStatusCode === 404) {
+} @else if (errorFetchingEntity()?.apiError?.code?.httpStatusCode === 404) {
   <article class="text-center my-12 flex flex-col items-center space-y-4 max-w-md mx-auto">
     <div class="p-4 bg-red-50 rounded-full mb-2 flex-center justify-center">
       <ng-icon name="lucideShieldX" size="1.5rem" class="text-red-700"></ng-icon>

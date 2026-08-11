@@ -11,16 +11,18 @@ import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from "@spartan-ng/helm/separator";
-import { EmploymentType } from '../../../../enum/staff/employmentType.enum';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { InviteService } from '../../../../services/page-wide/onboarding/invite/invite-service';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
-import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { SideModal } from '../../shared/side-modal/side-modal';
-import { InviteApi } from '../../../../interfaces/api/staff/Invite.api';
+import { SideModalService } from '../../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { StaffService } from '../../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { EmploymentType } from '../../../../../enums/staff/employmentType.enum';
+import { InviteService } from '../../../../../features/onboarding/services/invite/invite-service';
+import { InviteApi } from '../../../../../models/api/staff/Invite.api';
+import { SpartanH4 } from '../../../../typography/spartan-h4/spartan-h4';
+import { SpartanMuted } from '../../../../typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../typography/spartan-p/spartan-p';
+import { UtilService } from '../../../../utils/service/util-service';
+import { SideModal } from '../../../side-modal/side-modal';
+import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
+import { OrganizationService } from '../../../../../features/shared/services/organization/organization-service';
 
 @Component({
   selector: 'nexus-invites-list-view',
@@ -53,11 +55,12 @@ import { InviteApi } from '../../../../interfaces/api/staff/Invite.api';
 export class InvitesListView {
   private sideModalService = inject(SideModalService);
   private utilService = inject(UtilService);
-  private staffService = inject(StaffService);
-  private inviteService = inject(InviteService);
+  private organizationService = inject(OrganizationService);
+  inviteService = inject(InviteService);
+  currentStaffService = inject(CurrentStaffService);
 
-  offices = this.staffService.officesInUnit;
-  designations = this.staffService.officesDesignations;
+  offices = this.organizationService.officesInUnit;
+  designations = this.organizationService.officesDesignations;
   employmentTypes = Object.values(EmploymentType);
 
   editMode = signal<boolean>(false);
@@ -84,8 +87,14 @@ export class InvitesListView {
   }
 
   ngOnInit(): void {
-    if (!this.staffService.officesInUnit) this.staffService.fetchAllOffices();
-    if (!this.staffService.officesDesignations) this.staffService.fetchAllDesignations();
+    const actor = this.currentStaffService.data()
+
+    if(!actor) return
+
+    if (!this.organizationService.officesInUnit) 
+      this.organizationService.fetchAllOffices(actor.unit.id);
+    if (!this.organizationService.officesDesignations) 
+      this.organizationService.fetchAllDesignations();
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

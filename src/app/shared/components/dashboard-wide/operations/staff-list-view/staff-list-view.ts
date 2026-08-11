@@ -12,14 +12,17 @@ import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
-import { SpartanH4 } from '../../../system-wide/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../system-wide/typography/spartan-p/spartan-p';
-import { SideModal } from '../../shared/side-modal/side-modal';
-import { BaseStaffEntity } from '../../../../interfaces/api/staff/BaseStaff.api';
+import { SideModalService } from '../../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { StaffService } from '../../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { BaseStaffEntity } from '../../../../../models/api/staff/BaseStaff.api';
+import { SpartanH4 } from '../../../../typography/spartan-h4/spartan-h4';
+import { SpartanMuted } from '../../../../typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../typography/spartan-p/spartan-p';
+import { UtilService } from '../../../../utils/service/util-service';
+import { SideModal } from '../../../side-modal/side-modal';
+import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
+import { OrganizationService } from '../../../../../features/shared/services/organization/organization-service';
+
 
 @Component({
   selector: 'nexus-staff-list-view',
@@ -48,7 +51,9 @@ import { BaseStaffEntity } from '../../../../interfaces/api/staff/BaseStaff.api'
 export class StaffListView implements OnInit, AfterViewInit {
   private sideModalService = inject(SideModalService);
   private utilService = inject(UtilService);
-  private staffService = inject(StaffService);
+  staffService = inject(StaffService);
+  organizationService = inject(OrganizationService);
+  currentStaffService = inject(CurrentStaffService);
 
   staff = input.required<BaseStaffEntity[]>();
   selectedStaff = signal<BaseStaffEntity | null>(null);
@@ -74,8 +79,14 @@ export class StaffListView implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if(!this.staffService.officesInUnit) this.staffService.fetchAllOffices();
-    if(!this.staffService.officesDesignations) this.staffService.fetchAllDesignations();
+    const actor = this.currentStaffService.data()
+
+    if(!actor) return
+
+    if(!this.organizationService.officesInUnit) 
+      this.organizationService.fetchAllOffices(actor.unit.id);
+    if(!this.organizationService.officesDesignations)
+      this.organizationService.fetchAllDesignations();
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

@@ -1,0 +1,9 @@
+:host { display: block; min-height: calc(100dvh - 4rem); }
+.page-error { min-height: inherit; display: grid; place-content: center; justify-items: center; gap: .75rem; padding: 2rem; text-align: center; color: #334155; }
+.page-error__icon { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 999px; color: #b91c1c; background: #fef2f2; }
+h1 { margin: .25rem 0 0; color: #0f172a; font-size: 1.5rem; font-weight: 650; }
+p { max-width: 34rem; margin: 0; line-height: 1.6; }
+small { color: #64748b; font-family: monospace; }
+.page-error__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: .75rem; }
+button { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid #cbd5e1; border-radius: .375rem; padding: .625rem 1rem; background: white; color: #334155; cursor: pointer; }
+button.primary { border-color: var(--brand-secondary, #312e81); background: var(--brand-secondary, #312e81); color: white; }

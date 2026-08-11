@@ -1,0 +1,14 @@
+<div class="heading">
+  <ng-icon name="lucideTriangleAlert" size="1.75rem" aria-hidden="true" />
+  <h2 mat-dialog-title>{{ error.title }}</h2>
+</div>
+<mat-dialog-content>
+  <p>{{ error.message }}</p>
+  @if (error.requestId) { <small>Reference: {{ error.requestId }}</small> }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button type="button" mat-dialog-close>Dismiss</button>
+  @if (error.recovery !== ErrorRecovery.NONE) {
+    <button type="button" class="primary" [mat-dialog-close]="error.recovery">Continue</button>
+  }
+</mat-dialog-actions>

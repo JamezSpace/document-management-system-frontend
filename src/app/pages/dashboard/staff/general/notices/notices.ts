@@ -6,14 +6,14 @@ import { HlmInputGroupImports } from '@spartan-ng/helm/input-group';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { SpartanH3 } from '../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { NoticesService } from '../../../../../services/page-wide/dashboard/generic/notices/notices-service';
-import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
-import { SpartanMuted } from '../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { NoticesApi } from '../../../../../interfaces/api/notices/notices.api';
-import { NotificationPreference } from '../../../../../enum/notices/notices.enum';
 import { hugeTickDouble02 } from '@ng-icons/huge-icons';
+import { NoticesService } from '../../../../../core/services/page-wide/dashboard/generic/notices/notices-service';
+import { NotificationPreference } from '../../../../../enums/notices/notices.enum';
+import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
+import { NoticesApi } from '../../../../../models/api/notices/notices.api';
+import { SpartanH3 } from '../../../../../shared/typography/spartan-h3/spartan-h3';
+import { SpartanMuted } from '../../../../../shared/typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../../shared/typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-notices',
@@ -37,9 +37,9 @@ import { hugeTickDouble02 } from '@ng-icons/huge-icons';
 export class Notices {
   private activatedRouter = inject(ActivatedRoute);
   noticeService = inject(NoticesService);
-  staffDetailsService = inject(StaffDetailsService);
+  currentStaffService = inject(CurrentStaffService);
 
-  readonly signedInStaff = this.staffDetailsService.data;
+  readonly signedInStaff = this.currentStaffService.data;
 
   directories = signal<string[]>([]);
   ngOnInit(): void {

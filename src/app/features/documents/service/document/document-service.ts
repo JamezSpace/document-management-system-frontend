@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { finalize } from 'rxjs';
 import { DocumentApi, InitDocumentApiPayload } from '../../../../models/api/documents/Document.api';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 import { UtilService } from '../../../../shared/utils/service/util-service';
 import { environment } from '../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
 import { LifecycleActions } from '../../../../enums/document/document.enum';
-import { finalize } from 'rxjs';
 import { WorkspaceUiService } from '../../../workspace/service/ui/workspace-ui-service';
 
 @Injectable({
@@ -18,15 +18,32 @@ export class DocumentService {
   private workspaceUiService = inject(WorkspaceUiService);
 
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
   document = signal<DocumentApi | null>(null);
   staffDocuments = signal<DocumentApi[]>([]);
+
+  private manualPrintPreview = signal(false);
+  readonly autoPrintPreview = signal(false);
+
+  get getManualPrintPreview(): WritableSignal<boolean> {
+    return this.manualPrintPreview;
+  }
+
+  set setManualPrintPreview(value: boolean) {
+    this.manualPrintPreview.set(value);
+  }
+
+  setAutoPrintPreview(value: boolean) {
+    this.autoPrintPreview.set(value);
+  }
 
   resetContext() {
     this.document.set(null);
     this.workspaceUiService.setIsDocumentSaved(true);
     this.docSubmittedSuccess.set(false);
     this.error.set(null);
+    this.manualPrintPreview.set(false);
+    this.autoPrintPreview.set(false);
 
     this.workspaceUiService.resetQuillEditorContent();
   }
@@ -143,27 +160,4 @@ export class DocumentService {
       });
   }
 
-
-  // resolve this later
-//   readonly autoPrintPreview = computed(() => this.isReadOnly());
-//   private manualPrintPreview = signal<boolean>(false);
-//   public get getManualPrintPreview(): WritableSignal<boolean> {
-//     return this.manualPrintPreview;
-//   }
-
-//   public set setManualPrintPreview(value: boolean) {
-//     if (this.workspaceMode() === 'author' || !this.isDocumentActive())
-//       this.manualPrintPreview.set(value);
-//   }
-
-
-//   isValidToShowPrintPreviewMenuOptions = computed(() => {
-//     // reviewers MUST NOT trigger menu button to escape print preview
-//     if (this.workspaceMode() === 'reviewer') return false;
-
-//     // author can only escape print preview so long the document is not in active lifecycle state
-//     if (!this.isDocumentActive()) return true;
-
-//     return false;
-//   });
 }

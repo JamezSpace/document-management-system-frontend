@@ -7,11 +7,11 @@ import { BrnAlertDialog } from '@spartan-ng/brain/alert-dialog';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
-import { DocumentApi, DocumentApiWithSharedTag } from '../../../../interfaces/api/documents/Document.api';
-import { RegistryService } from '../../../../services/page-wide/dashboard/documents-registry/registry/registry-service';
-import { DocumentsService } from '../../../../services/page-wide/dashboard/generic/documents/documents-service';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
-import { UtilService } from '../../../../services/system-wide/util-service/util-service';
+import { SideModalService } from '../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { DocumentApiWithSharedTag } from '../../../../models/api/documents/Document.api';
+import { UtilService } from '../../../../shared/utils/service/util-service';
+import { RegistryService } from '../../service/registry/registry-service';
+import DocumentService from '../../../shared/services/document/DocumentService';
 
 @Component({
   selector: 'nexus-document-item',
@@ -30,7 +30,7 @@ export class DocumentItem {
   utilService = inject(UtilService);
   registryService = inject(RegistryService);
   sideModalService = inject(SideModalService);
-  documentService = inject(DocumentsService);
+  documentService = inject(DocumentService);
 
   // --- SIGNALS FOR UI STATE ---
   

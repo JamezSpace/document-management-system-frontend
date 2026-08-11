@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { UtilService } from '../../../../system-wide/util-service/util-service';
-import { NoticesApi } from '../../../../../interfaces/api/notices/notices.api';
-import { ErrorType } from '../../../../../interfaces/api/Error.interface';
-import { ApiResponse } from '../../../../../interfaces/api/ApiResponse.interface';
-import { environment } from '../../../../../../environments/environment.development';
 import { finalize } from 'rxjs';
+import { environment } from '../../../../../../../environments/environment.development';
+import { ApiResponse } from '../../../../../../models/api/ApiResponse.api';
+import type { AppError } from '../../../../../../models/ui/global/ErrorPresentation.ui';
+import { NoticesApi } from '../../../../../../models/api/notices/notices.api';
+import { UtilService } from '../../../../../../shared/utils/service/util-service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +16,7 @@ export class NoticesService {
 
   notices = signal<NoticesApi[]>([]);
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
 
   fetchNotices(staffId: string) {
     this.loading.set(true);

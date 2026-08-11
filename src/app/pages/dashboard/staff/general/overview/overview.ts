@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { SpartanH2 } from '../../../../../components/system-wide/typography/spartan-h2/spartan-h2';
-import { SpartanP } from '../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { SpartanH4 } from '../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
-import { StaffDetailsService } from '../../../../../services/page-wide/dashboard/office-template/staff-details-service';
-import { SpartanH1 } from "../../../../../components/system-wide/typography/spartan-h1/spartan-h1";
+import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
+import { SpartanH1 } from '../../../../../shared/typography/spartan-h1/spartan-h1';
+import { SpartanH2 } from '../../../../../shared/typography/spartan-h2/spartan-h2';
+import { SpartanH4 } from '../../../../../shared/typography/spartan-h4/spartan-h4';
+import { SpartanP } from '../../../../../shared/typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-overview',
@@ -14,9 +14,9 @@ import { SpartanH1 } from "../../../../../components/system-wide/typography/spar
   styleUrl: './overview.css',
 })
 export class Overview {
-    private staffDetailsService = inject(StaffDetailsService);
+    private currentStaffService = inject(CurrentStaffService);
     
-    readonly staff = this.staffDetailsService.data;
+    readonly staff = this.currentStaffService.data;
 
   documents!: Document;
 

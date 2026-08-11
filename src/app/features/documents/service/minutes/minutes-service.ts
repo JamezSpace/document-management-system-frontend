@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
-import { ApiResponse } from '../../../../models/api/ApiResponse.interface';
+import { ApiResponse } from '../../../../models/api/ApiResponse.api';
 import { InitMinutePayload, MinuteApi } from '../../../../models/api/documents/minute/minutes.api';
-import { ErrorType } from '../../../../models/api/Error.interface';
+import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,7 @@ export class MinutesService {
   minutes = signal<MinuteApi[]>([]);
   minute = signal<MinuteApi | null>(null);
   loading = signal<boolean>(false);
-  error = signal<ErrorType | null>(null);
+  error = signal<AppError | null>(null);
 
   addMinuteToCorrespondence(docId: string, payload: InitMinutePayload){
     this.loading.set(true);

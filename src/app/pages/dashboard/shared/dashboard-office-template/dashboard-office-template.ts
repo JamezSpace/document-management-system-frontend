@@ -30,18 +30,15 @@ import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSidebarImports, HlmSidebarService } from '@spartan-ng/helm/sidebar';
 import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
-import { LineLoader } from '../../../../components/system-wide/loaders/line-loader/line-loader';
-import {
-  NavBarItem,
-  NavGroup,
-  SubMenu,
-} from '../../../../interfaces/ui/navigation/NavBarItem.interface';
-import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
 import { Workspace } from '../../../../features/workspace/page/workspace';
-import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
-import { AuthService } from '../../../../services/page-wide/auth/auth-service';
-import { NoticesService } from '../../../../services/page-wide/dashboard/generic/notices/notices-service';
-import { NotificationPreference, NotificationState } from '../../../../enum/notices/notices.enum';
+import { GenericDashboardService } from '../../../../core/services/page-wide/dashboard/generic/generic-dashboard-service';
+import { NoticesService } from '../../../../core/services/page-wide/dashboard/generic/notices/notices-service';
+import { NotificationPreference, NotificationState } from '../../../../enums/notices/notices.enum';
+import { AuthService } from '../../../../features/auth/service/auth-service';
+import { CurrentStaffService } from '../../../../features/shared/services/current-staff/current-staff-service';
+import { NavBarItem, NavGroup, SubMenu } from '../../../../models/ui/navigation/NavBarItem.ui';
+import { LineLoader } from '../../../../shared/components/loaders/line-loader/line-loader';
+
 
 @Component({
   selector: 'nexus-dashboard-office-template',
@@ -87,35 +84,38 @@ import { NotificationPreference, NotificationState } from '../../../../enum/noti
   ],
 })
 export class DashboardOfficeTemplate implements OnInit {
-  staffDetailsService = inject(StaffDetailsService);
+  currentStaffService = inject(CurrentStaffService);
   noticeService = inject(NoticesService);
   genericDashboardService = inject(GenericDashboardService);
   authService = inject(AuthService);
   sidebarService = inject(HlmSidebarService);
   router = inject(Router);
 
-  staffLoggedIn = this.staffDetailsService.data;
+  staffLoggedIn = this.currentStaffService.data;
   unreadNotificationsPresent = signal<boolean>(false);
+  private readonly staffContextRequested = signal(false);
 
   private hasFetchedNotices = false;
 
   navigateOnDataReadiness = effect(() => {
-    const isLoading = this.staffDetailsService.loading();
-    const staff = this.staffDetailsService.data();
+    const contextRequested = this.staffContextRequested();
+    const isLoading = this.currentStaffService.loading();
+    const staff = this.currentStaffService.data();
 
     this.authService.setLoading(isLoading);
 
-    if (!isLoading && staff) {
+    if (!contextRequested || isLoading) return;
+
+    if (staff) {
       if (!this.hasFetchedNotices) {
         this.hasFetchedNotices = true;
         this.noticeService.fetchNotices(staff.id);
       }
+      return;
     }
 
-    if (!isLoading && !staff) {
-      this.router.navigateByUrl('/unauthorized');
-      this.authService.resetContext();
-    }
+    void this.router.navigateByUrl('/unauthorized');
+    this.authService.resetContext();
   });
 
   TrackUnreadNotificationsEffect = effect(() => {
@@ -129,16 +129,8 @@ export class DashboardOfficeTemplate implements OnInit {
     this.unreadNotificationsPresent.set(unread.length > 0);
   });
 
-  LoadContextEffect = effect(() => {
-    const staff = this.staffDetailsService.data();
-
-    if (staff) {
-      this.authService.loadUserContext(staff);
-    }
-  });
-
-  async ngOnInit(): Promise<void> {
-    this.staffDetailsService.fetchStaffDetailsForLogin();
+  ngOnInit(): void {
+    this.staffContextRequested.set(true);
   }
 
   private NAV_REGISTRY: NavBarItem[] = [
@@ -368,9 +360,9 @@ export class DashboardOfficeTemplate implements OnInit {
   private hasAccess(required?: string, any?: string[]): boolean {
     if (!required && !any) return true;
 
-    if (required && this.authService.hasCapability(required)) return true;
+    if (required && this.currentStaffService.hasCapability(required)) return true;
 
-    if (any && any.some((cap) => this.authService.hasCapability(cap))) return true;
+    if (any && any.some((cap) => this.currentStaffService.hasCapability(cap))) return true;
 
     return false;
   }
@@ -429,6 +421,7 @@ export class DashboardOfficeTemplate implements OnInit {
   });
 
   logout() {
-    this.authService.logout();
+    this.currentStaffService.resetContext();
+    void this.authService.logout();
   }
 }

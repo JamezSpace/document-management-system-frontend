@@ -1,0 +1,32 @@
+<article>
+  <p class="text-center uppercase font-times-new-roman font-bold text-lg">university of ibadan</p>
+  <p class="text-center capitalize font-medium">{{ correspondence().origin.unit.name }}</p>
+  <div class="flex-center justify-center h-14 mt-1.5">
+    <img src="ui-logo.png" alt="ui's logo" class="h-full" />
+  </div>
+  <p class="text-center">
+    <span class="uppercase font-bold">
+      {{ correspondence().document.correspondence.direction }} memorandum</span
+    >
+  </p>
+
+  @if (correspondence().document.correspondence.direction === 'external' && correspondence().recipient; as recipient) {
+    <p>
+      <b>TO:</b>
+      The <span class="capitalize">{{ recipient.designation.title }}</span>,
+      <span>{{ recipient.unit.name }}</span>
+    </p>
+  }
+
+  <p><b>DATE:</b>
+    {{
+      formattedDate(correspondence().document.updatedAt ?? correspondence().document.createdAt)
+    }}</p>
+  <p class="uppercase"><b>REF. NO:</b> {{ correspondence().document.referenceNumber }}</p>
+
+  <hlm-separator />
+
+  <p class="capitalize underline font-bold">{{
+    correspondence().document.title
+  }}</p>
+</article>

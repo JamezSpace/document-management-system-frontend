@@ -1,0 +1,5 @@
+:host { display: block; }
+.component-error { display: flex; gap: .75rem; border: 1px solid #fecaca; border-radius: .5rem; padding: 1rem; color: #991b1b; background: #fef2f2; }
+h2 { margin: 0; font-size: 1rem; font-weight: 650; }
+p { margin: .25rem 0 0; color: #7f1d1d; }
+button { display: inline-flex; align-items: center; gap: .375rem; margin-top: .75rem; border: 0; padding: 0; color: #991b1b; background: transparent; font-weight: 600; cursor: pointer; }

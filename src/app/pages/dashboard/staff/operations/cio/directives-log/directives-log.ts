@@ -13,15 +13,16 @@ import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
-import { DirectiveDetail } from '../../../../../../components/dashboard-wide/operations/directive-detail/directive-detail';
-import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { DirectiveUi } from '../../../../../../interfaces/operations/cio/Directive.ui';
-import { DirectivesService } from '../../../../../../services/page-wide/dashboard/operations/cio/directives/directives-service';
-import { SideModal } from "../../../../../../components/dashboard-wide/shared/side-modal/side-modal";
-import { SideModalService } from '../../../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { SideModalService } from '../../../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
+import { DirectivesService } from '../../../../../../core/services/page-wide/dashboard/operations/cio/directives/directives-service';
+import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
+import { DirectiveDetail } from '../../../../../../shared/components/dashboard-wide/operations/directive-detail/directive-detail';
+import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
+import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
+import { SpartanH4 } from '../../../../../../shared/typography/spartan-h4/spartan-h4';
+import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
+
 
 @Component({
   selector: 'nexus-directives-log',

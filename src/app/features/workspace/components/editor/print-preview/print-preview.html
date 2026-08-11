@@ -1,0 +1,32 @@
+<main
+  class="paper-wrapper viewport"
+  (mouseenter)="showPaperActions()"
+  (mouseleave)="hidePaperActions()"
+>
+  <ng-template #dropdownMenu>
+    <hlm-dropdown-menu>
+      <button hlmDropdownMenuItem (click)="requestExitPreview()">
+        <span>Quit Preview Mode</span>
+        <kbd hlmKbd>Esc</kbd>
+      </button>
+    </hlm-dropdown-menu>
+  </ng-template>
+
+  <article
+    id="paper"
+    class="rounded-xs origin-top-center relative"
+    [style.transform]="canvasTransform()"
+  >
+    <div class="paper-actions" [class.visible]="paperActionsVisible()">
+      <button
+        class="flex-center p-2 rounded-full bg-muted-foreground/5"
+        [hlmDropdownMenuTrigger]="dropdownMenu"
+        aria-label="Print preview actions"
+      >
+        <ng-icon name="lucideGripVertical" />
+      </button>
+    </div>
+
+    <ng-content />
+  </article>
+</main>

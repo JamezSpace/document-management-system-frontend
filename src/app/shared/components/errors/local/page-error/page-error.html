@@ -1,0 +1,28 @@
+<section class="page-error" role="alert" aria-live="assertive">
+  <div class="page-error__icon" aria-hidden="true">
+    <ng-icon name="lucideTriangleAlert" size="2rem" />
+  </div>
+
+  <h1>{{ error().title }}</h1>
+  <p>{{ error().message }}</p>
+
+  @if (error().requestId) {
+    <small>Reference: {{ error().requestId }}</small>
+  }
+
+  <div class="page-error__actions">
+    @if (canRetry()) {
+      <button type="button" class="primary" (click)="retry.emit()">
+        <ng-icon name="lucideRefreshCw" />
+        Try again
+      </button>
+    }
+
+    @if (canGoBack()) {
+      <button type="button" (click)="goBack.emit()">
+        <ng-icon name="lucideArrowLeft" />
+        Go back
+      </button>
+    }
+  </div>
+</section>

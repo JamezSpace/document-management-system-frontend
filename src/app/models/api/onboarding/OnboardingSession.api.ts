@@ -1,4 +1,4 @@
-import { OnboardingSessionStatus } from "../../../enum/onboarding/sessionStatus.enum";
+import { OnboardingSessionStatus } from "../../../enums/onboarding/sessionStatus.enum";
 
 interface OnboardingSession {
     id: string;

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { SideModalService } from '../../../../services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { provideIcons } from '@ng-icons/core';
 import { lucideMail } from '@ng-icons/lucide';
+import { SideModalService } from '../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
 
 @Component({
   selector: 'nexus-side-modal',

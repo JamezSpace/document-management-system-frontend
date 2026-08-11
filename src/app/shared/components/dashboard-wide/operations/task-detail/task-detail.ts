@@ -1,5 +1,5 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import { TasksService } from '../../../../services/page-wide/dashboard/operations/regular/tasks/tasks-service';
+import { TasksService } from '../../../../../core/services/page-wide/dashboard/operations/regular/tasks/tasks-service';
 
 @Component({
   selector: 'nexus-task-detail',

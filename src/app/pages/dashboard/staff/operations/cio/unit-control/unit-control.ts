@@ -13,13 +13,13 @@ import { HlmHoverCardImports } from '@spartan-ng/helm/hover-card';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
-import { SpartanH3 } from '../../../../../../components/system-wide/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../../../../components/system-wide/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../../../components/system-wide/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../components/system-wide/typography/spartan-p/spartan-p';
-import { SpartanSmall } from '../../../../../../components/system-wide/typography/spartan-small/spartan-small';
-import { UnitMembersService } from '../../../../../../services/page-wide/dashboard/documents-registry/unit-members/unit-members-service';
-import { StaffDetailsService } from '../../../../../../services/page-wide/dashboard/office-template/staff-details-service';
+import { UnitMembersService } from '../../../../../../features/documents/service/unit-members/unit-members-service';
+import { CurrentStaffService } from '../../../../../../features/shared/services/current-staff/current-staff-service';
+import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
+import { SpartanH4 } from '../../../../../../shared/typography/spartan-h4/spartan-h4';
+import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
+import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
+import { SpartanSmall } from '../../../../../../shared/typography/spartan-small/spartan-small';
 
 @Component({
   selector: 'nexus-unit-control',
@@ -57,7 +57,7 @@ import { StaffDetailsService } from '../../../../../../services/page-wide/dashbo
 export class UnitControl implements OnInit {
   activatedRouter = inject(ActivatedRoute);
   unitMembersService = inject(UnitMembersService);
-  staffDetailsService = inject(StaffDetailsService);
+  currentStaffService = inject(CurrentStaffService);
 
   unitMembers = this.unitMembersService.data;
   private unitMembersLoaded = signal<boolean>(false);
@@ -70,7 +70,7 @@ export class UnitControl implements OnInit {
   }
 
   private unitMembersEffect = effect(() => {
-    const staff = this.staffDetailsService.data();
+    const staff = this.currentStaffService.data();
     if (!staff || this.unitMembersLoaded()) return;
 
     this.unitMembersService.fetchUnitMembers(staff.unit.id);

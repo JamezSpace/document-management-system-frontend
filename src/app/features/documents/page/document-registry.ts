@@ -49,10 +49,6 @@ import { HlmNavigationMenuImports } from '@spartan-ng/helm/navigation-menu';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparatorImports } from '@spartan-ng/helm/separator';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
-import { SensitivityLevel } from '../../../../enum/document/document.enum';
-import { GenericDashboardService } from '../../../../services/page-wide/dashboard/generic/generic-dashboard-service';
-import { StaffDetailsService } from '../../../../services/page-wide/dashboard/office-template/staff-details-service';
-import { StaffService } from '../../../../services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { EmptyStateInterface, EmptyStateType } from '../../../models/ui/global/EmptyState.ui';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { LineLoader } from '../../../shared/components/loaders/line-loader/line-loader';
@@ -65,15 +61,19 @@ import { BusinessFunctionService } from '../service/business-function/business-f
 import { CorrespondenceSubjectService } from '../service/correspondence-subject/correspondence-subject-service';
 import { DocumentTypesService } from '../service/document-types/document-types-service';
 import { MinutesService } from '../service/minutes/minutes-service';
-import { OrgUnitsService } from '../service/org-units/org-units-service';
 import { RegistryService } from '../service/registry/registry-service';
 import { UnitMembersService } from '../service/unit-members/unit-members-service';
 import { DocumentApi } from '../../../models/api/documents/Document.api';
-import { UnitsApi } from '../../../models/api/org units/units.api';
+import { UnitsApi } from '../../../models/api/organization/units.api';
 import { SideModal } from '../../../shared/components/side-modal/side-modal';
 import { DocumentDetails } from '../components/document-details/document-details';
 import { DocumentItem } from '../components/document-item/document-item';
 import { DocumentService } from '../service/document/document-service';
+import { OrganizationService } from '../../shared/services/organization/organization-service';
+import { CurrentStaffService } from '../../shared/services/current-staff/current-staff-service';
+import { StaffService } from '../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
+import { GenericDashboardService } from '../../../core/services/page-wide/dashboard/generic/generic-dashboard-service';
+import { SensitivityLevel } from '../../../enums/document/document.enum';
 
 
 @Component({
@@ -134,22 +134,22 @@ import { DocumentService } from '../service/document/document-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentRegistry implements OnInit {
+  router = inject(Router);
   private utilService = inject(UtilService);
-  private staffDetailsService = inject(StaffDetailsService);
+  private currentStaffService = inject(CurrentStaffService);
   registryService = inject(RegistryService);
   genericDashboardService = inject(GenericDashboardService);
   businessFunctionService = inject(BusinessFunctionService);
   corrSubjectService = inject(CorrespondenceSubjectService);
   unitMembersService = inject(UnitMembersService);
   documentTypesService = inject(DocumentTypesService);
-  orgUnitService = inject(OrgUnitsService);
+  organizationService = inject(OrganizationService);
   staffService = inject(StaffService);
   documentService = inject(DocumentService);
   minutesService = inject(MinutesService);
   activatedRouter = inject(ActivatedRoute);
-  router = inject(Router);
 
-  readonly signedInStaff = this.staffDetailsService.data;
+  readonly signedInStaff = this.currentStaffService.data;
 
   private queryParams = toSignal(this.activatedRouter.queryParamMap);
   viewMode = computed(() => this.queryParams()?.get('view'));
@@ -172,8 +172,8 @@ export class DocumentRegistry implements OnInit {
     this.corrSubjectService.fetchCorrSubjects();
     this.businessFunctionService.fetchBussFunctions();
     this.documentTypesService.fetchDocTypes();
-    this.orgUnitService.fetchOrgUnits();
-    this.staffService.fetchAllDesignations();
+    this.organizationService.fetchUnits();
+    this.organizationService.fetchAllDesignations();
   }
 
   AfterInitEffect = effect(() => {
@@ -265,9 +265,9 @@ export class DocumentRegistry implements OnInit {
   docTypes = this.documentTypesService.allDocTypes;
   corrSubjects = this.corrSubjectService.corrSubjects;
   unitMembers = this.unitMembersService.data;
-  orgUnits = this.orgUnitService.units;
+  orgUnits = this.organizationService.units;
   documents = this.documentService.staffDocuments;
-  designations = this.staffService.officesDesignations;
+  designations = this.organizationService.officesDesignations;
 
   filteredDocumentsForPageViewAndSearchQuery = computed(() => {
     const mode = this.viewMode();
@@ -548,14 +548,7 @@ export class DocumentRegistry implements OnInit {
       });
     }
 
-    if (error) {
-      this.hideLoader();
-
-      this.utilService.showToast(
-        'error',
-        error.code.httpStatusCode === 500 ? 'Internal Server Error' : error.context.message,
-      );
-    }
+    if (error) this.hideLoader();
   });
 
   documentClicked = this.registryService.documentClicked;

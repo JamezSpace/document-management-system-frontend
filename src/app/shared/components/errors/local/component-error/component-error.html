@@ -1,0 +1,12 @@
+<section class="component-error" role="alert">
+  <ng-icon name="lucideTriangleAlert" size="1.5rem" aria-hidden="true" />
+  <div>
+    <h2>{{ error().title }}</h2>
+    <p>{{ error().message }}</p>
+    @if (canRetry()) {
+      <button type="button" (click)="retry.emit()">
+        <ng-icon name="lucideRefreshCw" /> Try again
+      </button>
+    }
+  </div>
+</section>

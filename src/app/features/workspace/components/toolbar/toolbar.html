@@ -25,32 +25,6 @@
 
   <div id="right-section" class="flex-center gap-3.5">
     @if (ui().permissions.readonly) {
-      @if (!isMinuting) {
-        <button
-          type="button"
-          class="nexus-button scale-90 secondary"
-          (click)="addMinuteToCorrespondence()"
-        >
-          @if (getStaffMinuteIfExistsBefore().existsBefore) {
-            Re-minute
-          } @else {
-            acknowledge
-          }
-        </button>
-      } @else if (isForwarding) {
-        <button
-          type="button"
-          class="nexus-button scale-90"
-          [disabled]="!forwardCorrespondenceFormGroup.controls.forwardToDesignationId.valid"
-          [hlmAlertDialogTriggerFor]="forwardDocumentDialog"
-        >
-          <span class="flex-center gap-x-1.5">
-            <ng-icon name="lucideSend" />
-            forward</span
-          >
-        </button>
-      }
-
       <button
         type="button"
         class="nexus-button flex-center gap-2 scale-90 capitalize"
