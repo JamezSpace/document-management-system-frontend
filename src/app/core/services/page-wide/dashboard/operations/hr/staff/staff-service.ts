@@ -143,7 +143,7 @@ export class StaffService {
     // TODO: replace placeholder URL when endpoint is finalized
     this.http
       .patch<ApiResponse<StaffWithMedia>>(
-        `${environment.api}/identity/staff/${staffId}/update`,
+        `${environment.api}/identity/staff/${staffId}`,
         payload,
       )
       .pipe(finalize(() => this.loading.set(false)))

@@ -208,10 +208,9 @@ export class Workspace implements OnInit, OnDestroy {
 
   submitDocument(): void {
     const document = this.document();
-    const staffId = this.signedInStaff()?.id;
-    if (!document || !staffId) return;
+    if (!document) return;
 
-    this.documentService.submitDocument(staffId, document);
+    this.documentService.submitDocumentById(document.id);
   }
 
   readonly documentSubmissionEffect = effect(() => {

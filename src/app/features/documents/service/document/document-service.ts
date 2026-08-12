@@ -8,6 +8,7 @@ import { environment } from '../../../../../environments/environment.development
 import { ApiResponse } from '../../../../models/api/ApiResponse.api';
 import { LifecycleActions } from '../../../../enums/document/document.enum';
 import { WorkspaceUiService } from '../../../workspace/service/ui/workspace-ui-service';
+import { DocumentsApi } from '../../../../api/documents/documents.api';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class DocumentService {
   private http = inject(HttpClient);
   private utilService = inject(UtilService);
   private workspaceUiService = inject(WorkspaceUiService);
+  private readonly documentsApi = inject(DocumentsApi);
 
   loading = signal<boolean>(false);
   error = signal<AppError | null>(null);
@@ -123,6 +125,21 @@ export class DocumentService {
       });
   }
 
+  saveDocumentContent(docId: string, contentDelta: unknown) {
+    this.saveDocumentLoading.set(true);
+
+    this.documentsApi
+      .saveContent(docId, { contentDelta })
+      .pipe(finalize(() => this.saveDocumentLoading.set(false)))
+      .subscribe({
+        next: (resp) => {
+          this.document.set(resp.data);
+          this.workspaceUiService.setIsDocumentSaved(true);
+        },
+        error: (err) => this.error.set(err),
+      });
+  }
+
   docSubmittedSuccess = signal<boolean>(false);
   submitDocument(staffId: string, doc: DocumentApi) {
     this.loading.set(true);
@@ -138,6 +155,22 @@ export class DocumentService {
 
           this.utilService.showToast('info', 'Correspondence submitted to registry successfully!');
 
+          this.docSubmittedSuccess.set(true);
+        },
+        error: (err) => this.error.set(err),
+      });
+  }
+
+  submitDocumentById(documentId: string) {
+    this.loading.set(true);
+
+    this.documentsApi
+      .submit(documentId)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (resp) => {
+          this.document.set(resp.data);
+          this.utilService.showToast('info', 'Correspondence submitted to registry successfully!');
           this.docSubmittedSuccess.set(true);
         },
         error: (err) => this.error.set(err),

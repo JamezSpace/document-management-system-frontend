@@ -1,8 +1,6 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpContext } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { finalize, Observable } from 'rxjs';
-import { ApiResponse } from '../../../../models/api/ApiResponse.api';
+import { finalize } from 'rxjs';
 import { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../models/api/workspace/signature/signature.ui';
 import { WorkspaceContextApi } from '../../../../models/api/workspace/WorkspaceContext.api';
 import { ERROR_SURFACE } from '../../../../core/interceptors/error/error-context';
@@ -13,9 +11,9 @@ import { Router } from '@angular/router';
 import { WorkspaceUiService } from '../ui/workspace-ui-service';
 import DocumentService from '../../../shared/services/document/DocumentService';
 import { CurrentStaffService } from '../../../shared/services/current-staff/current-staff-service';
-import { environment } from '../../../../../environments/environment.development';
 import { OrganizationService } from '../../../shared/services/organization/organization-service';
 import { WorkspacePrimaryAction } from '../../../../models/ui/workspace/WorkspacePrimaryAction.ui';
+import { WorkspaceApi } from '../../../../api/workspace/workspace.api';
 
 
 @Injectable({
@@ -23,7 +21,7 @@ import { WorkspacePrimaryAction } from '../../../../models/ui/workspace/Workspac
 })
 export class WorkspaceService {
   private router = inject(Router);
-  private http = inject(HttpClient);
+  private readonly workspaceApi = inject(WorkspaceApi);
   documentService = inject(DocumentService);
   workspaceUiService = inject(WorkspaceUiService);
   currentStaffService = inject(CurrentStaffService);
@@ -125,22 +123,16 @@ export class WorkspaceService {
   /** CROSS-ENTITY OPERATIONS */
   saveDocument() {
      const context = this.workspaceContext();
-     const actor = this.currentStaffService.data()
-
-      if (!context || !actor) return;
+      if (!context) return;
 
       const delta =
           this.workspaceUiService
               .getQuillEditorContent()()
               .deltaContent;
 
-      this.documentService.saveDocument(
+      this.documentService.saveDocumentContent(
           context.metadata.document.id,
-          {
-              document: context.metadata.document,
-              actorId: actor.id,
-              contentDelta: delta
-          }
+          delta,
       );
   }
 
@@ -152,25 +144,16 @@ export class WorkspaceService {
   });
 
   async fetchSignaturePlaceholder() {
-    const data = this.http.get(
-      `${environment.api}/signature/placeholder`,
-    ) as Observable<SignaturePlaceHolderForBaseLevelAuthorityUi>;
-
-    const signalData = toSignal(data);
-    if (signalData()) this.signaturePlaceholder.set(signalData()!);
+    // Placeholder configuration remains local until a backend resource exists.
+    return this.signaturePlaceholder();
   }
 
   fetchWorkspaceContext(documentId: string): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.http
-      .get<ApiResponse<WorkspaceContextApi>>(
-        `${environment.api}/workspace/${documentId}`,
-        {
-          context: new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE)
-        },
-      )
+    this.workspaceApi
+      .get(documentId, new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE))
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => this.workspaceContext.set(response.data),

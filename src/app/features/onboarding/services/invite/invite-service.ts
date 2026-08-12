@@ -125,7 +125,7 @@ export class InviteService {
     this.loading.set(true);
 
     this.http
-      .delete<ApiResponse<void>>(`${environment.api}/identity/invite/nudge/${inviteId}`)
+      .post<ApiResponse<void>>(`${environment.api}/identity/invite/nudge/${inviteId}`, {})
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.nudgeSuccessful.set(true),
