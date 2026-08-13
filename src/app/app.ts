@@ -14,8 +14,8 @@ export class App{
   protected readonly title = signal('document-management-system-frontend');
 
   private authService = inject(AuthService);
-  get isNotLoading() {
-    return this.authService.isAppStartingUpWithAuthenticatedUserLoading();
+  get isSecureEnvironmentLoading() {
+    return this.authService.isSecureEnvironmentLoading();
   }
 
 }

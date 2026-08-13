@@ -95,6 +95,11 @@ export const routes: Routes = [
     path: 'unauthorized',
     component: Unauthorized
   },
+  {
+    path: 'system-error',
+    loadComponent: () =>
+      import('./pages/shared/system-error/system-error').then((m) => m.SystemError),
+  },
 
   //fallback
     {

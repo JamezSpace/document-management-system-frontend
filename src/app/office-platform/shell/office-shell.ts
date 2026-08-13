@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -53,7 +53,6 @@ import { HlmSidebarImports, HlmSidebarService } from '@spartan-ng/helm/sidebar';
 import { AuthService } from '../../features/auth/service/auth-service';
 import { CurrentStaffService } from '../../features/shared/services/current-staff/current-staff-service';
 import { Workspace } from '../../features/workspace/page/workspace';
-import { LineLoader } from '../../shared/components/loaders/line-loader/line-loader';
 import type { OfficeNavigationGroup } from '../models/office-navigation';
 import { OfficeContextService } from '../context/office-context.service';
 
@@ -69,7 +68,6 @@ import { OfficeContextService } from '../context/office-context.service';
     HlmButtonImports,
     HlmAlertDialogImports,
     HlmSeparator,
-    LineLoader,
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
   ],
@@ -96,7 +94,6 @@ export class OfficeShell {
 
   readonly staff = this.staffService.data;
   readonly context = this.officeContext.active;
-  readonly loading = this.staffService.loading;
   readonly workspaceActive = signal(false);
   readonly sidebarClosed = computed(() => !this.sidebarService.open());
 
@@ -115,10 +112,6 @@ export class OfficeShell {
       }))
       .filter((group) => group.items.length > 0);
   });
-
-  constructor() {
-    effect(() => this.authService.setLoading(this.loading()));
-  }
 
   isActive(route: string): boolean {
     return this.router.url.startsWith(`${this.officeContext.baseRoute()}/${route}`);

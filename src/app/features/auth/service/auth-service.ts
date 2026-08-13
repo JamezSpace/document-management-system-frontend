@@ -20,15 +20,20 @@ export class AuthService {
   //  for Ui State
   readonly user = signal<User | null>(null);
   readonly errorMessage = signal<string | null>(null);
-  readonly appLoading = signal<boolean>(false);
+  /** Database identity/office bootstrap, shown by the application splash screen. */
+  readonly secureEnvironmentLoading = signal<boolean>(false);
   loading = signal<boolean>(false);
 
-  isAppStartingUpWithAuthenticatedUserLoading() {
-    return this.appLoading;
+  isSecureEnvironmentLoading() {
+    return this.secureEnvironmentLoading;
   }
 
-  setLoading(isLoading: boolean) {
-    this.appLoading.set(isLoading);
+  beginSecureEnvironmentSetup(): void {
+    this.secureEnvironmentLoading.set(true);
+  }
+
+  endSecureEnvironmentSetup(): void {
+    this.secureEnvironmentLoading.set(false);
   }
 
   constructor() {
@@ -67,7 +72,10 @@ export class AuthService {
     try {
       await signInWithEmailAndPassword(this.auth, authUser.email, authUser.password);
 
-      this.appLoading.set(true);
+      // Firebase has finished. Hand loading ownership over to the database
+      // identity/bootstrap phase before routing into the protected office tree.
+      this.loading.set(false);
+      this.beginSecureEnvironmentSetup();
 
       return { success: 1 };
     } catch (error: any) {
@@ -90,6 +98,7 @@ export class AuthService {
 
   resetContext() {
     this.loading.set(false);
+    this.endSecureEnvironmentSetup();
     this.errorMessage.set(null);
   }
 }

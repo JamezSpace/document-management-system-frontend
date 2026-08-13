@@ -13,6 +13,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
   const firebaseUser = await authService.waitForUser();
 
   if (!firebaseUser) {
+    authService.endSecureEnvironmentSetup();
     return router.createUrlTree(['/auth'], {
       queryParams: {
         returnUrl: state.url,
@@ -20,15 +21,18 @@ export const authGuard: CanActivateFn = async (_route, state) => {
     });
   }
 
+  const needsIdentityBootstrap = !currentStaffService.data();
+  if (needsIdentityBootstrap) authService.beginSecureEnvironmentSetup();
+
   try {
-    if (!currentStaffService.data()) {
+    if (needsIdentityBootstrap) {
       await currentStaffService.loadCurrentStaff();
     }
 
     return true;
   } catch (error) {
     const appError = error as AppError;
-    const category = appError.apiError.context.category;
+    const category = appError.apiError?.context.category;
 
     if (category === 'authorization' || category === 'not_found') {
       return router.createUrlTree(['/unauthorized']);
@@ -45,5 +49,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
     }
 
     return router.createUrlTree(['/system-error']);
+  } finally {
+    authService.endSecureEnvironmentSetup();
   }
 };

@@ -102,8 +102,6 @@ export class DashboardOfficeTemplate implements OnInit {
     const isLoading = this.currentStaffService.loading();
     const staff = this.currentStaffService.data();
 
-    this.authService.setLoading(isLoading);
-
     if (!contextRequested || isLoading) return;
 
     if (staff) {
