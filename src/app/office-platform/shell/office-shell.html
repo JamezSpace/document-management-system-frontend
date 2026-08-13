@@ -1,0 +1,91 @@
+<div class="relative" [class.hidden]="!loading()">
+  <span class="opacity-0">Loading office</span>
+  <nexus-line-loader />
+</div>
+
+<div hlmSidebarWrapper class="nexus-sans-font" [class.workspace-mode]="workspaceActive()">
+  <hlm-sidebar collapsible="icon" class="flex h-screen flex-col">
+    <header hlmSidebarHeader class="gap-3">
+      <a routerLink="/office" class="w-8"><img src="logo.webp" alt="NexusFons" /></a>
+      @if (!sidebarClosed() && context(); as office) {
+        <div class="min-w-0">
+          <p class="truncate text-xs font-semibold">{{ office.definition.label }}</p>
+          <p class="truncate text-[10px] text-muted-foreground">{{ office.officeName }}</p>
+        </div>
+      }
+    </header>
+
+    <hlm-separator />
+
+    <div class="flex-1 overflow-y-auto overflow-x-hidden">
+      @for (group of navigation(); track group.label) {
+        <section hlmSidebarGroup>
+          <div hlmSidebarGroupLabel class="uppercase tracking-wider">{{ group.label }}</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (item of group.items; track item.route) {
+                <li hlmSidebarMenuItem>
+                  <a hlmSidebarMenuButton [routerLink]="item.route" [isActive]="isActive(item.route)">
+                    <ng-icon hlm [name]="item.icon" />
+                    <span>{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </section>
+      }
+    </div>
+
+    <hlm-separator />
+    <footer hlmSidebarFooter>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <button type="button" hlmSidebarMenuButton><ng-icon name="lucideSettings" /><span>Settings</span></button>
+        </li>
+        <li hlmSidebarMenuItem>
+          <button type="button" hlmSidebarMenuButton [hlmAlertDialogTriggerFor]="logOutDialog">
+            <ng-icon name="lucideLogOut" /><span>Logout</span>
+          </button>
+        </li>
+        <hlm-separator />
+        @if (staff(); as member) {
+          <li hlmSidebarMenuItem>
+            <div class="flex items-center gap-3 px-2 py-1">
+              <hlm-avatar>
+                @if (member.media.profilePicUrl) {
+                  <img hlmAvatarImage [src]="member.media.profilePicUrl" alt="Staff profile" />
+                }
+                <span hlmAvatarFallback>{{ initials(member.fullName) }}</span>
+              </hlm-avatar>
+              @if (!sidebarClosed()) {
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium">{{ member.fullName }}</p>
+                  <p class="truncate text-xs text-muted-foreground">{{ member.designation.title || 'No designation' }}</p>
+                </div>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </footer>
+  </hlm-sidebar>
+
+  <main [class.hidden]="workspaceActive()"><button hlmSidebarTrigger><span class="sr-only">Toggle navigation</span></button></main>
+  <div [class]="workspaceActive() ? 'flex-1 p-0' : 'min-w-0 flex-1 p-5'">
+    <router-outlet (activate)="onRouteActivate($event)" />
+  </div>
+</div>
+
+<hlm-alert-dialog #logOutDialog>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>End this session?</h2>
+      <p hlmAlertDialogDescription>Make sure your active document work is saved before signing out.</p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction class="bg-primary text-white" (click)="logout()">Log out</button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

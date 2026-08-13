@@ -14,6 +14,7 @@ import { CurrentStaffService } from '../../../shared/services/current-staff/curr
 import { OrganizationService } from '../../../shared/services/organization/organization-service';
 import { WorkspacePrimaryAction } from '../../../../models/ui/workspace/WorkspacePrimaryAction.ui';
 import { WorkspaceApi } from '../../../../api/workspace/workspace.api';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 
 
 @Injectable({
@@ -21,6 +22,7 @@ import { WorkspaceApi } from '../../../../api/workspace/workspace.api';
 })
 export class WorkspaceService {
   private router = inject(Router);
+  private readonly officeContext = inject(OfficeContextService);
   private readonly workspaceApi = inject(WorkspaceApi);
   documentService = inject(DocumentService);
   workspaceUiService = inject(WorkspaceUiService);
@@ -117,7 +119,7 @@ export class WorkspaceService {
   exitWorkspace() {
     this.documentService.resetContext();
 
-    return this.router.navigateByUrl('/office/documents');
+    return this.router.navigateByUrl(this.officeContext.route('documents'));
   }
 
   /** CROSS-ENTITY OPERATIONS */

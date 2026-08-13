@@ -12,6 +12,7 @@ import { StaffWithMedia } from '../../../../../../../models/api/staff/StaffWithM
 import { Users } from '../../../../../../../models/api/users/users.api';
 import { UtilService } from '../../../../../../../shared/utils/service/util-service';
 import { CurrentStaffService } from '../../../../../../../features/shared/services/current-staff/current-staff-service';
+import { OfficeContextService } from '../../../../../../../office-platform/context/office-context.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,7 @@ export class StaffService {
   private utilService = inject(UtilService);
   private currentStaffService = inject(CurrentStaffService);
   private router = inject(Router);
+  private officeContext = inject(OfficeContextService);
 
   initStaff = signal<InitStaffPayload | null>(null);
   staff = signal<StaffWithMedia[]>([]);
@@ -67,7 +69,7 @@ export class StaffService {
         next: (resp) => {
           this.newlyAddedStaffId.set(resp.data);
 
-          this.router.navigateByUrl('/office/operations/staff');
+          this.router.navigateByUrl(this.officeContext.route('staff'));
         },
         error: (err: AppError) => {
           this.error.set(err);

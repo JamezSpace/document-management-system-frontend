@@ -1,10 +1,14 @@
 import { Routes } from '@angular/router';
 import { Auth } from './features/auth/page/auth';
-import { DashboardOfficeTemplate } from './pages/dashboard/shared/dashboard-office-template/dashboard-office-template';
 import { authGuard } from './core/guards/auth-guard';
 import { Unauthorized } from './pages/shared/unauthorized/unauthorized/unauthorized';
 import { OnboardingEntity } from './features/onboarding/pages/onboarding-entity/onboarding-entity';
 import { PasswordReset } from './features/onboarding/pages/password-reset/password-reset';
+import { OfficeShell } from './office-platform/shell/office-shell';
+import {
+  officeLandingGuard,
+  officeWorkbenchGuard,
+} from './office-platform/guards/office-workbench.guard';
 
 export const routes: Routes = [
   // public/auth route
@@ -33,68 +37,55 @@ export const routes: Routes = [
   // digital office dashboard
   {
     path: 'office',
-    component: DashboardOfficeTemplate,
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        redirectTo: 'overview',
         pathMatch: 'full',
+        component: OfficeShell,
+        canActivate: [officeLandingGuard],
       },
       {
-        path: 'overview',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/general/overview/overview').then((page) => page.Overview),
+        path: 'records',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('records')],
+        loadChildren: () => import('./offices/records/records.routes').then((m) => m.RECORDS_ROUTES),
       },
       {
-        path: 'documents',
-        loadComponent: () =>
-          import('./features/documents/page/document-registry').then((page) => page.DocumentRegistry),
+        path: 'secretariat',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('secretariat')],
+        loadChildren: () => import('./offices/secretariat/secretariat.routes').then((m) => m.SECRETARIAT_ROUTES),
       },
       {
-        path: 'documents/workspace/:id',
-        loadComponent: () =>
-          import('./features/workspace/page/workspace').then((page) => page.Workspace),
+        path: 'processing',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('processing')],
+        loadChildren: () => import('./offices/processing/processing.routes').then((m) => m.PROCESSING_ROUTES),
       },
       {
-        path: 'notices',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/general/notices/notices').then((page) => page.Notices),
+        path: 'leadership',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('leadership')],
+        loadChildren: () => import('./offices/leadership/leadership.routes').then((m) => m.LEADERSHIP_ROUTES),
       },
       {
-        path: 'operations/tasks',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/operations/regular/tasks-ledger/tasks-ledger').then(
-            (page) => page.TasksLedger,
-          ),
+        path: 'human-resources',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('human-resources')],
+        loadChildren: () => import('./offices/human-resources/human-resources.routes').then((m) => m.HUMAN_RESOURCES_ROUTES),
       },
       {
-        path: 'operations/unit-control',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/operations/cio/unit-control/unit-control').then(
-            (page) => page.UnitControl,
-          ),
+        path: 'system-administration',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('system-administration')],
+        loadChildren: () => import('./offices/system-administration/system-administration.routes').then((m) => m.SYSTEM_ADMINISTRATION_ROUTES),
       },
       {
-        path: 'operations/directives',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/operations/cio/directives-log/directives-log').then(
-            (page) => page.DirectivesLog,
-          ),
-      },
-      {
-        path: 'operations/staff',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/operations/hr/staff-registry/staff-registry').then(
-            (page) => page.StaffRegistry,
-          ),
-      },
-      {
-        path: 'operations/staff-activation',
-        loadComponent: () =>
-          import('./pages/dashboard/staff/operations/hr/staff-activation/staff-activation').then(
-            (page) => page.StaffActivation,
-          ),
+        path: 'audit-compliance',
+        component: OfficeShell,
+        canMatch: [officeWorkbenchGuard('audit-compliance')],
+        loadChildren: () => import('./offices/audit-compliance/audit-compliance.routes').then((m) => m.AUDIT_COMPLIANCE_ROUTES),
       },
     ],
   },

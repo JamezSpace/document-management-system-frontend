@@ -1,0 +1,15 @@
+<section class="mx-auto max-w-6xl px-4 py-6 soft-fade">
+  <div class="mb-8 max-w-3xl">
+    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-(--brand-primary)">{{ status() }}</p>
+    <h1 class="nexus-serif-font text-4xl font-bold text-(--brand-text)">{{ title() }}</h1>
+    <p class="mt-3 text-sm leading-6 text-muted-foreground">{{ description() }}</p>
+  </div>
+
+  @if (office(); as context) {
+    <div hlmCard class="border-l-4 border-l-(--brand-primary) p-6">
+      <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active office</p>
+      <h2 class="mt-2 text-xl font-semibold">{{ context.officeName }}</h2>
+      <p class="mt-1 text-sm text-muted-foreground">{{ context.definition.label }} workbench</p>
+    </div>
+  }
+</section>

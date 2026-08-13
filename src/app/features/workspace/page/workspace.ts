@@ -24,6 +24,7 @@ import { Toolbar } from '../components/toolbar/toolbar';
 import { WorkspaceService } from '../service/data/workspace-service';
 import { MemoViewModel } from '../../../models/ui/workspace/MemoViewModel.ui';
 import { PageError } from '../../../shared/components/errors/local/page-error/page-error';
+import { OfficeContextService } from '../../../office-platform/context/office-context.service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -58,6 +59,7 @@ export class Workspace implements OnInit, OnDestroy {
   private readonly minutesService = inject(MinutesService);
   private readonly currentStaffService = inject(CurrentStaffService);
   private readonly organizationService = inject(OrganizationService);
+  private readonly officeContext = inject(OfficeContextService);
 
   readonly workspaceLoading = this.workspaceService.loading;
   readonly workspaceError = this.workspaceService.error;
@@ -146,7 +148,7 @@ export class Workspace implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    void this.router.navigateByUrl('/office/documents');
+    void this.router.navigateByUrl(this.officeContext.route('documents'));
   }
 
   previewDocument(): void {
@@ -215,7 +217,7 @@ export class Workspace implements OnInit, OnDestroy {
 
   readonly documentSubmissionEffect = effect(() => {
     if (this.documentService.docSubmittedSuccess()) {
-      void this.router.navigateByUrl('/office/documents');
+      void this.router.navigateByUrl(this.officeContext.route('documents'));
     }
   });
 }

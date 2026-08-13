@@ -1,3 +1,5 @@
+import type { OfficeWorkbenchKey } from '../../../office-platform/models/office-workbench';
+
 interface BaseStaffEntity {
   id: string;
   identityId: string;
@@ -16,6 +18,7 @@ interface BaseStaffEntity {
   office: {
     id: string;
     name: string;
+    workbench?: OfficeWorkbenchKey;
   };
   designation: {
     id: string;
