@@ -18,17 +18,11 @@ import { DirectivesService } from '../../../../../../core/services/page-wide/das
 import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
 import { DirectiveDetail } from '../../../../../../shared/components/dashboard-wide/operations/directive-detail/directive-detail';
 import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
-import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../../../../shared/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
 
 
 @Component({
   selector: 'nexus-directives-log',
   imports: [
-    SpartanH3,
-    SpartanP,
     HlmSelectImports,
     HlmAlertDialogImports,
     BrnSelectImports,
@@ -38,8 +32,6 @@ import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-
     BrnAvatarImports,
     HlmSeparator,
     HlmTextareaImports,
-    SpartanH4,
-    SpartanMuted,
     MatTableModule,
     MatPaginatorModule,
     DirectiveDetail,

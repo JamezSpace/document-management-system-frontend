@@ -19,10 +19,10 @@
 
 <section class="flex-center justify-between">
   <article>
-    <nexus-spartan-h3>documents registry</nexus-spartan-h3>
-    <nexus-spartan-p>
+    <h3 nata-h3>documents registry</h3>
+    <p nata-p>
       Complete view of all documents across drafts, submissions and shared items.
-    </nexus-spartan-p>
+    </p>
   </article>
   <button
     type="button"
@@ -155,7 +155,7 @@
 <hlm-alert-dialog #documentTypeSelectionDialog>
   <hlm-alert-dialog-content *hlmAlertDialogPortal class="min-w-md">
     <hlm-alert-dialog-header>
-      <nexus-spartan-h4>Choose the jurisdictional boundary for this record</nexus-spartan-h4>
+      <h4 nata-h4>Choose the jurisdictional boundary for this record</h4>
     </hlm-alert-dialog-header>
 
     <hlm-separator class="" />
@@ -176,7 +176,7 @@
           }
 
           <article>
-            <nexus-spartan-p class="capitalize">{{ docType.name }}</nexus-spartan-p>
+            <p nata-p class="capitalize">{{ docType.name }}</p>
           </article>
         </button>
       }
@@ -188,7 +188,7 @@
 <hlm-alert-dialog #documentDirectionSelectionDialog>
   <hlm-alert-dialog-content *hlmAlertDialogPortal class="min-w-md">
     <hlm-alert-dialog-header>
-      <nexus-spartan-h4>Specify the direction for this record</nexus-spartan-h4>
+      <h4 nata-h4>Specify the direction for this record</h4>
     </hlm-alert-dialog-header>
     <hlm-separator />
     <div class="flex-center gap-5 mt-3.5 flex-wrap justify-center">
@@ -201,8 +201,8 @@
         <ng-icon name="lucideFileInput" class="text-2xl" />
 
         <article>
-          <nexus-spartan-p class="capitalize">internal</nexus-spartan-p>
-          <nexus-spartan-muted>Within the unit</nexus-spartan-muted>
+          <p nata-p class="capitalize">internal</p>
+          <p nata-muted>Within the unit</p>
         </article>
       </button>
 
@@ -215,8 +215,8 @@
         <ng-icon name="lucideFileOutput" class="text-2xl" />
 
         <article>
-          <nexus-spartan-p class="capitalize">external</nexus-spartan-p>
-          <nexus-spartan-muted>Outside the unit</nexus-spartan-muted>
+          <p nata-p class="capitalize">external</p>
+          <p nata-muted>Outside the unit</p>
         </article>
       </button>
     </div>
@@ -235,11 +235,11 @@
     </div>
     <section class="gap-4 p-6" [class.pt-2]="loading()">
       <hlm-alert-dialog-header>
-        <nexus-spartan-h4> Document Registration </nexus-spartan-h4>
-        <nexus-spartan-muted class="capitalize">
+        <h4 nata-h4> Document Registration </h4>
+        <p nata-muted class="capitalize">
           {{ initDocument()!.direction }} {{ initDocument()!.docType }} Workflow •
           {{ currentYear }} Session
-        </nexus-spartan-muted>
+        </p>
       </hlm-alert-dialog-header>
       <hlm-separator />
       <form [formGroup]="initDocFormGroup">

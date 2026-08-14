@@ -15,20 +15,10 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
 import { UnitMembersService } from '../../../../../../features/documents/service/unit-members/unit-members-service';
 import { CurrentStaffService } from '../../../../../../features/shared/services/current-staff/current-staff-service';
-import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../../../../shared/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
-import { SpartanSmall } from '../../../../../../shared/typography/spartan-small/spartan-small';
 
 @Component({
   selector: 'nexus-unit-control',
   imports: [
-    SpartanH3,
-    SpartanP,
-    SpartanH4,
-    SpartanMuted,
-    SpartanSmall, 
     NgIcon,
     HlmSeparator,
     HlmSelectImports,

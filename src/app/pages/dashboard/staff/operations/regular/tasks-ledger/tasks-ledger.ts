@@ -8,14 +8,11 @@ import { NgIcon } from '@ng-icons/core';
 import { TasksService } from '../../../../../../core/services/page-wide/dashboard/operations/regular/tasks/tasks-service';
 import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
 import { TaskDetail } from '../../../../../../shared/components/dashboard-wide/operations/task-detail/task-detail';
-import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-tasks-ledger',
-  imports: [SpartanH3, SpartanP, HlmSeparator, NgIcon, TaskDetail, MatTableModule,
-    MatPaginatorModule, BrnAvatar, SpartanMuted],
+  imports: [HlmSeparator, NgIcon, TaskDetail, MatTableModule,
+    MatPaginatorModule, BrnAvatar],
   templateUrl: './tasks-ledger.html',
   styleUrl: './tasks-ledger.css',
 })

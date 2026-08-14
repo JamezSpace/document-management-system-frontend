@@ -1,10 +1,10 @@
-<main class="system-error nexus-sans-font" role="alert" aria-live="assertive">
+<main class="system-error nexus-sans-font text-center" role="alert" aria-live="assertive">
   <div class="system-error__card">
     <span class="system-error__icon" aria-hidden="true">
       <ng-icon name="lucideTriangleAlert" size="2rem" />
     </span>
     <p class="system-error__eyebrow">Secure environment unavailable</p>
-    <h1>{{ error()?.title || 'We could not finish setting up your office' }}</h1>
+    <h3 nata-h3>{{ error()?.title || 'We could not finish setting up your office' }}</h3>
     <p>
       {{ error()?.message || 'Your Firebase session was accepted, but your staff identity could not be loaded from the database.' }}
     </p>

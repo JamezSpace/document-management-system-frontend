@@ -52,10 +52,6 @@ import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { EmptyStateInterface, EmptyStateType } from '../../../models/ui/global/EmptyState.ui';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { LineLoader } from '../../../shared/components/loaders/line-loader/line-loader';
-import { SpartanH3 } from '../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../shared/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../shared/typography/spartan-p/spartan-p';
 import { UtilService } from '../../../shared/utils/service/util-service';
 import { BusinessFunctionService } from '../service/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../service/correspondence-subject/correspondence-subject-service';
@@ -91,10 +87,6 @@ import { SensitivityLevel } from '../../../enums/document/document.enum';
     HlmNavigationMenuImports,
     HlmMenubarImports,
     HlmTooltipImports,
-    SpartanH3,
-    SpartanH4,
-    SpartanP,
-    SpartanMuted,
     NgIcon,
     HlmInputGroup,
     HlmInputGroupAddon,

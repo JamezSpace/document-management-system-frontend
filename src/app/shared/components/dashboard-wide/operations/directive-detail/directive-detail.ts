@@ -7,14 +7,10 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmAlertDialogImports } from "@spartan-ng/helm/alert-dialog";
 import { DirectivesService } from '../../../../../core/services/page-wide/dashboard/operations/cio/directives/directives-service';
 import { DirectiveDetailApi } from '../../../../../models/api/directive/DirectiveDetail.api';
-import { SpartanH3 } from '../../../../typography/spartan-h3/spartan-h3';
-import { SpartanMuted } from '../../../../typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-directive-detail',
-  imports: [NgIcon, SpartanP, HlmSeparator, SpartanMuted, SpartanH3,
-    HlmAlertDialogImports],
+  imports: [NgIcon, HlmSeparator, HlmAlertDialogImports],
   templateUrl: './directive-detail.html',
   styleUrl: './directive-detail.css',
   providers: [provideIcons({ saxTickCircleBold, hugeTimer01, hugeSignature, lucideScrollText })],

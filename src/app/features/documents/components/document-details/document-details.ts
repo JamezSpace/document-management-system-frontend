@@ -5,8 +5,6 @@ import { lucideX } from '@ng-icons/lucide';
 import { HlmSpinnerImports } from '@spartan-ng/helm/spinner';
 import { SideModalService } from '../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { DocumentApi } from '../../../../models/api/documents/Document.api';
-import { SpartanLarge } from '../../../../shared/typography/spartan-large/spartan-large';
-import { SpartanMuted } from '../../../../shared/typography/spartan-muted/spartan-muted';
 import { UtilService } from '../../../../shared/utils/service/util-service';
 import { BusinessFunctionService } from '../../service/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../../service/correspondence-subject/correspondence-subject-service';
@@ -19,7 +17,7 @@ import { OrganizationService } from '../../../shared/services/organization/organ
 
 @Component({
   selector: 'nexus-document-details',
-  imports: [MatTabsModule, SpartanLarge, NgIcon, HlmSpinnerImports],
+  imports: [MatTabsModule, NgIcon, HlmSpinnerImports],
   templateUrl: './document-details.html',
   styleUrl: './document-details.css',
   providers: [

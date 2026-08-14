@@ -3,9 +3,9 @@
   <section class="flex justify-between items-start mb-10">
     <div class="space-y-1">
       <!-- <h1 class="text-4xl nexus-serif-font font-bold text-(--brand-text) soft-fade capitalize"> -->
-      <nexus-spartan-h2> Hi, {{ staff()?.firstName }} </nexus-spartan-h2>
+      <h2 nata-h2> Hi, {{ staff()?.firstName }} </h2>
       @if (staff()?.designation?.title) {
-        <nexus-spartan-p class="uppercase">{{ staff()?.designation?.title }}</nexus-spartan-p>
+        <p nata-p class="uppercase">{{ staff()?.designation?.title }}</p>
       }
       <!-- <p
         class="text-xs font-semibold uppercase tracking-widest text-(--brand-accent-shade-1) soft-fade delay-100"
@@ -31,5 +31,5 @@
     } -->
   </section>
 
-  <nexus-spartan-h1>welcome!</nexus-spartan-h1>
+  <h1 nata-h1>welcome!</h1>
 </div>

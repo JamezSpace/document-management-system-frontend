@@ -112,36 +112,36 @@
     <section class="px-1.5 h-full">
       @if (!editMode()) {
         <div class="h-full flex flex-col">
-          <nexus-spartan-h4 class="capitalize">{{ invite.email }}</nexus-spartan-h4>
-          <nexus-spartan-muted class="uppercase"
-            >{{ invite.employmentType }} staff</nexus-spartan-muted
+          <h4 nata-h4 class="capitalize">{{ invite.email }}</h4>
+          <p nata-muted class="uppercase"
+            >{{ invite.employmentType }} staff</p
           >
 
           <hlm-separator class="my-3" />
 
           <div class="flex flex-col gap-2.5 overflow-auto">
             <article>
-              <nexus-spartan-muted class="uppercase">Email</nexus-spartan-muted>
-              <nexus-spartan-p>{{ invite.email }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">Email</p>
+              <p nata-p>{{ invite.email }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">Unit Sector</nexus-spartan-muted>
-              <nexus-spartan-p class="capitalize">{{ invite.unit.sector }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">Unit Sector</p>
+              <p nata-p class="capitalize">{{ invite.unit.sector }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">Unit Name</nexus-spartan-muted>
-              <nexus-spartan-p>{{ invite.unit.name }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">Unit Name</p>
+              <p nata-p>{{ invite.unit.name }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">Office</nexus-spartan-muted>
-              <nexus-spartan-p class="capitalize">{{ invite.office.name }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">Office</p>
+              <p nata-p class="capitalize">{{ invite.office.name }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">designation</nexus-spartan-muted>
-              <nexus-spartan-p class="capitalize">{{ invite.designation.title }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">designation</p>
+              <p nata-p class="capitalize">{{ invite.designation.title }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">Invited By</nexus-spartan-muted>
+              <p nata-muted class="uppercase">Invited By</p>
               <ul>
                 <li>{{ invite.invitedBy.fullName }}</li>
                 <li>{{ invite.invitedBy.staffNumber }}</li>
@@ -149,16 +149,16 @@
               </ul>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">status</nexus-spartan-muted>
-              <nexus-spartan-p class="capitalize">{{ invite.status }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">status</p>
+              <p nata-p class="capitalize">{{ invite.status }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">created</nexus-spartan-muted>
-              <nexus-spartan-p>{{ formatDate(invite.createdAt) }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">created</p>
+              <p nata-p>{{ formatDate(invite.createdAt) }}</p>
             </article>
             <article>
-              <nexus-spartan-muted class="uppercase">last updated</nexus-spartan-muted>
-              <nexus-spartan-p>{{ formatDate(invite.updatedAt) }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">last updated</p>
+              <p nata-p>{{ formatDate(invite.updatedAt) }}</p>
             </article>
           </div>
 
@@ -174,8 +174,8 @@
         }
         </div>
       } @else {
-        <nexus-spartan-h4 class="capitalize">Edit Invite for "{{ invite.email }}"</nexus-spartan-h4>
-        <!-- <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted> -->
+        <h4 nata-h4 class="capitalize">Edit Invite for "{{ invite.email }}"</h4>
+        <!-- <p nata-muted class="uppercase">{{ staff.employmentType }}</p> -->
         <hlm-separator class="my-3" />
         <form [formGroup]="inviteUpdateForm" class="grid gap-5">
           <div class="field">

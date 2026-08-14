@@ -2,12 +2,10 @@ import { Component, ElementRef, input, ViewChild } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { NotifStatus } from '../../../models/ui/global/NotifStatus.ui';
-import { SpartanH3 } from '../../typography/spartan-h3/spartan-h3';
-import { SpartanP } from '../../typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-status-modal',
-  imports: [NgIcon, HlmAlertDialogImports, SpartanH3, SpartanP],
+  imports: [NgIcon, HlmAlertDialogImports],
   templateUrl: './status-modal.html',
   styleUrl: './status-modal.css',
 })

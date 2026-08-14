@@ -19,10 +19,10 @@
 
 <section class="flex-center justify-between">
   <article>
-    <nexus-spartan-h3>Notices</nexus-spartan-h3>
-    <nexus-spartan-p
+    <h3 nata-h3>Notices</h3>
+    <p nata-p
       >Official administrative record of document status, department notices, and system
-      updates.</nexus-spartan-p
+      updates.</p
     >
   </article>
 </section>
@@ -114,7 +114,7 @@
 <section>
   @for (entry of sortedNotificationsEntries(); track $index) {
     <div class="flex flex-col w-full gap-3.5 mb-2.5">
-      <nexus-spartan-muted>{{ entry[0] }}</nexus-spartan-muted>
+      <p nata-muted>{{ entry[0] }}</p>
 
       @for (notif of entry[1]; track $index) {
         <section class="notif-container">

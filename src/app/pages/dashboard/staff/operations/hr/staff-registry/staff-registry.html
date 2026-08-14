@@ -21,13 +21,13 @@
 <section class="flex-center justify-between">
   <article>
     @if (viewMode() && viewMode() === 'invites') {
-      <nexus-spartan-h3>Staff Invites</nexus-spartan-h3>
-      <nexus-spartan-p> Manage staff members you want to add </nexus-spartan-p>
+      <h3 nata-h3>Staff Invites</h3>
+      <p nata-p> Manage staff members you want to add </p>
     } @else {
-      <nexus-spartan-h3>staff personnel registry</nexus-spartan-h3>
-      <nexus-spartan-p>
+      <h3 nata-h3>staff personnel registry</h3>
+      <p nata-p>
         Manage university unit administration and faculty records.
-      </nexus-spartan-p>
+      </p>
     }
   </article>
   <button
@@ -137,10 +137,10 @@
 
     <div class="p-4" [class.pt-0]="inviteServiceLoading()">
       <hlm-alert-dialog-header>
-        <nexus-spartan-h4>Invite staff</nexus-spartan-h4>
-        <nexus-spartan-muted>
+        <h4 nata-h4>Invite staff</h4>
+        <p nata-muted>
           Send an onboarding invitation and assign an official role within the registry.
-        </nexus-spartan-muted>
+        </p>
       </hlm-alert-dialog-header>
 
       <hlm-separator class="my-3" />

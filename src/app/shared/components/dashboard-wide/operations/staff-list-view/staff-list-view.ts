@@ -15,9 +15,6 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { SideModalService } from '../../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { StaffService } from '../../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { BaseStaffEntity } from '../../../../../models/api/staff/BaseStaff.api';
-import { SpartanH4 } from '../../../../typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../typography/spartan-p/spartan-p';
 import { UtilService } from '../../../../utils/service/util-service';
 import { SideModal } from '../../../side-modal/side-modal';
 import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
@@ -40,9 +37,6 @@ import { OrganizationService } from '../../../../../features/shared/services/org
     SideModal,
     NgIcon,
     HlmSeparator,
-    SpartanH4,
-    SpartanMuted,
-    SpartanP,
 ],
   templateUrl: './staff-list-view.html',
   styleUrl: './staff-list-view.css',

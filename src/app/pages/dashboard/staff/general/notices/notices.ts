@@ -11,21 +11,15 @@ import { NoticesService } from '../../../../../core/services/page-wide/dashboard
 import { NotificationPreference } from '../../../../../enums/notices/notices.enum';
 import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
 import { NoticesApi } from '../../../../../models/api/notices/notices.api';
-import { SpartanH3 } from '../../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanMuted } from '../../../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../shared/typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-notices',
   imports: [
-    SpartanH3,
-    SpartanP,
     HlmSeparator,
     HlmMenubarImports,
     HlmDropdownMenuImports,
     HlmInputGroupImports,
     HlmTooltipImports,
-    SpartanMuted,
     NgIcon
 ],
   templateUrl: './notices.html',

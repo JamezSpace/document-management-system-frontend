@@ -18,8 +18,8 @@
 
 <section class="flex-center justify-between">
   <article>
-    <nexus-spartan-h3>staff activation</nexus-spartan-h3>
-    <nexus-spartan-p> Activate staff accounts listed in this registry. </nexus-spartan-p>
+    <h3 nata-h3>staff activation</h3>
+    <p nata-p> Activate staff accounts listed in this registry. </p>
   </article>
 </section>
 
@@ -133,52 +133,52 @@
           <img [src]="invite.profilePicture" alt="Missing Profile Picture" class="max-h-40 object-cover" />
         </div>
         <div>
-          <nexus-spartan-h3 class="capitalize">{{ invite.fullName }}</nexus-spartan-h3>
+          <h3 nata-h3 class="capitalize">{{ invite.fullName }}</h3>
         </div>
 
         <hlm-separator />
 
         <div class="grid gap-2.5">
           <article>
-            <nexus-spartan-muted class="uppercase">staff id</nexus-spartan-muted>
-            <nexus-spartan-p>{{ invite.staffNumber }}</nexus-spartan-p>
+            <p nata-muted class="uppercase">staff id</p>
+            <p nata-p>{{ invite.staffNumber }}</p>
           </article>
           <article>
-            <nexus-spartan-muted class="uppercase">email</nexus-spartan-muted>
-            <nexus-spartan-p>{{ invite.email }}</nexus-spartan-p>
+            <p nata-muted class="uppercase">email</p>
+            <p nata-p>{{ invite.email }}</p>
           </article>
           <!-- <article>
-          <nexus-spartan-muted class="uppercase">unit</nexus-spartan-muted>
-          <nexus-spartan-p>{{ invite.unit.name }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">unit</p>
+          <p nata-p>{{ invite.unit.name }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">designation</nexus-spartan-muted>
-          <nexus-spartan-p>{{ invite.designation?.title ?? '--' }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">designation</p>
+          <p nata-p>{{ invite.designation?.title ?? '--' }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">status</nexus-spartan-muted>
-          <nexus-spartan-p>{{ invite.status }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">status</p>
+          <p nata-p>{{ invite.status }}</p>
         </article> -->
           <article>
-            <nexus-spartan-muted class="uppercase">started</nexus-spartan-muted>
-            <nexus-spartan-p>{{ formatDate(invite.createdAt) }}</nexus-spartan-p>
+            <p nata-muted class="uppercase">started</p>
+            <p nata-p>{{ formatDate(invite.createdAt) }}</p>
           </article>
           @if (invite.completedAt) {
             <article>
-              <nexus-spartan-muted class="uppercase">Completed</nexus-spartan-muted>
-              <nexus-spartan-p>{{ formatDate(invite.completedAt) }}</nexus-spartan-p>
+              <p nata-muted class="uppercase">Completed</p>
+              <p nata-p>{{ formatDate(invite.completedAt) }}</p>
             </article>
           }
           <!-- <article>
-          <nexus-spartan-muted class="uppercase">last updated</nexus-spartan-muted>
-          <nexus-spartan-p>{{ formatDate(invite.updatedAt) }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">last updated</p>
+          <p nata-p>{{ formatDate(invite.updatedAt) }}</p>
         </article> -->
         </div>
 
         <hlm-separator />
 
         <article>
-          <nexus-spartan-muted class="uppercase">digital signature</nexus-spartan-muted>
+          <p nata-muted class="uppercase">digital signature</p>
           @if (hasSignature(invite)) {
             <img
               [src]="invite.signature"

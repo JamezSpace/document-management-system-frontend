@@ -17,10 +17,6 @@ import {
     lucideUserRound,
 } from '@ng-icons/lucide';
 import { LineLoader } from '../../../../shared/components/loaders/line-loader/line-loader';
-import { SpartanH1 } from '../../../../shared/typography/spartan-h1/spartan-h1';
-import { SpartanP } from '../../../../shared/typography/spartan-p/spartan-p';
-import { SpartanH3 } from '../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanH2 } from '../../../../shared/typography/spartan-h2/spartan-h2';
 import { UtilService } from '../../../../shared/utils/service/util-service';
 import { OnboardingService } from '../../services/session/onboarding-service';
 import { OnboardingSessionStatus } from '../../../../enums/onboarding/sessionStatus.enum';
@@ -46,10 +42,6 @@ type PrimaryInformationData = {
     ReactiveFormsModule,
     MatTooltip,
     NgIcon,
-    SpartanH1,
-    SpartanP,
-    SpartanH3,
-    SpartanH2,
   ],
   templateUrl: './onboarding-entity.html',
   styleUrl: './onboarding-entity.css',

@@ -16,9 +16,6 @@ import { StaffService } from '../../../../../core/services/page-wide/dashboard/o
 import { EmploymentType } from '../../../../../enums/staff/employmentType.enum';
 import { InviteService } from '../../../../../features/onboarding/services/invite/invite-service';
 import { InviteApi } from '../../../../../models/api/staff/Invite.api';
-import { SpartanH4 } from '../../../../typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../typography/spartan-p/spartan-p';
 import { UtilService } from '../../../../utils/service/util-service';
 import { SideModal } from '../../../side-modal/side-modal';
 import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
@@ -28,7 +25,6 @@ import { OrganizationService } from '../../../../../features/shared/services/org
   selector: 'nexus-invites-list-view',
   imports: [
     SideModal,
-    SpartanH4,
     MatTableModule,
     MatPaginatorModule,
     ReactiveFormsModule,
@@ -39,8 +35,6 @@ import { OrganizationService } from '../../../../../features/shared/services/org
     BrnSelectImports,
     HlmSelectImports,
     NgIcon,
-    SpartanMuted,
-    SpartanP,
     HlmSeparator
 ],
   templateUrl: './invites-list-view.html',

@@ -19,8 +19,8 @@
 
 <section class="flex-center justify-between">
   <article>
-    <nexus-spartan-h3>Directives Log</nexus-spartan-h3>
-    <nexus-spartan-p> This is the registry of all issued directives. </nexus-spartan-p>
+    <h3 nata-h3>Directives Log</h3>
+    <p nata-p> This is the registry of all issued directives. </p>
   </article>
   <button
     type="button"
@@ -42,7 +42,7 @@
     class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
   >
     <hlm-alert-dialog-header class="text-left">
-      <nexus-spartan-h4>Issue New Directive</nexus-spartan-h4>
+      <h4 nata-h4>Issue New Directive</h4>
     </hlm-alert-dialog-header>
 
     <hlm-separator />
@@ -154,27 +154,27 @@
       <div class="flex-center justify-center">
         <ng-icon name="saxTickCircleBold" size="2rem" />
       </div>
-      <nexus-spartan-h3 class="text-center">directive successfully registered</nexus-spartan-h3>
-      <nexus-spartan-p class="text-center">
+      <h3 nata-h3 class="text-center">directive successfully registered</h3>
+      <p nata-p class="text-center">
         Directive
         <span class="font-medium uppercase">
           {{ broadcastDirectiveDetail()?.id }}
         </span>
         has been broadcast to
-        {{ broadcastDirectiveDetail()!.recipients[0].firstName }}.</nexus-spartan-p
+        {{ broadcastDirectiveDetail()!.recipients[0].firstName }}.</p
       >
 
       <section class="p-3 border rounded-xs">
         <article>
-          <nexus-spartan-muted class="uppercase">directive heading</nexus-spartan-muted>
-          <nexus-spartan-p>{{ broadcastDirectiveDetail()?.heading }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">directive heading</p>
+          <p nata-p>{{ broadcastDirectiveDetail()?.heading }}</p>
         </article>
 
         <hlm-separator class="my-2.5" />
 
         <article>
-          <nexus-spartan-muted class="uppercase">urgent priority</nexus-spartan-muted>
-          <nexus-spartan-p>{{ broadcastDirectiveDetail()?.heading }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">urgent priority</p>
+          <p nata-p>{{ broadcastDirectiveDetail()?.heading }}</p>
         </article>
       </section>
 
@@ -238,9 +238,9 @@
         </div>
       } @else {
         <div>
-          <nexus-spartan-muted>{{ directive.compliance.seen }} seen</nexus-spartan-muted>
-          <nexus-spartan-muted
-            >{{ directive.compliance.acknowledged }} acknowledged</nexus-spartan-muted
+          <p nata-muted>{{ directive.compliance.seen }} seen</p>
+          <p nata-muted
+            >{{ directive.compliance.acknowledged }} acknowledged</p
           >
         </div>
       }

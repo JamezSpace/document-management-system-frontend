@@ -27,7 +27,6 @@ import { MinutesService } from '../../../documents/service/minutes/minutes-servi
 import { UnitMembersService } from '../../../documents/service/unit-members/unit-members-service';
 import { CurrentStaffService } from '../../../shared/services/current-staff/current-staff-service';
 import { OrganizationService } from '../../../shared/services/organization/organization-service';
-import { SpartanMuted } from '../../../../shared/typography/spartan-muted/spartan-muted';
 import { UtilService } from '../../../../shared/utils/service/util-service';
 import { emptyDesignation } from '../../../../models/api/organization/designation.api';
 import { emptyUnit } from '../../../../models/api/organization/units.api';
@@ -37,7 +36,6 @@ import { WorkspaceService } from '../../service/data/workspace-service';
   selector: 'nexus-sidebar',
   imports: [
     NgIcon,
-    SpartanMuted,
     MatAutocompleteModule,
     MatChipsModule,
     FormsModule,

@@ -27,9 +27,6 @@ import { StaffService } from '../../../../../../core/services/page-wide/dashboar
 import { OnboardingService } from '../../../../../../features/onboarding/services/session/onboarding-service';
 import { StaffToActivate } from '../../../../../../models/api/staff/StaffToActivate.api';
 import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
-import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
 import { UtilService } from '../../../../../../shared/utils/service/util-service';
 
 @Component({
@@ -46,9 +43,6 @@ import { UtilService } from '../../../../../../shared/utils/service/util-service
     HlmSeparator,
     NgIcon,
     SideModal,
-    SpartanH3,
-    SpartanMuted,
-    SpartanP,
     HlmSpinner
 ],
   templateUrl: './staff-activation.html',

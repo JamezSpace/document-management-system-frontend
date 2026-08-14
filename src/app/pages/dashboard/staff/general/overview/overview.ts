@@ -1,15 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
-import { SpartanH1 } from '../../../../../shared/typography/spartan-h1/spartan-h1';
-import { SpartanH2 } from '../../../../../shared/typography/spartan-h2/spartan-h2';
-import { SpartanH4 } from '../../../../../shared/typography/spartan-h4/spartan-h4';
-import { SpartanP } from '../../../../../shared/typography/spartan-p/spartan-p';
 
 @Component({
   selector: 'nexus-overview',
-  imports: [HlmCardImports, SpartanH2, SpartanP, SpartanH4, HlmSeparator, SpartanH1],
+  imports: [HlmCardImports],
   templateUrl: './overview.html',
   styleUrl: './overview.css',
 })

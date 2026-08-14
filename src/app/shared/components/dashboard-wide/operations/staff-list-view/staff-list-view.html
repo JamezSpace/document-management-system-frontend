@@ -101,47 +101,47 @@
 
         <div>
 
-      <nexus-spartan-h4 class="capitalize">{{ staff.fullName }}</nexus-spartan-h4>
-      <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted>
+      <h4 nata-h4 class="capitalize">{{ staff.fullName }}</h4>
+      <p nata-muted class="uppercase">{{ staff.employmentType }}</p>
 
       <hlm-separator class="my-3" />
 
       <div class="grid gap-2.5">
         <article>
-          <nexus-spartan-muted class="uppercase">staff id</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.staffNumber }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">staff id</p>
+          <p nata-p>{{ staff.staffNumber }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">email</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.email }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">email</p>
+          <p nata-p>{{ staff.email }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">unit</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff?.unit?.name ?? '--' }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">unit</p>
+          <p nata-p>{{ staff?.unit?.name ?? '--' }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">designation</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.designation.title }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">designation</p>
+          <p nata-p>{{ staff.designation.title }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">status</nexus-spartan-muted>
-          <nexus-spartan-p>{{ staff.status }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">status</p>
+          <p nata-p>{{ staff.status }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">created</nexus-spartan-muted>
-          <nexus-spartan-p>{{ formatDate(staff.createdAt) }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">created</p>
+          <p nata-p>{{ formatDate(staff.createdAt) }}</p>
         </article>
         <article>
-          <nexus-spartan-muted class="uppercase">last updated</nexus-spartan-muted>
-          <nexus-spartan-p>{{ formatDate(staff.updatedAt) }}</nexus-spartan-p>
+          <p nata-muted class="uppercase">last updated</p>
+          <p nata-p>{{ formatDate(staff.updatedAt) }}</p>
         </article>
       </div>
         </div>
 
 
     }@else {
-        <nexus-spartan-h4 class="capitalize">Edit Staff "{{ staff.fullName }}"</nexus-spartan-h4>
-      <!-- <nexus-spartan-muted class="uppercase">{{ staff.employmentType }}</nexus-spartan-muted> -->
+        <h4 nata-h4 class="capitalize">Edit Staff "{{ staff.fullName }}"</h4>
+      <!-- <p nata-muted class="uppercase">{{ staff.employmentType }}</p> -->
         <hlm-separator class="my-3" />
         <form [formGroup]="staffUpdateForm" class="grid gap-5">
           <div class="field">

@@ -42,10 +42,6 @@ import { StaffListView } from '../../../../../../shared/components/dashboard-wid
 import { EmptyState } from '../../../../../../shared/components/empty-state/empty-state';
 import { LineLoader } from '../../../../../../shared/components/loaders/line-loader/line-loader';
 import { StatusModal } from '../../../../../../shared/components/status-modal/status-modal';
-import { SpartanH3 } from '../../../../../../shared/typography/spartan-h3/spartan-h3';
-import { SpartanH4 } from '../../../../../../shared/typography/spartan-h4/spartan-h4';
-import { SpartanMuted } from '../../../../../../shared/typography/spartan-muted/spartan-muted';
-import { SpartanP } from '../../../../../../shared/typography/spartan-p/spartan-p';
 import { UtilService } from '../../../../../../shared/utils/service/util-service';
 import { OrganizationService } from '../../../../../../features/shared/services/organization/organization-service';
 
@@ -53,10 +49,6 @@ import { OrganizationService } from '../../../../../../features/shared/services/
   selector: 'nexus-staff-registry',
   imports: [
     MatStepperModule,
-    SpartanH4,
-    SpartanH3,
-    SpartanP,
-    SpartanMuted,
     BrnSelectImports,
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,

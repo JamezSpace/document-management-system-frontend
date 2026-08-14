@@ -19,11 +19,11 @@
 
 <section class="flex-center justify-between">
   <article>
-    <nexus-spartan-h3>Unit Control Center</nexus-spartan-h3>
-    <nexus-spartan-p>
+    <h3 nata-h3>Unit Control Center</h3>
+    <p nata-p>
       Monitor active personnel directives, latency metris, and real time instrution flow aross your
       unit.
-    </nexus-spartan-p>
+    </p>
   </article>
   <button
     type="button"
@@ -45,10 +45,10 @@
     class="min-w-xl border-t-4 border-nexus-gold shadow-2xl"
   >
     <hlm-alert-dialog-header class="text-left">
-      <nexus-spartan-h4>Broadcast Unit Directive</nexus-spartan-h4>
-      <nexus-spartan-small>Chief Industrial Officer • ITCC Operations </nexus-spartan-small>
-      <nexus-spartan-muted
-        >Note: This message broadcasts to every member of your office!</nexus-spartan-muted
+      <h4 nata-h4>Broadcast Unit Directive</h4>
+      <p nata-small>Chief Industrial Officer • ITCC Operations </p>
+      <p nata-muted
+        >Note: This message broadcasts to every member of your office!</p
       >
     </hlm-alert-dialog-header>
 
@@ -142,7 +142,7 @@
     *hlmAlertDialogPortal="let ctx"
   >
     <hlm-alert-dialog-header class="text-left">
-      <nexus-spartan-h4>Issue New Directive</nexus-spartan-h4>
+      <h4 nata-h4>Issue New Directive</h4>
     </hlm-alert-dialog-header>
 
     <hlm-separator />
@@ -212,9 +212,9 @@
             </div>
 
             <article>
-              <nexus-spartan-small class="font-black"> Officer Tomi </nexus-spartan-small>
+              <p nata-small class="font-black"> Officer Tomi </p>
 
-              <nexus-spartan-muted class="-mb-2"> Staff ID: 290075 </nexus-spartan-muted>
+              <p nata-muted class="-mb-2"> Staff ID: 290075 </p>
             </article>
           </header>
         </div>
@@ -255,20 +255,20 @@
         </div>
 
         <article>
-          <nexus-spartan-small class="font-black">{{ member.fullName }}</nexus-spartan-small>
+          <p nata-small class="font-black">{{ member.fullName }}</p>
 
-          <nexus-spartan-muted class="-mb-2"> Staff ID: {{ member.staffNumber }} </nexus-spartan-muted>
+          <p nata-muted class="-mb-2"> Staff ID: {{ member.staffNumber }} </p>
         </article>
       </header>
 
       <article class="pt-2">
-        <nexus-spartan-p class="font-medium capitalize underline underline-offset-2"
-          >live assignment</nexus-spartan-p
+        <p nata-p class="font-medium capitalize underline underline-offset-2"
+          >live assignment</p
         >
         <p class="mb-2.5">
           Live assignment data will appear here once available.
         </p>
-        <nexus-spartan-muted class="uppercase">--</nexus-spartan-muted>
+        <p nata-muted class="uppercase">--</p>
       </article>
 
       <div class="mx-auto btn-group" hlmButtonGroup>
@@ -295,7 +295,7 @@
     </div>
   } @empty {
     <section class="w-full flex-center justify-center">
-      <nexus-spartan-muted>No unit members found.</nexus-spartan-muted>
+      <p nata-muted>No unit members found.</p>
     </section>
   }
 </section>

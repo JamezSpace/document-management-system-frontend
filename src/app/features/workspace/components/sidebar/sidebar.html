@@ -152,9 +152,9 @@
 
             <div class="min-w-0">
               <p class="font-medium truncate text-sm">{{ attachment.title }}</p>
-              <nexus-spartan-muted class="block text-xs">
+              <p nata-muted class="block text-xs">
                 {{ attachment.description }}
-              </nexus-spartan-muted>
+              </p>
               <p class="text-[11px] text-muted-foreground mt-1 break-all">
                 {{ attachment.mediaId }}
               </p>
@@ -195,7 +195,7 @@
         <div class="">
           <p class="font-medium">{{ fileUploaded()?.name }}</p>
 
-          <nexus-spartan-muted class="">{{ fileUploaded()?.size }}</nexus-spartan-muted>
+          <p nata-muted class="">{{ fileUploaded()?.size }}</p>
         </div>
       </article>
       }
