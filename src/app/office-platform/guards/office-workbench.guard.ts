@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, CanMatchFn, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { OfficeContextService } from '../context/office-context.service';
 import type { OfficeWorkbenchKey } from '../models/office-workbench';
 
@@ -13,7 +13,8 @@ export const officeLandingGuard: CanActivateFn = () => {
     : router.createUrlTree(['/unauthorized']);
 };
 
-export const officeWorkbenchGuard = (workbench: OfficeWorkbenchKey): CanMatchFn => () => {
+/** Runs after the parent auth guard has restored the staff context on page refresh. */
+export const officeWorkbenchGuard = (workbench: OfficeWorkbenchKey): CanActivateFn => () => {
   const officeContext = inject(OfficeContextService);
   const router = inject(Router);
 
