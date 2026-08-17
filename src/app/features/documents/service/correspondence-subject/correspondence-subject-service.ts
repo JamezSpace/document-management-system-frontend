@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../models/api/ApiResponse.api';
@@ -15,8 +15,11 @@ export class CorrespondenceSubjectService {
   corrSubjects = signal<CorrSubjectApi[]>([]);
   error = signal<AppError | null>(null);
 
-  fetchCorrSubjects() {
-    this.http.get<ApiResponse<CorrSubjectApi[]>>(`${environment.api}/document/subjects`)
+  fetchCorrSubjects(context?: HttpContext) {
+    this.http.get<ApiResponse<CorrSubjectApi[]>>(
+      `${environment.api}/document/subjects`,
+      context ? { context } : undefined,
+    )
     .subscribe({
         next: (resp) => this.corrSubjects.set(resp.data),
         error: (err) => this.error.set(err)

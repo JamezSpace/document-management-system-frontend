@@ -1,20 +1,27 @@
-enum EmptyStateType {
-    FIRST_TIME = 'first time',
-    NO_DATA = 'no data',
+type EmptyStateKind = 'first-use' | 'no-data' | 'no-results' | 'filtered' | 'completed';
+type EmptyStateActionAppearance = 'primary' | 'secondary' | 'ghost';
+
+interface EmptyStateAction {
+  id: string;
+  label: string;
+  route?: string | any[];
+  queryParams?: Record<string, string | number | boolean | null | undefined>;
+  appearance?: EmptyStateActionAppearance;
 }
 
-interface Action {
-    label: string;
-    route: string;
+interface EmptyStateConfig {
+  kind: EmptyStateKind;
+  iconName: string;
+  title: string;
+  description: string;
+  actions?: EmptyStateAction[];
+  compact?: boolean;
 }
 
-interface EmptyState {
-    type: EmptyStateType;
-    iconName: string;
-    title: string;
-    supportingText: string
-    actions: Action[];
-}
-
-export { type EmptyState as EmptyStateInterface, EmptyStateType };
+export type {
+  EmptyStateAction,
+  EmptyStateActionAppearance,
+  EmptyStateConfig,
+  EmptyStateKind,
+};
 

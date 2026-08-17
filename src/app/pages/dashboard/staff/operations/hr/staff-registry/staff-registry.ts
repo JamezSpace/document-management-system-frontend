@@ -35,7 +35,7 @@ import { EmploymentType } from '../../../../../../enums/staff/employmentType.enu
 import { InviteService } from '../../../../../../features/onboarding/services/invite/invite-service';
 import { DesignationApi } from '../../../../../../models/api/organization/designation.api';
 import { OfficeApi } from '../../../../../../models/api/organization/offices.api';
-import { EmptyStateInterface, EmptyStateType } from '../../../../../../models/ui/global/EmptyState.ui';
+import type { EmptyStateConfig } from '../../../../../../models/ui/global/EmptyState.ui';
 import { NotifStatus } from '../../../../../../models/ui/global/NotifStatus.ui';
 import { InvitesListView } from '../../../../../../shared/components/dashboard-wide/operations/invites-list-view/invites-list-view';
 import { StaffListView } from '../../../../../../shared/components/dashboard-wide/operations/staff-list-view/staff-list-view';
@@ -44,6 +44,7 @@ import { LineLoader } from '../../../../../../shared/components/loaders/line-loa
 import { StatusModal } from '../../../../../../shared/components/status-modal/status-modal';
 import { UtilService } from '../../../../../../shared/utils/service/util-service';
 import { OrganizationService } from '../../../../../../features/shared/services/organization/organization-service';
+import { officeActivityContext } from '../../../../../../office-platform/activity/office-activity.context';
 
 @Component({
   selector: 'nexus-staff-registry',
@@ -102,44 +103,19 @@ export class StaffRegistry implements OnInit {
   directories = signal<string[]>([]);
   isMobile = this.utilService.isMobile;
 
-  staffRegistryFirstTime: EmptyStateInterface = {
-    type: EmptyStateType.FIRST_TIME,
-    iconName: 'lucideUserPlus',
-    title: 'Empty Registry',
-    supportingText:
-      'Start building your organization by adding staff members. You can manually create profiles or bulk-import data from your HR system.',
-    actions: [
-      {
-        label: 'Add First Staff Member',
-        route: '/registry/add',
-      },
-    ],
-  };
-
-  staffRegistryNoResults: EmptyStateInterface = {
-    type: EmptyStateType.NO_DATA,
-    iconName: 'lucideUsers',
-    title: 'No Staff Found',
-    supportingText:
-      'We couldn’t find any staff members matching your current filters. Try adjusting your search terms or clearing the department filter.',
-    actions: [
-      {
-        label: 'Clear All Filters',
-        route: '/registry',
-      },
-    ],
-  };
-
   ngOnInit(): void {
     const currentPath = this.activatedRouter.snapshot.url.toString();
 
     this.directories.set(currentPath.split(','))
 
     // staff init deps
-    this.staffService.fetchAllStaff();
-    this.organizationService.fetchAllOffices(this.loggedInStaff.unit.id);
-    this.organizationService.fetchAllDesignations();
-    this.inviteService.fetchAllInvites();    
+    this.staffService.fetchAllStaff(officeActivityContext());
+    this.organizationService.fetchAllOffices(
+      this.loggedInStaff.unit.id,
+      officeActivityContext(),
+    );
+    this.organizationService.fetchAllDesignations(officeActivityContext());
+    this.inviteService.fetchAllInvites(officeActivityContext());
   }
 
   staff = this.staffService.staff;
@@ -172,19 +148,38 @@ export class StaffRegistry implements OnInit {
     this.searchQuery.set(value);
   }
 
-  emptyState = computed(() => {
-    const list = this.viewMode() === 'invites' ? this.invites() : this.staff()
+  emptyState = computed<EmptyStateConfig>(() => {
+    const invitesView = this.viewMode() === 'invites';
+    const source = invitesView ? this.invites() : this.staff();
+    const filtered = invitesView ? this.filteredInvites() : this.filteredStaff();
 
-    if (list.length === 0) {
-        return this.staffRegistryFirstTime;
+    if (source.length === 0) {
+      return {
+        kind: 'first-use',
+        iconName: 'lucideUserPlus',
+        title: invitesView ? 'No invitations have been sent' : 'Build your staff registry',
+        description: invitesView
+          ? 'Invitations awaiting onboarding will appear here with their current status.'
+          : 'Register the first staff member to begin building this office’s controlled personnel record.',
+        actions: [{ id: 'invite-staff', label: 'Invite staff member', appearance: 'primary' }],
+      };
     }
 
-    if (this.searchQuery() && list.length === 0) {
-      return this.staffRegistryNoResults;
-    }
-
-    return this.staffRegistryNoResults;
+    return {
+      kind: 'no-results',
+      iconName: 'lucideSearchX',
+      title: `No ${invitesView ? 'invitations' : 'staff'} match “${this.searchQuery()}”`,
+      description: filtered.length === 0
+        ? 'Try a different search term or clear the search to restore the complete registry.'
+        : 'No records are available in this view.',
+      actions: [{ id: 'clear-search', label: 'Clear search', appearance: 'secondary' }],
+    };
   });
+
+  handleEmptyStateAction(action: string): void {
+    if (action === 'invite-staff') this.inviteStaffDialog.open();
+    if (action === 'clear-search') this.searchQuery.set('');
+  }
 
   filteredStaff = computed(() => {
     const allStaff = this.staff();

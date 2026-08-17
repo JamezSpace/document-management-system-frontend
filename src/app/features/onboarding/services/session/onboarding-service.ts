@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import {
     confirmPasswordReset,
@@ -246,12 +246,13 @@ export class OnboardingService {
       });
   }
 
-  async fetchAllCompleteOnboardingSessions() {
+  async fetchAllCompleteOnboardingSessions(context?: HttpContext) {
     this.loading.set(true);
 
     this.http
       .get<ApiResponse<OnboardingSession[]>>(
         `${environment.api}/identity/invites/onboarding/sessions`,
+        context ? { context } : undefined,
       )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({

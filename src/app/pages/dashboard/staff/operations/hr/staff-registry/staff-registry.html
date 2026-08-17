@@ -54,7 +54,8 @@
         maxlength="50"
         placeholder="Search staff by name"
         autocorrect="off"
-        (change)="onSearchChange($event)"
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)"
         hlmInputGroupInput
       />
     } @else {
@@ -63,7 +64,8 @@
         maxlength="50"
         placeholder="Search invited persons by email"
         autocorrect="off"
-        (change)="onSearchChange($event)"
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)"
         hlmInputGroupInput
       />
     }
@@ -114,7 +116,7 @@
     <nexus-invites-list-view [invites]="filteredInvites()" />
   } @else {
     <section class="w-full flex-center justify-center">
-      <nexus-empty-state [stateData]="emptyState()" />
+      <nexus-empty-state [state]="emptyState()" (actionSelected)="handleEmptyStateAction($event)" />
     </section>
   }
 } @else if (!viewMode()) {
@@ -122,7 +124,7 @@
     <nexus-staff-list-view [staff]="filteredStaff()" />
   } @else {
     <section class="w-full flex-center justify-center">
-      <nexus-empty-state [stateData]="emptyState()" />
+      <nexus-empty-state [state]="emptyState()" (actionSelected)="handleEmptyStateAction($event)" />
     </section>
   }
 }

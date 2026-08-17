@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
@@ -53,11 +53,14 @@ export class InviteService {
       });
   }
 
-  fetchAllInvites() {
+  fetchAllInvites(context?: HttpContext) {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<InviteApi[]>>(`${environment.api}/identity/invites`)
+      .get<ApiResponse<InviteApi[]>>(
+        `${environment.api}/identity/invites`,
+        context ? { context } : undefined,
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.invites.set(resp.data),

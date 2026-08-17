@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -34,11 +34,14 @@ export class StaffService {
 
   readonly loggedInStaff = this.currentStaffService.data()!;
 
-  fetchAllUsers() {
+  fetchAllUsers(context?: HttpContext) {
         this.loading.set(true);
 
         this.http
-        .get<ApiResponse<Users[]>>(`${environment.api}/identity/users`)
+        .get<ApiResponse<Users[]>>(
+          `${environment.api}/identity/users`,
+          context ? { context } : undefined,
+        )
         .pipe(finalize(() => this.loading.set(false)))
         .subscribe({
             next: (resp) => this.users.set(resp.data),
@@ -46,11 +49,14 @@ export class StaffService {
         });
     }
 
-  fetchAllStaff() {
+  fetchAllStaff(context?: HttpContext) {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<StaffWithMedia[]>>(`${environment.api}/identity/staff`)
+      .get<ApiResponse<StaffWithMedia[]>>(
+        `${environment.api}/identity/staff`,
+        context ? { context } : undefined,
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.staff.set(resp.data),

@@ -1,11 +1,4 @@
 <div #workspaceRoot>
-  
-  <!-- top bar here -->
-  <nexus-toolbar
-    (previewRequested)="previewDocument()"
-    (printRequested)="printCorrespondence()"
-  />
-
   @if (workspaceError(); as error) {
     <nexus-page-error
       [error]="error"
@@ -13,39 +6,43 @@
       (goBack)="goBack()"
     />
   } @else {
+    @if (workspaceLoading()) {
+      <div class="relative">
+        <p class="opacity-0">.</p>
+        <nexus-line-loader />
+      </div>
+    }
 
-  <!-- loader -->
-  <div class="relative" [class.hidden]="!workspaceLoading()">
-    <p class="opacity-0">.</p>
-    <nexus-line-loader />
-  </div>
+    @if (workspaceContext()) {
+      <nexus-toolbar
+        (previewRequested)="previewDocument()"
+        (printRequested)="printCorrespondence()"
+      />
 
-  <!-- below top bar -->
-  <div class="flex flex-start relative">
-    <!-- side bar -->
-    <nexus-sidebar
-      [sidebarClosed]="sidebarClosed()"
-      (sidebarClosedChange)="sidebarClosed.set($event)"
-    />
+      <div class="flex flex-start relative">
+        <nexus-sidebar
+          [sidebarClosed]="sidebarClosed()"
+          (sidebarClosedChange)="sidebarClosed.set($event)"
+        />
 
-    <div class="w-full relative">
-      <!-- paper controls -->
-      <nexus-paper-controls #paperControls />
+        <div class="w-full relative">
+          <nexus-paper-controls #paperControls />
 
-      <nexus-print-preview
-        [isPreviewing]="paperControls.isPreviewing()"
-        [canvasTransform]="paperControls.canvasTransform()"
-        [canExitPreview]="paperControls.canExitPreview()"
-        (exit)="paperControls.exitPreview()"
-      >
-        @if (memoVm(); as memo) {
-          <nexus-memo-template [correspondence]="memo" />
-        }
+          <nexus-print-preview
+            [isPreviewing]="paperControls.isPreviewing()"
+            [canvasTransform]="paperControls.canvasTransform()"
+            [canExitPreview]="paperControls.canExitPreview()"
+            (exit)="paperControls.exitPreview()"
+          >
+            @if (memoVm(); as memo) {
+              <nexus-memo-template [correspondence]="memo" />
+            }
 
-        <nexus-memo-body-editor />
-      </nexus-print-preview>
-    </div>
-  </div>
+            <nexus-memo-body-editor />
+          </nexus-print-preview>
+        </div>
+      </div>
+    }
   }
 </div>
 

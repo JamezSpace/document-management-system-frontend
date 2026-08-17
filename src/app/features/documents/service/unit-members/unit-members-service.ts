@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../models/api/ApiResponse.api';
@@ -15,9 +15,12 @@ export class UnitMembersService {
   data = signal<StaffMember[]>([]);
   error = signal<AppError | null>(null);
 
-  fetchUnitMembers(unitId: string) {
+  fetchUnitMembers(unitId: string, context?: HttpContext) {
   this.http
-    .get<ApiResponse<StaffMember[]>>(`${environment.api}/identity/${unitId}/staff-members`)
+    .get<ApiResponse<StaffMember[]>>(
+      `${environment.api}/identity/${unitId}/staff-members`,
+      context ? { context } : undefined,
+    )
     .subscribe({
       next: (resp) => this.data.set(resp.data ?? []),
       error: (err) => this.error.set(err)

@@ -28,6 +28,9 @@
 
 <hlm-separator class="my-4" />
 
+@if (dataSource.data.length === 0) {
+  <nexus-empty-state [state]="emptyState" />
+} @else {
 <table mat-table [dataSource]="dataSource">
   <!-- Ref Number Column -->
   <ng-container matColumnDef="id">
@@ -115,6 +118,7 @@
   showFirstLastButtons
   aria-label="Select page of directives issued"
 ></mat-paginator>
+}
 
 <div
   [class]="

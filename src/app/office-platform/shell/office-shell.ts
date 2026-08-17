@@ -55,6 +55,8 @@ import { CurrentStaffService } from '../../features/shared/services/current-staf
 import { Workspace } from '../../features/workspace/page/workspace';
 import type { OfficeNavigationGroup } from '../models/office-navigation';
 import { OfficeContextService } from '../context/office-context.service';
+import { OfficeActivityService } from '../activity/office-activity.service';
+import { LineLoader } from '../../shared/components/loaders/line-loader/line-loader';
 
 @Component({
   selector: 'nexus-office-shell',
@@ -68,6 +70,7 @@ import { OfficeContextService } from '../context/office-context.service';
     HlmButtonImports,
     HlmAlertDialogImports,
     HlmSeparator,
+    LineLoader,
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
   ],
@@ -91,6 +94,7 @@ export class OfficeShell {
   private readonly sidebarService = inject(HlmSidebarService);
   private readonly router = inject(Router);
   readonly officeContext = inject(OfficeContextService);
+  readonly activity = inject(OfficeActivityService);
 
   readonly staff = this.staffService.data;
   readonly context = this.officeContext.active;

@@ -11,6 +11,9 @@ import { NoticesService } from '../../../../../core/services/page-wide/dashboard
 import { NotificationPreference } from '../../../../../enums/notices/notices.enum';
 import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
 import { NoticesApi } from '../../../../../models/api/notices/notices.api';
+import type { EmptyStateConfig } from '../../../../../models/ui/global/EmptyState.ui';
+import { EmptyState } from '../../../../../shared/components/empty-state/empty-state';
+import { officeActivityContext } from '../../../../../office-platform/activity/office-activity.context';
 
 @Component({
   selector: 'nexus-notices',
@@ -20,7 +23,8 @@ import { NoticesApi } from '../../../../../models/api/notices/notices.api';
     HlmDropdownMenuImports,
     HlmInputGroupImports,
     HlmTooltipImports,
-    NgIcon
+    NgIcon,
+    EmptyState,
 ],
   templateUrl: './notices.html',
   styleUrl: './notices.css',
@@ -34,6 +38,15 @@ export class Notices {
   currentStaffService = inject(CurrentStaffService);
 
   readonly signedInStaff = this.currentStaffService.data;
+  readonly emptyState: EmptyStateConfig = {
+    kind: 'no-data',
+    iconName: 'lucideBell',
+    title: 'You are all caught up',
+    description:
+      'Official document updates, administrative notices, and system announcements will appear here when they arrive.',
+    actions: [{ id: 'refresh-notices', label: 'Check again', appearance: 'secondary' }],
+  };
+  private noticesRequested = false;
 
   directories = signal<string[]>([]);
   ngOnInit(): void {
@@ -46,8 +59,10 @@ export class Notices {
     const staff = this.signedInStaff();
     if (!staff) return;
 
-    // fetch deps
-    if (!this.noticeService.notices()) this.noticeService.fetchNotices(staff.id);
+    if (!this.noticesRequested) {
+      this.noticesRequested = true;
+      this.noticeService.fetchNotices(staff.id, officeActivityContext());
+    }
   });
 
   isSameDate(dateString: string, compareDate: Date) {
@@ -72,13 +87,19 @@ export class Notices {
         });
 
         // initialize a new record with an empty array before populating with the actual data
-      notifications[key] = [];
+      if (!notifications[key]) notifications[key] = [];
       notifications[key].push(notif);
     });
 
-    console.log(notifications);    
     return notifications;
   });
 
   sortedNotificationsEntries = computed(() => Object.entries(this.sortedNotifications()));
+
+  handleEmptyStateAction(action: string): void {
+    const staff = this.signedInStaff();
+    if (action === 'refresh-notices' && staff) {
+      this.noticeService.fetchNotices(staff.id, officeActivityContext());
+    }
+  }
 }

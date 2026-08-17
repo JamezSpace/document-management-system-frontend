@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../../../../environments/environment.development';
@@ -18,10 +18,13 @@ export class NoticesService {
   loading = signal<boolean>(false);
   error = signal<AppError | null>(null);
 
-  fetchNotices(staffId: string) {
+  fetchNotices(staffId: string, context?: HttpContext) {
     this.loading.set(true);
 
-    this.http.get<ApiResponse<NoticesApi[]>>(`${environment.api}/notifications/${staffId}`)
+    this.http.get<ApiResponse<NoticesApi[]>>(
+      `${environment.api}/notifications/${staffId}`,
+      context ? { context } : undefined,
+    )
     .pipe(finalize(() => this.loading.set(false)))
     .subscribe({
         next: (resp) => this.notices.set(resp.data),

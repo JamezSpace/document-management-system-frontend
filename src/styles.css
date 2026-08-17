@@ -67,7 +67,11 @@ button {
   cursor: pointer;
 }
 
-/* Hover now uses structured system color */
+[hlmCard] {
+  border-radius: var(--radius);
+}
+
+/* Hover uses structured system color */
 table tbody tr:hover {
   background-color: color-mix(in oklab, var(--brand-primary) 6%, transparent);
 }

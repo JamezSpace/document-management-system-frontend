@@ -1,9 +1,20 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideFilePlusCorner } from '@ng-icons/lucide';
+import {
+  lucideArchive,
+  lucideBell,
+  lucideCircleCheckBig,
+  lucideFilePlusCorner,
+  lucideFileSearch,
+  lucideInbox,
+  lucideListTodo,
+  lucideSearchX,
+  lucideUserPlus,
+  lucideUsers,
+} from '@ng-icons/lucide';
 import { HlmEmptyImports } from '@spartan-ng/helm/empty';
-import { EmptyStateInterface } from '../../../models/ui/global/EmptyState.ui';
+import type { EmptyStateConfig } from '../../../models/ui/global/EmptyState.ui';
 
 @Component({
   selector: 'nexus-empty-state',
@@ -12,11 +23,24 @@ import { EmptyStateInterface } from '../../../models/ui/global/EmptyState.ui';
   styleUrl: './empty-state.css',
   providers: [
     provideIcons({
+      lucideArchive,
+      lucideBell,
+      lucideCircleCheckBig,
       lucideFilePlusCorner,
+      lucideFileSearch,
+      lucideInbox,
+      lucideListTodo,
+      lucideSearchX,
+      lucideUserPlus,
+      lucideUsers,
     }),
   ],
 })
 export class EmptyState {
-  @Input({required: true})
-  stateData!: EmptyStateInterface;
+  readonly state = input.required<EmptyStateConfig>();
+  readonly actionSelected = output<string>();
+
+  selectAction(id: string): void {
+    this.actionSelected.emit(id);
+  }
 }

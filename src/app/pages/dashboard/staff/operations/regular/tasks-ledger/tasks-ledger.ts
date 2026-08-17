@@ -8,11 +8,13 @@ import { NgIcon } from '@ng-icons/core';
 import { TasksService } from '../../../../../../core/services/page-wide/dashboard/operations/regular/tasks/tasks-service';
 import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
 import { TaskDetail } from '../../../../../../shared/components/dashboard-wide/operations/task-detail/task-detail';
+import { EmptyState } from '../../../../../../shared/components/empty-state/empty-state';
+import type { EmptyStateConfig } from '../../../../../../models/ui/global/EmptyState.ui';
 
 @Component({
   selector: 'nexus-tasks-ledger',
   imports: [HlmSeparator, NgIcon, TaskDetail, MatTableModule,
-    MatPaginatorModule, BrnAvatar],
+    MatPaginatorModule, BrnAvatar, EmptyState],
   templateUrl: './tasks-ledger.html',
   styleUrl: './tasks-ledger.css',
 })
@@ -20,6 +22,13 @@ export class TasksLedger implements OnInit {
   activatedRouter = inject(ActivatedRoute);
   directories = signal<string[]>([]);
   taskService = inject(TasksService)
+  readonly emptyState: EmptyStateConfig = {
+    kind: 'no-data',
+    iconName: 'lucideListTodo',
+    title: 'No assignments are waiting',
+    description:
+      'Directives and document actions assigned to you will appear here with their deadlines and compliance status.',
+  };
 
   ngOnInit(): void {
     const currentPath = this.activatedRouter.snapshot.url.toString();
@@ -28,6 +37,7 @@ export class TasksLedger implements OnInit {
       ...prev_directories,
       currentPath.replace(',', ' > '),
     ]);
+    void this.taskService.fetchAllTasks();
   }
 
   constructor() {

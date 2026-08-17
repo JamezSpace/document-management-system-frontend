@@ -11,6 +11,7 @@ import { environment } from '../environments/environment.development';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth/auth-interceptor';
 import { errorInterceptor } from './core/interceptors/error/error-interceptor';
+import { officeActivityInterceptor } from './office-platform/activity/office-activity.interceptor';
 
 // init firebase
 const firebaseConfig: FirebaseOptions = {
@@ -30,6 +31,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, officeActivityInterceptor, errorInterceptor])),
   ],
 };

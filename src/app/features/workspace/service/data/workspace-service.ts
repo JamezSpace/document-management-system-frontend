@@ -153,6 +153,7 @@ export class WorkspaceService {
   fetchWorkspaceContext(documentId: string): void {
     this.loading.set(true);
     this.error.set(null);
+    this.workspaceContext.set(null);
 
     this.workspaceApi
       .get(documentId, new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE))

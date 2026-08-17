@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { DocumentApi, InitDocumentApiPayload } from '../../../../models/api/documents/Document.api';
@@ -65,11 +65,14 @@ export class DocumentService {
       });
   }
 
-  fetchDocumentsByStaff(staffId: string) {
+  fetchDocumentsByStaff(staffId: string, context?: HttpContext) {
     this.loading.set(true);
 
     this.http
-      .get<ApiResponse<DocumentApi[]>>(`${environment.api}/document/documents/${staffId}`)
+      .get<ApiResponse<DocumentApi[]>>(
+        `${environment.api}/document/documents/${staffId}`,
+        context ? { context } : undefined,
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (resp) => this.staffDocuments.set(resp.data),

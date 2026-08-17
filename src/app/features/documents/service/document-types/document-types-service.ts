@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../../../environments/environment.development';
 import { ApiResponse } from '../../../../models/api/ApiResponse.api';
@@ -16,8 +16,11 @@ export class DocumentTypesService {
   docType = signal<DocTypeApi | null>(null);
   error = signal<AppError | null>(null);
 
-  fetchDocTypes() {
-    this.http.get<ApiResponse<DocTypeApi[]>>(`${environment.api}/document/types`)
+  fetchDocTypes(context?: HttpContext) {
+    this.http.get<ApiResponse<DocTypeApi[]>>(
+      `${environment.api}/document/types`,
+      context ? { context } : undefined,
+    )
     .subscribe({
         next: (resp) => this.allDocTypes.set(resp.data),
         error: (err) => this.error.set(err)

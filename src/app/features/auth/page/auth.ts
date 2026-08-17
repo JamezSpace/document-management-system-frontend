@@ -51,7 +51,9 @@ export class Auth {
     password: new FormControl<string>('', { nonNullable: true, validators: Validators.required }),
   });
 
-  async submitData() {
+  async submitData(): Promise<void> {
+    if (this.authFormGroup.invalid || this.loadingFromAuthService()) return;
+
     // login
     const response = await this.authService.login({
       email: this.authFormGroup.getRawValue().email,

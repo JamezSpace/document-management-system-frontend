@@ -28,6 +28,7 @@ import { OnboardingService } from '../../../../../../features/onboarding/service
 import { StaffToActivate } from '../../../../../../models/api/staff/StaffToActivate.api';
 import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
 import { UtilService } from '../../../../../../shared/utils/service/util-service';
+import { officeActivityContext } from '../../../../../../office-platform/activity/office-activity.context';
 
 @Component({
   selector: 'nexus-staff-activation',
@@ -90,8 +91,8 @@ export class StaffActivation implements OnInit, AfterViewInit {
 
     this.directories.set(currentPath.split(','))
 
-    this.onboardingSessionService.fetchAllCompleteOnboardingSessions();
-    this.staffService.fetchAllUsers();
+    this.onboardingSessionService.fetchAllCompleteOnboardingSessions(officeActivityContext());
+    this.staffService.fetchAllUsers(officeActivityContext());
   }
 
   onboardingSessions = computed(() => {

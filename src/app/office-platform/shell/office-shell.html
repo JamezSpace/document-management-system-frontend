@@ -66,10 +66,21 @@
     </footer>
   </hlm-sidebar>
 
-  <main [class.hidden]="workspaceActive()"><button hlmSidebarTrigger><span class="sr-only">Toggle navigation</span></button></main>
-  <div [class]="workspaceActive() ? 'flex-1 p-0' : 'min-w-0 flex-1 p-5'">
-    <router-outlet (activate)="onRouteActivate($event)" />
-  </div>
+  <main class="relative min-w-0 flex-1">
+    @if (activity.isLoading()) {
+      <div class="absolute inset-x-0 top-0 z-50" aria-label="Loading office data">
+        <nexus-line-loader />
+      </div>
+    }
+
+    <button hlmSidebarTrigger [class.hidden]="workspaceActive()">
+      <span class="sr-only">Toggle navigation</span>
+    </button>
+
+    <div [class]="workspaceActive() ? 'p-0' : 'min-w-0 p-5'">
+      <router-outlet (activate)="onRouteActivate($event)" />
+    </div>
+  </main>
 </div>
 
 <hlm-alert-dialog #logOutDialog>

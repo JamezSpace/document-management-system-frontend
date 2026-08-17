@@ -48,7 +48,8 @@
       placeholder="Search by title, reference number or subject..."
       autocorrect="off"
       hlmInputGroupInput
-      (change)="onSearchChange($event)"
+      [value]="searchQuery()"
+      (input)="onSearchChange($event)"
     />
 
     <div hlmInputGroupAddon align="inline-end">
@@ -137,15 +138,48 @@
 
 <hlm-separator class="my-4" />
 
+<!-- @if (documentService.loading()) { -->
+@if (true) {
+  <section
+    class="flex items-start flex-wrap w-full gap-3.5 p-px"
+    aria-label="Loading documents"
+    aria-busy="true"
+  >
+    @for (item of documentSkeletons; track item) {
+      <section
+        class="rounded-xs button-box-shadow p-1 min-w-40 w-full max-w-56 min-h-56 flex-1 flex flex-col items-center relative"
+        aria-hidden="true"
+      >
+        <hlm-skeleton class="absolute top-2 right-2 h-4 w-16 rounded-xs" />
+
+        <div class="flex-1 flex-center justify-center p-2 w-full">
+          <hlm-skeleton class="h-14 w-12 rounded-xs" />
+        </div>
+
+        <div class="pl-1.5 pb-1 w-full flex-center justify-between gap-3">
+          <div class="flex-1 space-y-2">
+            <hlm-skeleton class="h-4 w-4/5 rounded-xs" />
+            <hlm-skeleton class="h-3 w-2/5 rounded-xs" />
+          </div>
+          <hlm-skeleton class="h-7 w-7 shrink-0 rounded-full" />
+        </div>
+      </section>
+    }
+  </section>
+} @else {
 <section class="flex items-start flex-wrap w-full gap-3.5 p-px">
   @for (doc of filteredDocumentsForPageViewAndSearchQuery(); track doc.id) {
     <nexus-document-item [documentItem]="doc" class="flex-1 max-w-56" />
   } @empty {
     <section class="w-full flex-center justify-center">
-      <nexus-empty-state [stateData]="emptyState()" />
+      <nexus-empty-state
+        [state]="emptyState()"
+        (actionSelected)="handleEmptyStateAction($event)"
+      />
     </section>
   }
 </section>
+}
 
 <nexus-side-modal>
   <nexus-document-details [documentToShowFullDetails]="documentClicked()" />

@@ -1,0 +1,67 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.empty-state {
+  min-height: 22rem;
+  border: 1px dashed color-mix(in oklab, var(--border) 80%, transparent);
+  background:
+    radial-gradient(circle at top, color-mix(in oklab, var(--primary) 5%, transparent), transparent 45%),
+    var(--card);
+}
+
+.empty-state--compact {
+  min-height: 15rem;
+  padding-block: 2rem;
+}
+
+.empty-state__media {
+  width: 3.25rem;
+  height: 3.25rem;
+  color: var(--primary);
+  border: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
+  background: color-mix(in oklab, var(--primary) 8%, var(--card));
+  box-shadow: 0 0.75rem 2rem color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+.empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.empty-state__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.empty-state__action[data-appearance='primary'] {
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.empty-state__action[data-appearance='primary']:hover {
+  background: var(--brand-primary-hover);
+}
+
+.empty-state__action[data-appearance='secondary']:hover,
+.empty-state__action[data-appearance='ghost']:hover {
+  border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
+  background: color-mix(in oklab, var(--primary) 7%, transparent);
+}
+
+.empty-state__action[data-appearance='ghost'] {
+  border-color: transparent;
+  color: var(--muted-foreground);
+}

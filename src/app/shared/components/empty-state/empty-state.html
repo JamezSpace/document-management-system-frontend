@@ -1,26 +1,37 @@
-<div hlmEmpty>
+<div
+  hlmEmpty
+  class="empty-state"
+  [class.empty-state--compact]="state().compact"
+  [attr.data-kind]="state().kind"
+  role="status"
+  aria-live="polite"
+>
   <div hlmEmptyHeader>
-    <div hlmEmptyMedia variant="icon">
-      <ng-icon [name]="stateData.iconName" />
+    <div hlmEmptyMedia variant="icon" class="empty-state__media" aria-hidden="true">
+      <ng-icon [name]="state().iconName" size="1.5rem" />
     </div>
-    <div hlmEmptyTitle>{{ stateData.title }}</div>
-    <div hlmEmptyDescription>
-      {{ stateData.supportingText }}
-    </div>
+    <h3 hlmEmptyTitle>{{ state().title }}</h3>
+    <p hlmEmptyDescription>{{ state().description }}</p>
   </div>
-  <div hlmEmptyContent>
-    <div class="flex gap-2">
-      @for (action of stateData.actions; track $index) {
-        <button hlmBtn [routerLink]="action.route" class="nexus-button outlined">
-          {{ action.label }}
-        </button>
-        @if ($index < stateData.actions.length - 1) {
-          <span class="h-6 w-px bg-border"></span>
-        }
-        @if (stateData.actions.length > 1 && $index === stateData.actions.length - 1) {
-          <button hlmBtn variant="outline" [routerLink]="action.route">{{ action.label }}</button>
+  @if (state().actions?.length) {
+    <div hlmEmptyContent class="empty-state__actions">
+      @for (action of state().actions; track action.id) {
+        @if (action.route) {
+          <a
+            [routerLink]="action.route"
+            [queryParams]="action.queryParams"
+            class="empty-state__action"
+            [attr.data-appearance]="action.appearance ?? 'secondary'"
+          >{{ action.label }}</a>
+        } @else {
+          <button
+            type="button"
+            class="empty-state__action"
+            [attr.data-appearance]="action.appearance ?? 'secondary'"
+            (click)="selectAction(action.id)"
+          >{{ action.label }}</button>
         }
       }
     </div>
-  </div>
+  }
 </div>
