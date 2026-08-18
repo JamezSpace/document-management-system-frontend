@@ -7,14 +7,13 @@ import { RetentionMetadata } from './metadata/RetentionMetadata.metadata';
 
 interface InitDocumentApiPayload {
   title: string;
-  createdBy: string;
   documentTypeId: string;
   direction: string;
 
   // correspondence
   originatingUnitId: string;
   recipientUnitId: string;
-  addressedToDesignationId: string;
+  addressedToDesignationId: string | null;
   subjectCodeId: string;
   subjectCode: string;
 
@@ -51,7 +50,7 @@ const emptyDocument: DocumentApi = {
   title: '',
   // Governance Domains initialized with safe defaults
   addressees: [{
-    addressedToDesignationId: '',
+    addressedToDesignationId: null,
     recipientUnitId: '',
     isPrimary: false
   }],

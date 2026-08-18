@@ -509,7 +509,8 @@ export class DocumentRegistry implements OnInit {
       sensitivity = docForm.getRawValue().sensitivity.toLowerCase(),
       direction = initializedDoc.direction,
       documentTypeId = initializedDoc.docTypeId,
-      addressedToDesignationId = docForm.getRawValue().addressedToDesignationId;
+      addressedToDesignationId =
+        direction === 'external' ? null : docForm.getRawValue().addressedToDesignationId;
 
     this.documentService.initDocument({
       title,
@@ -523,7 +524,6 @@ export class DocumentRegistry implements OnInit {
       functionCodeId,
       functionCode,
       sensitivity,
-      createdBy: staff!.id,
     });
   }
 

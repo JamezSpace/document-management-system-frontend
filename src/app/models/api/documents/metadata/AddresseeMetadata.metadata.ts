@@ -1,11 +1,11 @@
 interface AddresseeMetadata {
   recipientUnitId: string;
-  addressedToDesignationId: string;
+  addressedToDesignationId: string | null;
   isPrimary: boolean;
 }
 
 const emptyAddressee: AddresseeMetadata = {
-    addressedToDesignationId: '',
+    addressedToDesignationId: null,
     recipientUnitId: '',
     isPrimary: true
 }
