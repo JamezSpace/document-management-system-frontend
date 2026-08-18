@@ -38,7 +38,6 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
   quill = signal<Quill | null>(null);
   quillEditor = viewChild<ElementRef<HTMLDivElement>>('editor');
   editorLocked = signal<boolean>(false);
-  private saveTimer: any;
   private previewRenderer: Quill | null = null;
   private attachedEditorElement: HTMLDivElement | null = null;
 
@@ -52,12 +51,6 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.saveTimer) {
-      clearTimeout(this.saveTimer);
-
-      // trigger the service update here if needed
-    }
-
     this.previewRenderer = null;
   }
 
@@ -143,19 +136,11 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
     quillInstance.on('text-change', (delta, oldDelta, source) => {
       if (source !== 'user') return;
 
-      if (this.saveTimer) {
-        clearTimeout(this.saveTimer);
-      }
-
-      this.saveTimer = setTimeout(() => {
-        this.workspaceUiService.setQuillEditorContent({
-            delta: quillInstance.getContents(),
-            text: quillInstance.getText(),
-            html: quillInstance.getSemanticHTML(),
-        })
-      }, 500);
-
-      this.workspaceUiService.setIsDocumentSaved(false);
+      this.workspaceUiService.updateQuillEditorContent({
+        delta: quillInstance.getContents(),
+        text: quillInstance.getText(),
+        html: quillInstance.getSemanticHTML(),
+      });
     });
   }
 }

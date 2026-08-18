@@ -41,13 +41,12 @@ export class DocumentService {
 
   resetContext() {
     this.document.set(null);
-    this.workspaceUiService.setIsDocumentSaved(true);
     this.docSubmittedSuccess.set(false);
     this.error.set(null);
     this.manualPrintPreview.set(false);
     this.autoPrintPreview.set(false);
 
-    this.workspaceUiService.resetQuillEditorContent();
+    this.workspaceUiService.resetWorkspaceState();
   }
 
   initDocument(newDocumentPayload: InitDocumentApiPayload) {
@@ -93,7 +92,7 @@ export class DocumentService {
           const editorDelta = resp.data.currentVersion?.contentDelta;
 
           if (editorDelta)
-            this.workspaceUiService.setQuillEditorContent({
+            this.workspaceUiService.initializeQuillEditorContent({
                 delta: editorDelta,
             })
         },
@@ -106,6 +105,7 @@ export class DocumentService {
   saveDocument(
     docId: string,
     payload: { document: DocumentApi; contentDelta: unknown; actorId: string },
+    onSaved?: (document: DocumentApi) => void,
   ) {
     this.saveDocumentLoading.set(true);
 
@@ -120,9 +120,7 @@ export class DocumentService {
         next: (resp) => {
           // set data
           this.document.set(resp.data);
-
-          // toggle signal
-          this.workspaceUiService.setIsDocumentSaved(true);
+          onSaved?.(resp.data);
         },
         error: (err) => this.error.set(err),
       });
@@ -137,7 +135,7 @@ export class DocumentService {
       .subscribe({
         next: (resp) => {
           this.document.set(resp.data);
-          this.workspaceUiService.setIsDocumentSaved(true);
+          this.workspaceUiService.commitChanges();
         },
         error: (err) => this.error.set(err),
       });

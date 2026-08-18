@@ -31,6 +31,7 @@ import { UtilService } from '../../../../shared/utils/service/util-service';
 import { emptyDesignation } from '../../../../models/api/organization/designation.api';
 import { emptyUnit } from '../../../../models/api/organization/units.api';
 import { WorkspaceService } from '../../service/data/workspace-service';
+import { WorkspaceUiService } from '../../service/ui/workspace-ui-service';
 
 @Component({
   selector: 'nexus-sidebar',
@@ -64,6 +65,7 @@ import { WorkspaceService } from '../../service/data/workspace-service';
 })
 export class Sidebar {
   private readonly workspaceService = inject(WorkspaceService);
+  private readonly workspaceUiService = inject(WorkspaceUiService);
   private readonly organizationService = inject(OrganizationService);
   private readonly unitMembersService = inject(UnitMembersService);
   private readonly currentStaffService = inject(CurrentStaffService);
@@ -88,8 +90,8 @@ export class Sidebar {
   readonly isLockedForEditing = signal(false);
   readonly numOfFilesAttached = signal(0);
   readonly fileUploaded = signal<File | null>(null);
-  readonly selectedUnitsForCC = signal<string[]>([]);
-  readonly selectedDesignationsForCC = signal<string[]>([]);
+  readonly selectedUnitsForCC = this.workspaceUiService.selectedAdditionalAddresseeIds;
+  readonly selectedDesignationsForCC = this.workspaceUiService.selectedAdditionalAddresseeIds;
   readonly searchUnitValue = signal('');
   readonly searchAddresseeValue = signal('');
   readonly minuteContentToBeAdded = signal('');
@@ -137,7 +139,11 @@ export class Sidebar {
     const filterValue = this.searchUnitValue().toLowerCase();
 
     return this.units().filter(
-      (unit) => unit.id !== primaryAddresseeUnitId && unit.fullName.toLowerCase().includes(filterValue),
+      (unit) =>
+        unit.id !== primaryAddresseeUnitId
+        && !this.selectedUnitsForCC().includes(unit.id)
+        && (unit.fullName.toLowerCase().includes(filterValue)
+          || unit.code.toLowerCase().includes(filterValue)),
     );
   });
 
@@ -155,7 +161,11 @@ export class Sidebar {
 
   readonly filteredUnitMembersForCC = computed(() => {
     const primaryAddresseeId = this.primaryAddresseeForInternalDocs().id;
-    return this.filteredUnitMembers().filter((member) => member.id !== primaryAddresseeId);
+    return this.filteredUnitMembers().filter(
+      (member) =>
+        member.designation.id !== primaryAddresseeId
+        && !this.selectedDesignationsForCC().includes(member.designation.id),
+    );
   });
 
   readonly isMinuteAdded = computed(() => this.minuteContentToBeAdded().trim().length === 0);
@@ -185,21 +195,48 @@ export class Sidebar {
   showUnitLabelRatherThanId = (unitId: string) => this.getUnitFromId(unitId).code;
 
   selectedDesig(event: MatAutocompleteSelectedEvent) {
-    this.selectedDesignationsForCC.update((selected) => [...selected, event.option.viewValue]);
+    const designationId = event.option.value as string;
+    const selected = this.selectedDesignationsForCC();
+    if (!selected.includes(designationId)) {
+      this.updateAdditionalAddressees([...selected, designationId]);
+    }
+    this.documentMetadata.controls.addresseesForInternalDocs.setValue('');
+    this.searchAddresseeValue.set('');
     event.option.deselect();
   }
 
   selectedUnit(event: MatAutocompleteSelectedEvent) {
-    this.selectedUnitsForCC.update((selected) => [...selected, event.option.viewValue]);
+    const unitId = event.option.value as string;
+    const selected = this.selectedUnitsForCC();
+    if (!selected.includes(unitId)) {
+      this.updateAdditionalAddressees([...selected, unitId]);
+    }
+    this.documentMetadata.controls.addresseesForExternalDocs.setValue('');
+    this.searchUnitValue.set('');
     event.option.deselect();
   }
 
   removeDesig(designationId: string) {
-    this.selectedDesignationsForCC.update((selected) => selected.filter((id) => id !== designationId));
+    this.updateAdditionalAddressees(
+      this.selectedDesignationsForCC().filter((id) => id !== designationId),
+    );
   }
 
   removeUnit(unitId: string) {
-    this.selectedUnitsForCC.update((selected) => selected.filter((id) => id !== unitId));
+    this.updateAdditionalAddressees(this.selectedUnitsForCC().filter((id) => id !== unitId));
+  }
+
+  private updateAdditionalAddressees(ids: string[]) {
+    const isExternal = this.uiDocumentCorrespondence()?.direction === 'external';
+    const labels = ids.map((id) => isExternal
+      ? this.getUnitFromId(id).code
+      : this.getDesignationFromId(id).title,
+    ).filter(Boolean);
+    const description = labels.length
+      ? `Additional addressees: ${labels.join(', ')}.`
+      : 'All additional addressees will be removed.';
+
+    this.workspaceUiService.updateAdditionalAddressees(ids, description);
   }
 
   updateUnitSearch(event: Event) {

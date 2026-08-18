@@ -6,11 +6,11 @@
       class="p-1 border flex-center justify-center rounded-xs toolbar-btn"
       (click)="exitWorkspace()"
     >
-      <ng-icon name="lucideArrowLeft" hlm size="sm" />
+      <ng-icon name="lucideArrowLeft" />
     </button>
 
     <article class="flex-center gap-2">
-      <ng-icon name="lucideFile" hlm size="base" />
+      <ng-icon name="lucideFile" />
 
       <div class="">
         <p class="text-sidebar-background text-xs">
@@ -72,6 +72,15 @@
       } -->
 
       @if (ui().primaryAction; as action) {
+        @if (action.action === 'save') {
+        <button
+          type="button"
+          class="nexus-button flex-center gap-2 scale-90"
+          [hlmAlertDialogTriggerFor]="saveChangesDialog"
+        >
+          {{ action.label }}
+        </button>
+        } @else {
         <button
           type="button"
           class="nexus-button flex-center gap-2 scale-90"
@@ -83,6 +92,7 @@
 
           {{ action.label }}
         </button>
+        }
       }
       <!-- @if (permissions().canExport) {
         <button
@@ -97,3 +107,36 @@
     }
   </div>
 </section>
+
+<hlm-alert-dialog #saveChangesDialog>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[35vw]">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle>Save workspace changes?</h2>
+      <div hlmAlertDialogDescription class="space-y-3 text-slate-700">
+        <p>The following changes will be written to this correspondence:</p>
+        <ul class="list-disc space-y-2 pl-5">
+          @for (change of ui().pendingChanges; track change.key) {
+            <li>{{ change.description }}</li>
+          }
+        </ul>
+      </div>
+    </hlm-alert-dialog-header>
+
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel type="button" (click)="ctx.close()">Keep editing</button>
+      <button
+        hlmAlertDialogAction
+        type="button"
+        class="bg-primary text-white"
+        [disabled]="saving()"
+        (click)="saveDocument(); ctx.close()"
+      >
+        @if (saving()) {
+          <hlm-spinner />
+        } @else {
+          Save changes
+        }
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

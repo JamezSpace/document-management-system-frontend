@@ -31,6 +31,7 @@ export class WorkspaceService {
   
 
   loading = signal<boolean>(false);
+  readonly saving = this.documentService.saveDocumentLoading;
   error = signal<AppError | null>(null);
   workspaceContext = signal<WorkspaceContextApi | null>(null);
   readonly workspaceContextDocument = computed(() => this.workspaceContext()?.metadata.document);
@@ -75,6 +76,7 @@ export class WorkspaceService {
     permissions: this.permissions(),
     primaryAction: this.primaryAction(),
     isChangesSaved: this.workspaceUiService.getIsDocumentSaved(),
+    pendingChanges: this.workspaceUiService.pendingChanges(),
   }));
 
   readonly primaryAction = computed<WorkspacePrimaryAction | null>(() => {
@@ -124,18 +126,49 @@ export class WorkspaceService {
 
   /** CROSS-ENTITY OPERATIONS */
   saveDocument() {
-     const context = this.workspaceContext();
-      if (!context) return;
+    const context = this.workspaceContext();
+    const actorId = this.currentStaffService.data()?.id;
+    if (!context || !actorId) return;
 
-      const delta =
-          this.workspaceUiService
-              .getQuillEditorContent()()
-              .deltaContent;
+    const document = context.metadata.document;
+    const direction = document.correspondence.direction;
+    const primaryAddressees = document.addressees.filter((addressee) => addressee.isPrimary);
+    const primaryUnitId = primaryAddressees[0]?.recipientUnitId
+      ?? document.correspondence.recipientUnitId
+      ?? document.correspondence.originatingUnitId;
+    const additionalAddressees = this.workspaceUiService.selectedAdditionalAddresseeIds().map(
+      (id) => direction === 'external'
+        ? { recipientUnitId: id, addressedToDesignationId: null, isPrimary: false }
+        : { recipientUnitId: primaryUnitId, addressedToDesignationId: id, isPrimary: false },
+    );
+    const updatedDocument = {
+      ...document,
+      addressees: [...primaryAddressees, ...additionalAddressees],
+    };
+    const delta = this.workspaceUiService.getQuillEditorContent()().deltaContent;
 
-      this.documentService.saveDocumentContent(
-          context.metadata.document.id,
-          delta,
-      );
+    this.documentService.saveDocument(
+      document.id,
+      { document: updatedDocument, contentDelta: delta, actorId },
+      (savedDocument) => {
+        const savedAdditionalAddresseeIds = savedDocument.addressees
+          .filter((addressee) => !addressee.isPrimary)
+          .map((addressee) => savedDocument.correspondence.direction === 'external'
+            ? addressee.recipientUnitId
+            : addressee.addressedToDesignationId,
+          )
+          .filter((id): id is string => Boolean(id));
+
+        this.workspaceContext.update((current) => current
+          ? {
+              ...current,
+              metadata: { ...current.metadata, document: savedDocument },
+            }
+          : current,
+        );
+        this.workspaceUiService.commitSavedState(delta, savedAdditionalAddresseeIds);
+      },
+    );
   }
 
   /** DATA FETCHING */
@@ -159,7 +192,22 @@ export class WorkspaceService {
       .get(documentId, new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE))
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (response) => this.workspaceContext.set(response.data),
+        next: (response) => {
+          const document = response.data.metadata.document;
+          const additionalAddresseeIds = document.addressees
+            .filter((addressee) => !addressee.isPrimary)
+            .map((addressee) => document.correspondence.direction === 'external'
+              ? addressee.recipientUnitId
+              : addressee.addressedToDesignationId,
+            )
+            .filter((id): id is string => Boolean(id));
+
+          this.workspaceContext.set(response.data);
+          this.workspaceUiService.initializeAdditionalAddressees(additionalAddresseeIds);
+          this.workspaceUiService.initializeQuillEditorContent({
+            delta: document.currentVersion?.contentDelta ?? { ops: [] },
+          });
+        },
         error: (error: AppError) => this.error.set(error),
       });
   }
