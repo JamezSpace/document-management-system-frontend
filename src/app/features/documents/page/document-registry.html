@@ -20,7 +20,7 @@
 <section class="flex-center justify-between">
   <article>
     <h3 nata-h3>documents registry</h3>
-    <p nata-p>
+    <p class="mt-1.5">
       Complete view of all documents across drafts, submissions and shared items.
     </p>
   </article>
@@ -138,8 +138,7 @@
 
 <hlm-separator class="my-4" />
 
-<!-- @if (documentService.loading()) { -->
-@if (true) {
+@if (documentService.loading()) {
   <section
     class="flex items-start flex-wrap w-full gap-3.5 p-px"
     aria-label="Loading documents"
