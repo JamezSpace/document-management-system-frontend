@@ -146,54 +146,57 @@
         <form [formGroup]="staffUpdateForm" class="grid gap-5">
           <div class="field">
             <label hlmLabel for="office">Office</label>
-            <brn-select
+            <hlm-select
               class="block w-full"
-              placeholder="Select an office"
               formControlName="officeId"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value />
+                <hlm-select-value placeholder="Select an office" />
               </hlm-select-trigger>
-              <hlm-select-content>
+              <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                 @for (office of offices(); track office.id) {
-                  <hlm-option [value]="office.id">{{ office.name }}</hlm-option>
+                  <hlm-select-item [value]="office.id">{{ office.name }}</hlm-select-item>
                 }
-              </hlm-select-content>
-            </brn-select>
+              </hlm-select-group>
+</hlm-select-content>
+            </hlm-select>
           </div>
           <div class="field">
             <label hlmLabel for="designation">Designation</label>
-            <brn-select
+            <hlm-select
               class="block w-full"
-              placeholder="Select a designation"
               formControlName="designationId"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value />
+                <hlm-select-value placeholder="Select a designation" />
               </hlm-select-trigger>
-              <hlm-select-content>
+              <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                 @for (designation of designations(); track designation.id) {
-                  <hlm-option [value]="designation.id">{{ designation.title }}</hlm-option>
+                  <hlm-select-item [value]="designation.id">{{ designation.title }}</hlm-select-item>
                 }
-              </hlm-select-content>
-            </brn-select>
+              </hlm-select-group>
+</hlm-select-content>
+            </hlm-select>
           </div>
           <div class="field">
             <label hlmLabel for="employmentType">Employment Type</label>
-            <brn-select
+            <hlm-select
               class="block w-full"
-              placeholder="Select employment type"
               formControlName="employmentType"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value />
+                <hlm-select-value placeholder="Select employment type" />
               </hlm-select-trigger>
-              <hlm-select-content>
+              <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                 @for (type of employmentTypes; track type) {
-                  <hlm-option [value]="type">{{ type }}</hlm-option>
+                  <hlm-select-item [value]="type">{{ type }}</hlm-select-item>
                 }
-              </hlm-select-content>
-            </brn-select>
+              </hlm-select-group>
+</hlm-select-content>
+            </hlm-select>
           </div>
           <div class="field">
             <label hlmLabel for="staffNumber">Staff Number</label>

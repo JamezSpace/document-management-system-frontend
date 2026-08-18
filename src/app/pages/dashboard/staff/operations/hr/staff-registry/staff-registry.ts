@@ -15,7 +15,7 @@ import {
     lucideUserPlus,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
+
 import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
@@ -50,7 +50,7 @@ import { officeActivityContext } from '../../../../../../office-platform/activit
   selector: 'nexus-staff-registry',
   imports: [
     MatStepperModule,
-    BrnSelectImports,
+    
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
     HlmInputGroupImports,

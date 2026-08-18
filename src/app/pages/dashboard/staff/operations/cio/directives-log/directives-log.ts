@@ -8,7 +8,7 @@ import { saxTickCircleBold } from '@ng-icons/iconsax/bold';
 import { lucideEye, lucideGavel, lucideSend, lucideXCircle, lucideZap } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
 import { BrnAvatarImports } from '@spartan-ng/brain/avatar';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
+
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
@@ -25,7 +25,7 @@ import { SideModal } from '../../../../../../shared/components/side-modal/side-m
   imports: [
     HlmSelectImports,
     HlmAlertDialogImports,
-    BrnSelectImports,
+    
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
     NgIcon,

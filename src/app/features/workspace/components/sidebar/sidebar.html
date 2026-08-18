@@ -57,8 +57,8 @@
               aria-label="Adds to the list of all this internal correspondence is addressed to"
               formControlName="addresseesForInternalDocs" [matChipInputFor]="chipGridForInternalDocs"
               [matAutocomplete]="addresseeAutoForInternalDocs"
-              class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring" />
-            <!-- (input)="updateDeptSearch($event)" -->
+              class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring" >
+            
 
             <mat-autocomplete #addresseeAutoForInternalDocs="matAutocomplete"
               [displayWith]="showDesignationTitleRatherThanId" (optionSelected)="selectedDesig($event)">
@@ -87,7 +87,7 @@
               formControlName="addresseesForExternalDocs" [matChipInputFor]="chipGridForExternalDocs"
               [matAutocomplete]="addresseeAutoForExternalDocs"
               class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-              (input)="updateUnitSearch($event)" />
+              (input)="updateUnitSearch($event)" >
 
             <mat-autocomplete #addresseeAutoForExternalDocs="matAutocomplete" [displayWith]="showUnitLabelRatherThanId"
               (optionSelected)="selectedUnit($event)">
@@ -135,7 +135,7 @@
           <input type="file" name="" id="" title=""
             class="absolute w-full h-full top-0 left-0 opacity-0 z-10 cursor-pointer"
             accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document, .pdf"
-            (change)="onUploadAttachment($event)" />
+            (change)="onUploadAttachment($event)" >
         </div>
       </section>
       }
@@ -202,11 +202,7 @@
       }
     </section>
 
-    <!--<hlm-separator class="my-3" />
-
-        <section id="version-history" class="px-2.5">
-          <p class="section-descriptor mb-1.5">version history</p>
-        </section> -->
+    
     } @else {
     <section id="minutes-timeline-section" class="px-3">
       <p class="capitalize font-semibold text-[90%] mb-2.5">Minutes timeline</p>
@@ -216,15 +212,15 @@
       <hlm-accordion [type]="'multiple'">
         @for (minute of minutes(); track $index) {
         <hlm-accordion-item>
-          <p role="heading" aria-level="high">
-            <button hlmAccordionTrigger class="font-normal">
+          <p role="heading" aria-level="high"><h3 class="contents"><button hlmAccordionTrigger class="font-normal">
               <p>
                 <span class="capitalize inline">{{
                   resolveStaffDesignationTitle(minute.authorStaffId)
                   }}</span>
                 {{ resolveMinuteAction(minute.action) }}
               </p>
-            </button>
+            </button></h3>
+            
           </p>
           <hlm-accordion-content>
             <p class="italic">{{ resolveMinuteContent(minute.content) }}</p>
@@ -258,7 +254,7 @@
             <div class="field">
               <textarea placeholder="Enter comments or directives"
                 class="w-full border min-h-60 max-h-120 rounded-xs py-2.5 px-2 active:outline focus:outline"
-                (keyup)="changeMinute($event)"></textarea>
+                (keyup)="changeMinute($event)"/>
             </div>
           </div>
           <button type="button" class="nexus-button w-full" [disabled]="isMinuteAdded()"
@@ -285,7 +281,7 @@
           <input type="text" formControlName="forwardToDesignationId" placeholder="Who is this forwarding to?"
             aria-label="adressee of the document" [matAutocomplete]="addresseeAutoComplete"
             class="py-1 px-1.5 border border-input rounded-xs w-full h-9 focus-visible:ring-0 focus-visible:border-ring"
-            (input)="updateAddressee($event)" />
+            (input)="updateAddressee($event)" >
 
           <mat-autocomplete autoActiveFirstOption requireSelection #addresseeAutoComplete="matAutocomplete"
             [displayWith]="showDesignationTitleRatherThanId">
@@ -328,7 +324,7 @@
 
       <hlm-alert-dialog-footer class="mt-2.5">
         <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-        <button
+        <button 
           hlmAlertDialogAction
           (click)="addMinuteToCorrespondence(); ctx.close()"
           class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring"
@@ -363,7 +359,7 @@
 
       <hlm-alert-dialog-footer class="mt-2.5">
         <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-        <button
+        <button 
           hlmAlertDialogAction
           (click)="forwardDocument(); ctx.close()"
           class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring"

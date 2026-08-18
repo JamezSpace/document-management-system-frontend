@@ -292,19 +292,20 @@
           <div class="row flex-center gap-2">
             <div class="field in-dashboard">
               <label for="categorySelect">Unit Category</label>
-              <brn-select
+              <hlm-select
                 class="inline-block"
-                placeholder="Select an option"
                 (valueChange)="onCategoryChange($event)"
               >
                 <hlm-select-trigger class="w-48">
-                  <hlm-select-value />
+                  <hlm-select-value placeholder="Select an option" />
                 </hlm-select-trigger>
-                <hlm-select-content>
-                  <hlm-option value="academic" class="cursor-pointer">Academic</hlm-option>
-                  <hlm-option value="non-academic" class="cursor-pointer">Non-Academic</hlm-option>
-                </hlm-select-content>
-              </brn-select>
+                <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
+                  <hlm-select-item value="academic" class="cursor-pointer">Academic</hlm-select-item>
+                  <hlm-select-item value="non-academic" class="cursor-pointer">Non-Academic</hlm-select-item>
+                </hlm-select-group>
+</hlm-select-content>
+              </hlm-select>
             </div>
 
             <div class="field in-dashboard">
@@ -368,61 +369,64 @@
         <div class="row">
           <div class="field in-dashboard w-full">
             <label>Correspondence Subject</label>
-            <brn-select
+            <hlm-select
               class="block"
-              placeholder="Select the subject..."
               formControlName="subjectCodeObject"
               (valueChange)="onSubjectSelection($event)"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value />
+                <hlm-select-value placeholder="Select the subject..." />
               </hlm-select-trigger>
-              <hlm-select-content>
+              <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                 @for (subj of corrSubjects(); track subj.id) {
-                  <hlm-option [value]="subj">{{ subj.name }}</hlm-option>
+                  <hlm-select-item [value]="subj">{{ subj.name }}</hlm-select-item>
                 }
-              </hlm-select-content>
-            </brn-select>
+              </hlm-select-group>
+</hlm-select-content>
+            </hlm-select>
           </div>
         </div>
 
         <div class="row">
           <div class="field in-dashboard w-full">
             <label>Business Function</label>
-            <brn-select
+            <hlm-select
               class="block"
-              placeholder="Select Activity (e.g. Procurement)"
               formControlName="functionCodeObject"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value />
+                <hlm-select-value placeholder="Select Activity (e.g. Procurement)" />
               </hlm-select-trigger>
-              <hlm-select-content>
+              <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                 @for (func of filteredBussFunctions(); track func.id) {
-                  <hlm-option [value]="func">{{ func.name }}</hlm-option>
+                  <hlm-select-item [value]="func">{{ func.name }}</hlm-select-item>
                 }
-              </hlm-select-content>
-            </brn-select>
+              </hlm-select-group>
+</hlm-select-content>
+            </hlm-select>
           </div>
         </div>
 
         <div class="row">
           <div class="field in-dashboard w-full">
             <label>Sensitivity Level</label>
-            <brn-select
+            <hlm-select
               class="block"
-              placeholder="Specify the sensistivity of this correspondence"
               formControlName="sensitivity"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value />
+                <hlm-select-value placeholder="Specify the sensistivity of this correspondence" />
               </hlm-select-trigger>
-              <hlm-select-content>
+              <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                 @for (sensitivityLevel of sensitivityLevels(); track $index) {
-                  <hlm-option [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-option>
+                  <hlm-select-item [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-select-item>
                 }
-              </hlm-select-content>
-            </brn-select>
+              </hlm-select-group>
+</hlm-select-content>
+            </hlm-select>
           </div>
         </div>
 

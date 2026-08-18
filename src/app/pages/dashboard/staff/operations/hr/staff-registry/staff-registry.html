@@ -176,30 +176,31 @@
               <div class="field in-dashboard w-full">
                 <label hlmLabel for="internalOffice">Internal Office</label>
 
-                <brn-select
+                <hlm-select
                   class="block w-full"
-                  placeholder="Select an office"
                   id="internalOffice"
                   (valueChange)="onOfficeSelection($event)"
                   formControlName="office"
                 >
                   <hlm-select-trigger class="w-full">
-                    <hlm-select-value />
+                    <hlm-select-value placeholder="Select an office" />
                   </hlm-select-trigger>
 
-                  <hlm-select-content>
+                  <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                     @for (office of offices(); track $index) {
-                      <hlm-option [value]="office" class="capitalize">
+                      <hlm-select-item [value]="office" class="capitalize">
                         {{ office.name }}
-                      </hlm-option>
+                      </hlm-select-item>
                     }
-                  </hlm-select-content>
-                </brn-select>
+                  </hlm-select-group>
+</hlm-select-content>
+                </hlm-select>
               </div>
               <div class="field in-dashboard w-full">
                 <label hlmLabel for="designation">Designation</label>
 
-                <brn-select
+                <hlm-select
                   class="block w-full"
                   [placeholder]="
                     selectedOffice() ? 'Select a designation' : 'Select an office first'
@@ -213,14 +214,16 @@
                     <hlm-select-value />
                   </hlm-select-trigger>
 
-                  <hlm-select-content>
+                  <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                     @for (desig of designationsInSelectedOffice(); track $index) {
-                      <hlm-option [value]="desig" class="capitalize">
+                      <hlm-select-item [value]="desig" class="capitalize">
                         {{ desig.title }}
-                      </hlm-option>
+                      </hlm-select-item>
                     }
-                  </hlm-select-content>
-                </brn-select>
+                  </hlm-select-group>
+</hlm-select-content>
+                </hlm-select>
               </div>
             </div>
 
@@ -243,24 +246,25 @@
               <div class="field in-dashboard w-full">
                 <label hlmLabel for="employmentType">Employment Type</label>
 
-                <brn-select
+                <hlm-select
                   class="block w-full"
-                  placeholder="Select employment type"
                   id="employmentType"
                   (valueChange)="onEmploymentTypeSelection($event)"
                 >
                   <hlm-select-trigger class="w-full">
-                    <hlm-select-value />
+                    <hlm-select-value placeholder="Select employment type" />
                   </hlm-select-trigger>
 
-                  <hlm-select-content>
+                  <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
                     @for (type of employmentTypes; track $index) {
-                      <hlm-option [value]="type" class="capitalize">
+                      <hlm-select-item [value]="type" class="capitalize">
                         {{ type }}
-                      </hlm-option>
+                      </hlm-select-item>
                     }
-                  </hlm-select-content>
-                </brn-select>
+                  </hlm-select-group>
+</hlm-select-content>
+                </hlm-select>
               </div>
             </div>
 

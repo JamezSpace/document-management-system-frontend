@@ -33,7 +33,7 @@ import {
     lucideUsers2,
 } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
+
 import { HlmAlertDialog, HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
 import { HlmButton } from '@spartan-ng/helm/button';
@@ -92,7 +92,7 @@ import { officeActivityContext } from '../../../office-platform/activity/office-
     HlmInputGroup,
     HlmInputGroupAddon,
     EmptyState,
-    BrnSelectImports,
+    
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
     HlmButton,

@@ -195,7 +195,7 @@
       <button 
         type="button" 
         class="nexus-button w-full"
-        [brnAlertDialogTriggerFor]="activateStaffDialog"
+        [hlmAlertDialogTriggerFor]="activateStaffDialog"
         [disabled]="!canActivate(invite) || loading() || isInviteMigratedToNewStaff()">
         @if(loading()) {
             <hlm-spinner class="text-base md:text-lg" />

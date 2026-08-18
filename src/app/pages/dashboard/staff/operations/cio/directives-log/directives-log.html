@@ -64,39 +64,41 @@
         <div class="field in-dashboard">
           <label>Registry Volume</label>
 
-          <brn-select
+          <hlm-select
             id="priorityLevelSelect"
             class="inline-block"
-            placeholder="Select an option"
             (valueChange)="onPriorityLevelSelect($event)"
           >
             <hlm-select-trigger class="w-64">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select an option" />
             </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option value="operations" class="cursor-pointer">Operations</hlm-option>
-              <hlm-option value="official" class="cursor-pointer">Official</hlm-option>
-            </hlm-select-content>
-          </brn-select>
+            <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
+              <hlm-select-item value="operations" class="cursor-pointer">Operations</hlm-select-item>
+              <hlm-select-item value="official" class="cursor-pointer">Official</hlm-select-item>
+            </hlm-select-group>
+</hlm-select-content>
+          </hlm-select>
         </div>
 
         <div class="field in-dashboard">
           <label for="priorityLevelSelect">Priority Level</label>
 
-          <brn-select
+          <hlm-select
             id="priorityLevelSelect"
             class="inline-block"
-            placeholder="Select an option"
             (valueChange)="onPriorityLevelSelect($event)"
           >
             <hlm-select-trigger class="w-64">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select an option" />
             </hlm-select-trigger>
-            <hlm-select-content>
-              <hlm-option value="urgent" class="cursor-pointer">Urgent Action Required</hlm-option>
-              <hlm-option value="standard" class="cursor-pointer">Regular</hlm-option>
-            </hlm-select-content>
-          </brn-select>
+            <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
+              <hlm-select-item value="urgent" class="cursor-pointer">Urgent Action Required</hlm-select-item>
+              <hlm-select-item value="standard" class="cursor-pointer">Regular</hlm-select-item>
+            </hlm-select-group>
+</hlm-select-content>
+          </hlm-select>
         </div>
       </div>
 
@@ -104,23 +106,24 @@
         <div class="field in-dashboard">
           <label for="directiveAddressee">Addressed To</label>
 
-          <brn-select
+          <hlm-select
             id="directiveAddressee"
             class="inline-block"
-            placeholder="Select a staff"
             (valueChange)="onPriorityLevelSelect($event)"
           >
             <hlm-select-trigger class="w-131.25">
-              <hlm-select-value />
+              <hlm-select-value placeholder="Select a staff" />
             </hlm-select-trigger>
-            <hlm-select-content>
+            <hlm-select-content *hlmSelectPortal>
+<hlm-select-group>
               @for (staff of unitStaffers(); track $index) {
-                <hlm-option [value]="staff.id" class="cursor-pointer">{{
+                <hlm-select-item [value]="staff.id" class="cursor-pointer">{{
                   staff.firstName + ' ' + staff.lastName
-                }}</hlm-option>
+                }}</hlm-select-item>
               }
-            </hlm-select-content>
-          </brn-select>
+            </hlm-select-group>
+</hlm-select-content>
+          </hlm-select>
         </div>
       </div>
 

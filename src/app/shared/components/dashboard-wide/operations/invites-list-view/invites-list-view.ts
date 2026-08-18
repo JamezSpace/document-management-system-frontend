@@ -4,7 +4,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMoreVertical, lucideXCircle } from '@ng-icons/lucide';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
+
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputImports } from '@spartan-ng/helm/input';
@@ -32,7 +32,7 @@ import { OrganizationService } from '../../../../../features/shared/services/org
     HlmDropdownMenuImports,
     HlmMenubarImports,
     HlmInputImports,
-    BrnSelectImports,
+    
     HlmSelectImports,
     NgIcon,
     HlmSeparator

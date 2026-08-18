@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideMegaphone, lucideLogs, lucideMessageSquare, lucideSend, lucideCheckCircle } from '@ng-icons/lucide';
 import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/alert-dialog';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
+
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmButtonGroupImports } from '@spartan-ng/helm/button-group';
@@ -27,7 +27,7 @@ import { CurrentStaffService } from '../../../../../../features/shared/services/
     HlmCardImports,
     HlmHoverCardImports,
     HlmTextareaImports,
-    BrnSelectImports,
+    
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
     MatSlideToggleModule
