@@ -212,18 +212,18 @@
       <hlm-accordion [type]="'multiple'">
         @for (minute of minutes(); track $index) {
         <hlm-accordion-item>
-          <p role="heading" aria-level="high"><h3 class="contents"><button hlmAccordionTrigger class="font-normal">
-              <p>
-                <span class="capitalize inline">{{
-                  resolveStaffDesignationTitle(minute.authorStaffId)
-                  }}</span>
-                {{ resolveMinuteAction(minute.action) }}
-              </p>
-            </button></h3>
-            
-          </p>
+          <hlm-accordion-trigger triggerClass="font-normal">
+            <span>
+              <span class="capitalize inline">{{
+                resolveStaffDesignationTitle(minute.authorStaffId)
+              }}</span>
+              {{ resolveMinuteAction(minute.action) }}
+            </span>
+          </hlm-accordion-trigger>
           <hlm-accordion-content>
-            <p class="italic">{{ resolveMinuteContent(minute.content) }}</p>
+            <p class="italic">
+                {{ resolveMinuteContent(minute.content) }}
+            </p>
             <p class="text-xs -mt-2 mb-2 text-right">
               {{ formatDate(minute.createdAt) }}
             </p>
@@ -254,7 +254,7 @@
             <div class="field">
               <textarea placeholder="Enter comments or directives"
                 class="w-full border min-h-60 max-h-120 rounded-xs py-2.5 px-2 active:outline focus:outline"
-                (keyup)="changeMinute($event)"/>
+                (keyup)="changeMinute($event)"></textarea>
             </div>
           </div>
           <button type="button" class="nexus-button w-full" [disabled]="isMinuteAdded()"

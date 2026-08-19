@@ -1,10 +1,10 @@
 import { Directive } from '@angular/core';
-import { BrnComboboxMultiple } from '@spartan-ng/brain/combobox';
 import { BrnPopover, provideBrnPopoverConfig, provideBrnPopoverDefaultOptions } from '@spartan-ng/brain/popover';
+import { BrnSelectMultiple } from '@spartan-ng/brain/select';
 import { classes } from '@spartan-ng/helm/utils';
 
 @Directive({
-	selector: '[hlmComboboxMultiple],hlm-combobox-multiple',
+	selector: '[hlmSelectMultiple],hlm-select-multiple',
 	providers: [
 		provideBrnPopoverConfig({
 			align: 'start',
@@ -14,18 +14,9 @@ import { classes } from '@spartan-ng/helm/utils';
 	],
 	hostDirectives: [
 		{
-			directive: BrnComboboxMultiple,
-			inputs: [
-				'autoHighlight',
-				'disabled',
-				'filter',
-				'search',
-				'value',
-				'itemToString',
-				'filterOptions',
-				'isItemEqualToValue',
-			],
-			outputs: ['searchChange', 'valueChange'],
+			directive: BrnSelectMultiple,
+			inputs: ['disabled', 'value', 'isItemEqualToValue', 'itemToString'],
+			outputs: ['valueChange'],
 		},
 		{
 			directive: BrnPopover,
@@ -33,9 +24,9 @@ import { classes } from '@spartan-ng/helm/utils';
 			outputs: ['stateChanged', 'closed'],
 		},
 	],
-	host: { 'data-slot': 'combobox' },
+	host: { 'data-slot': 'select' },
 })
-export class HlmComboboxMultiple {
+export class HlmSelectMultiple {
 	constructor() {
 		classes(() => 'block');
 	}
