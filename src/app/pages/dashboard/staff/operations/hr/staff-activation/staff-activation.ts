@@ -26,6 +26,8 @@ import { SideModalService } from '../../../../../../core/services/page-wide/dash
 import { StaffService } from '../../../../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { OnboardingService } from '../../../../../../features/onboarding/services/session/onboarding-service';
 import { StaffToActivate } from '../../../../../../models/api/staff/StaffToActivate.api';
+import type { EmptyStateConfig } from '../../../../../../models/ui/global/EmptyState.ui';
+import { EmptyState } from '../../../../../../shared/components/empty-state/empty-state';
 import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
 import { UtilService } from '../../../../../../shared/utils/service/util-service';
 import { officeActivityContext } from '../../../../../../office-platform/activity/office-activity.context';
@@ -43,6 +45,7 @@ import { officeActivityContext } from '../../../../../../office-platform/activit
     HlmInputGroupAddon,
     HlmSeparator,
     NgIcon,
+    EmptyState,
     SideModal,
     HlmSpinner
 ],
@@ -64,6 +67,13 @@ export class StaffActivation implements OnInit, AfterViewInit {
 
   selectedStaff = signal<StaffToActivate | null>(null);
   loading = this.staffService.loading;
+  readonly emptyState: EmptyStateConfig = {
+    kind: 'completed',
+    iconName: 'lucideCircleCheckBig',
+    title: 'All staff activations are up to date',
+    description:
+      'Staff members who complete onboarding and are ready for account activation will appear here.',
+  };
 
   searchQuery = signal<string>('');
   onSearchChange(event: Event) {

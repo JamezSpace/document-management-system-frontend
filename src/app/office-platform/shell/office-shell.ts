@@ -118,7 +118,10 @@ export class OfficeShell {
   });
 
   isActive(route: string): boolean {
-    return this.router.url.startsWith(`${this.officeContext.baseRoute()}/${route}`);
+    const currentPath = this.router.url.split(/[?#]/, 1)[0].replace(/\/$/, '');
+    const targetPath = `${this.officeContext.baseRoute()}/${route}`.replace(/\/$/, '');
+
+    return currentPath === targetPath || currentPath.startsWith(`${targetPath}/`);
   }
 
   onRouteActivate(component: unknown): void {
