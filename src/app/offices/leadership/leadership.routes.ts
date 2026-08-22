@@ -12,7 +12,11 @@ export const LEADERSHIP_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'overview' },
   { path: 'overview', ...page('Leadership & Approvals', 'Make accountable decisions, issue direction and oversee office execution.') },
   ...sharedOfficeRoutes,
-  { path: 'approvals', canActivate: [capabilityGuard(C.Document.Approve, C.Document.Sign)], ...page('Approval inbox', 'Documents waiting for an approval decision.') },
+  {
+    path: 'approvals',
+    canActivate: [capabilityGuard(C.Document.Approve, C.Document.Sign)],
+    loadComponent: () => import('../../pages/dashboard/staff/operations/cio/sensitivity-approvals/sensitivity-approvals').then((m) => m.SensitivityApprovals),
+  },
   { path: 'signature-queue', canActivate: [capabilityGuard(C.Document.Sign)], ...page('Signature queue', 'Approved instruments ready for authorised signature.') },
   { path: 'escalations', canActivate: [capabilityGuard(C.Workflow.Escalate, C.Directive.Issue)], ...page('Escalations', 'Exceptional and overdue matters requiring leadership intervention.') },
   { path: 'unit-control', canActivate: [capabilityGuard(C.Directive.Issue)], loadComponent: () => import('../../pages/dashboard/staff/operations/cio/unit-control/unit-control').then((m) => m.UnitControl) },

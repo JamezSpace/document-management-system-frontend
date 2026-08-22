@@ -25,6 +25,7 @@ import { WorkspaceService } from '../service/data/workspace-service';
 import { MemoViewModel } from '../../../models/ui/workspace/MemoViewModel.ui';
 import { PageError } from '../../../shared/components/errors/local/page-error/page-error';
 import { OfficeContextService } from '../../../office-platform/context/office-context.service';
+import { GovernanceService } from '../service/data/governance-service';
 
 @Component({
   selector: 'nexus-workspace',
@@ -60,6 +61,7 @@ export class Workspace implements OnInit, OnDestroy {
   private readonly currentStaffService = inject(CurrentStaffService);
   private readonly organizationService = inject(OrganizationService);
   private readonly officeContext = inject(OfficeContextService);
+  private readonly governanceService = inject(GovernanceService);
 
   readonly workspaceLoading = this.workspaceService.loading;
   readonly workspaceError = this.workspaceService.error;
@@ -71,6 +73,9 @@ export class Workspace implements OnInit, OnDestroy {
   readonly isReadOnly = computed(() => this.workspaceContext()?.mode === 'readonly');
   readonly isEditable = computed(() => this.workspaceContext()?.mode === 'edit');
   readonly isAuthor = computed(() => this.workspaceContext()?.metadata.isAuthor ?? false);
+  readonly requiresServerRenderedPrint = computed(
+    () => this.workspaceContext()?.governance.extraction.print.deliveryMode === 'server_rendered_only',
+  );
   readonly workspaceMode = signal<'author' | 'reviewer'>('reviewer');
   readonly sidebarClosed = signal(false);
   readonly documentDirection = signal('');
@@ -156,7 +161,17 @@ export class Workspace implements OnInit, OnDestroy {
   }
 
   printCorrespondence(): void {
-    this.paperControls?.printCorrespondence();
+    const directive = this.workspaceContext()?.governance.extraction.print;
+    if (this.can(WorkspaceActions.EXPORT) && directive?.allowed) {
+      this.governanceService.extract('print');
+    }
+  }
+
+  exportCorrespondence(): void {
+    const directive = this.workspaceContext()?.governance.extraction.export;
+    if (this.can(WorkspaceActions.EXPORT) && directive?.allowed) {
+      this.governanceService.extract('export');
+    }
   }
 
   /** Establishes workspace-level UI state once the context and actor are available. */
@@ -212,7 +227,12 @@ export class Workspace implements OnInit, OnDestroy {
     const document = this.document();
     if (!document) return;
 
-    this.documentService.submitDocumentById(document.id);
+    this.documentService.submitDocumentById(document.id, document.revision, (error) => {
+      if (error.apiError.code.codeName === 'stale_governance_decision') {
+        this.reloadWorkspace();
+        this.utilService.showToast('info', 'The document changed. The workspace was refreshed; please retry.');
+      }
+    });
   }
 
   readonly documentSubmissionEffect = effect(() => {

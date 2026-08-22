@@ -24,53 +24,40 @@
   </div>
 
   <div id="right-section" class="flex-center gap-3.5">
-    @if (ui().permissions.readonly) {
+    @if (!ui().permissions.readonly) {
       <button
         type="button"
-        class="nexus-button flex-center gap-2 scale-90 capitalize"
+        class="nexus-button secondary scale-90"
+        (click)="previewDocument()"
+      >
+        preview
+      </button>
+    }
+
+    @if (ui().permissions.canExport && ui().governance; as governance) {
+      <button
+        type="button"
+        class="nexus-button secondary flex-center gap-2 scale-90 capitalize"
+        [disabled]="!governance.extraction.print.allowed || governanceExtracting() !== null"
+        [title]="governance.extraction.print.allowed ? 'Print governed PDF' : governance.extraction.print.reasonCode.replaceAll('_', ' ')"
         (click)="printCorrespondence()"
       >
         <ng-icon name="lucidePrinter" />
-        print correspondence
+        print
       </button>
-    } @else {
-      <button type="button" class="nexus-button secondary scale-90" (click)="previewDocument()">
-        preview
-      </button>
-      <!-- @if (!ui().isChangesSaved()) {
-        <button
-          type="button"
-          class="nexus-button flex-center gap-2.5 scale-90"
-          (click)="saveDocument()"
-        >
-          @if (!saveDocumentLoading()) {
-            <span>Save</span>
-          } @else {
-            <hlm-spinner class="text-base md:text-lg" />
-          }
-        </button>
-      } @else {
-        @if (permissions().canAdvance) {
-          <button
-            type="button"
-            class="nexus-button flex-center gap-1.5 scale-90"
-            [hlmAlertDialogTriggerFor]="submitDocumentDialog"
-          >
-            <ng-icon name="lucideSend" />
-            Advance for Approval
-          </button>
-        } @else if (permissions().canDispatch) {
-          <button
-            type="button"
-            class="nexus-button flex-center gap-1.5 scale-90 capitalize"
-            [hlmAlertDialogTriggerFor]="submitDocumentDialog"
-          >
-            <ng-icon name="lucideSend" />
-            Send correspondence
-          </button>
-        }
-      } -->
 
+      <button
+        type="button"
+        class="nexus-button secondary flex-center gap-2 scale-90 capitalize"
+        [disabled]="!governance.extraction.export.allowed || governanceExtracting() !== null"
+        [title]="governance.extraction.export.allowed ? 'Download governed PDF' : governance.extraction.export.reasonCode.replaceAll('_', ' ')"
+        (click)="exportCorrespondence()"
+      >
+        export PDF
+      </button>
+    }
+
+    @if (!ui().permissions.readonly) {
       @if (ui().primaryAction; as action) {
         @if (action.action === 'save') {
         <button
@@ -94,16 +81,6 @@
         </button>
         }
       }
-      <!-- @if (permissions().canExport) {
-        <button
-          type="button"
-          class="nexus-button flex-center gap-2 scale-90 capitalize"
-          (click)="printCorrespondence()"
-        >
-          <ng-icon name="lucidePrinter" />
-          print correspondence
-        </button>
-      } -->
     }
   </div>
 </section>

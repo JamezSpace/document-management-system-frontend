@@ -23,10 +23,10 @@ enum RecipientSector {
 }
 
 enum SensitivityLevel {
-  PUBLIC = 'Public',
-  INTERNAL = 'Internal',
-  CONFIDENTIAL = 'Confidential',
-  RESTRICTED = 'Restricted',
+  PUBLIC = 'public',
+  INTERNAL = 'internal',
+  CONFIDENTIAL = 'confidential',
+  RESTRICTED = 'restricted',
 }
 
 enum LifecycleActions {

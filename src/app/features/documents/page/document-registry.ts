@@ -9,6 +9,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -102,6 +103,7 @@ import { officeActivityContext } from '../../../office-platform/activity/office-
     DocumentDetails,
     SideModal,
     HlmSkeleton,
+    DatePipe,
   ],
   templateUrl: './document-registry.html',
   styleUrl: './document-registry.css',
@@ -184,9 +186,38 @@ export class DocumentRegistry implements OnInit {
     this.documentService.fetchDocumentsByStaff(staff.id, officeActivityContext());
   });
 
+  searchQuery = signal<string>('');
+  readonly searchResults = this.documentService.searchResults;
+  readonly searchPageInfo = this.documentService.searchPageInfo;
+  readonly searchLoading = this.documentService.searchLoading;
+  readonly isSearching = computed(() => this.searchQuery().trim().length > 0);
+
+  private readonly governedSearchEffect = effect((onCleanup) => {
+    const query = this.searchQuery().trim();
+    const timer = setTimeout(() => {
+      if (query) {
+        this.documentService.searchDocuments(query);
+      } else {
+        this.documentService.clearDocumentSearch();
+      }
+    }, 300);
+
+    onCleanup(() => clearTimeout(timer));
+  });
+
   emptyState = computed<EmptyStateConfig>(() => {
     const list = this.filteredDocumentsForPageViewAndSearchQuery() ?? [];
     const hasAnyDocuments = this.documents().length > 0;
+
+    if (this.isSearching() && this.searchResults().length === 0) {
+      return {
+        kind: 'no-results',
+        iconName: 'lucideSearchX',
+        title: `No documents match “${this.searchQuery()}”`,
+        description: 'Check the spelling, use fewer terms, or clear the search to restore every document.',
+        actions: [{ id: 'clear-search', label: 'Clear search', appearance: 'secondary' }],
+      };
+    }
 
     if (!hasAnyDocuments) {
       return {
@@ -198,16 +229,6 @@ export class DocumentRegistry implements OnInit {
         actions: [
           { id: 'create-document', label: 'Create first document', appearance: 'primary' },
         ],
-      };
-    }
-
-    if (this.searchQuery() && list.length === 0) {
-      return {
-        kind: 'no-results',
-        iconName: 'lucideSearchX',
-        title: `No documents match “${this.searchQuery()}”`,
-        description: 'Check the spelling, use fewer terms, or clear the search to restore every document.',
-        actions: [{ id: 'clear-search', label: 'Clear search', appearance: 'secondary' }],
       };
     }
 
@@ -230,10 +251,21 @@ export class DocumentRegistry implements OnInit {
     };
   });
 
-  searchQuery = signal<string>('');
   onSearchChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
+  }
+
+  loadMoreSearchResults(): void {
+    const pageInfo = this.searchPageInfo();
+    const query = this.searchQuery().trim();
+    if (!query || !pageInfo?.hasMore || !pageInfo.nextCursor) return;
+
+    this.documentService.searchDocuments(query, pageInfo.nextCursor, true);
+  }
+
+  openSearchResult(documentId: string): void {
+    this.registryService.navigateToWorkspace(this.activatedRouter, documentId);
   }
 
   handleEmptyStateAction(action: string): void {
@@ -268,7 +300,7 @@ export class DocumentRegistry implements OnInit {
   filteredDocumentsForPageViewAndSearchQuery = computed(() => {
     const mode = this.viewMode();
     const docs = this.documents();
-    const query = this.searchQuery().toLowerCase();
+    const query = '';
     const staff = this.signedInStaff();
 
     if (!staff) return;

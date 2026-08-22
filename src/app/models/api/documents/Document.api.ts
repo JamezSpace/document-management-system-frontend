@@ -25,6 +25,7 @@ interface InitDocumentApiPayload {
 
 interface DocumentApi {
   id: string;
+  revision: number;
   ownerId: string;
   title: string;
   currentVersion?: DocumentVersion;
@@ -46,6 +47,7 @@ interface DocumentApiWithSharedTag extends DocumentApi {
 
 const emptyDocument: DocumentApi = {
   id: '',
+  revision: 0,
   ownerId: '',
   title: '',
   // Governance Domains initialized with safe defaults

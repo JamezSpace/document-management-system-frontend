@@ -115,7 +115,7 @@
         }
       </p>
 
-      @if (!isDocumentActive()) {
+      @if (!isDocumentActive() && ui().permissions.canAttach) {
       @if(numOfFilesAttached() === 0) {
       <article>
         <p class="text-sm mb-2.5">Select whichever suits you...</p>
@@ -172,7 +172,7 @@
         </div>
         }
       </div>
-      } @else {
+      } @else if (ui().permissions.canAttach) {
       @if (fileUploaded()) {
       <article class="p-2 flex-center gap-2.5 rounded-xs subtle-box-shadow">
         <div class="icon text-3xl">
@@ -295,6 +295,9 @@
       </form>
     </section>
     }
+
+    <hlm-separator class="my-4" />
+    <nexus-governance-panel />
   </aside>
 
   <div class="absolute top-2.5 -right-10 z-10">

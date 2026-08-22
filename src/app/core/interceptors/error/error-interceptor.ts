@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ErrorPresenterService } from '../../services/error/presenter/error-presenter';
 import { ErrorMapperService } from '../../services/error/mapper/error-mapper';
-import { catchError, throwError } from 'rxjs';
+import { catchError, from, mergeMap, throwError } from 'rxjs';
 import { ERROR_SURFACE, SKIP_ERROR_PRESENTATION } from './error-context';
 
 export const errorInterceptor: HttpInterceptorFn = (request, next) => {
@@ -15,14 +15,40 @@ export const errorInterceptor: HttpInterceptorFn = (request, next) => {
         return throwError(() => error);
       }
 
-      const appError = mapper.map(error, request.context.get(ERROR_SURFACE));
+      const presentAndThrow = (httpError: HttpErrorResponse) => {
+        const appError = mapper.map(httpError, request.context.get(ERROR_SURFACE));
 
-      if (!request.context.get(SKIP_ERROR_PRESENTATION)){
-        presenter.present(appError);
+        if (!request.context.get(SKIP_ERROR_PRESENTATION)) {
+          presenter.present(appError);
+        }
+
+        return throwError(() => appError);
+      };
+
+      // Blob endpoints still return the normal JSON error envelope on failure.
+      if (error.error instanceof Blob && error.error.type.includes('json')) {
+        return from(error.error.text()).pipe(
+          mergeMap((body) => {
+            let parsedBody: unknown = body;
+            try {
+              parsedBody = JSON.parse(body);
+            } catch {
+              // The mapper will fall back to the standard unexpected-error presentation.
+            }
+
+            return presentAndThrow(new HttpErrorResponse({
+              error: parsedBody,
+              headers: error.headers,
+              status: error.status,
+              statusText: error.statusText,
+              url: error.url ?? undefined,
+            }));
+          }),
+        );
       }
 
-      // feature services receive the normalized AppError.
-      return throwError(() => appError);
+      // Feature services receive the normalized AppError.
+      return presentAndThrow(error);
     }),
   );
 };

@@ -32,6 +32,7 @@ import { emptyDesignation } from '../../../../models/api/organization/designatio
 import { emptyUnit } from '../../../../models/api/organization/units.api';
 import { WorkspaceService } from '../../service/data/workspace-service';
 import { WorkspaceUiService } from '../../service/ui/workspace-ui-service';
+import { GovernancePanel } from '../governance/governance-panel';
 
 @Component({
   selector: 'nexus-sidebar',
@@ -48,6 +49,7 @@ import { WorkspaceUiService } from '../../service/ui/workspace-ui-service';
     HlmSeparator,
     HlmSpinnerImports,
     BrnAlertDialogTrigger,
+    GovernancePanel,
   ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',

@@ -1,0 +1,101 @@
+<section class="mx-auto max-w-6xl px-4 soft-fade">
+  <header class="mb-6 max-w-3xl">
+    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-(--brand-primary)">
+      Leadership · Approval inbox
+    </p>
+    <h1 nata-h1>Sensitivity changes</h1>
+    <p class="mt-2" nata-p>
+      Review requested document downgrades for units where you hold effective or delegated Unit Head authority.
+    </p>
+  </header>
+
+  <div class="mb-5 flex gap-2">
+    <span class="rounded-full border border-primary bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+      Sensitivity changes
+    </span>
+  </div>
+
+  <hlm-separator class="mb-5" />
+
+  @if (governanceService.loading() && !queue()) {
+    <div class="flex min-h-60 items-center justify-center" aria-label="Loading approval queue">
+      <hlm-spinner />
+    </div>
+  } @else {
+    <div class="grid gap-3">
+      @for (request of queue()?.items ?? []; track request.id) {
+        <article class="rounded-md border bg-card p-4 shadow-xs">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="min-w-0">
+              <div class="mb-2 flex items-center gap-2">
+                <ng-icon name="lucideShieldCheck" class="text-primary" />
+                <span class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Pending downgrade
+                </span>
+              </div>
+              <h2 class="font-semibold">{{ request.documentId }}</h2>
+              <p class="mt-1 capitalize">
+                {{ request.fromSensitivity }} → {{ request.toSensitivity }}
+              </p>
+              <p class="mt-3 max-w-3xl text-sm text-muted-foreground">{{ request.reason }}</p>
+              <p class="mt-3 text-xs text-muted-foreground">
+                Requested {{ request.requestedAt | date: 'medium' }} by {{ request.requestedBy }}
+              </p>
+            </div>
+
+            <div class="flex gap-2">
+              <button type="button" class="nexus-button secondary"
+                [hlmAlertDialogTriggerFor]="decisionDialog" (click)="prepareDecision(request, 'reject')">
+                Reject
+              </button>
+              <button type="button" class="nexus-button"
+                [hlmAlertDialogTriggerFor]="decisionDialog" (click)="prepareDecision(request, 'approve')">
+                Approve
+              </button>
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <nexus-empty-state [state]="emptyState" />
+      }
+    </div>
+
+    @if (queue()?.pageInfo?.hasMore) {
+      <div class="mt-5 flex justify-center">
+        <button type="button" class="nexus-button secondary" (click)="loadMore()">Load more requests</button>
+      </div>
+    }
+  }
+</section>
+
+<hlm-alert-dialog #decisionDialog>
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(34rem,90vw)]">
+    <hlm-alert-dialog-header>
+      <h2 hlmAlertDialogTitle class="capitalize">{{ selectedDecision() }} sensitivity downgrade?</h2>
+      <p hlmAlertDialogDescription>
+        This decision is audited. Record the reason supporting your review.
+      </p>
+    </hlm-alert-dialog-header>
+
+    @if (selectedRequest(); as request) {
+      <div class="rounded-xs border bg-muted/40 p-3 text-sm">
+        <p class="font-semibold">{{ request.documentId }}</p>
+        <p class="mt-1 capitalize">{{ request.fromSensitivity }} → {{ request.toSensitivity }}</p>
+      </div>
+    }
+
+    <label class="grid gap-1 text-sm font-medium">
+      Review reason
+      <textarea class="custom-input min-h-28" maxlength="2000" [formControl]="reviewReason"></textarea>
+    </label>
+
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button hlmAlertDialogAction [class.bg-destructive]="selectedDecision() === 'reject'"
+        [disabled]="reviewReason.invalid || governanceService.mutating()"
+        (click)="submitDecision(); ctx.close()">
+        Confirm {{ selectedDecision() }}
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

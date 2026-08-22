@@ -7,7 +7,10 @@ import type { WorkspaceDto } from './workspace.contracts';
 export class WorkspaceApi {
   private readonly api = inject(ApiClient);
 
-  get(documentId: string, context?: HttpContext) {
-    return this.api.get<WorkspaceDto>(`workspace/${documentId}`, context);
+  get(documentId: string, context?: HttpContext, canvas: 'internal' | 'letterhead' = 'internal') {
+    return this.api.getResponse<WorkspaceDto>(`workspace/${documentId}`, {
+      context,
+      params: { canvas },
+    });
   }
 }

@@ -71,7 +71,7 @@ export class DocumentItem {
   deleteDocument() {
     const state = this.documentItem().currentVersion?.lifecycle.currentState?.toLowerCase();
     if (!state || state === 'draft') {
-      this.documentService.deleteDocument(this.documentItem().id);
+      this.documentService.deleteDocument(this.documentItem().id, this.documentItem().revision);
       this.dialog.close();
       return;
     }

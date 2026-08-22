@@ -1,4 +1,4 @@
-<div #workspaceRoot>
+<div #workspaceRoot [class.server-rendered-only]="requiresServerRenderedPrint()">
   @if (workspaceError(); as error) {
     <nexus-page-error
       [error]="error"
@@ -17,6 +17,7 @@
       <nexus-toolbar
         (previewRequested)="previewDocument()"
         (printRequested)="printCorrespondence()"
+        (exportRequested)="exportCorrespondence()"
       />
 
       <div class="flex flex-start relative">

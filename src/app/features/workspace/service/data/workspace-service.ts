@@ -15,6 +15,7 @@ import { OrganizationService } from '../../../shared/services/organization/organ
 import { WorkspacePrimaryAction } from '../../../../models/ui/workspace/WorkspacePrimaryAction.ui';
 import { WorkspaceApi } from '../../../../api/workspace/workspace.api';
 import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
+import { UtilService } from '../../../../shared/utils/service/util-service';
 
 
 @Injectable({
@@ -24,6 +25,7 @@ export class WorkspaceService {
   private router = inject(Router);
   private readonly officeContext = inject(OfficeContextService);
   private readonly workspaceApi = inject(WorkspaceApi);
+  private readonly utilService = inject(UtilService);
   documentService = inject(DocumentService);
   workspaceUiService = inject(WorkspaceUiService);
   currentStaffService = inject(CurrentStaffService);
@@ -34,6 +36,7 @@ export class WorkspaceService {
   readonly saving = this.documentService.saveDocumentLoading;
   error = signal<AppError | null>(null);
   workspaceContext = signal<WorkspaceContextApi | null>(null);
+  readonly workspaceEtag = signal<string | null>(null);
   readonly workspaceContextDocument = computed(() => this.workspaceContext()?.metadata.document);
   readonly isAuthor = computed(() => this.workspaceContext()?.metadata.isAuthor ?? false);
 
@@ -74,6 +77,8 @@ export class WorkspaceService {
   readonly viewModel = computed(() => ({
     document: this.workspaceContextDocument(),
     permissions: this.permissions(),
+    governance: this.workspaceContext()?.governance ?? null,
+    canvas: this.workspaceContext()?.canvas ?? null,
     primaryAction: this.primaryAction(),
     isChangesSaved: this.workspaceUiService.getIsDocumentSaved(),
     pendingChanges: this.workspaceUiService.pendingChanges(),
@@ -103,14 +108,6 @@ export class WorkspaceService {
         label: 'Send Correspondence',
         icon: 'lucideSend',
         action: 'dispatch',
-      };
-    }
-
-    if (permissions.canExport) {
-      return {
-        label: 'print correspondence',
-        icon: 'lucidePrinter',
-        action: 'export',
       };
     }
 
@@ -167,6 +164,14 @@ export class WorkspaceService {
           : current,
         );
         this.workspaceUiService.commitSavedState(delta, savedAdditionalAddresseeIds);
+        this.acceptMutationRevision(savedDocument.revision);
+        this.fetchWorkspaceContext(savedDocument.id);
+      },
+      (error) => {
+        if (error.apiError.code.codeName === 'stale_governance_decision') {
+          this.fetchWorkspaceContext(document.id);
+          this.utilService.showToast('info', 'The document changed. The workspace was refreshed; please retry.');
+        }
       },
     );
   }
@@ -187,13 +192,17 @@ export class WorkspaceService {
     this.loading.set(true);
     this.error.set(null);
     this.workspaceContext.set(null);
+    this.workspaceEtag.set(null);
 
     this.workspaceApi
       .get(documentId, new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE))
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
-          const document = response.data.metadata.document;
+          const context = response.body?.data;
+          if (!context) return;
+
+          const document = context.metadata.document;
           const additionalAddresseeIds = document.addressees
             .filter((addressee) => !addressee.isPrimary)
             .map((addressee) => document.correspondence.direction === 'external'
@@ -202,7 +211,10 @@ export class WorkspaceService {
             )
             .filter((id): id is string => Boolean(id));
 
-          this.workspaceContext.set(response.data);
+          this.workspaceEtag.set(
+            response.headers.get('ETag') ?? `"${document.revision}"`,
+          );
+          this.workspaceContext.set(context);
           this.workspaceUiService.initializeAdditionalAddressees(additionalAddresseeIds);
           this.workspaceUiService.initializeQuillEditorContent({
             delta: document.currentVersion?.contentDelta ?? { ops: [] },
@@ -210,5 +222,31 @@ export class WorkspaceService {
         },
         error: (error: AppError) => this.error.set(error),
       });
+  }
+
+  currentRevisionHeader(): string | null {
+    const document = this.workspaceContextDocument();
+    if (!document) return null;
+
+    return this.workspaceEtag() ?? `"${document.revision}"`;
+  }
+
+  acceptMutationRevision(documentRevision: number, etag?: string | null): void {
+    this.workspaceEtag.set(etag ?? `"${documentRevision}"`);
+    this.workspaceContext.update((current) => current
+      ? {
+          ...current,
+          metadata: {
+            ...current.metadata,
+            document: { ...current.metadata.document, revision: documentRevision },
+          },
+        }
+      : current,
+    );
+  }
+
+  refreshWorkspace(): void {
+    const documentId = this.workspaceContextDocument()?.id;
+    if (documentId) this.fetchWorkspaceContext(documentId);
   }
 }

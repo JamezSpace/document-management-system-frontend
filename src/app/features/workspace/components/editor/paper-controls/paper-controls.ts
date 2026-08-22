@@ -51,6 +51,9 @@ export class PaperControls {
   }
 
   printCorrespondence() {
+    const directive = this.workspaceService.workspaceContext()?.governance.extraction.print;
+    if (!directive?.allowed || directive.deliveryMode === 'server_rendered_only') return;
+
     this.documentService.setManualPrintPreview = true;
     setTimeout(() => window.print(), 0);
   }
