@@ -166,56 +166,64 @@
     }
   </section>
 } @else if (isSearching()) {
-<section class="grid w-full gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-label="Governed document search results">
-  @for (result of searchResults(); track result.id) {
-    <button
-      type="button"
-      class="group min-h-36 rounded-xs border border-border bg-card p-4 text-left transition-colors hover:border-primary/40 hover:bg-primary/5"
-      (click)="openSearchResult(result.id)"
-    >
-      <div class="mb-5 flex items-start justify-between gap-3">
-        <ng-icon name="lucideFileText" class="text-3xl text-muted-foreground group-hover:text-primary" />
-        <span class="rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
-          {{ result.sensitivity }}
-        </span>
-      </div>
-      <h3 class="font-semibold capitalize group-hover:underline">{{ result.title }}</h3>
-      <p class="mt-1 break-all text-xs text-muted-foreground">
-        {{ result.referenceNumber || 'Reference pending' }}
-      </p>
-      <p class="mt-3 text-[11px] text-muted-foreground">
-        Created {{ result.createdAt | date: 'mediumDate' }}
-      </p>
-    </button>
-  } @empty {
-    <nexus-empty-state
-      class="sm:col-span-2 xl:col-span-3"
-      [state]="emptyState()"
-      (actionSelected)="handleEmptyStateAction($event)"
-    />
-  }
-</section>
-
-@if (searchPageInfo()?.hasMore) {
-  <div class="mt-5 flex justify-center">
-    <button type="button" class="nexus-button secondary" (click)="loadMoreSearchResults()">
-      Load more results
-    </button>
-  </div>
-}
-} @else {
-<section class="flex items-start flex-wrap w-full gap-3.5 p-px">
-  @for (doc of filteredDocumentsForPageViewAndSearchQuery(); track doc.id) {
-    <nexus-document-item [documentItem]="doc" class="flex-1 max-w-56" />
-  } @empty {
-    <section class="w-full flex-center justify-center">
+  <section
+    class="grid w-full gap-3 sm:grid-cols-2 xl:grid-cols-3"
+    aria-label="Governed document search results"
+  >
+    @for (result of searchResults(); track result.id) {
+      <button
+        type="button"
+        class="group min-h-36 rounded-xs border border-border bg-card p-4 text-left transition-colors hover:border-primary/40 hover:bg-primary/5"
+        (click)="openSearchResult(result.id)"
+      >
+        <div class="mb-5 flex items-start justify-between gap-3">
+          <ng-icon
+            name="lucideFileText"
+            class="text-3xl text-muted-foreground group-hover:text-primary"
+          />
+          <span
+            class="rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+          >
+            {{ result.sensitivity }}
+          </span>
+        </div>
+        <h3 class="font-semibold capitalize group-hover:underline">{{ result.title }}</h3>
+        <p class="mt-1 break-all text-xs text-muted-foreground">
+          {{ result.referenceNumber || 'Reference pending' }}
+        </p>
+        <p class="mt-3 text-[11px] text-muted-foreground">
+          Created {{ result.createdAt | date: 'mediumDate' }}
+        </p>
+      </button>
+    } @empty {
       <nexus-empty-state
+        class="sm:col-span-2 xl:col-span-3"
         [state]="emptyState()"
         (actionSelected)="handleEmptyStateAction($event)"
       />
-    </section>
+    }
+  </section>
+
+  @if (searchPageInfo()?.hasMore) {
+    <div class="mt-5 flex justify-center">
+      <button type="button" class="nexus-button secondary" (click)="loadMoreSearchResults()">
+        Load more results
+      </button>
+    </div>
   }
-</section>
+} @else {
+  <section class="flex items-start flex-wrap w-full gap-3.5 p-px">
+    @for (doc of filteredDocumentsForPageViewAndSearchQuery(); track doc.id) {
+      <nexus-document-item [documentItem]="doc" class="flex-1 max-w-56" />
+    } @empty {
+      <section class="w-full flex-center justify-center">
+        <nexus-empty-state
+          [state]="emptyState()"
+          (actionSelected)="handleEmptyStateAction($event)"
+        />
+      </section>
+    }
+  </section>
 }
 
 <nexus-side-modal>
@@ -306,7 +314,7 @@
     </div>
     <section class="gap-4 p-6" [class.pt-2]="loading()">
       <hlm-alert-dialog-header>
-        <h4 nata-h4> Document Registration </h4>
+        <h4 nata-h4>Document Registration</h4>
         <p nata-muted class="capitalize">
           {{ initDocument()!.direction }} {{ initDocument()!.docType }} Workflow •
           {{ currentYear }} Session
@@ -330,19 +338,20 @@
           <div class="row flex-center gap-2">
             <div class="field in-dashboard">
               <label for="categorySelect">Unit Category</label>
-              <hlm-select
-                class="inline-block"
-                (valueChange)="onCategoryChange($event)"
-              >
+              <hlm-select class="inline-block" (valueChange)="onCategoryChange($event)">
                 <hlm-select-trigger class="w-48">
                   <hlm-select-value placeholder="Select an option" />
                 </hlm-select-trigger>
                 <hlm-select-content *hlmSelectPortal>
-<hlm-select-group>
-                  <hlm-select-item value="academic" class="cursor-pointer">Academic</hlm-select-item>
-                  <hlm-select-item value="non-academic" class="cursor-pointer">Non-Academic</hlm-select-item>
-                </hlm-select-group>
-</hlm-select-content>
+                  <hlm-select-group>
+                    <hlm-select-item value="academic" class="cursor-pointer"
+                      >Academic</hlm-select-item
+                    >
+                    <hlm-select-item value="non-academic" class="cursor-pointer"
+                      >Non-Academic</hlm-select-item
+                    >
+                  </hlm-select-group>
+                </hlm-select-content>
               </hlm-select>
             </div>
 
@@ -413,15 +422,15 @@
               (valueChange)="onSubjectSelection($event)"
             >
               <hlm-select-trigger class="w-full">
-                <hlm-select-value placeholder="Select the subject..." />
+                <hlm-select-value placeholder="Select the subject..."  />
               </hlm-select-trigger>
               <hlm-select-content *hlmSelectPortal>
-<hlm-select-group>
-                @for (subj of corrSubjects(); track subj.id) {
-                  <hlm-select-item [value]="subj">{{ subj.name }}</hlm-select-item>
-                }
-              </hlm-select-group>
-</hlm-select-content>
+                <hlm-select-group>
+                  @for (subj of corrSubjects(); track subj.id) {
+                    <hlm-select-item [value]="subj.name">{{ subj.name }}</hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
             </hlm-select>
           </div>
         </div>
@@ -429,20 +438,17 @@
         <div class="row">
           <div class="field in-dashboard w-full">
             <label>Business Function</label>
-            <hlm-select
-              class="block"
-              formControlName="functionCodeObject"
-            >
+            <hlm-select class="block" formControlName="functionCodeObject">
               <hlm-select-trigger class="w-full">
                 <hlm-select-value placeholder="Select Activity (e.g. Procurement)" />
               </hlm-select-trigger>
               <hlm-select-content *hlmSelectPortal>
-<hlm-select-group>
-                @for (func of filteredBussFunctions(); track func.id) {
-                  <hlm-select-item [value]="func">{{ func.name }}</hlm-select-item>
-                }
-              </hlm-select-group>
-</hlm-select-content>
+                <hlm-select-group>
+                  @for (func of filteredBussFunctions(); track func.id) {
+                    <hlm-select-item [value]="func.name">{{ func.name }}</hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
             </hlm-select>
           </div>
         </div>
@@ -450,20 +456,19 @@
         <div class="row">
           <div class="field in-dashboard w-full">
             <label>Sensitivity Level</label>
-            <hlm-select
-              class="block"
-              formControlName="sensitivity"
-            >
+            <hlm-select class="block" formControlName="sensitivity">
               <hlm-select-trigger class="w-full">
                 <hlm-select-value placeholder="Specify the sensistivity of this correspondence" />
               </hlm-select-trigger>
               <hlm-select-content *hlmSelectPortal>
-<hlm-select-group>
-                @for (sensitivityLevel of sensitivityLevels(); track $index) {
-                  <hlm-select-item [value]="sensitivityLevel">{{ sensitivityLevel }}</hlm-select-item>
-                }
-              </hlm-select-group>
-</hlm-select-content>
+                <hlm-select-group>
+                  @for (sensitivityLevel of sensitivityLevels(); track $index) {
+                    <hlm-select-item [value]="sensitivityLevel">{{
+                      sensitivityLevel
+                    }}</hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
             </hlm-select>
           </div>
         </div>

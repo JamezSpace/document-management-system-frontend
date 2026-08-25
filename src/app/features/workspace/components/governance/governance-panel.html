@@ -2,7 +2,7 @@
   <div class="mb-3 flex items-center justify-between gap-2">
     <div>
       <p id="governance-heading" class="section-descriptor">Governance</p>
-      <p class="mt-1 text-[11px] capitalize text-muted-foreground">
+      <p class="text-xs font-medium text-muted-foreground capitalize">
         {{ currentSensitivity() }} · Policy v{{ governance()?.policyVersion }}
       </p>
     </div>
@@ -20,8 +20,13 @@
       <div class="rounded-xs border p-2">
         <div class="flex items-center justify-between gap-2">
           <span class="font-semibold">Print</span>
-          <span [class.text-emerald-700]="policy.extraction.print.allowed"
-            [class.text-destructive]="!policy.extraction.print.allowed">
+          <span
+            [class]="
+              policy.extraction.print.allowed
+                ? 'text-emerald-700'
+                : 'text-destructive text-xs font-medium lowercase'
+            "
+          >
             {{ policy.extraction.print.allowed ? 'Allowed' : 'Restricted' }}
           </span>
         </div>
@@ -35,8 +40,13 @@
       <div class="rounded-xs border p-2">
         <div class="flex items-center justify-between gap-2">
           <span class="font-semibold">Export</span>
-          <span [class.text-emerald-700]="policy.extraction.export.allowed"
-            [class.text-destructive]="!policy.extraction.export.allowed">
+          <span
+            [class]="
+              policy.extraction.export.allowed
+                ? 'text-emerald-700'
+                : 'text-destructive text-xs font-medium lowercase'
+            "
+          >
             {{ policy.extraction.export.allowed ? 'Allowed' : 'Restricted' }}
           </span>
         </div>
@@ -51,16 +61,24 @@
 
   <div class="mt-3 grid gap-2">
     @if (isConfidential()) {
-      <button type="button" class="nexus-button secondary flex w-full items-center justify-center gap-2 text-xs"
-        [disabled]="hasUnsavedChanges()" [hlmAlertDialogTriggerFor]="createGrantDialog">
+      <button
+        type="button"
+        class="nexus-button secondary flex w-full items-center justify-center gap-2 text-xs"
+        [disabled]="hasUnsavedChanges()"
+        [hlmAlertDialogTriggerFor]="createGrantDialog"
+      >
         <ng-icon name="lucideKeyRound" />
         Create access grant
       </button>
     }
 
     @if (isAuthor()) {
-      <button type="button" class="nexus-button secondary flex w-full items-center justify-center gap-2 text-xs"
-        [disabled]="hasUnsavedChanges()" [hlmAlertDialogTriggerFor]="sensitivityDialog">
+      <button
+        type="button"
+        class="nexus-button secondary flex w-full items-center justify-center gap-2 text-xs"
+        [disabled]="hasUnsavedChanges()"
+        [hlmAlertDialogTriggerFor]="sensitivityDialog"
+      >
         <ng-icon name="lucideShieldCheck" />
         Change sensitivity
       </button>
@@ -85,16 +103,24 @@
               </p>
             </div>
             @if (grant.status === 'active') {
-              <button type="button" class="rounded-xs p-1 text-destructive hover:bg-destructive/10"
-                aria-label="Revoke grant" [hlmAlertDialogTriggerFor]="revokeGrantDialog"
-                (click)="selectedGrant.set(grant)">
+              <button
+                type="button"
+                class="rounded-xs p-1 text-destructive hover:bg-destructive/10"
+                aria-label="Revoke grant"
+                [hlmAlertDialogTriggerFor]="revokeGrantDialog"
+                (click)="selectedGrant.set(grant)"
+              >
                 <ng-icon name="lucideTrash2" />
               </button>
             }
           </div>
-          <p class="mt-2 text-[11px] text-muted-foreground">Expires {{ grant.validTo | date: 'medium' }}</p>
+          <p class="mt-2 text-[11px] text-muted-foreground">
+            Expires {{ grant.validTo | date: 'medium' }}
+          </p>
           @if (grant.remainingUses !== null) {
-            <p class="text-[11px] text-muted-foreground">{{ grant.remainingUses }} export use(s) remain</p>
+            <p class="text-[11px] text-muted-foreground">
+              {{ grant.remainingUses }} export use(s) remain
+            </p>
           }
         </article>
       } @empty {
@@ -114,16 +140,22 @@
     <div class="mt-2 grid gap-2">
       @for (change of changes(); track change.id) {
         <article class="rounded-xs border p-2 text-xs">
-          <p class="font-semibold capitalize">{{ change.fromSensitivity }} → {{ change.toSensitivity }}</p>
+          <p class="font-semibold capitalize">
+            {{ change.fromSensitivity }} → {{ change.toSensitivity }}
+          </p>
           <p class="mt-1 capitalize text-muted-foreground">{{ change.status }}</p>
-          <p class="mt-1 text-[11px] text-muted-foreground">{{ change.requestedAt | date: 'medium' }}</p>
+          <p class="mt-1 text-[11px] text-muted-foreground">
+            {{ change.requestedAt | date: 'medium' }}
+          </p>
         </article>
       }
     </div>
   }
 
   @if (governanceService.loading() || governanceService.mutating()) {
-    <div class="mt-3 flex justify-center" aria-label="Updating governance settings"><hlm-spinner /></div>
+    <div class="mt-3 flex justify-center" aria-label="Updating governance settings">
+      <hlm-spinner />
+    </div>
   }
 </section>
 
@@ -131,34 +163,61 @@
   <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(34rem,90vw)]">
     <hlm-alert-dialog-header>
       <h2 hlmAlertDialogTitle>Create confidential access grant</h2>
-      <p hlmAlertDialogDescription>Every grant expires automatically and is recorded in the governance audit.</p>
+      <p hlmAlertDialogDescription>
+        Every grant expires automatically and is recorded in the governance audit.
+      </p>
     </hlm-alert-dialog-header>
     <form [formGroup]="grantForm" class="grid gap-4">
-      <label class="grid gap-1 text-sm font-medium">Grantee staff ID
+      <label class="grid gap-1 text-sm font-medium"
+        >Grantee staff ID
         <input class="custom-input" formControlName="granteeStaffId" placeholder="STAFF-..." />
       </label>
-      <label class="grid gap-1 text-sm font-medium">Grant type
+      <label class="grid gap-1 text-sm font-medium"
+        >Grant type
         <select class="custom-input" formControlName="grantType">
           <option value="guest_reader">Guest reader</option>
           <option value="export">Export</option>
         </select>
       </label>
-      <label class="grid gap-1 text-sm font-medium">Expires
-        <input class="custom-input" type="datetime-local" [min]="minimumExpiry" formControlName="validTo" />
+      <label class="grid gap-1 text-sm font-medium"
+        >Expires
+        <input
+          class="custom-input"
+          type="datetime-local"
+          [min]="minimumExpiry"
+          formControlName="validTo"
+        />
       </label>
       @if (grantForm.controls.grantType.value === 'export') {
-        <label class="grid gap-1 text-sm font-medium">Export uses
-          <input class="custom-input" type="number" min="1" formControlName="remainingUses" placeholder="Defaults to 1" />
+        <label class="grid gap-1 text-sm font-medium"
+          >Export uses
+          <input
+            class="custom-input"
+            type="number"
+            min="1"
+            formControlName="remainingUses"
+            placeholder="Defaults to 1"
+          />
         </label>
       }
-      <label class="grid gap-1 text-sm font-medium">Reason
-        <textarea class="custom-input min-h-28" maxlength="2000" formControlName="reason"></textarea>
+      <label class="grid gap-1 text-sm font-medium"
+        >Reason
+        <textarea
+          class="custom-input min-h-28"
+          maxlength="2000"
+          formControlName="reason"
+        ></textarea>
       </label>
     </form>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction [disabled]="grantForm.invalid || governanceService.mutating()"
-        (click)="createGrant(); ctx.close()">Create grant</button>
+      <button
+        hlmAlertDialogAction
+        [disabled]="grantForm.invalid || governanceService.mutating()"
+        (click)="createGrant(); ctx.close()"
+      >
+        Create grant
+      </button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
@@ -168,26 +227,43 @@
     <hlm-alert-dialog-header>
       <h2 hlmAlertDialogTitle>Request sensitivity change</h2>
       <p hlmAlertDialogDescription>
-        Increases apply immediately. Downgrades remain pending until an effective Unit Head approves them.
+        Increases apply immediately. Downgrades remain pending until an effective Unit Head approves
+        them.
       </p>
     </hlm-alert-dialog-header>
     <form [formGroup]="sensitivityForm" class="grid gap-4">
-      <label class="grid gap-1 text-sm font-medium">Target sensitivity
+      <label class="grid gap-1 text-sm font-medium"
+        >Target sensitivity
         <select class="custom-input capitalize" formControlName="targetSensitivity">
           @for (sensitivity of sensitivities; track sensitivity) {
-            <option [value]="sensitivity" [disabled]="sensitivity === currentSensitivity()">{{ sensitivity }}</option>
+            <option [value]="sensitivity" [disabled]="sensitivity === currentSensitivity()">
+              {{ sensitivity }}
+            </option>
           }
         </select>
       </label>
-      <label class="grid gap-1 text-sm font-medium">Reason
-        <textarea class="custom-input min-h-28" maxlength="2000" formControlName="reason"></textarea>
+      <label class="grid gap-1 text-sm font-medium"
+        >Reason
+        <textarea
+          class="custom-input min-h-28"
+          maxlength="2000"
+          formControlName="reason"
+        ></textarea>
       </label>
     </form>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction
-        [disabled]="sensitivityForm.invalid || sensitivityForm.controls.targetSensitivity.value === currentSensitivity() || governanceService.mutating()"
-        (click)="requestSensitivityChange(); ctx.close()">Submit change</button>
+      <button
+        hlmAlertDialogAction
+        [disabled]="
+          sensitivityForm.invalid ||
+          sensitivityForm.controls.targetSensitivity.value === currentSensitivity() ||
+          governanceService.mutating()
+        "
+        (click)="requestSensitivityChange(); ctx.close()"
+      >
+        Submit change
+      </button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>
@@ -196,16 +272,28 @@
   <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(32rem,90vw)]">
     <hlm-alert-dialog-header>
       <h2 hlmAlertDialogTitle>Revoke governance grant?</h2>
-      <p hlmAlertDialogDescription>Access ends immediately. A revocation reason is required for the audit record.</p>
+      <p hlmAlertDialogDescription>
+        Access ends immediately. A revocation reason is required for the audit record.
+      </p>
     </hlm-alert-dialog-header>
-    <label class="grid gap-1 text-sm font-medium">Revocation reason
-      <textarea class="custom-input min-h-24" maxlength="2000" [formControl]="revocationReason"></textarea>
+    <label class="grid gap-1 text-sm font-medium"
+      >Revocation reason
+      <textarea
+        class="custom-input min-h-24"
+        maxlength="2000"
+        [formControl]="revocationReason"
+      ></textarea>
     </label>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction class="bg-destructive text-destructive-foreground"
+      <button
+        hlmAlertDialogAction
+        class="bg-destructive text-destructive-foreground"
         [disabled]="revocationReason.invalid || governanceService.mutating()"
-        (click)="revokeGrant(); ctx.close()">Revoke grant</button>
+        (click)="revokeGrant(); ctx.close()"
+      >
+        Revoke grant
+      </button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

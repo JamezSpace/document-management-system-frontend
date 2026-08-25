@@ -5,7 +5,7 @@ aside {
   height: calc(100dvh - 62px);
   display: block;
 
-  .section-descriptor {
+  ::ng-deep .section-descriptor {
     text-transform: uppercase;
     opacity: 0.7;
     font-size: var(--text-xs);
