@@ -1,0 +1,110 @@
+<aside class="inspector" [class.inspector--closed]="closed()">
+  <button type="button" class="panel-toggle panel-toggle--right" [attr.aria-label]="closed() ? 'Open document inspector' : 'Close document inspector'" (click)="toggle()">
+    <ng-icon [name]="closed() ? 'lucidePanelLeftClose' : 'lucidePanelRightClose'" hlm size="sm" />
+  </button>
+
+  <div class="inspector-content">
+    <header class="inspector-heading">
+      <p class="eyebrow">Document intelligence</p>
+      <h2>Inspector</h2>
+    </header>
+
+    <nav class="tab-list" aria-label="Document inspector sections">
+      @for (tab of tabs; track tab.id) {
+        <button type="button" [class.active]="activeTab() === tab.id" (click)="activeTab.set(tab.id)">
+          <ng-icon [name]="tab.icon" />
+          <span>{{ tab.label }}</span>
+        </button>
+      }
+    </nav>
+
+    <div class="tab-content">
+      @if (activeTab() === 'details') {
+        <section aria-labelledby="details-title">
+          <h3 id="details-title" class="section-title">Document details</h3>
+          <dl class="property-list">
+            <div><dt>Document type</dt><dd>{{ documentType()?.name || document()?.classification?.documentTypeId || 'Not provided' }}</dd></div>
+            <div><dt>Direction</dt><dd class="capitalize">{{ displayValue(document()?.correspondence?.direction) }}</dd></div>
+            <div><dt>Subject</dt><dd>{{ displayValue(document()?.correspondence?.subjectCodeId) }}</dd></div>
+            <div><dt>Originating unit</dt><dd>{{ originatingUnitName() }}</dd></div>
+            <div><dt>Business function</dt><dd>{{ displayValue(document()?.classification?.functionCodeId) }}</dd></div>
+            <div><dt>Reference number</dt><dd>{{ displayValue(document()?.referenceNumber) }}</dd></div>
+            <div><dt>Revision</dt><dd>{{ displayValue(document()?.revision) }}</dd></div>
+            <div><dt>Created</dt><dd>{{ document()?.createdAt | date: 'mediumDate' }}</dd></div>
+            <div><dt>Owner / author</dt><dd>{{ owner()?.fullName || document()?.ownerId || 'Not provided' }}</dd></div>
+          </dl>
+        </section>
+      } @else if (activeTab() === 'governance') {
+        <nexus-governance-panel />
+        <section class="retention-section" aria-labelledby="retention-title">
+          <h3 id="retention-title" class="section-title">Policy and retention</h3>
+          <dl class="property-list">
+            <div><dt>Applied policy</dt><dd>{{ governance()?.policyId || 'Not provided' }} · v{{ governance()?.policyVersion }}</dd></div>
+            <div>
+              <dt>Required grants</dt>
+              <dd class="capitalize">
+                @for (grant of requiredGrants(); track grant; let last = $last) {
+                  {{ obligationLabel(grant) }}{{ last ? '' : ', ' }}
+                } @empty {
+                  None
+                }
+              </dd>
+            </div>
+            <div><dt>Retention starts</dt><dd>{{ document()?.retention?.retentionStartDate | date: 'mediumDate' }}</dd></div>
+            <div><dt>Disposal eligible</dt><dd>{{ document()?.retention?.disposalEligibilityDate | date: 'mediumDate' }}</dd></div>
+            <div><dt>Archival requirement</dt><dd>{{ document()?.retention?.archivalRequired ? 'Required' : 'Not required' }}</dd></div>
+          </dl>
+        </section>
+      } @else if (activeTab() === 'workflow') {
+        <section aria-labelledby="workflow-title">
+          <h3 id="workflow-title" class="section-title">Workflow</h3>
+          <div class="status-card" [class.status-card--empty]="!workflow()">
+            <p class="font-medium">{{ statusLabel() }}</p>
+            @if (!workflow()) {
+              <p>The document remains in the composition workspace until it is submitted or dispatched.</p>
+            }
+          </div>
+          @if (workflow(); as flow) {
+            <dl class="property-list mt-4">
+              <div><dt>Can advance</dt><dd>{{ flow.canAdvance ? 'Yes' : 'No' }}</dd></div>
+              <div><dt>Can reject</dt><dd>{{ flow.canReject ? 'Yes' : 'No' }}</dd></div>
+              <div><dt>Completed</dt><dd>{{ flow.completed ? 'Yes' : 'No' }}</dd></div>
+            </dl>
+          }
+        </section>
+      } @else {
+        <section aria-labelledby="activity-title">
+          <h3 id="activity-title" class="section-title">Activity</h3>
+          <ol class="activity-list">
+            @if (document()?.updatedAt) {
+              <li>
+                <span class="activity-dot"></span>
+                <div><p class="text-xs font-medium">Document saved</p><time>{{ document()?.updatedAt | date: 'medium' }}</time></div>
+              </li>
+            }
+            @if (document()?.classification?.lastReclassifiedAt) {
+              <li>
+                <span class="activity-dot"></span>
+                <div><p class="text-xs font-medium">Sensitivity changed</p><time>{{ document()?.classification?.lastReclassifiedAt | date: 'medium' }}</time></div>
+              </li>
+            }
+            @for (minute of minutes(); track $index) {
+              <li>
+                <span class="activity-dot"></span>
+                <div>
+                  <p class="text-xs font-medium capitalize">{{ minute.action }}</p>
+                  @if (minute.content) { <p class="activity-copy">{{ minute.content }}</p> }
+                  <time>{{ minute.createdAt | date: 'medium' }}</time>
+                </div>
+              </li>
+            }
+            <li>
+              <span class="activity-dot"></span>
+              <div><p class="text-xs font-medium">Document created</p><time>{{ document()?.createdAt | date: 'medium' }}</time></div>
+            </li>
+          </ol>
+        </section>
+      }
+    </div>
+  </div>
+</aside>

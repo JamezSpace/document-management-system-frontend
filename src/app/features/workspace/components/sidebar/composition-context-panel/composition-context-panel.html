@@ -1,0 +1,126 @@
+<aside class="composition-panel" [class.composition-panel--closed]="closed()">
+  <div class="panel-scroll">
+    <header class="panel-heading">
+      <div>
+        <p class="eyebrow">Composition context</p>
+        <h2>Addressees</h2>
+      </div>
+      <ng-icon name="lucideUsers" class="text-lg text-primary" />
+    </header>
+
+    <section aria-labelledby="primary-addressee-heading">
+      <p id="primary-addressee-heading" class="field-label">Primary addressee</p>
+      <div class="context-card capitalize">
+        @if (correspondence()?.direction === 'internal') {
+          The {{ primaryInternalAddressee().title || 'addressee is unavailable' }}
+        } @else {
+          {{ primaryExternalAddressee().fullName || 'Addressee is unavailable' }}
+        }
+      </div>
+    </section>
+
+    <section class="mt-5" aria-labelledby="cc-heading">
+      <div class="mb-2 flex items-center justify-between gap-2">
+        <p id="cc-heading" class="field-label mb-0">CC recipients</p>
+        <span class="permission-label">{{ canEditCc() ? 'Editable' : 'Read only' }}</span>
+      </div>
+
+      <div class="chip-list">
+        @for (id of selectedAdditionalAddressees(); track id) {
+          <span class="recipient-chip">
+            {{ correspondence()?.direction === 'external' ? getUnit(id).code : getDesignation(id).title }}
+            @if (canEditCc()) {
+              <button type="button" [attr.aria-label]="'Remove CC recipient'" (click)="removeAddressee(id)">
+                <ng-icon name="hugeCancelCircle" />
+              </button>
+            }
+          </span>
+        } @empty {
+          <p class="empty-copy">No CC recipients added.</p>
+        }
+      </div>
+
+      @if (canEditCc()) {
+        <form [formGroup]="ccForm" class="mt-2">
+          @if (correspondence()?.direction === 'internal') {
+            <input
+              type="text"
+              formControlName="internal"
+              placeholder="Add a CC recipient"
+              aria-label="Add an internal CC recipient"
+              [matAutocomplete]="internalCc"
+              (input)="updateSearch($event)"
+              class="context-input"
+            />
+            <mat-autocomplete #internalCc="matAutocomplete" [displayWith]="displayDesignation" (optionSelected)="selectInternal($event)">
+              @for (member of filteredInternalAddressees(); track member.id) {
+                <mat-option [value]="member.designation.id">{{ member.designation.title }}</mat-option>
+              }
+            </mat-autocomplete>
+          } @else {
+            <input
+              type="text"
+              formControlName="external"
+              placeholder="Add a CC recipient"
+              aria-label="Add an external CC recipient"
+              [matAutocomplete]="externalCc"
+              (input)="updateSearch($event)"
+              class="context-input"
+            />
+            <mat-autocomplete #externalCc="matAutocomplete" [displayWith]="displayUnit" (optionSelected)="selectExternal($event)">
+              @for (unit of filteredExternalAddressees(); track unit.id) {
+                <mat-option [value]="unit.id">{{ unit.fullName }}</mat-option>
+              }
+            </mat-autocomplete>
+          }
+        </form>
+      }
+
+      @if (hidesCcOnCanvas()) {
+        <div class="policy-notice" role="note">
+          <ng-icon name="lucideInfo" />
+          <p>CC recipients will not appear in the document header because this document is confidential.</p>
+        </div>
+      }
+    </section>
+
+    <hlm-separator class="my-5" />
+
+    <section aria-labelledby="attachments-heading">
+      <div class="mb-3 flex items-center gap-2">
+        <ng-icon name="lucidePaperclip" />
+        <p id="attachments-heading" class="eyebrow">Attachments</p>
+      </div>
+
+      @for (attachment of attachedDocuments(); track attachment.id) {
+        <article class="attachment-card">
+          <ng-icon name="lucideFile" />
+          <div class="min-w-0">
+            <p class="truncate text-sm font-medium">{{ attachment.title }}</p>
+            <p class="text-xs text-muted-foreground">{{ attachment.description }}</p>
+          </div>
+        </article>
+      } @empty {
+        @if (fileUploaded(); as file) {
+          <article class="attachment-card">
+            <ng-icon name="lucideFile" />
+            <div class="min-w-0"><p class="truncate text-sm font-medium">{{ file.name }}</p></div>
+          </article>
+        } @else {
+          <p class="empty-copy">No attachments added.</p>
+        }
+      }
+
+      @if (!isDocumentActive() && ui().permissions.canAttach) {
+        <label class="attachment-action">
+          Attach a file
+          <input type="file" class="sr-only" accept=".doc,.docx,.pdf" (change)="onUploadAttachment($event)" />
+        </label>
+      }
+    </section>
+  </div>
+
+  <button type="button" class="panel-toggle panel-toggle--left" [attr.aria-label]="closed() ? 'Open composition context' : 'Close composition context'" (click)="toggle()">
+    <ng-icon [name]="closed() ? 'lucidePanelRightClose' : 'lucidePanelLeftClose'" hlm size="sm" />
+  </button>
+</aside>

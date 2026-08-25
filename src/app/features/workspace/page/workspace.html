@@ -21,12 +21,12 @@
       />
 
       <div class="flex flex-start relative">
-        <nexus-sidebar
-          [sidebarClosed]="sidebarClosed()"
-          (sidebarClosedChange)="sidebarClosed.set($event)"
+        <nexus-composition-context-panel
+          [closed]="sidebarClosed()"
+          (closedChange)="sidebarClosed.set($event)"
         />
 
-        <div class="w-full relative">
+        <div class="relative min-w-0 flex-1">
           <nexus-paper-controls #paperControls />
 
           <nexus-print-preview
@@ -42,6 +42,11 @@
             <nexus-memo-body-editor />
           </nexus-print-preview>
         </div>
+
+        <nexus-document-inspector
+          [closed]="inspectorClosed()"
+          (closedChange)="inspectorClosed.set($event)"
+        />
       </div>
     }
   }

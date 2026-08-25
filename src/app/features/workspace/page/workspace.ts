@@ -19,7 +19,8 @@ import { MemoBodyEditor } from '../components/editor/actual editors/memo-body-ed
 import { PaperControls } from '../components/editor/paper-controls/paper-controls';
 import { PrintPreview } from '../components/editor/print-preview/print-preview';
 import { MemoTemplate } from '../components/editor/templates/memo-template/memo-template';
-import { Sidebar } from '../components/sidebar/sidebar';
+import { CompositionContextPanel } from '../components/sidebar/composition-context-panel/composition-context-panel';
+import { DocumentInspector } from '../components/sidebar/document-inspector/document-inspector';
 import { Toolbar } from '../components/toolbar/toolbar';
 import { WorkspaceService } from '../service/data/workspace-service';
 import { MemoViewModel } from '../../../models/ui/workspace/MemoViewModel.ui';
@@ -35,7 +36,8 @@ import { GovernanceService } from '../service/data/governance-service';
     BrnAlertDialogContent,
     HlmAlertDialogImports,
     Toolbar,
-    Sidebar,
+    CompositionContextPanel,
+    DocumentInspector,
     PaperControls,
     PrintPreview,
     MemoTemplate,
@@ -78,6 +80,7 @@ export class Workspace implements OnInit, OnDestroy {
   );
   readonly workspaceMode = signal<'author' | 'reviewer'>('reviewer');
   readonly sidebarClosed = signal(false);
+  readonly inspectorClosed = signal(false);
   readonly documentDirection = signal('');
   readonly documentType = this.documentTypesService.docType;
   readonly units = this.organizationService.units;
