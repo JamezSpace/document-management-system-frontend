@@ -1,14 +1,15 @@
 <aside class="composition-panel" [class.composition-panel--closed]="closed()">
-  <div class="panel-scroll">
-    <header class="panel-heading">
-      <div>
-        <p class="eyebrow">Composition context</p>
-        <h2>Addressees</h2>
-      </div>
-      <ng-icon name="lucideUsers" class="text-lg text-primary" />
-    </header>
+  <header class="flex-center justify-between">
+    <p class="eyebrow">Document context</p>
+  </header>
 
+  <div class="panel-scroll">
     <section aria-labelledby="primary-addressee-heading">
+      <div class="mb-3 flex items-center gap-2">
+        <ng-icon name="phosphorUsersDuotone" size="1rem" />
+        <p id="attachments-heading" class="eyebrow">Addressees</p>
+      </div>
+
       <p id="primary-addressee-heading" class="field-label">Primary addressee</p>
       <div class="context-card capitalize">
         @if (correspondence()?.direction === 'internal') {
@@ -28,9 +29,17 @@
       <div class="chip-list">
         @for (id of selectedAdditionalAddressees(); track id) {
           <span class="recipient-chip">
-            {{ correspondence()?.direction === 'external' ? getUnit(id).code : getDesignation(id).title }}
+            {{
+              correspondence()?.direction === 'external'
+                ? getUnit(id).code
+                : getDesignation(id).title
+            }}
             @if (canEditCc()) {
-              <button type="button" [attr.aria-label]="'Remove CC recipient'" (click)="removeAddressee(id)">
+              <button
+                type="button"
+                [attr.aria-label]="'Remove CC recipient'"
+                (click)="removeAddressee(id)"
+              >
                 <ng-icon name="hugeCancelCircle" />
               </button>
             }
@@ -52,9 +61,15 @@
               (input)="updateSearch($event)"
               class="context-input"
             />
-            <mat-autocomplete #internalCc="matAutocomplete" [displayWith]="displayDesignation" (optionSelected)="selectInternal($event)">
+            <mat-autocomplete
+              #internalCc="matAutocomplete"
+              [displayWith]="displayDesignation"
+              (optionSelected)="selectInternal($event)"
+            >
               @for (member of filteredInternalAddressees(); track member.id) {
-                <mat-option [value]="member.designation.id">{{ member.designation.title }}</mat-option>
+                <mat-option [value]="member.designation.id">{{
+                  member.designation.title
+                }}</mat-option>
               }
             </mat-autocomplete>
           } @else {
@@ -67,7 +82,11 @@
               (input)="updateSearch($event)"
               class="context-input"
             />
-            <mat-autocomplete #externalCc="matAutocomplete" [displayWith]="displayUnit" (optionSelected)="selectExternal($event)">
+            <mat-autocomplete
+              #externalCc="matAutocomplete"
+              [displayWith]="displayUnit"
+              (optionSelected)="selectExternal($event)"
+            >
               @for (unit of filteredExternalAddressees(); track unit.id) {
                 <mat-option [value]="unit.id">{{ unit.fullName }}</mat-option>
               }
@@ -79,7 +98,10 @@
       @if (hidesCcOnCanvas()) {
         <div class="policy-notice" role="note">
           <ng-icon name="lucideInfo" />
-          <p>CC recipients will not appear in the document header because this document is confidential.</p>
+          <p>
+            CC recipients will not appear in the document header because this document is
+            confidential.
+          </p>
         </div>
       }
     </section>
@@ -104,7 +126,9 @@
         @if (fileUploaded(); as file) {
           <article class="attachment-card">
             <ng-icon name="lucideFile" />
-            <div class="min-w-0"><p class="truncate text-sm font-medium">{{ file.name }}</p></div>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium">{{ file.name }}</p>
+            </div>
           </article>
         } @else {
           <p class="empty-copy">No attachments added.</p>
@@ -114,13 +138,23 @@
       @if (!isDocumentActive() && ui().permissions.canAttach) {
         <label class="attachment-action">
           Attach a file
-          <input type="file" class="sr-only" accept=".doc,.docx,.pdf" (change)="onUploadAttachment($event)" />
+          <input
+            type="file"
+            class="sr-only"
+            accept=".doc,.docx,.pdf"
+            (change)="onUploadAttachment($event)"
+          />
         </label>
       }
     </section>
   </div>
 
-  <button type="button" class="panel-toggle panel-toggle--left" [attr.aria-label]="closed() ? 'Open composition context' : 'Close composition context'" (click)="toggle()">
+  <button
+    type="button"
+    class="panel-toggle panel-toggle--left"
+    [attr.aria-label]="closed() ? 'Open composition context' : 'Close composition context'"
+    (click)="toggle()"
+  >
     <ng-icon [name]="closed() ? 'lucidePanelRightClose' : 'lucidePanelLeftClose'" hlm size="sm" />
   </button>
 </aside>

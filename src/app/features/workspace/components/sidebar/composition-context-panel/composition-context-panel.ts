@@ -4,13 +4,13 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatChipsModule } from '@angular/material/chips';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeCancelCircle } from '@ng-icons/huge-icons';
+import { phosphorUsersDuotone } from '@ng-icons/phosphor-icons/duotone';
 import {
   lucideFile,
   lucideInfo,
   lucidePanelLeftClose,
   lucidePanelRightClose,
   lucidePaperclip,
-  lucideUsers,
 } from '@ng-icons/lucide';
 import { HlmIcon } from '@spartan-ng/helm/icon';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
@@ -42,7 +42,7 @@ import { WorkspaceUiService } from '../../../service/ui/workspace-ui-service';
       lucidePanelLeftClose,
       lucidePanelRightClose,
       lucidePaperclip,
-      lucideUsers,
+      phosphorUsersDuotone
     }),
   ],
 })
