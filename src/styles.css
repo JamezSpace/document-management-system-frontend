@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+@import url('./typography.css');
 
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
@@ -98,88 +99,6 @@ iconify-icon {
   background: #555;
 }
 
-/* =========================
-   TYPOGRAPHY HELPERS
-========================= */
-.nexus-serif-font {
-  font-family: 'Crimson Pro', serif;
-}
-
-.nexus-sans-font {
-  font-family: 'Google Sans', sans-serif;
-}
-
-/* Global typography attributes. These mirror Spartan's typography recipes without
-   requiring an Angular component/directive import. */
-[nata-h1],
-[nata-h2],
-[nata-h3],
-[nata-h4] {
-  scroll-margin-top: 5rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  text-transform: capitalize;
-}
-
-[nata-h1] {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-  font-weight: 800;
-}
-
-[nata-h2] {
-  padding-bottom: 0.5rem;
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-  transition: color 150ms ease;
-}
-
-[nata-h2]:first-child {
-  margin-top: 0;
-}
-
-[nata-h3] {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
-[nata-h4] {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-[nata-large] {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: 600;
-}
-
-[nata-small] {
-  font-size: 0.875rem;
-  line-height: 1;
-  font-weight: 500;
-}
-
-[nata-p] {
-  line-height: 1.75rem;
-}
-
-[nata-p]:not(:first-child) {
-  /* margin-top: 1.5rem; */
-}
-
-[nata-muted] {
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-@media (min-width: 64rem) {
-  [nata-h1] {
-    font-size: 3rem;
-    line-height: 1;
-  }
-}
 
 /* =========================
    UTILITIES
