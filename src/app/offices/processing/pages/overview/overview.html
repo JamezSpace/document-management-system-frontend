@@ -1,0 +1,355 @@
+<hlm-sheet side="right">
+  <section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          Operational execution
+        </p>
+        <h1 nata-h1>{{ title() }}</h1>
+        <p class="mt-2 text-muted-foreground" nata-p>{{ description() }}</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        @switch (screen()) {
+          @case ('overview') {
+            <button 
+                hlmBtn 
+                type="button"
+                routerLink="/office/processing/work-queue"
+              ><ng-icon name="lucideListTodo" />Open my work queue</button>
+          }
+          @case ('escalated') {
+            <button hlmBtn><ng-icon name="lucideShieldCheck" />Acknowledge selected</button>
+          }
+        }
+      </div>
+    </header>
+    <hlm-separator class="my-6" />
+
+    @switch (screen()) {
+      @case ('overview') {
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          @for (
+            metric of [
+              {
+                label: 'My active workload',
+                value: '12',
+                note: '4 in progress',
+                icon: 'lucideListTodo',
+                tone: 'text-primary',
+              },
+              {
+                label: 'Unit workload',
+                value: '47',
+                note: '8 unassigned',
+                icon: 'lucideUsers',
+                tone: 'text-primary',
+              },
+              {
+                label: 'Due today',
+                value: '6',
+                note: 'Next at 12:30',
+                icon: 'lucideCalendarClock',
+                tone: 'text-(--brand-warning)',
+              },
+              {
+                label: 'Breached',
+                value: '3',
+                note: '1 escalated',
+                icon: 'lucideAlarmClock',
+                tone: 'text-(--brand-error)',
+              },
+              {
+                label: 'Returned work',
+                value: '4',
+                note: '2 due tomorrow',
+                icon: 'lucideUndo2',
+                tone: 'text-(--brand-warning)',
+              },
+            ];
+            track metric.label
+          ) {
+            <article hlmCard class="border bg-card p-4 shadow-xs">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="text-xs text-muted-foreground">{{ metric.label }}</p>
+                  <p class="mt-2 text-3xl font-bold">{{ metric.value }}</p>
+                  <p class="mt-2 text-xs text-muted-foreground">{{ metric.note }}</p>
+                </div>
+                <span class="rounded-md bg-muted p-2" [class]="metric.tone"
+                  ><ng-icon [name]="metric.icon"
+                /></span>
+              </div>
+            </article>
+          }
+        </div>
+        <div class="mt-5 grid gap-5 xl:grid-cols-[1.35fr_0.65fr]">
+          <section hlmCard class="border bg-card p-5 shadow-xs">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-semibold">Continue working</h2>
+                <p class="text-sm text-muted-foreground">
+                  Prioritised by deadline, authority instruction and current state
+                </p>
+              </div>
+              <a hlmBtn variant="ghost" routerLink="/office/processing/work-queue"
+                >Full queue<ng-icon name="lucideChevronRight"
+              /></a>
+            </div>
+            <div class="mt-4 grid gap-3">
+              @for (
+                item of [
+                  {
+                    id: '8fae41c2',
+                    title: 'Industrial attachment policy review',
+                    instruction: 'Minute implementation recommendation',
+                    authority: 'Director, Academic Planning',
+                    due: 'Today · 15:00',
+                    progress: 'Draft minute saved',
+                  },
+                  {
+                    id: '21d409ba',
+                    title: 'Procurement evaluation report',
+                    instruction: 'Validate evaluation criteria',
+                    authority: 'Head, Procurement Office',
+                    due: 'Today · 12:30',
+                    progress: 'Not started',
+                  },
+                  {
+                    id: '653ce198',
+                    title: 'Faculty workload reconciliation',
+                    instruction: 'Correct totals and resubmit',
+                    authority: 'Deputy Registrar',
+                    due: 'Tomorrow · 10:00',
+                    progress: 'Returned work',
+                  },
+                ];
+                track item.id
+              ) {
+                <article
+                  class="flex flex-wrap items-center justify-between gap-4 rounded-md border p-4"
+                >
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h3 class="font-semibold">{{ item.title }}</h3>
+                      <span
+                        class="rounded-full border border-(--brand-info)/35 bg-(--brand-info)/10 px-2 py-0.5 text-xs text-(--brand-info)"
+                        >{{ item.progress }}</span
+                      >
+                    </div>
+                    <p class="mt-2 text-sm text-muted-foreground">{{ item.instruction }}</p>
+                    <p class="mt-2 text-xs text-muted-foreground">
+                      Assigned by {{ item.authority }} · Due {{ item.due }}
+                    </p>
+                  </div>
+                  <a hlmBtn [routerLink]="['/office/processing/documents/workspace', item.id]"
+                    >Continue<ng-icon name="lucideArrowRight"
+                  /></a>
+                </article>
+              }
+            </div>
+          </section>
+          <aside class="grid gap-5">
+            <section hlmCard class="border bg-card p-5 shadow-xs">
+              <h2 class="text-lg font-semibold">Recent completions</h2>
+              <div class="mt-4 space-y-4">
+                @for (
+                  item of [
+                    'Council implementation brief',
+                    'Budget variance review',
+                    'Laboratory evidence check',
+                  ];
+                  track item
+                ) {
+                  <div class="flex gap-3">
+                    <span
+                      class="flex size-6 shrink-0 items-center justify-center rounded-full bg-(--brand-success)/10 text-(--brand-success)"
+                      ><ng-icon name="lucideCheck"
+                    /></span>
+                    <div>
+                      <p class="text-sm font-medium">{{ item }}</p>
+                      <p class="text-xs text-muted-foreground">Completed with authority record</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+            <section hlmCard class="border bg-card p-5 shadow-xs">
+              <h2 class="text-lg font-semibold">Unit workload</h2>
+              <div class="mt-4 space-y-3">
+                @for (
+                  load of [
+                    { person: 'You', count: '12', width: 'w-3/4' },
+                    { person: 'A. Musa', count: '9', width: 'w-3/5' },
+                    { person: 'T. Okafor', count: '7', width: 'w-1/2' },
+                  ];
+                  track load.person
+                ) {
+                  <div>
+                    <div class="flex justify-between text-sm">
+                      <span>{{ load.person }}</span
+                      ><span>{{ load.count }}</span>
+                    </div>
+                    <div class="mt-1 h-2 rounded-full bg-muted">
+                      <div class="h-2 rounded-full bg-primary" [class]="load.width"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+          </aside>
+        </div>
+      }
+
+      @case ('escalated') {
+        <div
+          class="mb-4 flex items-start gap-3 rounded-md border border-(--brand-warning-highlight)/35 bg-(--brand-warning-highlight)/10 p-4"
+        >
+          <ng-icon name="lucideTriangleAlert" class="mt-0.5 shrink-0 text-(--brand-warning)" />
+          <div>
+            <p class="font-semibold">Escalated work requires prompt accountable action</p>
+            <p class="mt-1 text-sm text-muted-foreground">
+              Warning and error treatments identify actual breaches only; escalation does not
+              automatically imply misconduct.
+            </p>
+          </div>
+        </div>
+        <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
+          <table hlmTable>
+            <thead hlmTHead>
+              <tr hlmTr>
+                <th hlmTh>Escalated item</th>
+                <th hlmTh>Original owner</th>
+                <th hlmTh>Escalation reason</th>
+                <th hlmTh>SLA breach</th>
+                <th hlmTh>Current authority</th>
+                <th hlmTh>Required next action</th>
+                <th hlmTh></th>
+              </tr>
+            </thead>
+            <tbody hlmTBody>
+              @for (
+                row of [
+                  {
+                    id: '21d409ba',
+                    ref: 'NF/REG/2026/0837',
+                    title: 'Procurement evaluation report',
+                    owner: 'T. Okafor',
+                    reason: 'Review deadline passed without required compliance minute',
+                    breach: '2h 18m',
+                    authority: 'Head, Procurement Office',
+                    action: 'Complete review or record reassignment',
+                  },
+                  {
+                    id: '8fae41c2',
+                    ref: 'NF/REG/2026/0841',
+                    title: 'Industrial attachment policy review',
+                    owner: 'Academic Planning Team',
+                    reason: 'Executive response deadline is at risk',
+                    breach: 'At risk · 3h',
+                    authority: 'Director, Academic Planning',
+                    action: 'Confirm responsible reviewer and delivery time',
+                  },
+                ];
+                track row.id
+              ) {
+                <tr hlmTr>
+                  <td hlmTd>
+                    <p class="font-medium">{{ row.title }}</p>
+                    <p class="font-mono text-xs text-muted-foreground">{{ row.ref }}</p>
+                  </td>
+                  <td hlmTd>{{ row.owner }}</td>
+                  <td hlmTd class="max-w-xs whitespace-normal">{{ row.reason }}</td>
+                  <td
+                    hlmTd
+                    [class.text-(--brand-error)]="row.breach.includes('2h')"
+                    [class.text-(--brand-warning)]="row.breach.includes('risk')"
+                  >
+                    {{ row.breach }}
+                  </td>
+                  <td hlmTd>{{ row.authority }}</td>
+                  <td hlmTd class="max-w-xs whitespace-normal">{{ row.action }}</td>
+                  <td hlmTd>
+                    <button
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      hlmSheetTrigger
+                      (click)="selectItem(row.id)"
+                    >
+                      <ng-icon name="lucidePanelRightOpen" />
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+    }
+  </section>
+
+  <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]">
+    <hlm-sheet-header class="border-b p-6 pr-12"
+      ><p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Assignment detail
+      </p>
+      <h2 hlmSheetTitle class="mt-2">{{ selectedItem().title }}</h2>
+      <p hlmSheetDescription class="font-mono">{{ selectedItem().reference }}</p></hlm-sheet-header
+    >
+    <div class="flex-1 overflow-y-auto px-6 pb-6">
+      <section class="py-5">
+        <h3 class="font-semibold">Summary</h3>
+        <p class="mt-3 text-sm text-muted-foreground">{{ selectedItem().instruction }}</p>
+        <dl class="mt-4 grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <dt class="text-xs text-muted-foreground">Status</dt>
+            <dd class="mt-1">{{ selectedItem().status }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Deadline</dt>
+            <dd class="mt-1">{{ selectedItem().deadline }}</dd>
+          </div>
+          <div class="col-span-2">
+            <dt class="text-xs text-muted-foreground">Assigning authority</dt>
+            <dd class="mt-1">{{ selectedItem().authority }}</dd>
+          </div>
+        </dl>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Classification and version</h3>
+        <p class="mt-3 text-sm">{{ selectedItem().classification }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ selectedItem().version }}</p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Immutable activity history</h3>
+        <div class="mt-4 space-y-0">
+          @for (event of selectedItem().activity; track event; let last = $last) {
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <span class="mt-1.5 size-2 rounded-full bg-primary"></span>
+                @if (!last) {
+                  <span class="h-10 w-px bg-border"></span>
+                }
+              </div>
+              <div>
+                <p class="text-sm font-medium">{{ event }}</p>
+                <p class="text-xs text-muted-foreground">
+                  Actor, authority, timestamp and version recorded
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+      <a
+        hlmBtn
+        class="mb-6 w-full"
+        [routerLink]="['/office/processing/documents/workspace', selectedItem().id]"
+        >Open workspace<ng-icon name="lucideArrowRight"
+      /></a>
+    </div>
+  </hlm-sheet-content>
+</hlm-sheet>

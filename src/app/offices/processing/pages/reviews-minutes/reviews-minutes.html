@@ -1,0 +1,145 @@
+<hlm-sheet side="right">
+  <section class="mx-auto max-w-[96rem]  pb-10">
+    <nav hlmBreadcrumb aria-label="Breadcrumb">
+      <ol hlmBreadcrumbList>
+        <li hlmBreadcrumbItem>
+            <span hlmBreadcrumbPage>Office</span>
+        </li>
+        <li hlmBreadcrumbSeparator></li>
+        <li hlmBreadcrumbItem>
+            <span hlmBreadcrumbPage>Reviews & minutes</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <h3 nata-h3>Reviews & minutes</h3>
+        <p class="mt-2 text-muted-foreground" nata-p>
+          Review requested decisions, exact document versions and prior accountable minutes.
+        </p>
+      </div>
+      <button 
+        hlmBtn 
+        variant="outline">
+        <ng-icon name="lucideFilter" />
+        Review type
+    </button>
+    </header>
+    <hlm-separator class="my-6" />
+    <div class="mb-4 flex flex-wrap gap-2">
+      <div class="relative min-w-64 flex-1">
+        <ng-icon name="lucideSearch" class="absolute left-3 top-2.5 text-muted-foreground" /><input
+          hlmInput
+          class="pl-9"
+          placeholder="Search documents awaiting review"
+        />
+      </div>
+      <button hlmBtn variant="outline"><ng-icon name="lucideFilter" />Requested decision</button
+      ><button hlmBtn variant="outline">Deadline</button>
+    </div>
+    <div class="grid gap-3">
+      @for (review of reviews; track review.id) {
+        <article hlmCard class="border bg-card p-5 shadow-xs">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <ng-icon name="lucideMessageSquareText" class="text-primary" />
+                <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Requested decision
+                </p>
+              </div>
+              <h2 class="mt-3 text-lg font-semibold">{{ review.title }}</h2>
+              <p class="mt-1 font-mono text-xs text-muted-foreground">{{ review.reference }}</p>
+              <p class="mt-4 font-medium">{{ review.instruction }}</p>
+              <p class="mt-2 text-sm text-muted-foreground">
+                Requested by {{ review.authority }} · {{ review.version }} · {{ review.deadline }}
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <button hlmBtn variant="outline" hlmSheetTrigger (click)="selectItem(review.id)">
+                {{ review.minutes }}</button
+              ><a
+                hlmBtn
+                [routerLink]="['/office/processing/documents/workspace', review.id]"
+                [queryParams]="{ mode: 'reviewer' }"
+                >Review in workspace<ng-icon name="lucideArrowRight"
+              /></a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]"
+    ><hlm-sheet-header class="border-b p-6 pr-12"
+      ><p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Review context
+      </p>
+      <h2 hlmSheetTitle class="mt-2">{{ selectedItem().title }}</h2>
+      <p hlmSheetDescription class="font-mono">{{ selectedItem().reference }}</p></hlm-sheet-header
+    >
+    <div class="flex-1 overflow-y-auto px-6 pb-6">
+      <section class="py-5">
+        <h3 class="font-semibold">Requested decision</h3>
+        <p class="mt-3 text-sm font-medium">{{ selectedItem().instruction }}</p>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Requested by {{ selectedItem().authority }} · Due {{ selectedItem().deadline }}
+        </p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Previous minutes</h3>
+        <div class="mt-3 space-y-3">
+          <div class="rounded-md border p-3 text-sm">
+            <p class="font-medium">Director, Academic Planning</p>
+            <p class="mt-1 text-muted-foreground">
+              Review the operational feasibility and state any dependency that affects the proposed
+              date.
+            </p>
+          </div>
+          <div class="rounded-md border p-3 text-sm">
+            <p class="font-medium">Registry Officer</p>
+            <p class="mt-1 text-muted-foreground">
+              Authoritative version {{ selectedItem().version }} supplied for review.
+            </p>
+          </div>
+        </div>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Classification and version</h3>
+        <p class="mt-3 text-sm">{{ selectedItem().classification }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ selectedItem().version }}</p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Immutable activity history</h3>
+        <div class="mt-4">
+          @for (event of selectedItem().activity; track event; let last = $last) {
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <span class="mt-1.5 size-2 rounded-full bg-primary"></span>
+                @if (!last) {
+                  <span class="h-10 w-px bg-border"></span>
+                }
+              </div>
+              <div>
+                <p class="text-sm font-medium">{{ event }}</p>
+                <p class="text-xs text-muted-foreground">
+                  Actor, authority, timestamp and version recorded
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+      <a
+        hlmBtn
+        class="mb-6 w-full"
+        [routerLink]="['/office/processing/documents/workspace', selectedItem().id]"
+        [queryParams]="{ mode: 'reviewer' }"
+        >Review in workspace<ng-icon name="lucideArrowRight"
+      /></a></div
+  ></hlm-sheet-content>
+</hlm-sheet>
