@@ -29,13 +29,13 @@
     </div>
 
     <div class="grid gap-4 lg:grid-cols-2">
-      @for (item of workItems; track item.id) {
+      @for (item of workItemsService.returnedItems(); track item.id) {
         <article hlmCard class="border bg-card p-5 shadow-xs">
           <div class="flex items-start justify-between gap-3">
             <div>
-              <h2 class="text-lg font-semibold">{{ item.title }}</h2>
+              <h2 class="text-lg font-semibold">{{ item.document.title }}</h2>
               <p class="mt-1 font-mono text-xs text-muted-foreground">
-                {{ item.reference }} · {{ item.version }}
+                {{ item.document.reference }} · {{ item.previousSubmission.label }}
               </p>
             </div>
             <span
@@ -57,11 +57,12 @@
             <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Required correction
             </p>
-            <p class="mt-2 text-sm">{{ item.correction }}</p>
+            <p class="mt-2 text-sm">{{ item.requiredCorrection }}</p>
           </div>
 
           <p class="mt-4 text-xs text-muted-foreground">
-            Returned by {{ item.authority }} · New deadline {{ item.deadline }}
+            Returned by {{ item.returnedBy.displayName }} · New deadline
+            {{ item.resubmissionDueAt | date: 'medium' }}
           </p>
           <div class="mt-5 flex gap-2">
             <button hlmBtn variant="outline" hlmSheetTrigger (click)="selectItem(item.id)">
@@ -69,7 +70,7 @@
             </button>
             <a
               hlmBtn
-              [routerLink]="officeContext.route('documents', 'workspace', item.id)"
+              [routerLink]="officeContext.route('documents', 'workspace', item.document.id)"
               >Correct and resubmit</a
             >
           </div>
@@ -79,31 +80,35 @@
   </section>
 
   <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]">
-    <hlm-sheet-header class="border-b p-6 pr-12">
-      <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Previous submission
-      </p>
-      <h2 hlmSheetTitle class="mt-2">{{ selectedItem().title }}</h2>
-      <p hlmSheetDescription class="font-mono">{{ selectedItem().reference }}</p>
-    </hlm-sheet-header>
-    <div class="flex-1 overflow-y-auto px-6 pb-6">
+    @if (selectedItem(); as item) {
+      <hlm-sheet-header class="border-b p-6 pr-12">
+        <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Previous submission
+        </p>
+        <h2 hlmSheetTitle class="mt-2">{{ item.document.title }}</h2>
+        <p hlmSheetDescription class="font-mono">{{ item.document.reference }}</p>
+      </hlm-sheet-header>
+      <div class="flex-1 overflow-y-auto px-6 pb-6">
       <section class="py-5">
         <h3 class="font-semibold">Submitted version</h3>
-        <p class="mt-3 text-sm">{{ selectedItem().version }}</p>
-        <p class="mt-1 text-sm text-muted-foreground">{{ selectedItem().classification }}</p>
+        <p class="mt-3 text-sm">
+          {{ item.previousSubmission.label }} ·
+          {{ item.previousSubmission.submittedAt | date: 'medium' }}
+        </p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ item.document.classification }}</p>
       </section>
       <hlm-separator />
       <section class="py-5">
         <h3 class="font-semibold">Return instruction</h3>
-        <p class="mt-3 text-sm">{{ selectedItem().returnReason }}</p>
+        <p class="mt-3 text-sm">{{ item.returnReason }}</p>
         <p class="mt-4 text-sm font-medium">Required correction</p>
-        <p class="mt-1 text-sm text-muted-foreground">{{ selectedItem().correction }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ item.requiredCorrection }}</p>
       </section>
       <hlm-separator />
       <section class="py-5">
         <h3 class="font-semibold">Immutable activity history</h3>
         <div class="mt-4">
-          @for (event of selectedItem().activity; track event; let last = $last) {
+          @for (activity of item.activity; track activity.id; let last = $last) {
             <div class="flex gap-3">
               <div class="flex flex-col items-center">
                 <span class="mt-1.5 size-2 rounded-full bg-primary"></span>
@@ -112,8 +117,10 @@
                 }
               </div>
               <div>
-                <p class="text-sm font-medium">{{ event }}</p>
-                <p class="text-xs text-muted-foreground">Actor, authority and timestamp recorded</p>
+                <p class="text-sm font-medium">{{ activity.event }}</p>
+                <p class="text-xs text-muted-foreground">
+                  {{ activity.actor.displayName }} · {{ activity.occurredAt | date: 'medium' }}
+                </p>
               </div>
             </div>
           }
@@ -122,9 +129,15 @@
       <a
         hlmBtn
         class="mb-6 w-full"
-        [routerLink]="officeContext.route('documents', 'workspace', selectedItem().id)"
+        [routerLink]="officeContext.route('documents', 'workspace', item.document.id)"
         >Correct and resubmit<ng-icon name="lucideArrowRight"
       /></a>
-    </div>
+      </div>
+    } @else {
+      <hlm-sheet-header class="p-6 pr-12">
+        <h2 hlmSheetTitle>Loading previous submission</h2>
+        <p hlmSheetDescription>The return evidence is being retrieved.</p>
+      </hlm-sheet-header>
+    }
   </hlm-sheet-content>
 </hlm-sheet>

@@ -91,6 +91,7 @@ export class WorkItemsService {
   loadDetail(workItemId: string): void {
     this.detailLoading.set(true);
     this.error.set(null);
+    this.selectedItem.set(null);
     this.api
       .getDetail(workItemId)
       .pipe(finalize(() => this.detailLoading.set(false)))

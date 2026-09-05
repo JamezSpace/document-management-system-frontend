@@ -40,23 +40,25 @@
         </tr>
       </thead>
       <tbody hlmTBody>
-        @for (row of workItems; track row.reference) {
+        @for (row of workItemsService.completedItems(); track row.id) {
           <tr hlmTr>
             <td hlmTd>
-              <p class="font-medium">{{ row.title }}</p>
+              <p class="font-medium">{{ row.document.title }}</p>
               <p class="mt-1 text-xs text-(--brand-success)">{{ row.outcome }}</p>
-              <p class="font-mono text-xs text-muted-foreground">{{ row.reference }}</p>
+              <p class="font-mono text-xs text-muted-foreground">{{ row.document.reference }}</p>
             </td>
-            <td hlmTd>{{ row.completed }}</td>
-            <td hlmTd>{{ row.authority }}</td>
-            <td hlmTd>{{ row.state }}</td>
-            <td hlmTd>{{ row.version }}</td>
+            <td hlmTd>{{ row.completedAt | date: 'medium' }}</td>
+            <td hlmTd>{{ row.finalAuthority.displayName }}</td>
+            <td hlmTd>{{ row.resultingState }}</td>
+            <td hlmTd>
+              {{ row.authoritativeVersion.label }} · {{ row.authoritativeVersion.integrityStatus }}
+            </td>
             <td hlmTd>
               <a
                 hlmBtn
                 variant="outline"
                 size="sm"
-                [routerLink]="officeContext.route('documents', 'workspace', row.id)"
+                [routerLink]="officeContext.route('documents', 'workspace', row.document.id)"
                 [queryParams]="{ mode: 'readonly' }"
                 ><ng-icon name="lucideEye" />Open version</a
               >
