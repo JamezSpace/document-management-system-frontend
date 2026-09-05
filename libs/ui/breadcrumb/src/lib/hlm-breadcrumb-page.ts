@@ -11,6 +11,6 @@ import { classes } from '@spartan-ng/helm/utils';
 })
 export class HlmBreadcrumbPage {
 	constructor() {
-		classes(() => 'text-foreground font-normal');
+		classes(() => 'text-xs text-foreground font-medium');
 	}
 }
