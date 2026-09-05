@@ -5,23 +5,23 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BrnAvatar } from "@spartan-ng/brain/avatar";
 import { NgIcon } from '@ng-icons/core';
-import { TasksService } from '../../../../../../core/services/page-wide/dashboard/operations/regular/tasks/tasks-service';
-import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
-import { TaskDetail } from '../../../../../../shared/components/dashboard-wide/operations/task-detail/task-detail';
-import { EmptyState } from '../../../../../../shared/components/empty-state/empty-state';
-import type { EmptyStateConfig } from '../../../../../../models/ui/global/EmptyState.ui';
+import { TasksService } from '../../services/tasks/tasks-service';
+import type { WorkTask } from '../../../../models/ui/work-management/WorkTask.ui';
+import { TaskDetail } from '../../components/task-detail/task-detail';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
+import type { EmptyStateConfig } from '../../../../models/ui/global/EmptyState.ui';
 
 @Component({
   selector: 'nexus-tasks-ledger',
   imports: [HlmSeparator, NgIcon, TaskDetail, MatTableModule,
     MatPaginatorModule, BrnAvatar, EmptyState],
   templateUrl: './tasks-ledger.html',
-  styleUrl: './tasks-ledger.css',
 })
 export class TasksLedger implements OnInit {
   activatedRouter = inject(ActivatedRoute);
   directories = signal<string[]>([]);
-  taskService = inject(TasksService)
+  taskService = inject(TasksService);
+  
   readonly emptyState: EmptyStateConfig = {
     kind: 'no-data',
     iconName: 'lucideListTodo',
@@ -46,7 +46,7 @@ export class TasksLedger implements OnInit {
     });
   }
 
-  dataSource = new MatTableDataSource<DirectiveUi>([]);
+  dataSource = new MatTableDataSource<WorkTask>([]);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -67,8 +67,8 @@ export class TasksLedger implements OnInit {
   closeSideNav() {
     this.sideNavOpened.set(false);
   }
-  closeSideNavOnBackdropClick(event: any) {
-    const elFunction = event.target.dataset.function;
+  closeSideNavOnBackdropClick(event: MouseEvent) {
+    const elFunction = (event.target as HTMLElement).dataset['function'];
 
     if (elFunction === 'backdrop') this.closeSideNav();
   }

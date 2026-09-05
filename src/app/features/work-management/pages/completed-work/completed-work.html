@@ -1,0 +1,74 @@
+<section class="mx-auto max-w-[96rem] pb-10">
+  <nav hlmBreadcrumb aria-label="Breadcrumb">
+    <ol hlmBreadcrumbList>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Office</span></li>
+      <li hlmBreadcrumbSeparator></li>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Completed work</span></li>
+    </ol>
+  </nav>
+
+  <header class="mt-5 max-w-3xl">
+    <h3 nata-h3>Completed work</h3>
+    <p nata-p>
+      Review read-only outcomes and the authoritative document versions they produced.
+    </p>
+  </header>
+
+  <hlm-separator class="my-6" />
+
+  <div class="mb-4 flex flex-wrap gap-2">
+    <div class="relative min-w-64 flex-1">
+      <ng-icon name="lucideSearch" class="absolute left-3 top-2.5 text-muted-foreground" />
+      <input hlmInput class="pl-9" placeholder="Search completed work and outcomes" />
+    </div>
+    <button hlmBtn variant="outline"><ng-icon name="lucideFilter" />Outcome and date</button>
+    <span class="ml-auto self-center text-sm text-muted-foreground">
+      Read-only authoritative completion ledger
+    </span>
+  </div>
+
+  <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Document / outcome</th>
+          <th hlmTh>Completed</th>
+          <th hlmTh>Final authority</th>
+          <th hlmTh>Resulting state</th>
+          <th hlmTh>Authoritative version</th>
+          <th hlmTh></th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of workItems; track row.reference) {
+          <tr hlmTr>
+            <td hlmTd>
+              <p class="font-medium">{{ row.title }}</p>
+              <p class="mt-1 text-xs text-(--brand-success)">{{ row.outcome }}</p>
+              <p class="font-mono text-xs text-muted-foreground">{{ row.reference }}</p>
+            </td>
+            <td hlmTd>{{ row.completed }}</td>
+            <td hlmTd>{{ row.authority }}</td>
+            <td hlmTd>{{ row.state }}</td>
+            <td hlmTd>{{ row.version }}</td>
+            <td hlmTd>
+              <a
+                hlmBtn
+                variant="outline"
+                size="sm"
+                [routerLink]="officeContext.route('documents', 'workspace', row.id)"
+                [queryParams]="{ mode: 'readonly' }"
+                ><ng-icon name="lucideEye" />Open version</a
+              >
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">
+    Completed work cannot be edited or deleted here. Corrections must follow the governing
+    document workflow and create a new accountable version.
+  </div>
+</section>

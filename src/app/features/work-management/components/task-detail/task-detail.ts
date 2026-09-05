@@ -1,11 +1,10 @@
 import { Component, inject, input, OnInit } from '@angular/core';
-import { TasksService } from '../../../../../core/services/page-wide/dashboard/operations/regular/tasks/tasks-service';
+import { TasksService } from '../../services/tasks/tasks-service';
 
 @Component({
   selector: 'nexus-task-detail',
   imports: [],
   templateUrl: './task-detail.html',
-  styleUrl: './task-detail.css',
 })
 export class TaskDetail implements OnInit {
   taskId = input<string>('');

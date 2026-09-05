@@ -1,0 +1,130 @@
+<hlm-sheet side="right">
+  <section class="mx-auto max-w-[96rem] pb-10">
+    <nav hlmBreadcrumb aria-label="Breadcrumb">
+      <ol hlmBreadcrumbList>
+        <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Office</span></li>
+        <li hlmBreadcrumbSeparator></li>
+        <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Returned work</span></li>
+      </ol>
+    </nav>
+
+    <header class="mt-5 max-w-3xl">
+      <h3 nata-h3>Returned work</h3>
+      <p nata-p>
+        Correct and resubmit work without losing the returning authority's reason or required correction.
+      </p>
+    </header>
+
+    <hlm-separator class="my-6" />
+
+    <div class="mb-4 flex flex-wrap gap-2">
+      <div class="relative min-w-64 flex-1">
+        <ng-icon name="lucideSearch" class="absolute left-3 top-2.5 text-muted-foreground" />
+        <input hlmInput class="pl-9" placeholder="Search returned work" />
+      </div>
+      <button hlmBtn variant="outline">
+        <ng-icon name="lucideFilter" />Returning authority
+      </button>
+      <button hlmBtn variant="outline">New deadline</button>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+      @for (item of workItems; track item.id) {
+        <article hlmCard class="border bg-card p-5 shadow-xs">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold">{{ item.title }}</h2>
+              <p class="mt-1 font-mono text-xs text-muted-foreground">
+                {{ item.reference }} · {{ item.version }}
+              </p>
+            </div>
+            <span
+              class="rounded-full border border-(--brand-warning-highlight)/35 bg-(--brand-warning-highlight)/10 px-2.5 py-1 text-xs text-(--brand-warning)"
+              >Returned</span
+            >
+          </div>
+
+          <div
+            class="mt-5 rounded-md border-l-4 border-l-(--brand-warning-highlight) bg-(--brand-warning-highlight)/10 p-4"
+          >
+            <p class="text-xs font-semibold uppercase tracking-wider text-(--brand-warning)">
+              Return reason · remains visible until resubmission
+            </p>
+            <p class="mt-2 text-sm">{{ item.returnReason }}</p>
+          </div>
+
+          <div class="mt-4">
+            <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Required correction
+            </p>
+            <p class="mt-2 text-sm">{{ item.correction }}</p>
+          </div>
+
+          <p class="mt-4 text-xs text-muted-foreground">
+            Returned by {{ item.authority }} · New deadline {{ item.deadline }}
+          </p>
+          <div class="mt-5 flex gap-2">
+            <button hlmBtn variant="outline" hlmSheetTrigger (click)="selectItem(item.id)">
+              Previous submission
+            </button>
+            <a
+              hlmBtn
+              [routerLink]="officeContext.route('documents', 'workspace', item.id)"
+              >Correct and resubmit</a
+            >
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]">
+    <hlm-sheet-header class="border-b p-6 pr-12">
+      <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Previous submission
+      </p>
+      <h2 hlmSheetTitle class="mt-2">{{ selectedItem().title }}</h2>
+      <p hlmSheetDescription class="font-mono">{{ selectedItem().reference }}</p>
+    </hlm-sheet-header>
+    <div class="flex-1 overflow-y-auto px-6 pb-6">
+      <section class="py-5">
+        <h3 class="font-semibold">Submitted version</h3>
+        <p class="mt-3 text-sm">{{ selectedItem().version }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ selectedItem().classification }}</p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Return instruction</h3>
+        <p class="mt-3 text-sm">{{ selectedItem().returnReason }}</p>
+        <p class="mt-4 text-sm font-medium">Required correction</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ selectedItem().correction }}</p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Immutable activity history</h3>
+        <div class="mt-4">
+          @for (event of selectedItem().activity; track event; let last = $last) {
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <span class="mt-1.5 size-2 rounded-full bg-primary"></span>
+                @if (!last) {
+                  <span class="h-10 w-px bg-border"></span>
+                }
+              </div>
+              <div>
+                <p class="text-sm font-medium">{{ event }}</p>
+                <p class="text-xs text-muted-foreground">Actor, authority and timestamp recorded</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+      <a
+        hlmBtn
+        class="mb-6 w-full"
+        [routerLink]="officeContext.route('documents', 'workspace', selectedItem().id)"
+        >Correct and resubmit<ng-icon name="lucideArrowRight"
+      /></a>
+    </div>
+  </hlm-sheet-content>
+</hlm-sheet>
