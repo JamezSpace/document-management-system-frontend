@@ -2,11 +2,12 @@ import type { Routes } from '@angular/router';
 import { sharedOfficeRoutes } from '../../office-platform/routes/shared-office.routes';
 import { capabilityGuard } from '../../office-platform/guards/office-workbench.guard';
 import { Capabilities as C } from '../../platform/authorization/capabilities';
-import type { ProcessingScreenKey } from './pages/overview/overview';
+import type { ProcessingScreenKey } from './pages/processing-overview/processing-overview';
+
 
 const page = (screen: ProcessingScreenKey, title: string, description: string) => ({
   loadComponent: () =>
-    import('./pages/overview/overview').then((m) => m.Overview),
+    import('./pages/processing-overview/processing-overview').then((m) => m.ProcessingOverview),
   data: { screen, title, description },
 });
 
