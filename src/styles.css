@@ -8,24 +8,23 @@
 
 @plugin "@iconify/tailwind4";
 
-/* =========================
-   CORE DESIGN TOKENS (LOCKED)
-========================= */
+/* CORE DESIGN TOKENS (LOCKED) */
 :root {
-  /* Primary System */
+  /* Routine actions */
   --brand-primary: #2856c3;
   --brand-primary-hover: #1f46a5;
   --brand-primary-active: #173b8c;
+  --brand-primary-soft: #eef3ff;
 
-  /* Structural / Authority */
-  /* --brand-secondary: #1a212c;
-  --brand-secondary-soft: #2a3442; */
-  --brand-secondary: #111827;
-  --brand-secondary-soft: #1f2937;
+  /* Structural authority */
+  --brand-secondary: #001a33;
+  --brand-secondary-soft: #0b2d4a;
+  --brand-authority-accent: #c5a059;
+  --brand-authority-accent-hover: #b38e49;
+  --brand-authority-foreground: #001a33;
 
   /* Surfaces */
-  --brand-background: #f8fafc; 
-  /* --brand-background: #f00;  */
+  --brand-background: #f4f7f9;
   --brand-surface: #ffffff;
   --brand-surface-alt: #e9edf3;
   --brand-border: #d3dae6;
@@ -33,26 +32,31 @@
   /* Text */
   --brand-text: #1a212c;
   --brand-text-secondary: #4a5568;
-  --brand-text-muted: #7a8699;
+  --brand-text-muted: #667085;
 
   /* Semantic */
-  --brand-success: #2f855a;
-  --brand-warning: #d69e2e;
-  --brand-error: #e53e3e;
-  --brand-critical: #c53030;
-  --brand-info: #3182ce;
+  --brand-success: #2d5a27;
+  --brand-warning: #975a16;
+  --brand-warning-highlight: #d69e2e;
+  --brand-error: #c53030;
+  --brand-critical: #9b2c2c;
+  --brand-info: #2b6cb0;
 
   /* Interaction */
-  --brand-disabled: #a0aec0;
+  --brand-disabled-background: #e2e8f0;
+  --brand-disabled-foreground: #667085;
+  --brand-disabled: var(--brand-disabled-background);
+
+  /* Sidebar metadata */
+  --sidebar-muted-foreground: #94a3b8;
 
   color-scheme: light dark;
   --radius: 0.25rem;
 }
 
-/* =========================
-   GLOBAL ELEMENTS
-========================= */
+/* GLOBAL ELEMENTS */
 html {
+  font-size: 13px;
   font-style: normal;
   font-optical-sizing: auto;
   font-variation-settings: 'GRAD' 0;
@@ -83,26 +87,21 @@ iconify-icon {
   height: 1em;
 }
 
-/* =========================
-   SCROLLBAR
-========================= */
+/* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 3.5px;
 }
 ::-webkit-scrollbar-track {
-  background: #e1e1e1;
+  background: var(--brand-surface-alt);
 }
 ::-webkit-scrollbar-thumb {
-  background: #aaa;
+  background: var(--sidebar-muted-foreground);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--brand-text-secondary);
 }
 
-
-/* =========================
-   UTILITIES
-========================= */
+/* UTILITIES */
 .flex-center {
   display: flex;
   align-items: center;
@@ -128,9 +127,7 @@ iconify-icon {
   box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px;
 }
 
-/* =========================
-   FORM STRUCTURE
-========================= */
+/* FORM STRUCTURE */
 .row {
   margin-bottom: 20px;
 
@@ -156,9 +153,7 @@ iconify-icon {
   }
 }
 
-/* =========================
-   INPUT FIELD
-========================= */
+/* INPUT FIELD */
 .input-field {
   --field-color: var(--brand-border);
 
@@ -191,9 +186,7 @@ iconify-icon {
   }
 }
 
-/* =========================
-   BUTTON SYSTEM
-========================= */
+/* BUTTON SYSTEM */
 .nexus-button {
   --bg-color: var(--brand-primary);
 
@@ -218,14 +211,17 @@ iconify-icon {
     --bg-color: var(--brand-primary-active);
   }
   &:focus {
-    outline: 1px solid var(--brand-primary);
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
   }
 
   &:disabled {
     pointer-events: none;
-    opacity: 0.5;
-    background-color: var(--brand-disabled);
-    border-color: var(--brand-disabled);
+    cursor: not-allowed;
+    opacity: 1;
+    color: var(--brand-disabled-foreground);
+    background-color: var(--brand-disabled-background);
+    border-color: var(--brand-border);
   }
 
   &.red {
@@ -234,7 +230,27 @@ iconify-icon {
   }
 
   &.red:hover {
-    background-color: color-mix(in oklab, var(--brand-error) 85%, black);
+    background-color: var(--brand-critical);
+    border-color: var(--brand-critical);
+  }
+}
+
+.nexus-button.authority {
+  --bg-color: var(--brand-authority-accent);
+
+  font-weight: 600;
+  background-color: var(--bg-color);
+  border-color: var(--bg-color);
+  color: var(--brand-authority-foreground);
+
+  &:hover {
+    --bg-color: var(--brand-authority-accent-hover);
+    background-color: var(--bg-color);
+    border-color: var(--bg-color);
+  }
+
+  &:focus {
+    outline-color: var(--brand-authority-accent);
   }
 }
 
@@ -267,9 +283,7 @@ iconify-icon {
   }
 }
 
-/* =========================
-   ANIMATIONS
-========================= */
+/* ANIMATIONS */
 @keyframes nexusFadeIn {
   0% {
     opacity: 0;
@@ -376,8 +390,8 @@ iconify-icon {
     color-scheme: light;
 
     --font-sans:
-      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-      sans-serif;
+      'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+      'Noto Sans', sans-serif;
 
     /* Core surfaces */
     --background: var(--brand-background);
@@ -393,7 +407,7 @@ iconify-icon {
     --primary: var(--brand-primary);
     --primary-foreground: #ffffff;
 
-    /* Secondary = STRUCTURE */
+    /* Spartan secondary = neutral component surface, not brand authority */
     --secondary: var(--brand-surface-alt);
     --secondary-foreground: var(--brand-text);
 
@@ -401,9 +415,9 @@ iconify-icon {
     --muted: var(--brand-surface-alt);
     --muted-foreground: var(--brand-text-secondary);
 
-    /* Accent */
-    --accent: var(--brand-info);
-    --accent-foreground: #ffffff;
+    /* Spartan accent = selection/hover surface */
+    --accent: var(--brand-primary-soft);
+    --accent-foreground: var(--brand-primary-active);
 
     /* Destructive = violations */
     --destructive: var(--brand-error);
@@ -415,17 +429,17 @@ iconify-icon {
     /* Focus ring = action clarity */
     --ring: var(--brand-primary);
 
-    /* Sidebar (authority zone) */
-    --sidebar: #f7f9fc;
---sidebar-foreground: var(--brand-text);
+    /* Sidebar = authority zone */
+    --sidebar: var(--brand-secondary);
+    --sidebar-foreground: #eaf0f6;
 
     --sidebar-primary: var(--brand-primary);
     --sidebar-primary-foreground: #ffffff;
 
-    --sidebar-accent: var(--brand-surface-alt);
-    --sidebar-accent-foreground: var(--brand-text);
+    --sidebar-accent: var(--brand-secondary-soft);
+    --sidebar-accent-foreground: #ffffff;
 
-    --sidebar-border: var(--brand-border);
+    --sidebar-border: rgb(255 255 255 / 10%);
     --sidebar-ring: var(--brand-primary);
   }
 }
@@ -434,53 +448,65 @@ iconify-icon {
   :root {
     color-scheme: dark;
 
+    /* Override brand surfaces so custom components also follow dark mode */
+    --brand-background: #0f172a;
+    --brand-surface: #111827;
+    --brand-surface-alt: #1e293b;
+    --brand-border: rgb(255 255 255 / 10%);
+    --brand-text: #e2e8f0;
+    --brand-text-secondary: #cbd5e1;
+    --brand-text-muted: #94a3b8;
+    --brand-primary-soft: color-mix(in oklab, var(--brand-primary) 18%, transparent);
+    --brand-disabled-background: #334155;
+    --brand-disabled-foreground: #94a3b8;
+
     /* Core surfaces */
-    --background: #0f172a; /* deep controlled navy */
-    --foreground: #e2e8f0;
+    --background: var(--brand-background);
+    --foreground: var(--brand-text);
 
-    --card: #111827;
-    --card-foreground: #e2e8f0;
+    --card: var(--brand-surface);
+    --card-foreground: var(--brand-text);
 
-    --popover: #111827;
-    --popover-foreground: #e2e8f0;
+    --popover: var(--brand-surface);
+    --popover-foreground: var(--brand-text);
 
     /* Primary stays consistent (important for cognition) */
     --primary: var(--brand-primary);
     --primary-foreground: #ffffff;
 
-    /* Secondary surfaces */
-    --secondary: #1e293b;
-    --secondary-foreground: #e2e8f0;
+    /* Spartan secondary remains a neutral component surface */
+    --secondary: var(--brand-surface-alt);
+    --secondary-foreground: var(--brand-text);
 
     /* Muted */
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
+    --muted: var(--brand-surface-alt);
+    --muted-foreground: var(--brand-text-muted);
 
-    /* Accent (info only) */
-    --accent: var(--brand-info);
-    --accent-foreground: #ffffff;
+    /* Spartan accent = selection/hover surface */
+    --accent: var(--brand-primary-soft);
+    --accent-foreground: #dbeafe;
 
     /* Destructive */
     --destructive: var(--brand-error);
 
     /* Borders */
-    --border: rgba(255, 255, 255, 0.08);
-    --input: rgba(255, 255, 255, 0.12);
+    --border: var(--brand-border);
+    --input: rgb(255 255 255 / 14%);
 
     /* Focus */
     --ring: var(--brand-primary);
 
     /* Sidebar (authority zone stays darker) */
-    --sidebar: #020617;
+    --sidebar: #00101f;
     --sidebar-foreground: #e2e8f0;
 
     --sidebar-primary: var(--brand-primary);
     --sidebar-primary-foreground: #ffffff;
 
-    --sidebar-accent: #1e293b;
+    --sidebar-accent: var(--brand-secondary-soft);
     --sidebar-accent-foreground: #e2e8f0;
 
-    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-border: rgb(255 255 255 / 10%);
     --sidebar-ring: var(--brand-primary);
   }
 }
@@ -490,6 +516,6 @@ iconify-icon {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-(--brand-background) text-foreground;
+    @apply bg-background text-foreground;
   }
 }
