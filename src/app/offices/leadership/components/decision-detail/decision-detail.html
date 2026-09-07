@@ -1,0 +1,58 @@
+<hlm-sheet side="right">
+  <button hlmBtn variant="outline" hlmSheetTrigger (click)="select()">{{ label() }}</button>
+  <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]">
+    <hlm-sheet-header class="border-b p-6 pr-12">
+      <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Decision context</p>
+      <h2 hlmSheetTitle class="mt-2">{{ selectedDecision().title }}</h2>
+      <p hlmSheetDescription class="font-mono">{{ selectedDecision().reference }}</p>
+    </hlm-sheet-header>
+    <div class="flex-1 overflow-y-auto px-6 pb-6">
+      <section class="py-5">
+        <h3 class="font-semibold">Decision requested</h3>
+        <p class="mt-3 text-sm font-medium">{{ selectedDecision().decision }}</p>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Requested by {{ selectedDecision().requester }} · Due {{ selectedDecision().deadline }}
+        </p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Classification, version and effect</h3>
+        <p class="mt-3 text-sm">{{ selectedDecision().classification }}</p>
+        <p class="mt-1 text-sm text-muted-foreground">{{ selectedDecision().version }}</p>
+        <p class="mt-4 rounded-md border bg-muted/40 p-3 text-sm">{{ selectedDecision().effect }}</p>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Authorship and approvals</h3>
+        <p class="mt-3 text-sm">{{ selectedDecision().authorship }}</p>
+        <div class="mt-3 space-y-2">
+          @for (approval of selectedDecision().approvals; track approval) {
+            <p class="flex items-center gap-2 text-sm text-(--brand-success)">
+              <ng-icon name="lucideCheck" />{{ approval }}
+            </p>
+          }
+        </div>
+      </section>
+      <hlm-separator />
+      <section class="py-5">
+        <h3 class="font-semibold">Immutable activity history</h3>
+        <div class="mt-4">
+          @for (event of selectedDecision().activity; track event; let last = $last) {
+            <div class="flex gap-3">
+              <div class="flex flex-col items-center">
+                <span class="mt-1.5 size-2 rounded-full bg-primary"></span>
+                @if (!last) {
+                  <span class="h-10 w-px bg-border"></span>
+                }
+              </div>
+              <div>
+                <p class="text-sm font-medium">{{ event }}</p>
+                <p class="text-xs text-muted-foreground">Actor, authority, timestamp and version preserved</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </hlm-sheet-content>
+</hlm-sheet>

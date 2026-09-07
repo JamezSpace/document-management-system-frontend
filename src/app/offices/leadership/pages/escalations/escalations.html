@@ -1,0 +1,71 @@
+<section class="mx-auto max-w-[96rem] px-4 pb-10">
+  <nav hlmBreadcrumb aria-label="Breadcrumb">
+    <ol hlmBreadcrumbList>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Leadership & Approvals</span></li>
+      <li hlmBreadcrumbSeparator></li>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Escalations</span></li>
+    </ol>
+  </nav>
+
+  <header class="mt-5 max-w-3xl">
+    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Authority desk</p>
+    <h1 nata-h1>Escalations</h1>
+    <p class="mt-2 text-muted-foreground" nata-p>
+      Resolve overdue work, policy conflicts, rejections, capacity constraints and authority gaps with rationale.
+    </p>
+  </header>
+
+  <hlm-separator class="my-6" />
+
+  <div class="mb-5 flex items-start gap-3 rounded-md border border-(--brand-warning-highlight)/35 bg-(--brand-warning-highlight)/10 p-4">
+    <ng-icon name="lucideTriangleAlert" class="mt-0.5 shrink-0 text-(--brand-warning)" />
+    <div>
+      <p class="font-semibold">Leadership intervention requires a recorded rationale</p>
+      <p class="mt-1 text-sm text-muted-foreground">
+        Select the cause to review only the cases requiring that form of authority.
+      </p>
+    </div>
+  </div>
+
+  <div class="mb-5 flex flex-wrap gap-2">
+    @for (group of leadership.escalationGroups; track group) {
+      <button
+        hlmBtn
+        [variant]="leadership.escalationGroup() === group ? 'default' : 'outline'"
+        (click)="leadership.selectEscalationGroup(group)"
+      >
+        {{ group }}
+      </button>
+    }
+  </div>
+
+  <div class="grid gap-4">
+    @for (item of leadership.filteredEscalations(); track item.id) {
+      <article hlmCard class="border bg-card p-5 shadow-xs">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="min-w-0 flex-1">
+            <div class="flex gap-2">
+              <span class="rounded-full border border-(--brand-warning-highlight)/35 bg-(--brand-warning-highlight)/10 px-2 py-0.5 text-xs text-(--brand-warning)">
+                {{ item.urgency }}
+              </span>
+              <span class="text-xs text-muted-foreground">{{ item.cause }} · {{ item.age }}</span>
+            </div>
+            <h2 class="mt-3 text-lg font-semibold">{{ item.title }}</h2>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Original owner: {{ item.owner }} · Current authority: {{ item.authority }}
+            </p>
+            <p class="mt-3 font-medium">Required decision: {{ item.request }}</p>
+          </div>
+          <div class="flex gap-2">
+            <nexus-decision-detail [decisionId]="item.id" />
+            <nexus-authority-decision-control [decisionId]="item.id" label="Record decision" />
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <div class="rounded-md border bg-card p-6 text-sm text-muted-foreground">
+        No escalations currently require this form of authority.
+      </div>
+    }
+  </div>
+</section>

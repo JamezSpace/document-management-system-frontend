@@ -1,0 +1,68 @@
+<section class="mx-auto max-w-[96rem] px-4 pb-10">
+  <nav hlmBreadcrumb aria-label="Breadcrumb">
+    <ol hlmBreadcrumbList>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Leadership & Approvals</span></li>
+      <li hlmBreadcrumbSeparator></li>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Office workload</span></li>
+    </ol>
+  </nav>
+
+  <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+    <div class="max-w-3xl">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Authority desk</p>
+      <h1 nata-h1>Office workload</h1>
+      <p class="mt-2 text-muted-foreground" nata-p>
+        Plan staff and workstream capacity from assignments, deadlines and declared availability.
+      </p>
+    </div>
+    <button hlmBtn variant="outline"><ng-icon name="lucideCalendarClock" />Planning horizon</button>
+  </header>
+
+  <hlm-separator class="my-6" />
+
+  <div class="mb-4 flex flex-wrap gap-2">
+    <div class="relative min-w-64 flex-1">
+      <ng-icon name="lucideSearch" class="absolute left-3 top-2.5 text-muted-foreground" />
+      <input hlmInput class="pl-9" placeholder="Search staff or workstream" />
+    </div>
+    <button hlmBtn variant="outline"><ng-icon name="lucideFilter" />Office and availability</button>
+    <span class="ml-auto self-center text-sm text-muted-foreground">
+      Capacity planning—not productivity scoring
+    </span>
+  </div>
+
+  <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Staff / workstream</th>
+          <th hlmTh>Availability</th>
+          <th hlmTh>Active assignments</th>
+          <th hlmTh>Overdue</th>
+          <th hlmTh>Upcoming deadlines</th>
+          <th hlmTh>Capacity context</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of leadership.workload; track row.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <p class="font-medium">{{ row.name }}</p>
+              <p class="text-xs text-muted-foreground">{{ row.role }}</p>
+            </td>
+            <td hlmTd>{{ row.availability }}</td>
+            <td hlmTd>{{ row.activeAssignments }}</td>
+            <td hlmTd [class.text-(--brand-error)]="row.overdue > 0">{{ row.overdue }}</td>
+            <td hlmTd>{{ row.upcomingDeadlines }}</td>
+            <td hlmTd class="max-w-sm whitespace-normal">{{ row.capacityContext }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">
+    Availability combines declared leave, working hours, active deadlines and assignment scope.
+    NexusFons does not calculate individual productivity or surveillance scores.
+  </div>
+</section>

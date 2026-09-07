@@ -1,0 +1,75 @@
+<section class="mx-auto max-w-[96rem] px-4 pb-10">
+  <nav hlmBreadcrumb aria-label="Breadcrumb">
+    <ol hlmBreadcrumbList>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Leadership & Approvals</span></li>
+      <li hlmBreadcrumbSeparator></li>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Decision audit trail</span></li>
+    </ol>
+  </nav>
+
+  <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+    <div class="max-w-3xl">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+        Authority desk
+      </p>
+      <h1 nata-h1>Decision audit trail</h1>
+      <p class="mt-2 text-muted-foreground" nata-p>
+        Review immutable decisions, rationales, authority roles and resulting lifecycle changes.
+      </p>
+    </div>
+    <button hlmBtn variant="outline">
+      <ng-icon name="lucideHistory" />Export decision evidence
+    </button>
+  </header>
+
+  <hlm-separator class="my-6" />
+
+  <div class="mb-4 grid gap-2 md:grid-cols-2 xl:grid-cols-6">
+    <div class="relative md:col-span-2">
+      <ng-icon name="lucideSearch" class="absolute left-3 top-2.5 text-muted-foreground" />
+      <input hlmInput class="pl-9" placeholder="Decision, authority role or object reference" />
+    </div>
+    @for (filter of ['Decision type', 'Authority role', 'Outcome', 'Date']; track filter) {
+      <button hlmBtn variant="outline" class="justify-between">
+        {{ filter }}<ng-icon name="lucideChevronRight" />
+      </button>
+    }
+  </div>
+
+  <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Decision / timestamp</th>
+          <th hlmTh>Authority role</th>
+          <th hlmTh>Object</th>
+          <th hlmTh>Rationale</th>
+          <th hlmTh>Outcome</th>
+          <th hlmTh>Lifecycle change</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (row of leadership.auditEvents; track row.id) {
+          <tr hlmTr>
+            <td hlmTd>
+              <p class="font-medium">{{ row.decision }}</p>
+              <p class="font-mono text-xs text-muted-foreground">
+                {{ row.id }} · {{ row.occurredAt }}
+              </p>
+            </td>
+            <td hlmTd>{{ row.authority }}</td>
+            <td hlmTd class="font-mono text-xs">{{ row.object }}</td>
+            <td hlmTd class="max-w-sm whitespace-normal">{{ row.rationale }}</td>
+            <td hlmTd>{{ row.outcome }}</td>
+            <td hlmTd class="max-w-sm whitespace-normal">{{ row.lifecycleChange }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">
+    This ledger is immutable and intentionally provides no edit or delete controls. Corrections are
+    recorded as linked superseding decisions.
+  </div>
+</section>

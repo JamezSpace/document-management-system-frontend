@@ -1,0 +1,120 @@
+<section class="mx-auto max-w-[96rem] px-4 pb-10">
+  <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+    <div class="max-w-3xl">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+        Authority desk
+      </p>
+      <h1 nata-h1>Leadership & Approvals</h1>
+      <p class="mt-2 text-muted-foreground" nata-p>
+        Make accountable decisions, exercise authority and support workstreams at risk.
+      </p>
+    </div>
+    <a hlmBtn routerLink="/office/leadership/approvals">
+      <ng-icon name="lucideBadgeCheck" />Sensitivity approvals
+    </a>
+  </header>
+
+  <hlm-separator class="my-6" />
+
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+    @for (metric of leadership.metrics; track metric.label) {
+      <article hlmCard class="border bg-card p-4 shadow-xs">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-xs text-muted-foreground">{{ metric.label }}</p>
+            <p class="mt-2 text-3xl font-bold">{{ metric.value }}</p>
+            <p class="mt-2 text-xs text-muted-foreground">{{ metric.note }}</p>
+          </div>
+          <span class="rounded-md bg-muted p-2" [class]="metric.tone">
+            <ng-icon [name]="metric.icon" />
+          </span>
+        </div>
+      </article>
+    }
+  </div>
+
+  <div class="mt-5 grid gap-5 xl:grid-cols-[1.4fr_0.6fr]">
+    <section hlmCard class="border bg-card p-5 shadow-xs">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">Decisions requiring you</h2>
+          <p class="text-sm text-muted-foreground">
+            Prioritised by authority requirement, policy effect and deadline
+          </p>
+        </div>
+        <span class="rounded-full bg-primary px-2.5 py-1 text-xs text-primary-foreground">
+          {{ leadership.decisions.length }} pending
+        </span>
+      </div>
+
+      <div class="mt-5 grid gap-3">
+        @for (decision of leadership.decisions; track decision.id) {
+          <article class="rounded-md border p-4">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="rounded-full border px-2 py-0.5 text-xs capitalize"
+                    [class.border-(--brand-authority-accent)]="decision.kind === 'signature'"
+                    [class.text-(--brand-authority-accent)]="decision.kind === 'signature'"
+                    [class.border-(--brand-info)]="decision.kind !== 'signature'"
+                    [class.text-(--brand-info)]="decision.kind !== 'signature'"
+                    >{{ decision.kind }}</span>
+                  <span class="text-xs text-muted-foreground">{{ decision.deadline }}</span>
+                </div>
+                <h3 class="mt-3 text-lg font-semibold">{{ decision.title }}</h3>
+                <p class="mt-2 font-medium">{{ decision.decision }}</p>
+                <p class="mt-2 text-sm text-muted-foreground">
+                  Requested by {{ decision.requester }} · Effect: {{ decision.effect }}
+                </p>
+              </div>
+              <div class="flex gap-2">
+                <nexus-decision-detail [decisionId]="decision.id" label="Review" />
+                <nexus-authority-decision-control
+                  [decisionId]="decision.id"
+                  [label]="decision.kind === 'signature' ? 'Sign' : 'Decide'"
+                />
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <aside class="grid gap-5">
+      <section hlmCard class="border bg-card p-5 shadow-xs">
+        <h2 class="text-lg font-semibold">Unit SLA risk</h2>
+        <p class="text-sm text-muted-foreground">Workstreams needing leadership support</p>
+        <div class="mt-4 space-y-4">
+          @for (risk of leadership.risks; track risk.stream) {
+            <div class="flex justify-between gap-3">
+              <span class="text-sm font-medium">{{ risk.stream }}</span>
+              <span class="text-xs" [class]="risk.tone">{{ risk.state }}</span>
+            </div>
+          }
+        </div>
+        <a hlmBtn variant="outline" class="mt-5 w-full" routerLink="/office/leadership/workload">
+          Review capacity
+        </a>
+      </section>
+
+      <section hlmCard class="border bg-card p-5 shadow-xs">
+        <h2 class="text-lg font-semibold">Recent directives</h2>
+        <div class="mt-4 space-y-3">
+          @for (directive of leadership.recentDirectives; track directive.title) {
+            <div class="flex gap-2">
+              <ng-icon name="lucideZap" class="mt-0.5 text-primary" />
+              <div>
+                <p class="text-sm font-medium">{{ directive.title }}</p>
+                <p class="text-xs text-muted-foreground">{{ directive.status }}</p>
+              </div>
+            </div>
+          }
+        </div>
+        <a hlmBtn variant="ghost" class="mt-3 w-full" routerLink="/office/leadership/directives">
+          Open directives log
+        </a>
+      </section>
+    </aside>
+  </div>
+</section>

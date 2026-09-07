@@ -1,0 +1,117 @@
+<section class="mx-auto max-w-[96rem] px-4 pb-10">
+  <nav hlmBreadcrumb aria-label="Breadcrumb">
+    <ol hlmBreadcrumbList>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Leadership & Approvals</span></li>
+      <li hlmBreadcrumbSeparator></li>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Signature queue</span></li>
+    </ol>
+  </nav>
+
+  <header class="mt-5 max-w-3xl">
+    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Authority desk</p>
+    <h1 nata-h1>Signature queue</h1>
+    <p class="mt-2 text-muted-foreground" nata-p>
+      Sign exact approved versions after reviewing authorship, prior approvals and policy effect.
+    </p>
+  </header>
+
+  <hlm-separator class="my-6" />
+
+  <div class="mb-4 flex items-start gap-3 rounded-md border border-(--brand-info)/35 bg-(--brand-info)/10 p-4">
+    <ng-icon name="lucideShieldCheck" class="mt-0.5 shrink-0 text-(--brand-info)" />
+    <div>
+      <p class="font-semibold">Broad document sign-off queue</p>
+      <p class="mt-1 text-sm text-muted-foreground">
+        This queue covers approved instruments ready for signature. Sensitivity-change decisions remain in the separate Approval Inbox.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid min-h-[44rem] gap-4 xl:grid-cols-[19rem_minmax(28rem,1fr)_23rem]">
+    <aside hlmCard class="border bg-card shadow-xs">
+      <div class="border-b p-4">
+        <h2 class="font-semibold">Ready for sign-off</h2>
+        <p class="text-xs text-muted-foreground">Exact approved versions only</p>
+      </div>
+      <div class="divide-y">
+        @for (decision of leadership.signatureDecisions; track decision.id) {
+          <button
+            type="button"
+            class="w-full p-4 text-left hover:bg-muted/50"
+            [class.bg-primary]="selectedDecision().id === decision.id"
+            [class.text-primary-foreground]="selectedDecision().id === decision.id"
+            (click)="leadership.selectDecision(decision.id)"
+          >
+            <p class="font-medium">{{ decision.title }}</p>
+            <p class="mt-2 text-xs opacity-75">
+              {{ decision.classification }} · {{ decision.version }} · {{ decision.deadline }}
+            </p>
+          </button>
+        }
+      </div>
+    </aside>
+
+    <main class="flex flex-col rounded-md border bg-muted/30 p-4">
+      <div class="flex justify-between text-sm text-muted-foreground">
+        <span>{{ selectedDecision().reference }} · authoritative preview</span>
+        <span>Page 1 of 2</span>
+      </div>
+      <article class="mx-auto mt-4 flex w-full max-w-2xl flex-1 flex-col bg-card p-10 shadow-md">
+        <p class="text-center text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          NexusFons Leadership Instrument
+        </p>
+        <h2 class="mt-10 text-center text-2xl font-bold">{{ selectedDecision().title }}</h2>
+        <p class="mt-10 leading-8 text-muted-foreground">{{ selectedDecision().effect }}</p>
+        <div class="mt-auto border-t pt-8">
+          <p class="text-sm font-semibold">Authorized signatory</p>
+          <p class="mt-1 text-xs text-muted-foreground">
+            Signature applies only to the displayed exact version.
+          </p>
+        </div>
+      </article>
+    </main>
+
+    <aside hlmCard class="border bg-card p-5 shadow-xs">
+      <h2 class="font-semibold">Governance and signature</h2>
+      <dl class="mt-5 grid gap-4 text-sm">
+        <div>
+          <dt class="text-xs text-muted-foreground">Version</dt>
+          <dd class="mt-1 font-medium">{{ selectedDecision().version }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Classification</dt>
+          <dd class="mt-1">{{ selectedDecision().classification }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Authorship</dt>
+          <dd class="mt-1">{{ selectedDecision().authorship }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Policy effect</dt>
+          <dd class="mt-1">{{ selectedDecision().effect }}</dd>
+        </div>
+      </dl>
+      <hlm-separator class="my-5" />
+      <h3 class="text-sm font-semibold">Prior approvals</h3>
+      <div class="mt-3 space-y-2">
+        @for (approval of selectedDecision().approvals; track approval) {
+          <p class="flex items-center gap-2 text-sm text-(--brand-success)">
+            <ng-icon name="lucideCheck" />{{ approval }}
+          </p>
+        }
+      </div>
+      <div class="mt-6 flex flex-wrap gap-2">
+        <nexus-authority-decision-control
+          [decisionId]="selectedDecision().id"
+          mode="reject"
+          label="Reject"
+        />
+        <nexus-authority-decision-control
+          [decisionId]="selectedDecision().id"
+          label="Sign exact version"
+          icon="lucidePenTool"
+        />
+      </div>
+    </aside>
+  </div>
+</section>

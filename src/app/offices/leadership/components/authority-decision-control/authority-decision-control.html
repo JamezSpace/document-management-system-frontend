@@ -1,0 +1,84 @@
+<hlm-alert-dialog #decisionDialog>
+  <button
+    hlmBtn
+    [class.bg-destructive]="mode() === 'reject'"
+    [class.bg-(--brand-authority-accent)]="mode() !== 'reject'"
+    [class.text-(--brand-authority-foreground)]="mode() !== 'reject'"
+    [class.hover:bg-(--brand-authority-accent-hover)]="mode() !== 'reject'"
+    [hlmAlertDialogTriggerFor]="decisionDialog"
+    (click)="prepare()"
+  >
+    @if (icon()) {
+      <ng-icon [name]="icon()!" />
+    }
+    {{ label() }}
+  </button>
+
+  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(38rem,92vw)]">
+    <hlm-alert-dialog-header>
+      <p class="text-xs font-semibold uppercase tracking-wider text-(--brand-authority-accent)">
+        Formal authority decision
+      </p>
+      <h2 hlmAlertDialogTitle>{{ authorityAction().title }}</h2>
+      <p hlmAlertDialogDescription>
+        A rationale is required and will remain part of the immutable decision record.
+      </p>
+    </hlm-alert-dialog-header>
+
+    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md border bg-muted/40 p-4 text-sm">
+      <div>
+        <p class="text-xs text-muted-foreground">Current state</p>
+        <p class="mt-1 font-semibold">{{ authorityAction().currentState }}</p>
+      </div>
+      <ng-icon name="lucideArrowRight" class="text-muted-foreground" />
+      <div>
+        <p class="text-xs text-muted-foreground">Proposed state</p>
+        <p class="mt-1 font-semibold">{{ authorityAction().proposedState }}</p>
+      </div>
+    </div>
+
+    <dl class="grid gap-3 text-sm">
+      <div>
+        <dt class="font-semibold">Who is exercising authority?</dt>
+        <dd class="mt-1 text-muted-foreground">{{ authorityAction().authority }}</dd>
+      </div>
+      <div>
+        <dt class="font-semibold">What policy consequence follows?</dt>
+        <dd class="mt-1 text-muted-foreground">{{ authorityAction().consequence }}</dd>
+      </div>
+      <div>
+        <dt class="font-semibold">Is it reversible?</dt>
+        <dd class="mt-1 text-muted-foreground">{{ authorityAction().reversible }}</dd>
+      </div>
+      <div>
+        <dt class="font-semibold">What evidence will be recorded?</dt>
+        <dd class="mt-1 text-muted-foreground">{{ authorityAction().evidence }}</dd>
+      </div>
+    </dl>
+
+    <label class="grid gap-1.5 text-sm font-medium">
+      Decision rationale
+      <textarea
+        hlmTextarea
+        class="min-h-28"
+        placeholder="State the evidence and policy basis for this decision"
+      ></textarea>
+    </label>
+    <label class="flex items-start gap-2 rounded-md border border-(--brand-authority-accent)/35 bg-(--brand-authority-accent)/10 p-3 text-sm">
+      <hlm-checkbox aria-label="Confirm authority and decision object" />
+      <span>I confirm the displayed object, version, classification, effect and my authority to decide.</span>
+    </label>
+
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
+      <button
+        hlmAlertDialogAction
+        [class.bg-destructive]="authorityAction().reject"
+        [class.bg-(--brand-authority-accent)]="!authorityAction().reject"
+        [class.text-(--brand-authority-foreground)]="!authorityAction().reject"
+      >
+        {{ authorityAction().confirmLabel }}
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
