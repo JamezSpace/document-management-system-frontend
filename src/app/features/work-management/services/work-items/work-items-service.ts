@@ -20,6 +20,7 @@ import type {
   WorkItemPageInfo,
   WorkItemQuery,
 } from '../../../../models/ui/work-management/WorkItemQuery.ui';
+import { officeActivityContext } from '../../../../office-platform/activity/office-activity.context';
 
 @Injectable({ providedIn: 'root' })
 export class WorkItemsService {
@@ -44,7 +45,7 @@ export class WorkItemsService {
     this.assignedLoading.set(true);
     this.error.set(null);
     this.api
-      .listAssigned(this.toApiQuery(query))
+      .listAssigned(this.toApiQuery(query), officeActivityContext())
       .pipe(finalize(() => this.assignedLoading.set(false)))
       .subscribe({
         next: (response) => {
@@ -60,7 +61,7 @@ export class WorkItemsService {
     this.returnedLoading.set(true);
     this.error.set(null);
     this.api
-      .listReturned(this.toApiQuery(query))
+      .listReturned(this.toApiQuery(query), officeActivityContext())
       .pipe(finalize(() => this.returnedLoading.set(false)))
       .subscribe({
         next: (response) => {
@@ -76,7 +77,7 @@ export class WorkItemsService {
     this.completedLoading.set(true);
     this.error.set(null);
     this.api
-      .listCompleted(this.toApiQuery(query))
+      .listCompleted(this.toApiQuery(query), officeActivityContext())
       .pipe(finalize(() => this.completedLoading.set(false)))
       .subscribe({
         next: (response) => {
@@ -93,7 +94,7 @@ export class WorkItemsService {
     this.error.set(null);
     this.selectedItem.set(null);
     this.api
-      .getDetail(workItemId)
+      .getDetail(workItemId, officeActivityContext())
       .pipe(finalize(() => this.detailLoading.set(false)))
       .subscribe({
         next: (response) => this.selectedItem.set(this.mapDetail(response.data)),

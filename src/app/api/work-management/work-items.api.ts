@@ -1,3 +1,4 @@
+import type { HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import type {
   AssignedWorkItemApi,
@@ -15,32 +16,32 @@ import { ApiClient } from '../client/api-client';
 export class WorkItemsApi {
   private readonly api = inject(ApiClient);
 
-  listAssigned(query: WorkItemQueryApi = {}) {
+  listAssigned(query: WorkItemQueryApi = {}, context?: HttpContext) {
     return this.api.get<WorkItemPageApi<AssignedWorkItemApi>>(
       'work-items',
-      undefined,
+      context,
       this.params('assigned', query),
     );
   }
 
-  listReturned(query: WorkItemQueryApi = {}) {
+  listReturned(query: WorkItemQueryApi = {}, context?: HttpContext) {
     return this.api.get<WorkItemPageApi<ReturnedWorkItemApi>>(
       'work-items',
-      undefined,
+      context,
       this.params('returned', query),
     );
   }
 
-  listCompleted(query: WorkItemQueryApi = {}) {
+  listCompleted(query: WorkItemQueryApi = {}, context?: HttpContext) {
     return this.api.get<WorkItemPageApi<CompletedWorkItemApi>>(
       'work-items',
-      undefined,
+      context,
       this.params('completed', query),
     );
   }
 
-  getDetail(workItemId: string) {
-    return this.api.get<WorkItemDetailApi>(`work-items/${workItemId}`);
+  getDetail(workItemId: string, context?: HttpContext) {
+    return this.api.get<WorkItemDetailApi>(`work-items/${workItemId}`, context);
   }
 
   private params(
