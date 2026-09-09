@@ -39,4 +39,11 @@ describe('CompletedWork', () => {
     expect(component).toBeTruthy();
     expect(TestBed.inject(WorkItemsService).completedItems()).toEqual([]);
   });
+
+  it('renders the empty state when no work has been completed', () => {
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent.replace(/\s+/g, ' ');
+    expect(text).toContain('No completed work yet');
+    expect(text).not.toContain('Final authority');
+  });
 });

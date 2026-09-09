@@ -39,4 +39,11 @@ describe('ReturnedWork', () => {
     expect(component).toBeTruthy();
     expect(TestBed.inject(WorkItemsService).returnedItems()).toEqual([]);
   });
+
+  it('renders the empty state when no work has been returned', () => {
+    fixture.detectChanges();
+    const text = fixture.nativeElement.textContent.replace(/\s+/g, ' ');
+    expect(text).toContain('No work has been returned');
+    expect(text).not.toContain('Required correction');
+  });
 });

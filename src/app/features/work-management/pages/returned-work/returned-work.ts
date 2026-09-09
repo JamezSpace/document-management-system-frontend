@@ -9,7 +9,9 @@ import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
+import type { EmptyStateConfig } from '../../../../models/ui/global/EmptyState.ui';
 import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { WorkItemsService } from '../../services/work-items/work-items-service';
 
 @Component({
@@ -24,6 +26,7 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
     HlmInput,
     HlmSeparator,
     HlmSheetImports,
+    EmptyState,
   ],
   templateUrl: './returned-work.html',
   providers: [provideIcons({ lucideArrowRight, lucideFilter, lucideSearch })],
@@ -31,6 +34,13 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
 export class ReturnedWork implements OnInit {
   readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
+  readonly emptyState: EmptyStateConfig = {
+    kind: 'completed',
+    iconName: 'lucideCircleCheckBig',
+    title: 'No work has been returned',
+    description:
+      'Work returned for correction will appear here with the authority’s reason, required changes and resubmission deadline.',
+  };
   readonly selectedItem = computed(() => {
     const item = this.workItemsService.selectedItem();
     return item?.view === 'returned' ? item : null;

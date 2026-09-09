@@ -8,7 +8,9 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTableImports } from '@spartan-ng/helm/table';
+import type { EmptyStateConfig } from '../../../../models/ui/global/EmptyState.ui';
 import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { WorkItemsService } from '../../services/work-items/work-items-service';
 
 @Component({
@@ -22,6 +24,7 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
     HlmInput,
     HlmSeparator,
     HlmTableImports,
+    EmptyState,
   ],
   templateUrl: './completed-work.html',
   providers: [provideIcons({ lucideEye, lucideFilter, lucideSearch })],
@@ -29,6 +32,13 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
 export class CompletedWork implements OnInit {
   readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
+  readonly emptyState: EmptyStateConfig = {
+    kind: 'no-data',
+    iconName: 'lucideArchive',
+    title: 'No completed work yet',
+    description:
+      'Completed assignments will appear here with their outcome, final authority and authoritative document version.',
+  };
 
   ngOnInit(): void {
     this.workItemsService.loadCompleted();

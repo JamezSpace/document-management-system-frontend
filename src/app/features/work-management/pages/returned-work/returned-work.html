@@ -28,8 +28,14 @@
       <button hlmBtn variant="outline">New deadline</button>
     </div>
 
-    <div class="grid gap-4 lg:grid-cols-2">
-      @for (item of workItemsService.returnedItems(); track item.id) {
+    @if (!workItemsService.returnedLoading() && workItemsService.returnedItems().length === 0) {
+      <nexus-empty-state [state]="emptyState" />
+    } @else {
+      <div
+        class="grid gap-4 lg:grid-cols-2"
+        [attr.aria-busy]="workItemsService.returnedLoading()"
+      >
+        @for (item of workItemsService.returnedItems(); track item.id) {
         <article hlmCard class="border bg-card p-5 shadow-xs">
           <div class="flex items-start justify-between gap-3">
             <div>
@@ -75,8 +81,9 @@
             >
           </div>
         </article>
-      }
-    </div>
+        }
+      </div>
+    }
   </section>
 
   <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]">

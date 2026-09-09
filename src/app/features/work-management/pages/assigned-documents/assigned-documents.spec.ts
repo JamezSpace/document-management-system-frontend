@@ -40,10 +40,12 @@ describe('AssignedDocuments', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders the assignment register and work actions', () => {
+  it('renders the empty state when no documents are assigned', () => {
+    fixture.detectChanges();
     const text = fixture.nativeElement.textContent.replace(/\s+/g, ' ');
     expect(text).toContain('Assigned documents');
-    expect(text).toContain('Assigning authority');
+    expect(text).toContain('No documents are assigned to you');
+    expect(text).not.toContain('Assigning authority');
     expect(TestBed.inject(WorkItemsService).assignedItems()).toEqual([]);
   });
 });

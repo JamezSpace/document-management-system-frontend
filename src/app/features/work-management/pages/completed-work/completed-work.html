@@ -27,7 +27,14 @@
     </span>
   </div>
 
-  <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
+  @if (!workItemsService.completedLoading() && workItemsService.completedItems().length === 0) {
+    <nexus-empty-state [state]="emptyState" />
+  } @else {
+  <div
+    hlmTableContainer
+    class="rounded-md border bg-card shadow-xs"
+    [attr.aria-busy]="workItemsService.completedLoading()"
+  >
     <table hlmTable>
       <thead hlmTHead>
         <tr hlmTr>
@@ -68,6 +75,7 @@
       </tbody>
     </table>
   </div>
+  }
 
   <div class="mt-4 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">
     Completed work cannot be edited or deleted here. Corrections must follow the governing

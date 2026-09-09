@@ -40,8 +40,15 @@
             Status
         </button>
     </div>
-    <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
-      <table hlmTable>
+    @if (!workItemsService.assignedLoading() && workItemsService.assignedItems().length === 0) {
+      <nexus-empty-state [state]="emptyState" />
+    } @else {
+      <div
+        hlmTableContainer
+        class="rounded-md border bg-card shadow-xs"
+        [attr.aria-busy]="workItemsService.assignedLoading()"
+      >
+        <table hlmTable>
         <thead hlmTHead>
           <tr hlmTr>
             <th hlmTh>Document</th>
@@ -87,8 +94,9 @@
             </tr>
           }
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    }
   </section>
 
   <hlm-sheet-content *hlmSheetPortal="let ctx" class="w-[min(30rem,100vw)] sm:max-w-[30rem]">
