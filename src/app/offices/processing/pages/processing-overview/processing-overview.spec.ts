@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { WorkItemsService } from '../../../../features/work-management/services/work-items/work-items-service';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 
 import { ProcessingOverview } from './processing-overview';
 
@@ -32,6 +33,10 @@ describe('ProcessingOverview', () => {
         {
           provide: WorkItemsService,
           useValue: { selectedItem: signal(null), loadDetail },
+        },
+        {
+          provide: OfficeContextService,
+          useValue: { route: (...segments: string[]) => `/office/processing/${segments.join('/')}` },
         },
       ],
     })

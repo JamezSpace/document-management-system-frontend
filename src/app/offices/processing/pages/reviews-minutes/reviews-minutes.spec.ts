@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 
 import { ReviewsMinutes } from './reviews-minutes';
 
@@ -10,7 +11,13 @@ describe('ReviewsMinutes', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReviewsMinutes],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: OfficeContextService,
+          useValue: { route: (...segments: string[]) => `/office/processing/${segments.join('/')}` },
+        },
+      ],
     })
     .compileComponents();
 

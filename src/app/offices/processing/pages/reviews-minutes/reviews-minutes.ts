@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowRight, lucideFilter, lucideMessageSquareText, lucideSearch } from '@ng-icons/lucide';
@@ -9,6 +9,7 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import type { WorkItem } from '../../../../models/ui/work-management/WorkItem.ui';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 
 const reviewItems: Record<string, WorkItem> = {
   '8fae41c2': {
@@ -46,6 +47,7 @@ const reviewItems: Record<string, WorkItem> = {
   providers: [provideIcons({ lucideArrowRight, lucideFilter, lucideMessageSquareText, lucideSearch })],
 })
 export class ReviewsMinutes {
+  readonly officeContext = inject(OfficeContextService);
   readonly reviews = [
     { ...reviewItems['8fae41c2'], minutes: '2 previous minutes' },
     { ...reviewItems['21d409ba'], minutes: '4 previous minutes' },

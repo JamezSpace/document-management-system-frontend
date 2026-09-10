@@ -1,16 +1,12 @@
-<!-- breadcrumb at the top -->
-<nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-xs">
-      @for (directory of directories(); track $index) {
-      <li hlmBreadcrumbItem>
-        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
-      </li>
-
-      <!-- that is, if there still exists a next directory -->
-      @if ($index + 1 !== directories().length) {
-        <li hlmBreadcrumbSeparator></li>
-      }
-    }
+<nav hlmBreadcrumb aria-label="Breadcrumb">
+  <ol hlmBreadcrumbList>
+    <li hlmBreadcrumbItem>
+      <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+    </li>
+    <li hlmBreadcrumbSeparator></li>
+    <li hlmBreadcrumbItem>
+      <span hlmBreadcrumbPage>My task ledger</span>
+    </li>
   </ol>
 </nav>
 

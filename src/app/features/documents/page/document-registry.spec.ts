@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { OfficeContextService } from '../../../office-platform/context/office-context.service';
 
 import { DocumentRegistry } from './document-registry';
 
@@ -8,7 +9,13 @@ describe('DocumentRegistry', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DocumentRegistry]
+      imports: [DocumentRegistry],
+      providers: [
+        {
+          provide: OfficeContextService,
+          useValue: { route: (...segments: string[]) => `/office/processing/${segments.join('/')}` },
+        },
+      ],
     })
     .compileComponents();
 

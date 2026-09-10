@@ -21,6 +21,7 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { HlmTableImports } from '@spartan-ng/helm/table';
 import { WorkItemsService } from '../../../../features/work-management/services/work-items/work-items-service';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 import { DatePipe } from '@angular/common';
 
 
@@ -57,7 +58,8 @@ export type ProcessingScreenKey = 'overview' | 'escalated';
   ],
 })
 export class ProcessingOverview {
-    private readonly route = inject(ActivatedRoute);
+  private readonly route = inject(ActivatedRoute);
+  readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
 
   readonly screen = computed(() => this.route.snapshot.data['screen'] as ProcessingScreenKey);

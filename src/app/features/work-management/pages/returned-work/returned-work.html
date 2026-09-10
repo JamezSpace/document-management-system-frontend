@@ -2,7 +2,9 @@
   <section class="mx-auto max-w-[96rem] pb-10">
     <nav hlmBreadcrumb aria-label="Breadcrumb">
       <ol hlmBreadcrumbList>
-        <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Office</span></li>
+        <li hlmBreadcrumbItem>
+          <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+        </li>
         <li hlmBreadcrumbSeparator></li>
         <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Returned work</span></li>
       </ol>

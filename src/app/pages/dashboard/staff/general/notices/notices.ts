@@ -1,5 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, effect, inject } from '@angular/core';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
 import { HlmInputGroupImports } from '@spartan-ng/helm/input-group';
@@ -14,6 +13,8 @@ import { NoticesApi } from '../../../../../models/api/notices/notices.api';
 import type { EmptyStateConfig } from '../../../../../models/ui/global/EmptyState.ui';
 import { EmptyState } from '../../../../../shared/components/empty-state/empty-state';
 import { officeActivityContext } from '../../../../../office-platform/activity/office-activity.context';
+import { OfficeContextService } from '../../../../../office-platform/context/office-context.service';
+import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
 
 @Component({
   selector: 'nexus-notices',
@@ -25,6 +26,7 @@ import { officeActivityContext } from '../../../../../office-platform/activity/o
     HlmTooltipImports,
     NgIcon,
     EmptyState,
+    HlmBreadCrumbImports,
 ],
   templateUrl: './notices.html',
   styleUrl: './notices.css',
@@ -33,7 +35,7 @@ import { officeActivityContext } from '../../../../../office-platform/activity/o
   })],
 })
 export class Notices {
-  private activatedRouter = inject(ActivatedRoute);
+  readonly officeContext = inject(OfficeContextService);
   noticeService = inject(NoticesService);
   currentStaffService = inject(CurrentStaffService);
 
@@ -47,13 +49,6 @@ export class Notices {
     actions: [{ id: 'refresh-notices', label: 'Check again', appearance: 'secondary' }],
   };
   private noticesRequested = false;
-
-  directories = signal<string[]>([]);
-  ngOnInit(): void {
-    const currentPath = this.activatedRouter.snapshot.url.toString();
-
-    this.directories.set(currentPath.split(','));
-  }
 
   private afterInitEffect = effect(() => {
     const staff = this.signedInStaff();
