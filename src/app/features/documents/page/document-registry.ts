@@ -62,6 +62,8 @@ import { MinutesService } from '../service/minutes/minutes-service';
 import { RegistryService } from '../service/registry/registry-service';
 import { UnitMembersService } from '../service/unit-members/unit-members-service';
 import { DocumentApi } from '../../../models/api/documents/Document.api';
+import type { BussFunctionApi } from '../../../models/api/documents/bussFunction/bussFunction.api';
+import type { CorrSubjectApi } from '../../../models/api/documents/corrSubject/corrSubject.api';
 import { UnitsApi } from '../../../models/api/organization/units.api';
 import { SideModal } from '../../../shared/components/side-modal/side-modal';
 import { DocumentDetails } from '../components/document-details/document-details';
@@ -72,6 +74,7 @@ import { CurrentStaffService } from '../../shared/services/current-staff/current
 import { StaffService } from '../../../core/services/page-wide/dashboard/operations/hr/staff/staff-service';
 import { SensitivityLevel } from '../../../enums/document/document.enum';
 import { officeActivityContext } from '../../../office-platform/activity/office-activity.context';
+import { OfficeContextService } from '../../../office-platform/context/office-context.service';
 
 
 @Component({
@@ -144,6 +147,7 @@ export class DocumentRegistry implements OnInit {
   documentService = inject(DocumentService);
   minutesService = inject(MinutesService);
   activatedRouter = inject(ActivatedRoute);
+  readonly officeContext = inject(OfficeContextService);
 
   readonly signedInStaff = this.currentStaffService.data;
 
@@ -158,12 +162,7 @@ export class DocumentRegistry implements OnInit {
     { label: 'Shared', value: 'shared' },
   ];
 
-  directories = signal<string[]>([]);
   ngOnInit(): void {
-    const currentPath = this.activatedRouter.snapshot.url.toString();
-
-    this.directories.set(currentPath.split(','));
-
     // document init deps
     this.corrSubjectService.fetchCorrSubjects(officeActivityContext());
     this.businessFunctionService.fetchBussFunctions(officeActivityContext());
@@ -397,17 +396,19 @@ export class DocumentRegistry implements OnInit {
     this.documentDirectionSelectionDialog.close();
   }
 
-  selectedCorrSubject = signal<any>(null);
+  selectedCorrSubject = signal<CorrSubjectApi | null>(null);
   filteredBussFunctions = computed(() => {
-    if (!this.selectedCorrSubject()) return [];
+    const selectedSubject = this.selectedCorrSubject();
+    if (!selectedSubject) return [];
 
     return this.businessFunctionService
       .bussFunctions()
-      .filter((func) => func.subjectId === this.selectedCorrSubject().id);
+      .filter((func) => func.subjectId === selectedSubject.id);
   });
 
-  onSubjectSelection(selectedSubject: any) {
+  onSubjectSelection(selectedSubject: CorrSubjectApi) {
     this.selectedCorrSubject.set(selectedSubject);
+    this.initDocFormGroup.controls.functionCodeObject.reset();
   }
 
   unitsView = signal<UnitsApi[]>([]);
@@ -500,12 +501,10 @@ export class DocumentRegistry implements OnInit {
       nonNullable: true,
       validators: Validators.required,
     }),
-    subjectCodeObject: new FormControl<any>('', {
-      nonNullable: true,
+    subjectCodeObject: new FormControl<CorrSubjectApi | null>(null, {
       validators: Validators.required,
     }),
-    functionCodeObject: new FormControl<any>('', {
-      nonNullable: true,
+    functionCodeObject: new FormControl<BussFunctionApi | null>(null, {
       validators: Validators.required,
     }),
     sensitivity: new FormControl<SensitivityLevel>(
@@ -518,31 +517,31 @@ export class DocumentRegistry implements OnInit {
   });
 
   submitDocInitData() {
-    this.showLoader();
-
     const staff = this.signedInStaff();
     const initializedDoc = this.initDocument();
-    if (!initializedDoc || !staff) return;
-
     const docForm = this.initDocFormGroup;
+    const formValue = docForm.getRawValue();
+    const { functionCodeObject, subjectCodeObject } = formValue;
+
+    if (!initializedDoc || !staff || !functionCodeObject || !subjectCodeObject) return;
+
+    this.showLoader();
 
     const originatingUnitId = staff.unit.id!,
       recipientUnitId =
         initializedDoc.direction === 'internal'
           ? originatingUnitId
-          : docForm.getRawValue().recipientUnitId!,
-      functionCodeObject = docForm.getRawValue().functionCodeObject,
+          : formValue.recipientUnitId!,
       functionCodeId = functionCodeObject.id,
       functionCode = functionCodeObject.code,
-      subjectCodeObject = docForm.getRawValue().subjectCodeObject,
       subjectCodeId = subjectCodeObject.id,
       subjectCode = subjectCodeObject.code,
-      title = docForm.getRawValue().title,
-      sensitivity = docForm.getRawValue().sensitivity.toLowerCase(),
+      title = formValue.title,
+      sensitivity = formValue.sensitivity.toLowerCase(),
       direction = initializedDoc.direction,
       documentTypeId = initializedDoc.docTypeId,
       addressedToDesignationId =
-        direction === 'external' ? null : docForm.getRawValue().addressedToDesignationId;
+        direction === 'external' ? null : formValue.addressedToDesignationId;
 
     this.documentService.initDocument({
       title,
