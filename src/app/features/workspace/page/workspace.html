@@ -18,6 +18,7 @@
         (previewRequested)="previewDocument()"
         (printRequested)="printCorrespondence()"
         (exportRequested)="exportCorrespondence()"
+        (dispatchRequested)="submitDocument()"
       />
 
       <div class="flex flex-start relative">
@@ -51,88 +52,3 @@
     }
   }
 </div>
-
-<hlm-alert-dialog #submitDocumentDialog>
-  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[45vw] gap-0 p-0">
-    <div class="relative top-0" [class.hidden]="!documentLoading()">
-      <p class="opacity-0">.</p>
-      <nexus-line-loader />
-    </div>
-
-    <div class="p-4" [class.pt-0]="documentLoading()">
-      <hlm-alert-dialog-header>
-        <h2 hlmAlertDialogTitle>Confirm Submission</h2>
-        <div hlmAlertDialogDescription class="space-y-4 text-slate-700">
-          @if (isExternalMemo(document())) {
-            <p>
-              You are about to transition this correspondence into the
-              <span class="font-bold text-nexus-indigo uppercase tracking-tight"
-                >Official Review Pipeline</span
-              >.
-            </p>
-
-            <div class="bg-slate-100 p-4 border-l-2 border-slate-400 rounded-r-md">
-              <p class="text-sm leading-relaxed">
-                Upon submission, this document will be formally
-                <span
-                  class="font-semibold text-slate-900 underline underline-offset-4 decoration-slate-300"
-                  >Locked for Review</span
-                >. All subsequent modifications will require a formal rejection or revision request.
-              </p>
-            </div>
-
-            <div class="flex items-start gap-3 p-3 bg-amber-50 border border-amber-100 rounded-sm">
-              <ng-icon name="lucideFileLock" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-
-              <p class="text-xs text-amber-800 italic">
-                This action is recorded in the institutional audit log. Please ensure the accuracy
-                of all metadata and attachments before proceeding.
-              </p>
-            </div>
-          } @else {
-            <p>
-              You are about to dispatch this internal correspondence to the
-              <span class="font-bold text-nexus-indigo uppercase tracking-tight">{{
-                getAddresseeDesignation(document()!)
-              }}</span
-              >.
-            </p>
-
-            <div class="bg-slate-100 p-4 border-l-2 border-slate-500 rounded-r-md">
-              <p class="text-sm leading-relaxed">
-                Once dispatched, the document becomes an
-                <span class="font-semibold text-slate-900">Active Assignment</span>
-                within the recipient's workspace and will be locked in your outgoing records.
-              </p>
-            </div>
-
-            <div class="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-sm">
-              <ng-icon name="lucideSend" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-
-              <p class="text-xs text-blue-800 italic">
-                The recipient will be notified. Further revisions will require the document to be
-                returned to your desk.
-              </p>
-            </div>
-          }
-        </div>
-      </hlm-alert-dialog-header>
-
-      <hlm-alert-dialog-footer class="mt-2.5">
-        <button hlmAlertDialogCancel (click)="ctx.close()">Return to Draft</button>
-
-        <button
-          (click)="submitDocument(); ctx.close()"
-          hlmAlertDialogAction
-          class="capitalize bg-primary text-white flex-center justify-center px-4 rounded-xs ring"
-        >
-          @if (isExternalMemo(document())) {
-            <span>Submit & Lock Record</span>
-          } @else {
-            <span>Dispatch Correspondence</span>
-          }
-        </button>
-      </hlm-alert-dialog-footer>
-    </div>
-</hlm-alert-dialog-content>
-</hlm-alert-dialog>

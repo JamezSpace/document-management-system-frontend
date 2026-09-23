@@ -1,11 +1,6 @@
 import { Component, computed, effect, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideFileLock, lucideSend } from '@ng-icons/lucide';
-import { BrnAlertDialogContent } from '@spartan-ng/brain/alert-dialog';
-import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { WorkspaceActions } from '../../../enums/workspace/actions.enum';
-import { DocumentApi } from '../../../models/api/documents/Document.api';
 import { LineLoader } from '../../../shared/components/loaders/line-loader/line-loader';
 import { UtilService } from '../../../shared/utils/service/util-service';
 import { AuthService } from '../../auth/service/auth-service';
@@ -31,10 +26,7 @@ import { GovernanceService } from '../service/data/governance-service';
 @Component({
   selector: 'nexus-workspace',
   imports: [
-    NgIcon,
     LineLoader,
-    BrnAlertDialogContent,
-    HlmAlertDialogImports,
     Toolbar,
     CompositionContextPanel,
     DocumentInspector,
@@ -46,7 +38,6 @@ import { GovernanceService } from '../service/data/governance-service';
   ],
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
-  providers: [provideIcons({ lucideFileLock, lucideSend })],
 })
 export class Workspace implements OnInit, OnDestroy {
   @ViewChild(PaperControls) private paperControls?: PaperControls;
@@ -67,7 +58,6 @@ export class Workspace implements OnInit, OnDestroy {
 
   readonly workspaceLoading = this.workspaceService.loading;
   readonly workspaceError = this.workspaceService.error;
-  readonly documentLoading = this.documentService.loading;
   readonly signedInStaff = this.currentStaffService.data;
   readonly workspaceContext = this.workspaceService.workspaceContext;
   readonly document = computed(() => this.workspaceContext()?.metadata.document ?? null);
@@ -214,17 +204,6 @@ export class Workspace implements OnInit, OnDestroy {
       this.organizationService.fetchAllDesignations();
     }
   });
-
-  isExternalMemo(document: DocumentApi | null): boolean {
-    return document?.correspondence.direction === 'external';
-  }
-
-  getAddresseeDesignation(document: DocumentApi): string {
-    const staffId = document.correspondence.addressedToStaffId;
-    if (!staffId) return '';
-
-    return this.unitMembersService.data().find((member) => member.id === staffId)?.designation?.title ?? '';
-  }
 
   submitDocument(): void {
     const document = this.document();

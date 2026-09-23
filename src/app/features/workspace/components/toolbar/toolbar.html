@@ -64,20 +64,43 @@
           type="button"
           class="nexus-button flex-center gap-2 scale-90"
           [hlmAlertDialogTriggerFor]="saveChangesDialog"
+          [disabled]="saving()"
+          [attr.aria-busy]="saving()"
         >
+          @if (saving()) {
+            <hlm-spinner />
+          } @else {
+            {{ action.label }}
+          }
+        </button>
+        } @else if (action.action === 'dispatch') {
+        <button
+          type="button"
+          class="nexus-button flex-center gap-2 scale-90"
+          [hlmAlertDialogTriggerFor]="dispatchCorrespondenceDialog"
+          [disabled]="submitting()"
+          [attr.aria-busy]="submitting()"
+        >
+          <ng-icon name="lucideSend" />
           {{ action.label }}
         </button>
         } @else {
         <button
           type="button"
           class="nexus-button authority flex-center gap-2 scale-90"
+          [disabled]="saving()"
+          [attr.aria-busy]="saving()"
           (click)="performPrimaryAction(action.action)"
         >
-          @if (action.icon) {
-            <ng-icon [name]="action.icon" />
-          }
+          @if (saving()) {
+            <hlm-spinner />
+          } @else {
+            @if (action.icon) {
+              <ng-icon [name]="action.icon" />
+            }
 
-          {{ action.label }}
+            {{ action.label }}
+          }
         </button>
         }
       }
@@ -112,6 +135,108 @@
           <hlm-spinner />
         } @else {
           Save changes
+        }
+      </button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+
+<hlm-alert-dialog #dispatchCorrespondenceDialog>
+  <hlm-alert-dialog-content
+    *hlmAlertDialogPortal="let ctx"
+    class="min-w-[min(38rem,92vw)]"
+  >
+    <hlm-alert-dialog-header>
+      <p class="text-xs font-semibold uppercase tracking-wider text-primary">
+        Correspondence dispatch
+      </p>
+      <h2 hlmAlertDialogTitle>Send this correspondence?</h2>
+      <p hlmAlertDialogDescription>
+        Review the lifecycle and audit consequences before sending the current document version.
+      </p>
+    </hlm-alert-dialog-header>
+
+    @if (ui().document; as document) {
+      <section class="rounded-md border bg-muted/50 p-4">
+        <p class="font-medium">{{ document.title }}</p>
+        <p class="mt-1 font-mono text-xs text-muted-foreground">
+          {{ document.referenceNumber || 'Reference pending' }} · Revision {{ document.revision }}
+        </p>
+
+        <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+          <div>
+            <dt class="text-xs text-muted-foreground">Current state</dt>
+            <dd class="mt-1 font-medium capitalize">
+              {{ document.currentVersion?.lifecycle?.currentState || 'Draft' }}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Proposed state</dt>
+            <dd class="mt-1 font-medium text-primary">Submitted</dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Classification</dt>
+            <dd class="mt-1 font-medium capitalize">{{ document.classification.sensitivity }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Authority</dt>
+            <dd class="mt-1 font-medium">Your granted dispatch capability</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        class="flex items-start gap-3 rounded-md border border-(--brand-info)/35 bg-(--brand-info)/10 p-4"
+      >
+        <ng-icon name="lucideSend" class="mt-0.5 shrink-0 text-(--brand-info)" />
+        <div class="text-sm">
+          <p class="font-semibold">Dispatch consequence</p>
+          <p class="mt-1 text-muted-foreground">
+            The exact revision will enter the recipient workflow. Further changes require the
+            correspondence to be returned through the governed workflow.
+          </p>
+        </div>
+      </section>
+
+      <dl class="grid gap-3 text-sm">
+        <div>
+          <dt class="font-semibold">Is this reversible?</dt>
+          <dd class="mt-1 text-muted-foreground">
+            Not directly. The recipient or responsible authority must return the correspondence.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-semibold">What evidence will be recorded?</dt>
+          <dd class="mt-1 text-muted-foreground">
+            Your authenticated identity, authority, document revision, lifecycle transition and
+            timestamp will be retained in the audit trail.
+          </dd>
+        </div>
+      </dl>
+    }
+
+    <hlm-alert-dialog-footer>
+      <button
+        hlmAlertDialogCancel
+        type="button"
+        [disabled]="submitting()"
+        (click)="ctx.close()"
+      >
+        Keep editing
+      </button>
+      <button
+        type="button"
+        class="nexus-button flex-center justify-center gap-2"
+        [disabled]="submitting()"
+        [attr.aria-busy]="submitting()"
+        (click)="dispatchCorrespondence()"
+      >
+        @if (submitting()) {
+          <hlm-spinner />
+          Sending
+        } @else {
+          <ng-icon name="lucideSend" />
+          Send correspondence
         }
       </button>
     </hlm-alert-dialog-footer>
