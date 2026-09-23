@@ -21,4 +21,5 @@ const emptyUnit: UnitsApi = {
   subunits: []
 };
 
-export { type UnitsApi, emptyUnit };
+export { emptyUnit };
+export type { UnitsApi };

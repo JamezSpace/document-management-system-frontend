@@ -1,16 +1,12 @@
-<!-- breadcrumb at the top -->
-<nav hlmBreadcrumb>
-  <ol hlmBreadcrumbList class="text-(--brand-accent-shade-1) text-xs flex-center gap-x-0.5">
-    @for (directory of directories(); track $index) {
-      <li hlmBreadcrumbItem>
-        <button hlmBreadcrumbLink class="capitalize">{{ directory }}</button>
-      </li>
-
-      <!-- that is, if there still exists a next directory -->
-      @if ($index + 1 < directories().length) {
-        <li hlmBreadcrumbSeparator>&Backslash;</li>
-      }
-    }
+<nav hlmBreadcrumb aria-label="Breadcrumb">
+  <ol hlmBreadcrumbList>
+    <li hlmBreadcrumbItem>
+      <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+    </li>
+    <li hlmBreadcrumbSeparator></li>
+    <li hlmBreadcrumbItem>
+      <span hlmBreadcrumbPage>Notices</span>
+    </li>
   </ol>
 </nav>
 
@@ -111,31 +107,34 @@
 </div>
 
 @if (!noticeService.loading()) {
-<section>
-  @if (sortedNotificationsEntries().length === 0) {
-    <nexus-empty-state [state]="emptyState" (actionSelected)="handleEmptyStateAction($event)" />
-  } @else {
-    @for (entry of sortedNotificationsEntries(); track entry[0]) {
-      <div class="flex flex-col w-full gap-3.5 mb-2.5">
-        <p nata-muted>{{ entry[0] }}</p>
+  <section>
+    @if (sortedNotificationsEntries().length === 0) {
+      <nexus-empty-state
+        [state]="emptyState"
+        (actionSelected)="handleEmptyStateAction($event)"
+        />
+    } @else {
+      @for (entry of sortedNotificationsEntries(); track entry[0]) {
+        <div class="flex flex-col w-full gap-3.5 mb-2.5">
+          <p nata-muted>{{ entry[0] }}</p>
 
-        @for (notif of entry[1]; track notif.notificationId) {
-          <section class="notif-container">
-            <div class="actions">
-              <button class="flex-center justify-center w-full h-full" hlmTooltip="Mark as Read">
-                <ng-icon name="hugeTickDouble02" size="1.2rem" />
-              </button>
-            </div>
-            <article class="p-4">
-              <p class="capitalize font-bold text-[110%]">{{ notif.inAppSubjectName }}</p>
-              <p class="mt-1">
-                {{ notif.messageTemplate }}
-              </p>
-            </article>
-          </section>
-        }
-      </div>
+          @for (notif of entry[1]; track notif.notificationId) {
+            <section class="notif-container">
+              <div class="actions">
+                <button class="flex-center justify-center w-full h-full" hlmTooltip="Mark as Read">
+                  <ng-icon name="hugeTickDouble02" size="1.2rem" />
+                </button>
+              </div>
+              <article class="p-4">
+                <p class="capitalize font-bold text-[110%]">{{ notif.inAppSubjectName }}</p>
+                <p class="mt-1">
+                  {{ notif.messageTemplate }}
+                </p>
+              </article>
+            </section>
+          }
+        </div>
+      }
     }
-  }
-</section>
+  </section>
 }

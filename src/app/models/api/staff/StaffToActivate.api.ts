@@ -9,4 +9,4 @@ interface StaffToActivate {
     completedAt: Date | null;
 }
 
-export type {StaffToActivate}
+export type { StaffToActivate };

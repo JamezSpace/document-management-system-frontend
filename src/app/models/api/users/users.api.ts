@@ -20,4 +20,4 @@ interface Users {
 	status: IdentityStatus;
 }
 
-export type {Users};
+export type { Users };

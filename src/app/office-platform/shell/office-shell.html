@@ -5,12 +5,12 @@
       @if (!sidebarClosed() && context(); as office) {
         <div class="min-w-0">
           <p class="truncate text-xs font-semibold">{{ office.definition.label }}</p>
-          <p class="truncate text-[10px] text-muted-foreground">{{ office.officeName }}</p>
+          <p class="truncate text-xs text-(--sidebar-muted-foreground)">{{ office.officeName }}</p>
         </div>
       }
     </header>
 
-    <hlm-separator />
+    <hlm-sidebar-separator />
 
     <div class="flex-1 overflow-y-auto overflow-x-hidden">
       @for (group of navigation(); track group.label) {
@@ -32,18 +32,18 @@
       }
     </div>
 
-    <hlm-separator />
+    <hlm-sidebar-separator />
     <footer hlmSidebarFooter>
       <ul hlmSidebarMenu>
         <li hlmSidebarMenuItem>
-          <button type="button" hlmSidebarMenuButton><ng-icon name="lucideSettings" /><span>Settings</span></button>
+          <a hlmSidebarMenuButton routerLink="settings" [isActive]="isActive('settings')"><ng-icon name="lucideSettings" /><span>Settings</span></a>
         </li>
         <li hlmSidebarMenuItem>
           <button type="button" hlmSidebarMenuButton [hlmAlertDialogTriggerFor]="logOutDialog">
             <ng-icon name="lucideLogOut" /><span>Logout</span>
           </button>
         </li>
-        <hlm-separator />
+        <hlm-sidebar-separator />
         @if (staff(); as member) {
           <li hlmSidebarMenuItem>
             <div class="flex items-center gap-3 px-2 py-1">
@@ -56,7 +56,7 @@
               @if (!sidebarClosed()) {
                 <div class="min-w-0">
                   <p class="truncate text-sm font-medium">{{ member.fullName }}</p>
-                  <p class="truncate text-xs text-muted-foreground">{{ member.designation.title || 'No designation' }}</p>
+                  <p class="truncate text-xs text-(--sidebar-muted-foreground)">{{ member.designation.title || 'No designation' }}</p>
                 </div>
               }
             </div>

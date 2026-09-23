@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { OfficeContextService } from '../context/office-context.service';
-import type { OfficeWorkbenchKey } from '../models/office-workbench';
+import type { OfficeWorkbenchKey } from '../../models/ui/office-platform/office-workbench';
 
 export const officeLandingGuard: CanActivateFn = () => {
   const officeContext = inject(OfficeContextService);

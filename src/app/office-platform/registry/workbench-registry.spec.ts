@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { WorkbenchRegistry } from './workbench-registry';
-import { OFFICE_WORKBENCH_KEYS } from '../models/office-workbench';
+import { OFFICE_WORKBENCH_KEYS } from '../../models/ui/office-platform/office-workbench';
 
 describe('WorkbenchRegistry', () => {
   let registry: WorkbenchRegistry;

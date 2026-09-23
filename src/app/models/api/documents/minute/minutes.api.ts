@@ -19,4 +19,4 @@ interface InitMinutePayload {
 	parentMinuteId?: string | null;
 }
 
-export type {MinuteApi, InitMinutePayload};
+export type { InitMinutePayload, MinuteApi };

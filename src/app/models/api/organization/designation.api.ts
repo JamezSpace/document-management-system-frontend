@@ -13,4 +13,5 @@ const emptyDesignation: DesignationApi = {
   title: ''
 }
 
-export { type DesignationApi, emptyDesignation };
+export { emptyDesignation };
+export type { DesignationApi };

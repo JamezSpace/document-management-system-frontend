@@ -1,17 +1,9 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { AppContextService } from '../../core/services/app-context/app-context.service';
-import type { OfficeWorkbenchDefinition } from '../models/office-navigation';
-import type { OfficeWorkbenchKey } from '../models/office-workbench';
-import { isOfficeWorkbenchKey } from '../models/office-workbench';
+import type { OfficeWorkbenchKey } from '../../models/ui/office-platform/office-workbench';
+import { isOfficeWorkbenchKey } from '../../models/ui/office-platform/office-workbench';
+import type { ActiveOfficeContext } from '../../models/ui/office-platform/ActiveOfficeContext.ui';
 import { WorkbenchRegistry } from '../registry/workbench-registry';
-
-export interface ActiveOfficeContext {
-  officeId: string;
-  officeName: string;
-  unitId: string;
-  workbench: OfficeWorkbenchKey;
-  definition: OfficeWorkbenchDefinition;
-}
 
 @Injectable({ providedIn: 'root' })
 export class OfficeContextService {
@@ -51,16 +43,18 @@ export class OfficeContextService {
 
   canEnter(workbench: OfficeWorkbenchKey): boolean {
     const active = this.active();
+
     if (!active || active.workbench !== workbench) return false;
+
     const required = active.definition.accessCapabilities;
+
     return required.length === 0 || this.hasAny(required);
   }
 
   private resolveWorkbench(explicitWorkbench: unknown): OfficeWorkbenchKey {
     if (isOfficeWorkbenchKey(explicitWorkbench)) return explicitWorkbench;
 
-    // Compatibility boundary for older identity responses. The backend should send
-    // office.workbench; capability/assignment inference can then be removed.
+    // Compatibility boundary for older identity responses. The backend should send office.workbench; capability/assignment inference can then be removed.
     const actor = this.appContext.actor();
     const capabilities = this.appContext.capabilities();
     const roles = actor?.authority.roleAssignments.map((assignment) => assignment.role.toLowerCase()) ?? [];

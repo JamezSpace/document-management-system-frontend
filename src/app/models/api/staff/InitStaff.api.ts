@@ -27,4 +27,4 @@ interface InviteStaffPayload {
     createdBy: string
 }
 
-export type { InitStaffPayload, InviteStaffPayload }
+export type { InitStaffPayload, InviteStaffPayload };

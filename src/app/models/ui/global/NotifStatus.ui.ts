@@ -4,4 +4,4 @@ interface NotifStatus {
     description: string;
 }
 
-export type {NotifStatus}
+export type { NotifStatus };

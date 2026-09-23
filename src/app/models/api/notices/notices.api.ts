@@ -18,4 +18,4 @@ interface NoticesApi {
 	createdAt: Date;
 }
 
-export type {NoticesApi};
+export type { NoticesApi };

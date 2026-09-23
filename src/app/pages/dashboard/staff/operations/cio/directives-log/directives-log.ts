@@ -15,7 +15,7 @@ import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTextareaImports } from '@spartan-ng/helm/textarea';
 import { SideModalService } from '../../../../../../core/services/page-wide/dashboard/generic/side-modal/side-modal-service';
 import { DirectivesService } from '../../../../../../core/services/page-wide/dashboard/operations/cio/directives/directives-service';
-import { DirectiveUi } from '../../../../../../models/api/directive/Directive.ui';
+import type { DirectiveUi } from '../../../../../../models/ui/directive/Directive.ui';
 import { DirectiveDetail } from '../../../../../../shared/components/dashboard-wide/operations/directive-detail/directive-detail';
 import { SideModal } from '../../../../../../shared/components/side-modal/side-modal';
 

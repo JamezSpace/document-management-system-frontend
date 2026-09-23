@@ -1,4 +1,4 @@
-import type { OfficeWorkbenchKey } from '../../../office-platform/models/office-workbench';
+import type { OfficeWorkbenchKey } from '../../ui/office-platform/office-workbench';
 
 interface BaseStaffEntity {
   id: string;
