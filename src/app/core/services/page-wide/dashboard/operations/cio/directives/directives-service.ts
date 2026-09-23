@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { DirectiveApi } from '../../../../../../../models/api/directive/Directive.api';
-import { DirectiveUi } from '../../../../../../../models/api/directive/Directive.ui';
+import type { DirectiveUi } from '../../../../../../../models/ui/directive/Directive.ui';
 import { DirectiveDetailApi } from '../../../../../../../models/api/directive/DirectiveDetail.api';
 import { StaffLoginApi } from '../../../../../../../models/api/staff/StaffLogin.api';
 

@@ -40,7 +40,7 @@ export class DocumentItem {
     const themes: Record<string, { classes: string, icon: string }> = {
       'draft': { classes: 'border-amber-500/50 bg-amber-500/10 text-amber-600', icon: 'hugeFile02' },
       'submitted': { classes: 'border-amber-500/50 bg-amber-500/10 text-amber-600', icon: 'hugeFile02' },
-      'in_review': { classes: 'border-[#c5a059]/80 bg-[#c5a059]/10 text-[#c5a059] animate-pulse', icon: 'hugeFileValidation' },
+      'in_review': { classes: 'border-(--brand-info)/35 bg-(--brand-info)/10 text-(--brand-info) animate-pulse', icon: 'hugeFileValidation' },
       'approved': { classes: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-600', icon: 'hugeFileCheckmark02' },
       'active': { classes: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-600', icon: 'hugeFileCheckmark02' },
       'declared_record': { classes: 'border-blue-500/50 bg-blue-500/10 text-blue-600', icon: 'hugeFileShield02' },

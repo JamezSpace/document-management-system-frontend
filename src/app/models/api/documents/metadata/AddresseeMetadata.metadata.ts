@@ -10,4 +10,5 @@ const emptyAddressee: AddresseeMetadata = {
     isPrimary: true
 }
 
-export { type AddresseeMetadata, emptyAddressee };
+export { emptyAddressee };
+export type { AddresseeMetadata };

@@ -1,10 +1,6 @@
 import { computed, Injectable, Signal, signal } from '@angular/core';
 import { Delta, Op } from 'quill';
-
-export interface WorkspacePendingChange {
-  key: string;
-  description: string;
-}
+import type { WorkspacePendingChange } from '../../../../models/ui/workspace/WorkspacePendingChange.ui';
 
 @Injectable({
   providedIn: 'root',

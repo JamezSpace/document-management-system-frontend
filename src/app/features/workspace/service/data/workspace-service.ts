@@ -1,7 +1,7 @@
 import { HttpContext } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-import { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../models/api/workspace/signature/signature.ui';
+import type { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../models/ui/workspace/signature/signature.ui';
 import { WorkspaceContextApi } from '../../../../models/api/workspace/WorkspaceContext.api';
 import { ERROR_SURFACE } from '../../../../core/interceptors/error/error-context';
 import { ErrorSurface } from '../../../../enums/global/errorSurface.enum';

@@ -9,4 +9,4 @@ interface DocumentVersion {
 	lifecycle: LifecycleMetadata;
 }
 
-export type {DocumentVersion};
+export type { DocumentVersion };

@@ -9,4 +9,4 @@ interface DirectiveDetailApi {
     modified: Date | null
 }
 
-export type {DirectiveDetailApi};
+export type { DirectiveDetailApi };

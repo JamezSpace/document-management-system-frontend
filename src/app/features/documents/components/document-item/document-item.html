@@ -1,13 +1,13 @@
 <section
-  class="rounded-xs button-box-shadow p-1 min-w-40 w-full min-h-56 flex flex-col items-center relative transition-transform hover:cursor-pointer hover:outline hover:scale-95">
+  class="rounded-xs bg-card text-card-foreground button-box-shadow p-1 min-w-40 w-full min-h-56 flex flex-col items-center relative transition-transform hover:cursor-pointer hover:outline hover:scale-95">
   @if (documentItem().shared) {
     <span
-      class="absolute top-1 right-1 text-[10px] px-2 rounded-xs border uppercase font-medium transition-colors border-emerald-500/50 bg-emerald-500/10 text-emerald-600">
+      class="absolute top-1 right-1 text-xs px-2 rounded-xs border uppercase font-medium transition-colors border-emerald-500/50 bg-emerald-500/10 text-emerald-600">
       shared
     </span>
   } @else {
     <span
-      class="absolute top-1 right-1 text-[10px] px-2 rounded-xs border uppercase font-medium transition-colors {{
+      class="absolute top-1 right-1 text-xs px-2 rounded-xs border uppercase font-medium transition-colors {{
         statusInfo().classes
       }}">
       {{ displayState() }}
@@ -22,7 +22,7 @@
 
   <div class="pl-1.5 w-full flex-center justify-between">
     <article>
-      <p class="capitalize text-[15px] font-medium hover:underline" (click)="openWorkspaceEditor()">
+      <p class="capitalize text-sm font-medium hover:underline" (click)="openWorkspaceEditor()">
         {{ documentItem().title }}
       </p>
     </article>

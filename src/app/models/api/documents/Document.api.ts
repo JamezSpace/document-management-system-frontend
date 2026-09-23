@@ -81,5 +81,6 @@ const emptyDocument: DocumentApi = {
   updatedAt: null,
 };
 
-export {emptyDocument, type DocumentApi, type DocumentApiWithSharedTag, type InitDocumentApiPayload };
+export { emptyDocument };
+export type { DocumentApi, DocumentApiWithSharedTag, InitDocumentApiPayload };
 
