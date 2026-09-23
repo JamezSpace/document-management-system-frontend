@@ -17,7 +17,7 @@ export class DocumentsApi {
   }
 
   submit(documentId: string, revision: number) {
-    return this.api.postResponse<DocumentDto>(`document/${documentId}/submit`, {}, {
+    return this.api.postResponse<DocumentDto>(`document/${documentId}/submit`, null, {
       headers: { 'If-Match': `"${revision}"` },
     });
   }

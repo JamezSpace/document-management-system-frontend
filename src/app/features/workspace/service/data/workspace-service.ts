@@ -10,7 +10,6 @@ import { WorkspaceActions } from '../../../../enums/workspace/actions.enum';
 import { Router } from '@angular/router';
 import { WorkspaceUiService } from '../ui/workspace-ui-service';
 import DocumentService from '../../../shared/services/document/DocumentService';
-import { CurrentStaffService } from '../../../shared/services/current-staff/current-staff-service';
 import { OrganizationService } from '../../../shared/services/organization/organization-service';
 import { WorkspacePrimaryAction } from '../../../../models/ui/workspace/WorkspacePrimaryAction.ui';
 import { WorkspaceApi } from '../../../../api/workspace/workspace.api';
@@ -28,7 +27,6 @@ export class WorkspaceService {
   private readonly utilService = inject(UtilService);
   documentService = inject(DocumentService);
   workspaceUiService = inject(WorkspaceUiService);
-  currentStaffService = inject(CurrentStaffService);
   organizationService = inject(OrganizationService);
   
 
@@ -121,41 +119,24 @@ export class WorkspaceService {
     return this.router.navigateByUrl(this.officeContext.route('documents'));
   }
 
+  refreshWorkspace(): void {
+    const documentId = this.workspaceContextDocument()?.id;
+    if (documentId) this.fetchWorkspaceContext(documentId);
+  }
+
   /** CROSS-ENTITY OPERATIONS */
   saveDocument() {
     const context = this.workspaceContext();
-    const actorId = this.currentStaffService.data()?.id;
-    if (!context || !actorId) return;
+    if (!context) return;
 
     const document = context.metadata.document;
-    const direction = document.correspondence.direction;
-    const primaryAddressees = document.addressees.filter((addressee) => addressee.isPrimary);
-    const primaryUnitId = primaryAddressees[0]?.recipientUnitId
-      ?? document.correspondence.recipientUnitId
-      ?? document.correspondence.originatingUnitId;
-    const additionalAddressees = this.workspaceUiService.selectedAdditionalAddresseeIds().map(
-      (id) => direction === 'external'
-        ? { recipientUnitId: id, addressedToDesignationId: null, isPrimary: false }
-        : { recipientUnitId: primaryUnitId, addressedToDesignationId: id, isPrimary: false },
-    );
-    const updatedDocument = {
-      ...document,
-      addressees: [...primaryAddressees, ...additionalAddressees],
-    };
     const delta = this.workspaceUiService.getQuillEditorContent()().deltaContent;
 
-    this.documentService.saveDocument(
+    this.documentService.saveDocumentContent(
       document.id,
-      { document: updatedDocument, contentDelta: delta, actorId },
+      document.revision,
+      delta,
       (savedDocument) => {
-        const savedAdditionalAddresseeIds = savedDocument.addressees
-          .filter((addressee) => !addressee.isPrimary)
-          .map((addressee) => savedDocument.correspondence.direction === 'external'
-            ? addressee.recipientUnitId
-            : addressee.addressedToDesignationId,
-          )
-          .filter((id): id is string => Boolean(id));
-
         this.workspaceContext.update((current) => current
           ? {
               ...current,
@@ -163,7 +144,6 @@ export class WorkspaceService {
             }
           : current,
         );
-        this.workspaceUiService.commitSavedState(delta, savedAdditionalAddresseeIds);
         this.acceptMutationRevision(savedDocument.revision);
         this.fetchWorkspaceContext(savedDocument.id);
       },
@@ -243,10 +223,5 @@ export class WorkspaceService {
         }
       : current,
     );
-  }
-
-  refreshWorkspace(): void {
-    const documentId = this.workspaceContextDocument()?.id;
-    if (documentId) this.fetchWorkspaceContext(documentId);
   }
 }

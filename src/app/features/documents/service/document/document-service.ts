@@ -13,6 +13,7 @@ import type {
   CursorPageInfoDto,
   DocumentSearchItemDto,
 } from '../../../../api/documents/documents.contracts';
+import type { DeleteDocumentResultApi } from '../../../../models/api/documents/DeleteDocumentResult.api';
 
 @Injectable({
   providedIn: 'root',
@@ -99,50 +100,24 @@ export class DocumentService {
 
           const editorDelta = resp.data.currentVersion?.contentDelta;
 
-          if (editorDelta)
+          if (editorDelta) {
             this.workspaceUiService.initializeQuillEditorContent({
-                delta: editorDelta,
-            })
+              delta: editorDelta,
+            });
+          }
         },
         error: (err) => this.error.set(err),
       });
   }
 
-  
   saveDocumentLoading = signal<boolean>(false);
-  saveDocument(
+  saveDocumentContent(
     docId: string,
-    payload: { document: DocumentApi; contentDelta: unknown; actorId: string },
+    revision: number,
+    contentDelta: unknown,
     onSaved?: (document: DocumentApi) => void,
     onError?: (error: AppError) => void,
   ) {
-    this.saveDocumentLoading.set(true);
-
-    this.http
-      .post<ApiResponse<DocumentApi>>(
-        `${environment.api}/document/${docId}/save`,
-        {
-          contentDelta: payload.contentDelta,
-          document: payload.document,
-          actorId: payload.actorId,
-        },
-        { headers: { 'If-Match': `"${payload.document.revision}"` } },
-      )
-      .pipe(finalize(() => this.saveDocumentLoading.set(false)))
-      .subscribe({
-        next: (resp) => {
-          // set data
-          this.document.set(resp.data);
-          onSaved?.(resp.data);
-        },
-        error: (err: AppError) => {
-          this.error.set(err);
-          onError?.(err);
-        },
-      });
-  }
-
-  saveDocumentContent(docId: string, revision: number, contentDelta: unknown) {
     this.saveDocumentLoading.set(true);
 
     this.documentsApi
@@ -152,8 +127,12 @@ export class DocumentService {
         next: (resp) => {
           this.document.set(resp.data);
           this.workspaceUiService.commitChanges();
+          onSaved?.(resp.data);
         },
-        error: (err: AppError) => this.error.set(err),
+        error: (err: AppError) => {
+          this.error.set(err);
+          onError?.(err);
+        },
       });
   }
 
@@ -187,26 +166,6 @@ export class DocumentService {
   }
 
   docSubmittedSuccess = signal<boolean>(false);
-  submitDocument(staffId: string, doc: DocumentApi) {
-    this.loading.set(true);
-
-    this.http
-      .post<ApiResponse<DocumentApi>>(`${environment.api}/document/${staffId}/submit`, {
-        ...doc,
-      })
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (resp) => {
-          this.document.set(resp.data);
-
-          this.utilService.showToast('info', 'Correspondence submitted to registry successfully!');
-
-          this.docSubmittedSuccess.set(true);
-        },
-        error: (err) => this.error.set(err),
-      });
-  }
-
   submitDocumentById(
     documentId: string,
     revision: number,
@@ -235,12 +194,12 @@ export class DocumentService {
     this.loading.set(true);
 
     this.http
-      .delete<ApiResponse<void>>(`${environment.api}/document/${id}`, {
+      .delete<ApiResponse<DeleteDocumentResultApi>>(`${environment.api}/document/${id}`, {
         headers: { 'If-Match': `"${revision}"` },
       })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (resp) => {
+        next: () => {
           this.staffDocuments.update((docs) => docs.filter((doc) => doc.id !== id));
 
           console.log('document deleted!');
@@ -248,5 +207,4 @@ export class DocumentService {
         error: (err) => this.error.set(err),
       });
   }
-
 }
