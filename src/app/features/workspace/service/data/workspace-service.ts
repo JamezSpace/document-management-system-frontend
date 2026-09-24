@@ -1,6 +1,6 @@
 import { HttpContext } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { finalize } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs';
 import type { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../models/ui/workspace/signature/signature.ui';
 import { WorkspaceContextApi } from '../../../../models/api/workspace/WorkspaceContext.api';
 import { ERROR_SURFACE } from '../../../../core/interceptors/error/error-context';
@@ -32,6 +32,7 @@ export class WorkspaceService {
 
   loading = signal<boolean>(false);
   readonly saving = this.documentService.saveDocumentLoading;
+  readonly submitting = signal(false);
   error = signal<AppError | null>(null);
   workspaceContext = signal<WorkspaceContextApi | null>(null);
   readonly workspaceEtag = signal<string | null>(null);
@@ -132,28 +133,81 @@ export class WorkspaceService {
     const document = context.metadata.document;
     const delta = this.workspaceUiService.getQuillEditorContent()().deltaContent;
 
-    this.documentService.saveDocumentContent(
-      document.id,
-      document.revision,
-      delta,
-      (savedDocument) => {
-        this.workspaceContext.update((current) => current
-          ? {
-              ...current,
-              metadata: { ...current.metadata, document: savedDocument },
-            }
-          : current,
-        );
-        this.acceptMutationRevision(savedDocument.revision);
-        this.fetchWorkspaceContext(savedDocument.id);
-      },
-      (error) => {
-        if (error.apiError.code.codeName === 'stale_governance_decision') {
-          this.fetchWorkspaceContext(document.id);
-          this.utilService.showToast('info', 'The document changed. The workspace was refreshed; please retry.');
-        }
-      },
-    );
+    this.documentService
+      .saveDocumentContent(document.id, document.revision, delta)
+      .subscribe({
+        next: (response) => {
+          const savedDocument = response.data;
+
+          this.workspaceContext.update((current) => current
+            ? {
+                ...current,
+                metadata: { ...current.metadata, document: savedDocument },
+              }
+            : current,
+          );
+          this.acceptMutationRevision(savedDocument.revision);
+          this.fetchWorkspaceContext(savedDocument.id);
+        },
+        error: (error: AppError) => {
+          if (error.apiError.code.codeName === 'stale_governance_decision') {
+            this.fetchWorkspaceContext(document.id);
+            this.utilService.showToast('info', 'The document changed. The workspace was refreshed; please retry.');
+          }
+        },
+      });
+  }
+
+  submitDocument() {
+    const context = this.workspaceContext();
+    if (!context || this.submitting()) return;
+
+    const document = context.metadata.document;
+    const contentDelta = this.workspaceUiService.getQuillEditorContent()().deltaContent;
+
+    this.submitting.set(true);
+    this.documentService
+      .saveDocumentContent(document.id, document.revision, contentDelta)
+      .pipe(
+        tap((saveResponse) => {
+          const savedDocument = saveResponse.data;
+
+          this.workspaceContext.update((current) => current
+            ? {
+                ...current,
+                metadata: { ...current.metadata, document: savedDocument },
+              }
+            : current,
+          );
+          this.acceptMutationRevision(savedDocument.revision);
+        }),
+        switchMap((saveResponse) =>
+          this.documentService.submitDocumentById(document.id, saveResponse.data.revision),
+        ),
+        finalize(() => this.submitting.set(false)),
+      )
+      .subscribe({
+        next: (submitResponse) => {
+          const submittedDocument = submitResponse.body?.data;
+          if (!submittedDocument) return;
+
+          this.workspaceContext.update((current) => current
+            ? {
+                ...current,
+                metadata: { ...current.metadata, document: submittedDocument },
+              }
+            : current,
+          );
+          this.acceptMutationRevision(submittedDocument.revision);
+          void this.router.navigateByUrl(this.officeContext.route('documents'));
+        },
+        error: (error: AppError) => {
+          if (error.apiError.code.codeName === 'stale_governance_decision') {
+            this.fetchWorkspaceContext(document.id);
+            this.utilService.showToast('info', 'The document changed. The workspace was refreshed; please retry.');
+          }
+        },
+      });
   }
 
   /** DATA FETCHING */

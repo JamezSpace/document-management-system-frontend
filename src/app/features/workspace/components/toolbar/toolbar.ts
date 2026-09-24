@@ -20,11 +20,10 @@ export class Toolbar {
 
   readonly ui = this.workspaceService.viewModel;
   readonly saving = this.workspaceService.saving;
-  readonly submitting = this.workspaceService.documentService.loading;
+  readonly submitting = this.workspaceService.submitting;
   readonly previewRequested = output<void>();
   readonly printRequested = output<void>();
   readonly exportRequested = output<void>();
-  readonly dispatchRequested = output<void>();
 
   exitWorkspace() {
     this.workspaceService.exitWorkspace();
@@ -47,7 +46,7 @@ export class Toolbar {
   }
 
   dispatchCorrespondence() {
-    this.dispatchRequested.emit();
+    this.workspaceService.submitDocument();
   }
 
   performPrimaryAction(action: string) {

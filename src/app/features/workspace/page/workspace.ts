@@ -205,21 +205,4 @@ export class Workspace implements OnInit, OnDestroy {
     }
   });
 
-  submitDocument(): void {
-    const document = this.document();
-    if (!document) return;
-
-    this.documentService.submitDocumentById(document.id, document.revision, (error) => {
-      if (error.apiError.code.codeName === 'stale_governance_decision') {
-        this.reloadWorkspace();
-        this.utilService.showToast('info', 'The document changed. The workspace was refreshed; please retry.');
-      }
-    });
-  }
-
-  readonly documentSubmissionEffect = effect(() => {
-    if (this.documentService.docSubmittedSuccess()) {
-      void this.router.navigateByUrl(this.officeContext.route('documents'));
-    }
-  });
 }
