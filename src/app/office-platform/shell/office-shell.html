@@ -21,7 +21,7 @@
               @for (item of group.items; track item.route) {
                 <li hlmSidebarMenuItem>
                   <a hlmSidebarMenuButton [routerLink]="item.route" [isActive]="isActive(item.route)">
-                    <ng-icon hlm [name]="item.icon" />
+                    <ng-icon [name]="item.icon" size="1.2rem" />
                     <span>{{ item.label }}</span>
                   </a>
                 </li>

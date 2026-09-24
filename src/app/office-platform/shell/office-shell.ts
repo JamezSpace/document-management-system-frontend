@@ -21,10 +21,12 @@ import {
   lucideFileSearch,
   lucideFiles,
   lucideHistory,
+  lucideGitBranch,
   lucideInbox,
   lucideLayoutDashboard,
   lucideLibrary,
   lucideListTodo,
+  lucideLockKeyhole,
   lucideLogOut,
   lucideMessageSquareText,
   lucideNetwork,
@@ -34,9 +36,11 @@ import {
   lucideScanLine,
   lucideSend,
   lucideSettings,
+  lucideShieldAlert,
   lucideShieldCheck,
   lucideTags,
   lucideTriangleAlert,
+  lucideTimerReset,
   lucideUndo2,
   lucideUserCheck,
   lucideUsers,
@@ -47,13 +51,11 @@ import { BrnAlertDialogContent, BrnAlertDialogTrigger } from '@spartan-ng/brain/
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmIcon } from '@spartan-ng/helm/icon';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSidebarImports, HlmSidebarService } from '@spartan-ng/helm/sidebar';
 import { AuthService } from '../../features/auth/service/auth-service';
 import { CurrentStaffService } from '../../features/shared/services/current-staff/current-staff-service';
 import { Workspace } from '../../features/workspace/page/workspace';
-import type { OfficeNavigationGroup } from '../models/office-navigation';
+import type { OfficeNavigationGroup } from '../../models/ui/office-platform/office-navigation';
 import { OfficeContextService } from '../context/office-context.service';
 import { OfficeActivityService } from '../activity/office-activity.service';
 import { LineLoader } from '../../shared/components/loaders/line-loader/line-loader';
@@ -64,12 +66,10 @@ import { LineLoader } from '../../shared/components/loaders/line-loader/line-loa
     RouterOutlet,
     RouterLink,
     NgIcon,
-    HlmIcon,
     HlmSidebarImports,
     HlmAvatarImports,
     HlmButtonImports,
     HlmAlertDialogImports,
-    HlmSeparator,
     LineLoader,
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
@@ -81,11 +81,11 @@ import { LineLoader } from '../../shared/components/loaders/line-loader/line-loa
     lucideBookOpen, lucideBriefcaseBusiness, lucideCalendarCheck, lucideCalendarClock,
     lucideCalendarDays, lucideChartNoAxesCombined, lucideCircleCheckBig, lucideClipboardCheck,
     lucideClipboardList, lucideFileCog, lucideFilePenLine, lucideFileSearch, lucideFiles,
-    lucideHistory, lucideInbox, lucideLayoutDashboard, lucideLibrary,
-    lucideListTodo, lucideLogOut, lucideMessageSquareText, lucideNetwork, lucidePenTool,
-    lucidePlugZap, lucideRoute, lucideScanLine, lucideSend, lucideSettings, lucideShieldCheck,
+    lucideGitBranch, lucideHistory, lucideInbox, lucideLayoutDashboard, lucideLibrary,
+    lucideListTodo, lucideLockKeyhole, lucideLogOut, lucideMessageSquareText, lucideNetwork, lucidePenTool,
+    lucidePlugZap, lucideRoute, lucideScanLine, lucideSend, lucideSettings, lucideShieldAlert, lucideShieldCheck,
     lucideTags, lucideTriangleAlert, lucideUndo2, lucideUserCheck, lucideUsers,
-    lucideWorkflow, lucideZap,
+    lucideTimerReset, lucideWorkflow, lucideZap,
   })],
 })
 export class OfficeShell {
