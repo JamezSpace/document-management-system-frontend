@@ -1,6 +1,6 @@
 import type { OfficeWorkbenchKey } from './office-workbench';
 
-export interface OfficeNavigationItem {
+interface OfficeNavigationItem {
   label: string;
   icon: string;
   route: string;
@@ -8,12 +8,12 @@ export interface OfficeNavigationItem {
   anyCapabilities?: string[];
 }
 
-export interface OfficeNavigationGroup {
+interface OfficeNavigationGroup {
   label: string;
   items: OfficeNavigationItem[];
 }
 
-export interface OfficeWorkbenchDefinition {
+interface OfficeWorkbenchDefinition {
   key: OfficeWorkbenchKey;
   label: string;
   summary: string;
@@ -21,3 +21,9 @@ export interface OfficeWorkbenchDefinition {
   accessCapabilities: string[];
   navigation: OfficeNavigationGroup[];
 }
+
+export type {
+  OfficeNavigationGroup,
+  OfficeNavigationItem,
+  OfficeWorkbenchDefinition,
+};
