@@ -4,13 +4,14 @@ import { ApiClient } from '../client/api-client';
 import type { WorkspaceDto } from './workspace.contracts';
 
 @Injectable({ providedIn: 'root' })
-export class WorkspaceApi {
+class WorkspaceApi {
   private readonly api = inject(ApiClient);
 
-  get(documentId: string, context?: HttpContext, canvas: 'internal' | 'letterhead' = 'internal') {
+  get(documentId: string, context?: HttpContext) {
     return this.api.getResponse<WorkspaceDto>(`workspace/${documentId}`, {
-      context,
-      params: { canvas },
+      context
     });
   }
 }
+
+export { WorkspaceApi };

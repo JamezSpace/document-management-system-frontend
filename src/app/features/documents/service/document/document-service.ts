@@ -1,6 +1,6 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { finalize, Subscription } from 'rxjs';
+import { catchError, finalize, Subscription, tap, throwError } from 'rxjs';
 import { DocumentApi, InitDocumentApiPayload } from '../../../../models/api/documents/Document.api';
 import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 import { UtilService } from '../../../../shared/utils/service/util-service';
@@ -18,7 +18,7 @@ import type { DeleteDocumentResultApi } from '../../../../models/api/documents/D
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentService {
+class DocumentService {
   private http = inject(HttpClient);
   private utilService = inject(UtilService);
   private workspaceUiService = inject(WorkspaceUiService);
@@ -50,7 +50,6 @@ export class DocumentService {
 
   resetContext() {
     this.document.set(null);
-    this.docSubmittedSuccess.set(false);
     this.error.set(null);
     this.manualPrintPreview.set(false);
     this.autoPrintPreview.set(false);
@@ -115,25 +114,22 @@ export class DocumentService {
     docId: string,
     revision: number,
     contentDelta: unknown,
-    onSaved?: (document: DocumentApi) => void,
-    onError?: (error: AppError) => void,
   ) {
     this.saveDocumentLoading.set(true);
 
-    this.documentsApi
+    return this.documentsApi
       .saveContent(docId, revision, { contentDelta })
-      .pipe(finalize(() => this.saveDocumentLoading.set(false)))
-      .subscribe({
-        next: (resp) => {
+      .pipe(
+        tap((resp) => {
           this.document.set(resp.data);
           this.workspaceUiService.commitChanges();
-          onSaved?.(resp.data);
-        },
-        error: (err: AppError) => {
+        }),
+        catchError((err: AppError) => {
           this.error.set(err);
-          onError?.(err);
-        },
-      });
+          return throwError(() => err);
+        }),
+        finalize(() => this.saveDocumentLoading.set(false)),
+      );
   }
 
   searchDocuments(query: string, cursor?: string, append = false): void {
@@ -165,29 +161,26 @@ export class DocumentService {
     this.searchPageInfo.set(null);
   }
 
-  docSubmittedSuccess = signal<boolean>(false);
   submitDocumentById(
     documentId: string,
     revision: number,
-    onError?: (error: AppError) => void,
   ) {
     this.loading.set(true);
 
-    this.documentsApi
+    return this.documentsApi
       .submit(documentId, revision)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (resp) => {
+      .pipe(
+        tap((resp) => {
           if (!resp.body) return;
           this.document.set(resp.body.data);
           this.utilService.showToast('info', 'Correspondence submitted to registry successfully!');
-          this.docSubmittedSuccess.set(true);
-        },
-        error: (err: AppError) => {
+        }),
+        catchError((err: AppError) => {
           this.error.set(err);
-          onError?.(err);
-        },
-      });
+          return throwError(() => err);
+        }),
+        finalize(() => this.loading.set(false)),
+      );
   }
 
   deleteDocument(id: string, revision: number) {
@@ -208,3 +201,5 @@ export class DocumentService {
       });
   }
 }
+
+export { DocumentService };

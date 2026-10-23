@@ -158,7 +158,7 @@
 
     @if (ui().document; as document) {
       <section class="rounded-md border bg-muted/50 p-4">
-        <p class="font-medium">{{ document.title }}</p>
+        <p class="font-medium capitalize">{{ document.title }}</p>
         <p class="mt-1 font-mono text-xs text-muted-foreground">
           {{ document.referenceNumber || 'Reference pending' }} · Revision {{ document.revision }}
         </p>
@@ -236,7 +236,7 @@
           Sending
         } @else {
           <ng-icon name="lucideSend" />
-          Send correspondence
+          Dispatch
         }
       </button>
     </hlm-alert-dialog-footer>
