@@ -3,7 +3,7 @@ import { sharedOfficeRoutes } from '../../office-platform/routes/shared-office.r
 import { capabilityGuard } from '../../office-platform/guards/office-workbench.guard';
 import { Capabilities as C } from '../../platform/authorization/capabilities';
 
-export const LEADERSHIP_ROUTES: Routes = [
+const LEADERSHIP_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'overview' },
   {
     path: 'overview',
@@ -16,7 +16,10 @@ export const LEADERSHIP_ROUTES: Routes = [
   {
     path: 'approvals',
     canActivate: [capabilityGuard(C.Document.Approve, C.Document.Sign)],
-    loadComponent: () => import('../../pages/dashboard/staff/operations/cio/sensitivity-approvals/sensitivity-approvals').then((m) => m.SensitivityApprovals),
+    loadComponent: () =>
+      import('../../pages/dashboard/staff/operations/cio/sensitivity-approvals/sensitivity-approvals').then(
+        (m) => m.SensitivityApprovals,
+      ),
   },
   {
     path: 'signature-queue',
@@ -27,11 +30,24 @@ export const LEADERSHIP_ROUTES: Routes = [
   {
     path: 'escalations',
     canActivate: [capabilityGuard(C.Workflow.Escalate, C.Directive.Issue)],
-    loadComponent: () =>
-      import('./pages/escalations/escalations').then((page) => page.Escalations),
+    loadComponent: () => import('./pages/escalations/escalations').then((page) => page.Escalations),
   },
-  { path: 'unit-control', canActivate: [capabilityGuard(C.Directive.Issue)], loadComponent: () => import('../../pages/dashboard/staff/operations/cio/unit-control/unit-control').then((m) => m.UnitControl) },
-  { path: 'directives', canActivate: [capabilityGuard(C.Directive.View)], loadComponent: () => import('../../pages/dashboard/staff/operations/cio/directives-log/directives-log').then((m) => m.DirectivesLog) },
+  {
+    path: 'unit-control',
+    canActivate: [capabilityGuard(C.Directive.Issue)],
+    loadComponent: () =>
+      import('../../pages/dashboard/staff/operations/cio/unit-control/unit-control').then(
+        (m) => m.UnitControl,
+      ),
+  },
+  {
+    path: 'directives',
+    canActivate: [capabilityGuard(C.Directive.View)],
+    loadComponent: () =>
+      import('../../pages/dashboard/staff/operations/cio/directives-log/directives-log').then(
+        (m) => m.DirectivesLog,
+      ),
+  },
   {
     path: 'workload',
     canActivate: [capabilityGuard(C.Directive.View)],
@@ -47,3 +63,5 @@ export const LEADERSHIP_ROUTES: Routes = [
       ),
   },
 ];
+
+export { LEADERSHIP_ROUTES };

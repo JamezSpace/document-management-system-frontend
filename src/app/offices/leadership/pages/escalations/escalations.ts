@@ -5,6 +5,7 @@ import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 import { AuthorityDecisionControl } from '../../components/authority-decision-control/authority-decision-control';
 import { DecisionDetail } from '../../components/decision-detail/decision-detail';
 import { LeadershipService } from '../../services/leadership/leadership-service';
@@ -23,6 +24,9 @@ import { LeadershipService } from '../../services/leadership/leadership-service'
   templateUrl: './escalations.html',
   providers: [provideIcons({ lucideTriangleAlert })],
 })
-export class Escalations {
+class Escalations {
+  readonly officeContext = inject(OfficeContextService);
   readonly leadership = inject(LeadershipService);
 }
+
+export { Escalations };

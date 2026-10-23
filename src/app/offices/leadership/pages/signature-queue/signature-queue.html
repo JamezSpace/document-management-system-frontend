@@ -1,9 +1,13 @@
 <section class="mx-auto max-w-[96rem] px-4 pb-10">
   <nav hlmBreadcrumb aria-label="Breadcrumb">
     <ol hlmBreadcrumbList>
-      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Leadership & Approvals</span></li>
+      <li hlmBreadcrumbItem>
+        <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+      </li>
       <li hlmBreadcrumbSeparator></li>
-      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Signature queue</span></li>
+      <li hlmBreadcrumbItem>
+        <span hlmBreadcrumbPage>Signature queue</span>
+      </li>
     </ol>
   </nav>
 

@@ -6,6 +6,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmTableImports } from '@spartan-ng/helm/table';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 import { LeadershipService } from '../../services/leadership/leadership-service';
 
 @Component({
@@ -21,6 +22,9 @@ import { LeadershipService } from '../../services/leadership/leadership-service'
   templateUrl: './decision-audit-trail.html',
   providers: [provideIcons({ lucideChevronRight, lucideHistory, lucideSearch })],
 })
-export class DecisionAuditTrail {
+class DecisionAuditTrail {
+  readonly officeContext = inject(OfficeContextService);
   readonly leadership = inject(LeadershipService);
 }
+
+export { DecisionAuditTrail };
