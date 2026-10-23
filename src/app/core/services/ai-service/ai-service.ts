@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment.development';
 @Injectable({
   providedIn: 'root',
 })
-export class AiService {
+class AiService {
     private apiUrl = environment.api;
   private http = inject(HttpClient);
 
@@ -17,3 +17,5 @@ export class AiService {
     return this.http.post(`${this.apiUrl}/ai`, { prompt, context }); 
   }
 }
+
+export { AiService };

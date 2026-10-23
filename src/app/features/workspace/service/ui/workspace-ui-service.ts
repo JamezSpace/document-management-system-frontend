@@ -5,7 +5,7 @@ import type { WorkspacePendingChange } from '../../../../models/ui/workspace/Wor
 @Injectable({
   providedIn: 'root',
 })
-export class WorkspaceUiService {
+class WorkspaceUiService {
   private readonly changes = signal<Record<string, string>>({});
   private savedContentFingerprint = '';
   private savedAdditionalAddresseeIds: string[] = [];
@@ -153,3 +153,5 @@ export class WorkspaceUiService {
     return this.quillEditorContent.asReadonly();
   }
 }
+
+export { WorkspaceUiService };

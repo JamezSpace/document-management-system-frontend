@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui';
 
 @Injectable({ providedIn: 'root' })
-export class ErrorBannerService {
+class ErrorBannerService {
   readonly error = signal<AppError | null>(null);
 
   show(error: AppError): void {
@@ -13,3 +13,5 @@ export class ErrorBannerService {
     this.error.set(null);
   }
 }
+
+export { ErrorBannerService };

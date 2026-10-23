@@ -8,7 +8,7 @@ import { ErrorDialogService } from '../dialog/error-dialog';
 @Injectable({
   providedIn: 'root',
 })
-export class ErrorPresenterService {
+class ErrorPresenterService {
   private readonly toastService = inject(ToastService);
   private readonly bannerService = inject(ErrorBannerService);
   private readonly dialogService = inject(ErrorDialogService);
@@ -35,3 +35,5 @@ export class ErrorPresenterService {
     }
   }
 }
+
+export { ErrorPresenterService };

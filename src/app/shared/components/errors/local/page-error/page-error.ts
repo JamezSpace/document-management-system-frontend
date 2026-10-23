@@ -11,7 +11,7 @@ import type { AppError } from '../../../../../models/ui/global/ErrorPresentation
   styleUrl: './page-error.css',
   providers: [provideIcons({ lucideArrowLeft, lucideRefreshCw, lucideTriangleAlert })],
 })
-export class PageError {
+class PageError {
   readonly error = input.required<AppError>();
   readonly retry = output<void>();
   readonly goBack = output<void>();
@@ -21,3 +21,5 @@ export class PageError {
   );
   readonly canGoBack = computed(() => this.error().recovery === ErrorRecovery.GO_BACK);
 }
+
+export { PageError };

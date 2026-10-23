@@ -25,7 +25,7 @@ import { OfficeContextService } from '../../../../office-platform/context/office
 import { DatePipe } from '@angular/common';
 
 
-export type ProcessingScreenKey = 'overview' | 'escalated';
+type ProcessingScreenKey = 'overview' | 'escalated';
 
 @Component({
   selector: 'nexus-processing-overview',
@@ -57,7 +57,7 @@ export type ProcessingScreenKey = 'overview' | 'escalated';
     }),
   ],
 })
-export class ProcessingOverview {
+class ProcessingOverview {
   private readonly route = inject(ActivatedRoute);
   readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
@@ -74,3 +74,7 @@ export class ProcessingOverview {
     this.workItemsService.loadDetail(id);
   }
 }
+
+export { ProcessingOverview };
+
+export type { ProcessingScreenKey };

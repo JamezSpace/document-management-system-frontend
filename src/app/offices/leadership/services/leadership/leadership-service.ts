@@ -11,7 +11,7 @@ import type {
 } from '../../../../models/ui/leadership/LeadershipWorkspace.ui';
 
 @Injectable({ providedIn: 'root' })
-export class LeadershipService {
+class LeadershipService {
   readonly metrics: readonly LeadershipMetric[] = [
     { label: 'Pending decisions', value: '9', note: '3 due today', icon: 'lucideGavel', tone: 'text-primary' },
     { label: 'Signatures', value: '6', note: 'All version-verified', icon: 'lucidePenTool', tone: 'text-(--brand-authority-accent)' },
@@ -152,3 +152,5 @@ export class LeadershipService {
     };
   }
 }
+
+export { LeadershipService };

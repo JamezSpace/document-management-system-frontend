@@ -16,10 +16,12 @@ import { lucideCompass, lucideSearchX } from '@ng-icons/lucide';
       }),
     ],
 })
-export class NotFound {
+class NotFound {
   location = inject(Location);
 
   goBack(): void {
     this.location.back();
   }
 }
+
+export { NotFound };

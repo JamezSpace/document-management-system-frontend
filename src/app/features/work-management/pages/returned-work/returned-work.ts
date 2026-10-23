@@ -31,7 +31,7 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
   templateUrl: './returned-work.html',
   providers: [provideIcons({ lucideArrowRight, lucideFilter, lucideSearch })],
 })
-export class ReturnedWork implements OnInit {
+class ReturnedWork implements OnInit {
   readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
   readonly emptyState: EmptyStateConfig = {
@@ -54,3 +54,5 @@ export class ReturnedWork implements OnInit {
     this.workItemsService.loadDetail(id);
   }
 }
+
+export { ReturnedWork };

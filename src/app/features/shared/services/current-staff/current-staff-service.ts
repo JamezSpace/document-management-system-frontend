@@ -10,7 +10,7 @@ import { AppContextService } from '../../../../core/services/app-context/app-con
 @Injectable({
   providedIn: 'root',
 })
-export class CurrentStaffService {
+class CurrentStaffService {
   private readonly appContext = inject(AppContextService);
 
   readonly data = this.appContext.actor;
@@ -44,3 +44,5 @@ export class CurrentStaffService {
     this.loading.set(false);
   }
 }
+
+export { CurrentStaffService };

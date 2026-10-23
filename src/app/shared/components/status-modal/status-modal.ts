@@ -9,7 +9,7 @@ import { NotifStatus } from '../../../models/ui/global/NotifStatus.ui';
   templateUrl: './status-modal.html',
   styleUrl: './status-modal.css',
 })
-export class StatusModal {
+class StatusModal {
     statusModal = input<NotifStatus>({
         description: '',
         iconName: '',
@@ -23,3 +23,5 @@ export class StatusModal {
       this.dialogTrigger?.nativeElement.click();
     }
 }
+
+export { StatusModal };

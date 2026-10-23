@@ -60,7 +60,7 @@ type PrimaryInformationData = {
     }),
   ],
 })
-export class OnboardingEntity {
+class OnboardingEntity {
   // used to create custom or different onboarding pages for different entities
   @Input() entityType!: EntityType;
 
@@ -314,3 +314,5 @@ export class OnboardingEntity {
       this.isOnboardingProcessCompleted.set(true);
   });
 }
+
+export { OnboardingEntity };

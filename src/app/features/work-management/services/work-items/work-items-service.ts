@@ -23,7 +23,7 @@ import type {
 import { officeActivityContext } from '../../../../office-platform/activity/office-activity.context';
 
 @Injectable({ providedIn: 'root' })
-export class WorkItemsService {
+class WorkItemsService {
   private readonly api = inject(WorkItemsApi);
 
   readonly assignedItems = signal<AssignedWorkItem[]>([]);
@@ -167,3 +167,5 @@ export class WorkItemsService {
     }
   }
 }
+
+export { WorkItemsService };

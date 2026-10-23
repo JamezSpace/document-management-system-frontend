@@ -17,7 +17,7 @@ import { OfficeContextService } from '../../../../../../../office-platform/conte
 @Injectable({
   providedIn: 'root',
 })
-export class StaffService {
+class StaffService {
   private http = inject(HttpClient);
   private utilService = inject(UtilService);
   private currentStaffService = inject(CurrentStaffService);
@@ -194,3 +194,5 @@ export class StaffService {
       });
   }
 }
+
+export { StaffService };

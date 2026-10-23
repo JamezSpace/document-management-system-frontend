@@ -252,7 +252,7 @@ const definitions: OfficeWorkbenchDefinition[] = [
 ];
 
 @Injectable({ providedIn: 'root' })
-export class WorkbenchRegistry {
+class WorkbenchRegistry {
   private readonly definitions = new Map(
     definitions.map((definition) => [definition.key, definition]),
   );
@@ -267,3 +267,5 @@ export class WorkbenchRegistry {
     return [...this.definitions.values()];
   }
 }
+
+export { WorkbenchRegistry };

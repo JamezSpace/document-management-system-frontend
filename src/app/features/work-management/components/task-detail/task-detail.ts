@@ -6,7 +6,7 @@ import { TasksService } from '../../services/tasks/tasks-service';
   imports: [],
   templateUrl: './task-detail.html',
 })
-export class TaskDetail implements OnInit {
+class TaskDetail implements OnInit {
   taskId = input<string>('');
   taskService = inject(TasksService);
 
@@ -15,3 +15,5 @@ export class TaskDetail implements OnInit {
       await this.taskService.fetchTaskById(this.taskId());
   }
 }
+
+export { TaskDetail };

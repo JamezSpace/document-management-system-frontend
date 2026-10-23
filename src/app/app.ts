@@ -9,7 +9,7 @@ import { ErrorBanner } from './shared/components/errors/global/error-banner/erro
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App{
+class App{
   protected readonly title = signal('document-management-system-frontend');
 
   private authService = inject(AuthService);
@@ -18,3 +18,5 @@ export class App{
   }
 
 }
+
+export { App };

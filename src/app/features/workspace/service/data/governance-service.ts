@@ -15,7 +15,7 @@ import { UtilService } from '../../../../shared/utils/service/util-service';
 import { WorkspaceService } from './workspace-service';
 
 @Injectable({ providedIn: 'root' })
-export class GovernanceService {
+class GovernanceService {
   private readonly api = inject(GovernanceApi);
   private readonly workspaceApi = inject(WorkspaceApi);
   private readonly workspaceService = inject(WorkspaceService);
@@ -235,3 +235,5 @@ export class GovernanceService {
     return match?.[1] ?? 'document.pdf';
   }
 }
+
+export { GovernanceService };

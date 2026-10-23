@@ -14,9 +14,11 @@ import { hugeInformationSquare, hugeTick04 } from '@ng-icons/huge-icons';
     }),
   ]
 })
-export class NotifToast {
+class NotifToast {
     constructor(
     @Inject(MAT_SNACK_BAR_DATA)
     public data: {message: string, type: 'success' | 'info'},
   ) {}
 }
+
+export { NotifToast };

@@ -1,7 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class OfficeActivityService {
+class OfficeActivityService {
   private readonly pendingRequests = signal(0);
 
   readonly activeRequestCount = this.pendingRequests.asReadonly();
@@ -18,3 +18,5 @@ export class OfficeActivityService {
     };
   }
 }
+
+export { OfficeActivityService };

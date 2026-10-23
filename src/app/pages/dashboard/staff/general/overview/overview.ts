@@ -8,7 +8,7 @@ import { CurrentStaffService } from '../../../../../features/shared/services/cur
   templateUrl: './overview.html',
   styleUrl: './overview.css',
 })
-export class Overview {
+class Overview {
     private currentStaffService = inject(CurrentStaffService);
     
     readonly staff = this.currentStaffService.data;
@@ -69,3 +69,5 @@ export class Overview {
 
   continueDraft() {}
 }
+
+export { Overview };

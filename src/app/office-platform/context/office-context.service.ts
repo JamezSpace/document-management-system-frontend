@@ -6,7 +6,7 @@ import type { ActiveOfficeContext } from '../../models/ui/office-platform/Active
 import { WorkbenchRegistry } from '../registry/workbench-registry';
 
 @Injectable({ providedIn: 'root' })
-export class OfficeContextService {
+class OfficeContextService {
   private readonly appContext = inject(AppContextService);
   private readonly registry = inject(WorkbenchRegistry);
 
@@ -72,3 +72,5 @@ export class OfficeContextService {
     return 'processing';
   }
 }
+
+export { OfficeContextService };

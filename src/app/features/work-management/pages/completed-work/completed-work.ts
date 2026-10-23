@@ -29,7 +29,7 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
   templateUrl: './completed-work.html',
   providers: [provideIcons({ lucideEye, lucideFilter, lucideSearch })],
 })
-export class CompletedWork implements OnInit {
+class CompletedWork implements OnInit {
   readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
   readonly emptyState: EmptyStateConfig = {
@@ -44,3 +44,5 @@ export class CompletedWork implements OnInit {
     this.workItemsService.loadCompleted();
   }
 }
+
+export { CompletedWork };

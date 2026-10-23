@@ -46,7 +46,7 @@ const reviewItems: Record<string, WorkItem> = {
   templateUrl: './reviews-minutes.html',
   providers: [provideIcons({ lucideArrowRight, lucideFilter, lucideMessageSquareText, lucideSearch })],
 })
-export class ReviewsMinutes {
+class ReviewsMinutes {
   readonly officeContext = inject(OfficeContextService);
   readonly reviews = [
     { ...reviewItems['8fae41c2'], minutes: '2 previous minutes' },
@@ -58,3 +58,5 @@ export class ReviewsMinutes {
     this.selectedItem.set(reviewItems[id] ?? reviewItems['8fae41c2']);
   }
 }
+
+export { ReviewsMinutes };

@@ -9,7 +9,7 @@ import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentTypesService {
+class DocumentTypesService {
   private http = inject(HttpClient);
 
   allDocTypes = signal<DocTypeApi[]>([]);
@@ -35,3 +35,5 @@ export class DocumentTypesService {
     })
   }
 }
+
+export { DocumentTypesService };

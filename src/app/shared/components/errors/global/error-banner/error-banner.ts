@@ -12,7 +12,7 @@ import { ErrorRecoveryService } from '../../../../../core/services/error/recover
   styleUrl: './error-banner.css',
   providers: [provideIcons({ lucideRefreshCw, lucideTriangleAlert, lucideX })],
 })
-export class ErrorBanner {
+class ErrorBanner {
   readonly banner = inject(ErrorBannerService);
   private readonly recoveryService = inject(ErrorRecoveryService);
   readonly hasRecovery = computed(() => this.banner.error()?.recovery !== ErrorRecovery.NONE);
@@ -24,3 +24,5 @@ export class ErrorBanner {
     this.banner.dismiss();
   }
 }
+
+export { ErrorBanner };

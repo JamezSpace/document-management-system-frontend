@@ -30,7 +30,7 @@ import { WorkspaceUiService } from '../../../../service/ui/workspace-ui-service'
     }),
   ],
 })
-export class MemoBodyEditor implements AfterViewInit, OnDestroy {
+class MemoBodyEditor implements AfterViewInit, OnDestroy {
   documentService = inject(DocumentService);
   workspaceService = inject(WorkspaceService);
   workspaceUiService = inject(WorkspaceUiService);
@@ -144,3 +144,5 @@ export class MemoBodyEditor implements AfterViewInit, OnDestroy {
     });
   }
 }
+
+export { MemoBodyEditor };

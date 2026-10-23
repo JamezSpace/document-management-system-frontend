@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { from, switchMap } from 'rxjs';
 import { AuthService } from '../../../features/auth/service/auth-service';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
   return from(authService.getValidToken()).pipe(
@@ -18,3 +18,5 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     }),
   );
 };
+
+export { authInterceptor };

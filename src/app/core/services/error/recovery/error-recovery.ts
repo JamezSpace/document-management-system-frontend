@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ErrorRecovery } from '../../../../enums/global/errorRecovery.enum';
 
 @Injectable({ providedIn: 'root' })
-export class ErrorRecoveryService {
+class ErrorRecoveryService {
   private readonly router = inject(Router);
   private readonly document = inject(DOCUMENT);
 
@@ -27,3 +27,5 @@ export class ErrorRecoveryService {
     }
   }
 }
+
+export { ErrorRecoveryService };

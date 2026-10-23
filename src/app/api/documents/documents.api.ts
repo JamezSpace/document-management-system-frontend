@@ -7,7 +7,7 @@ import type {
 } from './documents.contracts';
 
 @Injectable({ providedIn: 'root' })
-export class DocumentsApi {
+class DocumentsApi {
   private readonly api = inject(ApiClient);
 
   saveContent(documentId: string, revision: number, command: SaveDocumentContentCommand) {
@@ -30,3 +30,5 @@ export class DocumentsApi {
     });
   }
 }
+
+export { DocumentsApi };

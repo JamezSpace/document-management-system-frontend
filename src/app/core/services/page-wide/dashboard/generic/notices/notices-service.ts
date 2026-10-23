@@ -10,7 +10,7 @@ import { UtilService } from '../../../../../../shared/utils/service/util-service
 @Injectable({
   providedIn: 'root',
 })
-export class NoticesService {
+class NoticesService {
   private http = inject(HttpClient);
   private utilService = inject(UtilService);
 
@@ -32,3 +32,5 @@ export class NoticesService {
     })
   }
 }
+
+export { NoticesService };

@@ -12,7 +12,9 @@ import type { AppError } from '../../../../../models/ui/global/ErrorPresentation
   styleUrl: './error-dialog.css',
   providers: [provideIcons({ lucideTriangleAlert })],
 })
-export class ErrorDialog {
+class ErrorDialog {
   readonly ErrorRecovery = ErrorRecovery;
   constructor(@Inject(MAT_DIALOG_DATA) readonly error: AppError) {}
 }
+
+export { ErrorDialog };

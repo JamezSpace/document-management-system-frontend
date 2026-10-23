@@ -8,7 +8,7 @@ import { ToastType } from '../../../enums/toast/toastType.enum';
 @Injectable({
   providedIn: 'root',
 })
-export class ToastService {
+class ToastService {
   private readonly snackBar = inject(MatSnackBar);
 
   show(type: ToastType, message: string): void {
@@ -48,3 +48,5 @@ export class ToastService {
     this.show(ToastType.ERROR, message);
   }
 }
+
+export { ToastService };

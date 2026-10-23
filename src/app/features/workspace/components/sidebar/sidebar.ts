@@ -65,7 +65,7 @@ import { GovernancePanel } from '../governance/governance-panel';
     }),
   ],
 })
-export class Sidebar {
+class Sidebar {
   private readonly workspaceService = inject(WorkspaceService);
   private readonly workspaceUiService = inject(WorkspaceUiService);
   private readonly organizationService = inject(OrganizationService);
@@ -316,3 +316,5 @@ export class Sidebar {
     this.addMinuteToCorrespondence();
   }
 }
+
+export { Sidebar };

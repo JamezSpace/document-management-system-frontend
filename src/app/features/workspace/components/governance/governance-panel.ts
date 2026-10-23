@@ -37,7 +37,7 @@ import { WorkspaceService } from '../../service/data/workspace-service';
     lucideTrash2,
   })],
 })
-export class GovernancePanel {
+class GovernancePanel {
   private readonly workspaceService = inject(WorkspaceService);
   readonly governanceService = inject(GovernanceService);
 
@@ -156,3 +156,5 @@ export class GovernancePanel {
     return new Date(date.getTime() - offset).toISOString().slice(0, 16);
   }
 }
+
+export { GovernancePanel };

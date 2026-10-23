@@ -9,6 +9,8 @@ import { lucideCircleAlert } from '@ng-icons/lucide';
   styleUrl: './inline-error.css',
   providers: [provideIcons({ lucideCircleAlert })],
 })
-export class InlineError {
+class InlineError {
   readonly message = input.required<string>();
 }
+
+export { InlineError };

@@ -16,7 +16,7 @@ import type {
 } from './governance.contracts';
 
 @Injectable({ providedIn: 'root' })
-export class GovernanceApi {
+class GovernanceApi {
   private readonly api = inject(ApiClient);
 
   listGrants(documentId: string) {
@@ -91,3 +91,5 @@ export class GovernanceApi {
     );
   }
 }
+
+export { GovernanceApi };

@@ -6,6 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './letter-editor.html',
   styleUrl: './letter-editor.css',
 })
-export class LetterEditor {
+class LetterEditor {
 
 }
+
+export { LetterEditor };

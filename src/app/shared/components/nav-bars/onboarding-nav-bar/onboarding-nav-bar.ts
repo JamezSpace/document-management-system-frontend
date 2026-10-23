@@ -7,6 +7,8 @@ import { Component } from '@angular/core';
   templateUrl: './onboarding-nav-bar.html',
   styleUrl: './onboarding-nav-bar.css',
 })
-export class OnboardingNavBar {
+class OnboardingNavBar {
 
 }
+
+export { OnboardingNavBar };

@@ -8,8 +8,10 @@ import type { AppError } from '../../../../../models/ui/global/ErrorPresentation
   template: `<nexus-page-error [error]="error()" (retry)="retry.emit()" (goBack)="goBack.emit()" />`,
   styles: `:host { position: fixed; inset: 0; z-index: 1000; display: block; background: white; }`,
 })
-export class FullScreenError {
+class FullScreenError {
   readonly error = input.required<AppError>();
   readonly retry = output<void>();
   readonly goBack = output<void>();
 }
+
+export { FullScreenError };

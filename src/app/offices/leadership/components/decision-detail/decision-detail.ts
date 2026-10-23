@@ -12,7 +12,7 @@ import { LeadershipService } from '../../services/leadership/leadership-service'
   templateUrl: './decision-detail.html',
   providers: [provideIcons({ lucideCheck })],
 })
-export class DecisionDetail {
+class DecisionDetail {
   private readonly leadership = inject(LeadershipService);
 
   readonly decisionId = input.required<string>();
@@ -23,3 +23,5 @@ export class DecisionDetail {
     this.leadership.selectDecision(this.decisionId());
   }
 }
+
+export { DecisionDetail };

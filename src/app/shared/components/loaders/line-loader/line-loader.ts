@@ -6,6 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './line-loader.html',
   styleUrl: './line-loader.css',
 })
-export class LineLoader {
+class LineLoader {
     
 }
+
+export { LineLoader };

@@ -7,7 +7,7 @@ import { ErrorDialog } from '../../../../shared/components/errors/global/error-d
 import { ErrorRecoveryService } from '../recovery/error-recovery';
 
 @Injectable({ providedIn: 'root' })
-export class ErrorDialogService {
+class ErrorDialogService {
   private readonly dialog = inject(MatDialog);
   private readonly recoveryService = inject(ErrorRecoveryService);
 
@@ -23,3 +23,5 @@ export class ErrorDialogService {
       .subscribe((recovery) => this.recoveryService.recover(recovery));
   }
 }
+
+export { ErrorDialogService };

@@ -4,10 +4,12 @@ import { ApiClient } from '../client/api-client';
 import type { StaffContextDto } from './identity.contracts';
 
 @Injectable({ providedIn: 'root' })
-export class IdentityApi {
+class IdentityApi {
   private readonly api = inject(ApiClient);
 
   getCurrentStaff(context?: HttpContext) {
     return this.api.get<StaffContextDto>('identity/staff/me', context);
   }
 }
+
+export { IdentityApi };

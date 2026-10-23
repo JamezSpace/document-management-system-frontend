@@ -11,7 +11,7 @@ const page = (screen: ProcessingScreenKey, title: string, description: string) =
   data: { screen, title, description },
 });
 
-export const PROCESSING_ROUTES: Routes = [
+const PROCESSING_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'overview' },
   {
     path: 'overview',
@@ -38,3 +38,5 @@ export const PROCESSING_ROUTES: Routes = [
     ),
   },
 ];
+
+export { PROCESSING_ROUTES };

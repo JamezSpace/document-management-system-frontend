@@ -1,8 +1,8 @@
 import type { DocumentApi } from '../../models/api/documents/Document.api';
 
-export type DocumentDto = DocumentApi;
+type DocumentDto = DocumentApi;
 
-export interface DocumentSearchItemDto {
+interface DocumentSearchItemDto {
   id: string;
   title: string;
   referenceNumber: string | null;
@@ -11,17 +11,19 @@ export interface DocumentSearchItemDto {
   revision: number;
 }
 
-export interface CursorPageInfoDto {
+interface CursorPageInfoDto {
   limit: number;
   hasMore: boolean;
   nextCursor: string | null;
 }
 
-export interface DocumentSearchResultDto {
+interface DocumentSearchResultDto {
   items: DocumentSearchItemDto[];
   pageInfo: CursorPageInfoDto;
 }
 
-export interface SaveDocumentContentCommand {
+interface SaveDocumentContentCommand {
   contentDelta: unknown;
 }
+
+export type { DocumentDto, DocumentSearchItemDto, CursorPageInfoDto, DocumentSearchResultDto, SaveDocumentContentCommand };

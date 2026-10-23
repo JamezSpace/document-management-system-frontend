@@ -48,7 +48,7 @@ import { OrganizationService } from '../../../../../features/shared/services/org
   styleUrl: './staff-list-view.css',
   providers: [provideIcons({ lucideMoreVertical, lucideXCircle })],
 })
-export class StaffListView implements OnInit, AfterViewInit {
+class StaffListView implements OnInit, AfterViewInit {
   private sideModalService = inject(SideModalService);
   private utilService = inject(UtilService);
   staffService = inject(StaffService);
@@ -172,3 +172,5 @@ export class StaffListView implements OnInit, AfterViewInit {
     return this.utilService.formatDateAsReadableString(date);
   }
 }
+
+export { StaffListView };

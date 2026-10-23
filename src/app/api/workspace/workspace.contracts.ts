@@ -1,23 +1,23 @@
 import type { WorkspaceActions } from '../../enums/workspace/actions.enum';
 import type { DocumentDto } from '../documents/documents.contracts';
 
-export interface WorkspaceWorkflowDto {
+interface WorkspaceWorkflowDto {
   canAdvance: boolean;
   canReject: boolean;
   completed: boolean;
   rejected: boolean;
 }
 
-export type ExtractionDeliveryMode = 'direct' | 'server_rendered_only';
+type ExtractionDeliveryMode = 'direct' | 'server_rendered_only';
 
-export interface WorkspaceExtractionDirectiveDto {
+interface WorkspaceExtractionDirectiveDto {
   allowed: boolean;
   reasonCode: string;
   obligations: string[];
   deliveryMode: ExtractionDeliveryMode;
 }
 
-export interface WorkspaceGovernanceDto {
+interface WorkspaceGovernanceDto {
   policyId: string;
   policyVersion: number;
   extraction: {
@@ -26,13 +26,13 @@ export interface WorkspaceGovernanceDto {
   };
 }
 
-export interface WorkspaceCanvasDto {
+interface WorkspaceCanvasDto {
   visible: boolean;
   placement: 'internal_routing' | 'letterhead_footer' | null;
   reasonCode: string;
 }
 
-export interface WorkspaceDto {
+interface WorkspaceDto {
   mode: 'edit' | 'readonly';
   authorizedActions: WorkspaceActions[];
   workflow: WorkspaceWorkflowDto | null;
@@ -43,3 +43,5 @@ export interface WorkspaceDto {
   };
   canvas: WorkspaceCanvasDto;
 }
+
+export type { WorkspaceWorkflowDto, ExtractionDeliveryMode, WorkspaceExtractionDirectiveDto, WorkspaceGovernanceDto, WorkspaceCanvasDto, WorkspaceDto };

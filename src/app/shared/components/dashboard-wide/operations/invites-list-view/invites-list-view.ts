@@ -46,7 +46,7 @@ import { OrganizationService } from '../../../../../features/shared/services/org
     }),
   ],
 })
-export class InvitesListView {
+class InvitesListView {
   private sideModalService = inject(SideModalService);
   private utilService = inject(UtilService);
   private organizationService = inject(OrganizationService);
@@ -168,3 +168,5 @@ export class InvitesListView {
     this.inviteService.deleteInvite(invite.id);
   }
 }
+
+export { InvitesListView };

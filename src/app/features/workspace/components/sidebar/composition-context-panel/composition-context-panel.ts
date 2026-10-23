@@ -46,7 +46,7 @@ import { WorkspaceUiService } from '../../../service/ui/workspace-ui-service';
     }),
   ],
 })
-export class CompositionContextPanel {
+class CompositionContextPanel {
   private readonly workspaceService = inject(WorkspaceService);
   private readonly workspaceUiService = inject(WorkspaceUiService);
   private readonly organizationService = inject(OrganizationService);
@@ -184,3 +184,5 @@ export class CompositionContextPanel {
     this.workspaceUiService.updateAdditionalAddressees(ids, description);
   }
 }
+
+export { CompositionContextPanel };

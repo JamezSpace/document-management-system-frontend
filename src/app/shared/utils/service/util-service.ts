@@ -8,7 +8,7 @@ import { ToastService } from '../../../core/services/notifications/toast-service
 @Injectable({
   providedIn: 'root',
 })
-export class UtilService {
+class UtilService {
   private readonly toastService = inject(ToastService);
   private breakpointObserver = inject(BreakpointObserver);
 
@@ -50,3 +50,5 @@ export class UtilService {
     }
   }
 }
+
+export { UtilService };

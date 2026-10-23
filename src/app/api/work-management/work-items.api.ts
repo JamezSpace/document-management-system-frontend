@@ -13,7 +13,7 @@ import type {
 import { ApiClient } from '../client/api-client';
 
 @Injectable({ providedIn: 'root' })
-export class WorkItemsApi {
+class WorkItemsApi {
   private readonly api = inject(ApiClient);
 
   listAssigned(query: WorkItemQueryApi = {}, context?: HttpContext) {
@@ -53,3 +53,5 @@ export class WorkItemsApi {
     ) as Record<string, string | number | boolean>;
   }
 }
+
+export { WorkItemsApi };

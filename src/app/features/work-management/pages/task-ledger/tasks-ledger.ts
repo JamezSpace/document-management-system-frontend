@@ -26,7 +26,7 @@ import { OfficeContextService } from '../../../../office-platform/context/office
   ],
   templateUrl: './tasks-ledger.html',
 })
-export class TasksLedger implements OnInit {
+class TasksLedger implements OnInit {
   readonly officeContext = inject(OfficeContextService);
   taskService = inject(TasksService);
   
@@ -75,3 +75,5 @@ export class TasksLedger implements OnInit {
     if (elFunction === 'backdrop') this.closeSideNav();
   }
 }
+
+export { TasksLedger };

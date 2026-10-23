@@ -5,7 +5,7 @@ import { ErrorMapperService } from '../../services/error/mapper/error-mapper';
 import { catchError, from, mergeMap, throwError } from 'rxjs';
 import { ERROR_SURFACE, SKIP_ERROR_PRESENTATION } from './error-context';
 
-export const errorInterceptor: HttpInterceptorFn = (request, next) => {
+const errorInterceptor: HttpInterceptorFn = (request, next) => {
   const mapper = inject(ErrorMapperService);
   const presenter = inject(ErrorPresenterService);
 
@@ -52,3 +52,5 @@ export const errorInterceptor: HttpInterceptorFn = (request, next) => {
     }),
   );
 };
+
+export { errorInterceptor };

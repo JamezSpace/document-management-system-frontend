@@ -12,7 +12,7 @@ import { UtilService } from '../../../shared/utils/service/util-service';
 import { AuthUser } from '../../../models/ui/auth/AuthUser.ui';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+class AuthService {
   private router = inject(Router);
   private auth = getAuth(firebase_app);
   private utilService = inject(UtilService);
@@ -102,3 +102,5 @@ export class AuthService {
     this.errorMessage.set(null);
   }
 }
+
+export { AuthService };

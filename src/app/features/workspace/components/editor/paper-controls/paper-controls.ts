@@ -11,7 +11,7 @@ import { WorkspaceService } from '../../../service/data/workspace-service';
   styleUrl: './paper-controls.css',
   viewProviders: [provideIcons({ lucideZoomOut, lucideZoomIn })],
 })
-export class PaperControls {
+class PaperControls {
   private readonly documentService = inject(DocumentService);
   private readonly workspaceService = inject(WorkspaceService);
 
@@ -58,3 +58,5 @@ export class PaperControls {
     setTimeout(() => window.print(), 0);
   }
 }
+
+export { PaperControls };

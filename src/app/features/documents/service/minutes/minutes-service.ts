@@ -9,7 +9,7 @@ import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui
 @Injectable({
   providedIn: 'root',
 })
-export class MinutesService {
+class MinutesService {
   private http = inject(HttpClient);
 
   minutes = signal<MinuteApi[]>([]);
@@ -44,3 +44,5 @@ export class MinutesService {
       });
   }
 }
+
+export { MinutesService };

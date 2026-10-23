@@ -14,7 +14,7 @@ import { OnboardingNavBar } from '../../../../shared/components/nav-bars/onboard
   templateUrl: './password-reset.html',
   styleUrl: './password-reset.css',
 })
-export class PasswordReset implements OnInit {
+class PasswordReset implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private staffService = inject(StaffService);
@@ -105,3 +105,5 @@ export class PasswordReset implements OnInit {
     this.router.navigateByUrl('/auth');
   }
 }
+
+export { PasswordReset };

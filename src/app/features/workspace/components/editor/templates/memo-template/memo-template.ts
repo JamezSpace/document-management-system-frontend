@@ -8,7 +8,7 @@ import { MemoViewModel } from '../../../../../../models/ui/workspace/MemoViewMod
   templateUrl: './memo-template.html',
   styleUrl: './memo-template.css',
 })
-export class MemoTemplate {
+class MemoTemplate {
   correspondence = input.required<MemoViewModel>();
   
   formattedDate(date: string | Date) {
@@ -19,3 +19,5 @@ export class MemoTemplate {
     });
   }
 }
+
+export { MemoTemplate };

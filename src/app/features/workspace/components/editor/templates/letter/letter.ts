@@ -6,6 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './letter.html',
   styleUrl: './letter.css',
 })
-export class Letter {
+class Letter {
 
 }
+
+export { Letter };

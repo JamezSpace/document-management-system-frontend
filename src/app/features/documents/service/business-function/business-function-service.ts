@@ -9,7 +9,7 @@ import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui
 @Injectable({
   providedIn: 'root',
 })
-export class BusinessFunctionService {
+class BusinessFunctionService {
   private http = inject(HttpClient);
 
   bussFunctions = signal<BussFunctionApi[]>([]);
@@ -26,3 +26,5 @@ export class BusinessFunctionService {
     })
   }
 }
+
+export { BusinessFunctionService };

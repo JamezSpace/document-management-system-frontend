@@ -28,7 +28,7 @@ import { GovernanceService } from '../../../../../../features/workspace/service/
   templateUrl: './sensitivity-approvals.html',
   providers: [provideIcons({ lucideBadgeCheck, lucideShieldCheck })],
 })
-export class SensitivityApprovals implements OnInit {
+class SensitivityApprovals implements OnInit {
   readonly governanceService = inject(GovernanceService);
   readonly queue = this.governanceService.pendingSensitivityChanges;
   readonly selectedRequest = signal<SensitivityChangeDto | null>(null);
@@ -75,3 +75,5 @@ export class SensitivityApprovals implements OnInit {
     }
   }
 }
+
+export { SensitivityApprovals };

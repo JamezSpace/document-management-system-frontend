@@ -32,7 +32,7 @@ type PrimaryInformationData = {
 @Injectable({
   providedIn: 'root',
 })
-export class OnboardingService {
+class OnboardingService {
     private http = inject(HttpClient);
   private auth = getAuth(firebase_app);
   private utilService = inject(UtilService);
@@ -269,3 +269,5 @@ export class OnboardingService {
       });
   }
 }
+
+export { OnboardingService };

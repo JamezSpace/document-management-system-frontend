@@ -1,4 +1,4 @@
-export const Capabilities = {
+const Capabilities = {
   Document: {
     View: 'document.view',
     Create: 'document.create',
@@ -43,3 +43,4 @@ export const Capabilities = {
   },
 } as const;
 
+export { Capabilities };

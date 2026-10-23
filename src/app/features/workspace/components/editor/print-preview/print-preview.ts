@@ -15,7 +15,7 @@ import { HlmKbdImports } from '@spartan-ng/helm/kbd';
   },
   providers: [provideIcons({ lucideGripVertical })],
 })
-export class PrintPreview {
+class PrintPreview {
   /** Whether the document is currently rendered as a print preview. */
   isPreviewing = input(false);
 
@@ -45,3 +45,5 @@ export class PrintPreview {
     this.exit.emit();
   }
 }
+
+export { PrintPreview };

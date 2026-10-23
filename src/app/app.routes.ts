@@ -10,7 +10,7 @@ import {
   officeWorkbenchGuard,
 } from './office-platform/guards/office-workbench.guard';
 
-export const routes: Routes = [
+const routes: Routes = [
   // public/auth route
   {
     path: '',
@@ -111,3 +111,5 @@ export const routes: Routes = [
         redirectTo: '404',
     },
 ];
+
+export { routes };

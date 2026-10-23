@@ -7,10 +7,12 @@ import { Component, inject } from '@angular/core';
   templateUrl: './unauthorized.html',
   styleUrl: './unauthorized.css',
 })
-export class Unauthorized {
+class Unauthorized {
   location = inject(Location);
 
   goBack(): void {
     this.location.back();
   }
 }
+
+export { Unauthorized };

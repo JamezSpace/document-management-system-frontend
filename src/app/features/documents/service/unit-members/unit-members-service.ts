@@ -9,7 +9,7 @@ import { StaffMember } from '../../../../models/api/staff/StaffMember.api';
 @Injectable({
   providedIn: 'root',
 })
-export class UnitMembersService {
+class UnitMembersService {
   private http = inject(HttpClient);
 
   data = signal<StaffMember[]>([]);
@@ -27,3 +27,5 @@ export class UnitMembersService {
     });
 }
 }
+
+export { UnitMembersService };

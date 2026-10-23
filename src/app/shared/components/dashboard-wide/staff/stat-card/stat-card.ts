@@ -6,6 +6,8 @@ import { Component } from '@angular/core';
   templateUrl: './stat-card.html',
   styleUrl: './stat-card.css',
 })
-export class StatCard {
+class StatCard {
 
 }
+
+export { StatCard };

@@ -6,10 +6,12 @@ import { Component, Input } from '@angular/core';
   templateUrl: './id-card.html',
   styleUrl: './id-card.css',
 })
-export class IdCard {
+class IdCard {
     @Input({alias: 'idCardPage', required: true})
     page !: 'front' | 'back';
 
     @Input({alias: 'staffDetails', required: true})
     staffDetails !: any
 }
+
+export { IdCard };

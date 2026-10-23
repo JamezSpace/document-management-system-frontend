@@ -11,7 +11,7 @@ import { CurrentStaffService } from '../../../features/shared/services/current-s
   styleUrl: './system-error.css',
   providers: [provideIcons({ lucideRefreshCw, lucideTriangleAlert })],
 })
-export class SystemError {
+class SystemError {
   private readonly router = inject(Router);
   private readonly staffService = inject(CurrentStaffService);
 
@@ -22,3 +22,5 @@ export class SystemError {
     void this.router.navigateByUrl('/office');
   }
 }
+
+export { SystemError };

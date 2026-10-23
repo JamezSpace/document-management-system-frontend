@@ -44,7 +44,7 @@ import { CurrentStaffService } from '../../../../../../features/shared/services/
     }),
   ],
 })
-export class UnitControl implements OnInit {
+class UnitControl implements OnInit {
   activatedRouter = inject(ActivatedRoute);
   unitMembersService = inject(UnitMembersService);
   currentStaffService = inject(CurrentStaffService);
@@ -72,3 +72,5 @@ export class UnitControl implements OnInit {
     this.priorityLevelSelected.set(priorityLevelSelected)
   }
 }
+
+export { UnitControl };

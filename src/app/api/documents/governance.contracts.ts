@@ -1,13 +1,13 @@
 import type { CursorPageInfoDto } from './documents.contracts';
 
-export type DocumentSensitivity = 'public' | 'internal' | 'confidential' | 'restricted';
-export type GovernanceGrantType = 'guest_reader' | 'export';
-export type GovernanceGrantStatus = 'active' | 'expired' | 'exhausted' | 'revoked';
-export type GrantorAuthority = 'originator' | 'unit_head';
-export type SensitivityChangeStatus = 'pending' | 'approved' | 'rejected' | 'applied';
-export type SensitivityDecision = 'approve' | 'reject';
+type DocumentSensitivity = 'public' | 'internal' | 'confidential' | 'restricted';
+type GovernanceGrantType = 'guest_reader' | 'export';
+type GovernanceGrantStatus = 'active' | 'expired' | 'exhausted' | 'revoked';
+type GrantorAuthority = 'originator' | 'unit_head';
+type SensitivityChangeStatus = 'pending' | 'approved' | 'rejected' | 'applied';
+type SensitivityDecision = 'approve' | 'reject';
 
-export interface GovernanceGrantDto {
+interface GovernanceGrantDto {
   id: string;
   documentId: string;
   granteeStaffId: string;
@@ -25,7 +25,7 @@ export interface GovernanceGrantDto {
   createdAt: string;
 }
 
-export interface CreateGovernanceGrantCommand {
+interface CreateGovernanceGrantCommand {
   granteeStaffId: string;
   grantType: GovernanceGrantType;
   reason: string;
@@ -33,18 +33,18 @@ export interface CreateGovernanceGrantCommand {
   remainingUses: number | null;
 }
 
-export interface CreateGovernanceGrantResult {
+interface CreateGovernanceGrantResult {
   grant: Pick<GovernanceGrantDto, 'id' | 'status'>;
   documentRevision: number;
 }
 
-export interface RevokeGovernanceGrantResult {
+interface RevokeGovernanceGrantResult {
   grantId: string;
   revoked: boolean;
   documentRevision: number;
 }
 
-export interface SensitivityChangeDto {
+interface SensitivityChangeDto {
   id: string;
   documentId: string;
   fromSensitivity: DocumentSensitivity;
@@ -60,21 +60,21 @@ export interface SensitivityChangeDto {
   documentRevision?: number;
 }
 
-export interface RequestSensitivityChangeCommand {
+interface RequestSensitivityChangeCommand {
   targetSensitivity: DocumentSensitivity;
   reason: string;
 }
 
-export interface AppliedSensitivityChangeResult {
+interface AppliedSensitivityChangeResult {
   status: 'applied';
   documentId: string;
   sensitivity: DocumentSensitivity;
   documentRevision: number;
 }
 
-export type RequestSensitivityChangeResult = AppliedSensitivityChangeResult | SensitivityChangeDto;
+type RequestSensitivityChangeResult = AppliedSensitivityChangeResult | SensitivityChangeDto;
 
-export interface ReviewSensitivityChangeResult {
+interface ReviewSensitivityChangeResult {
   requestId: string;
   status: 'applied' | 'rejected';
   documentId: string;
@@ -82,7 +82,9 @@ export interface ReviewSensitivityChangeResult {
   documentRevision: number;
 }
 
-export interface PendingSensitivityChangesDto {
+interface PendingSensitivityChangesDto {
   items: SensitivityChangeDto[];
   pageInfo: CursorPageInfoDto;
 }
+
+export type { DocumentSensitivity, GovernanceGrantType, GovernanceGrantStatus, GrantorAuthority, SensitivityChangeStatus, SensitivityDecision, GovernanceGrantDto, CreateGovernanceGrantCommand, CreateGovernanceGrantResult, RevokeGovernanceGrantResult, SensitivityChangeDto, RequestSensitivityChangeCommand, AppliedSensitivityChangeResult, RequestSensitivityChangeResult, ReviewSensitivityChangeResult, PendingSensitivityChangesDto };

@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment.development';
 import { ApiResponse } from '../../models/api/ApiResponse.api';
 
 @Injectable({ providedIn: 'root' })
-export class ApiClient {
+class ApiClient {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.api.replace(/\/$/, '');
 
@@ -86,3 +86,5 @@ export class ApiClient {
     return `${this.baseUrl}/${path.replace(/^\//, '')}`;
   }
 }
+
+export { ApiClient };

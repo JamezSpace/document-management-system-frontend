@@ -20,7 +20,7 @@ import { UtilService } from '../../../../shared/utils/service/util-service';
 @Injectable({
   providedIn: 'root',
 })
-export class WorkspaceService {
+class WorkspaceService {
   private router = inject(Router);
   private readonly officeContext = inject(OfficeContextService);
   private readonly workspaceApi = inject(WorkspaceApi);
@@ -279,3 +279,5 @@ export class WorkspaceService {
     );
   }
 }
+
+export { WorkspaceService };

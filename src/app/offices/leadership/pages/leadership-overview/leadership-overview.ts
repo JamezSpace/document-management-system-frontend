@@ -41,6 +41,8 @@ import { LeadershipService } from '../../services/leadership/leadership-service'
     }),
   ],
 })
-export class LeadershipOverview {
+class LeadershipOverview {
   readonly leadership = inject(LeadershipService);
 }
+
+export { LeadershipOverview };

@@ -15,7 +15,7 @@ import { DirectiveDetailApi } from '../../../../../models/api/directive/Directiv
   styleUrl: './directive-detail.css',
   providers: [provideIcons({ saxTickCircleBold, hugeTimer01, hugeSignature, lucideScrollText })],
 })
-export class DirectiveDetail implements OnInit {
+class DirectiveDetail implements OnInit {
   directiveId = input<string>('');
   directiveService = inject(DirectivesService);
   // directiveDetail = this.directiveService.directiveDetail;
@@ -36,3 +36,5 @@ export class DirectiveDetail implements OnInit {
       await this.directiveService.fetchDirectiveById(this.directiveId());
   }
 }
+
+export { DirectiveDetail };

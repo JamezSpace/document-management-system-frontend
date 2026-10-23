@@ -11,7 +11,7 @@ import { UnitsApi } from '../../../../models/api/organization/units.api';
 @Injectable({
   providedIn: 'root',
 })
-export class OrganizationService {
+class OrganizationService {
   private http = inject(HttpClient);
 
   loading = signal<boolean>(false);
@@ -68,3 +68,5 @@ export class OrganizationService {
 
   }
 }
+
+export { OrganizationService };

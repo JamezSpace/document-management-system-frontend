@@ -4,7 +4,7 @@ import { defer, finalize } from 'rxjs';
 import { TRACK_OFFICE_ACTIVITY } from './office-activity.context';
 import { OfficeActivityService } from './office-activity.service';
 
-export const officeActivityInterceptor: HttpInterceptorFn = (request, next) => {
+const officeActivityInterceptor: HttpInterceptorFn = (request, next) => {
   if (!request.context.get(TRACK_OFFICE_ACTIVITY)) return next(request);
 
   const activity = inject(OfficeActivityService);
@@ -14,3 +14,5 @@ export const officeActivityInterceptor: HttpInterceptorFn = (request, next) => {
     return next(request).pipe(finalize(finish));
   });
 };
+
+export { officeActivityInterceptor };

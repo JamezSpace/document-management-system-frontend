@@ -8,7 +8,7 @@ import { StaffLoginApi } from '../../../../../../../models/api/staff/StaffLogin.
 @Injectable({
   providedIn: 'root',
 })
-export class DirectivesService {
+class DirectivesService {
   directives = signal<DirectiveUi[]>([
     {
       id: 'DIR-001',
@@ -206,3 +206,5 @@ export class DirectivesService {
   async fetchAllDirectives() {}
   async fetchDirectiveById(directiveId: string) {}
 }
+
+export { DirectivesService };

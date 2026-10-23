@@ -24,9 +24,9 @@ const firebaseConfig: FirebaseOptions = {
   measurementId: environment.auth.firebase.measurement_id
 };
 
-export const firebase_app = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(firebase_app);
-export const appConfig: ApplicationConfig = {
+const firebase_app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(firebase_app);
+const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
@@ -34,3 +34,5 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor, officeActivityInterceptor, errorInterceptor])),
   ],
 };
+
+export { firebase_app, analytics, appConfig };

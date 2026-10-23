@@ -58,7 +58,7 @@ import { officeActivityContext } from '../../../../../../office-platform/activit
     }),
   ],
 })
-export class StaffActivation implements OnInit, AfterViewInit {
+class StaffActivation implements OnInit, AfterViewInit {
   private onboardingSessionService = inject(OnboardingService);
   private sideModalService = inject(SideModalService);
   private staffService = inject(StaffService);
@@ -190,3 +190,5 @@ export class StaffActivation implements OnInit, AfterViewInit {
     return inviteSession.signature ? true : false;
   }
 }
+
+export { StaffActivation };

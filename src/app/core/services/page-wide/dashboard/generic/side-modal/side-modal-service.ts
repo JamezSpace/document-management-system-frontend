@@ -3,7 +3,7 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class SideModalService {
+class SideModalService {
   private sideNavOpened = signal<boolean>(false);
   open() {
     this.sideNavOpened.set(true);
@@ -17,3 +17,5 @@ export class SideModalService {
     return this.sideNavOpened()
   }
 }
+
+export { SideModalService };

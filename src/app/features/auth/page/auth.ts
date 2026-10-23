@@ -30,7 +30,7 @@ import { AuthService } from '../service/auth-service';
     }),
   ],
 })
-export class Auth {
+class Auth {
   private authService = inject(AuthService);
   private utilService = inject(UtilService);
   private route = inject(ActivatedRoute);
@@ -73,3 +73,5 @@ export class Auth {
     await this.router.navigateByUrl(destination);
   }
 }
+
+export { Auth };

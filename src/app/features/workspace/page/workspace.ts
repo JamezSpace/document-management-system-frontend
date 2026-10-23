@@ -39,7 +39,7 @@ import { GovernanceService } from '../service/data/governance-service';
   templateUrl: './workspace.html',
   styleUrl: './workspace.css',
 })
-export class Workspace implements OnInit, OnDestroy {
+class Workspace implements OnInit, OnDestroy {
   @ViewChild(PaperControls) private paperControls?: PaperControls;
 
   private readonly router = inject(Router);
@@ -206,3 +206,5 @@ export class Workspace implements OnInit, OnDestroy {
   });
 
 }
+
+export { Workspace };

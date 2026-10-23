@@ -37,7 +37,7 @@ import { WorkspaceService } from '../../../service/data/workspace-service';
     }),
   ],
 })
-export class DocumentInspector implements OnInit {
+class DocumentInspector implements OnInit {
   private readonly workspaceService = inject(WorkspaceService);
   private readonly businessFunctionService = inject(BusinessFunctionService);
   private readonly correspondenceSubjectService = inject(CorrespondenceSubjectService);
@@ -127,3 +127,5 @@ export class DocumentInspector implements OnInit {
     return value.replaceAll('_', ' ');
   }
 }
+
+export { DocumentInspector };

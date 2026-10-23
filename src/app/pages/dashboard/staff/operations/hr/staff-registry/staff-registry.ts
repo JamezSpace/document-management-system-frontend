@@ -87,7 +87,7 @@ import { officeActivityContext } from '../../../../../../office-platform/activit
     }),
   ],
 })
-export class StaffRegistry implements OnInit {
+class StaffRegistry implements OnInit {
   private utilService = inject(UtilService);
   staffService = inject(StaffService);
   organizationService = inject(OrganizationService);
@@ -338,3 +338,5 @@ export class StaffRegistry implements OnInit {
     // })
   }
 }
+
+export { StaffRegistry };

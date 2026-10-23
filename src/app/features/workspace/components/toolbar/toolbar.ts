@@ -14,7 +14,7 @@ import { GovernanceService } from '../../service/data/governance-service';
   styleUrl: './toolbar.css',
   viewProviders: [provideIcons({ lucideArrowLeft, lucideFile, lucidePrinter, lucideSend })],
 })
-export class Toolbar {
+class Toolbar {
   workspaceService = inject(WorkspaceService);
   readonly governanceExtracting = inject(GovernanceService).extracting;
 
@@ -59,3 +59,5 @@ export class Toolbar {
     }
   }
 }
+
+export { Toolbar };

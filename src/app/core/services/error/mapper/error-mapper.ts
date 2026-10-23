@@ -9,7 +9,7 @@ import { ErrorCategory } from '../../../../enums/global/errorCategory.enum';
 @Injectable({
   providedIn: 'root',
 })
-export class ErrorMapperService {
+class ErrorMapperService {
   map(
     error: HttpErrorResponse,
     preferredSurface: ErrorSurface = ErrorSurface.TOAST,
@@ -128,3 +128,5 @@ export class ErrorMapperService {
     }
   }
 }
+
+export { ErrorMapperService };

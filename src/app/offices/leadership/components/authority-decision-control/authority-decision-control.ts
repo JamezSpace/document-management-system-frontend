@@ -13,7 +13,7 @@ import { LeadershipService } from '../../services/leadership/leadership-service'
   templateUrl: './authority-decision-control.html',
   providers: [provideIcons({ lucideArrowRight, lucidePenTool })],
 })
-export class AuthorityDecisionControl {
+class AuthorityDecisionControl {
   private readonly leadership = inject(LeadershipService);
 
   readonly decisionId = input<string>();
@@ -30,3 +30,5 @@ export class AuthorityDecisionControl {
     else this.leadership.prepareApproval();
   }
 }
+
+export { AuthorityDecisionControl };

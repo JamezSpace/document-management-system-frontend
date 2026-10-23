@@ -24,7 +24,7 @@ import DocumentService from '../../../shared/services/document/DocumentService';
     hugeFileValidation
   })],
 })
-export class DocumentItem {
+class DocumentItem {
   private activatedRouter = inject(ActivatedRoute);
   documentItem = input.required<DocumentApiWithSharedTag>();
   utilService = inject(UtilService);
@@ -78,3 +78,5 @@ export class DocumentItem {
     console.log('Only draft or documents with no content can be deleted');
   }
 }
+
+export { DocumentItem };

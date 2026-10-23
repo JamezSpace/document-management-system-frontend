@@ -45,7 +45,7 @@ import { WorkItemsService } from '../../services/work-items/work-items-service';
     }),
   ],
 })
-export class AssignedDocuments implements OnInit {
+class AssignedDocuments implements OnInit {
   readonly officeContext = inject(OfficeContextService);
   readonly workItemsService = inject(WorkItemsService);
   readonly emptyState: EmptyStateConfig = {
@@ -68,3 +68,5 @@ export class AssignedDocuments implements OnInit {
     this.workItemsService.loadDetail(id);
   }
 }
+
+export { AssignedDocuments };

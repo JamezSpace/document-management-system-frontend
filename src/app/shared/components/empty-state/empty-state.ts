@@ -36,7 +36,7 @@ import type { EmptyStateConfig } from '../../../models/ui/global/EmptyState.ui';
     }),
   ],
 })
-export class EmptyState {
+class EmptyState {
   readonly state = input.required<EmptyStateConfig>();
   readonly actionSelected = output<string>();
 
@@ -44,3 +44,5 @@ export class EmptyState {
     this.actionSelected.emit(id);
   }
 }
+
+export { EmptyState };

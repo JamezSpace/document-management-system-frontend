@@ -6,7 +6,7 @@ import type { StaffActor } from '../../../api/identity/identity.contracts';
 import type { AuthorizationScope } from '../../../models/api/authorization/AuthorizationScope.api';
 
 @Injectable({ providedIn: 'root' })
-export class AppContextService {
+class AppContextService {
   private readonly identityApi = inject(IdentityApi);
 
   readonly actor = signal<StaffActor | null>(null);
@@ -36,3 +36,5 @@ export class AppContextService {
     this.actor.set(null);
   }
 }
+
+export { AppContextService };

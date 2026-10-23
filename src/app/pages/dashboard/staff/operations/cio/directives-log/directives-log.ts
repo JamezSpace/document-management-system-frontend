@@ -51,7 +51,7 @@ import { SideModal } from '../../../../../../shared/components/side-modal/side-m
     }),
   ],
 })
-export class DirectivesLog implements OnInit, AfterViewInit {
+class DirectivesLog implements OnInit, AfterViewInit {
   activatedRouter = inject(ActivatedRoute);
   directiveService = inject(DirectivesService);
 
@@ -130,3 +130,5 @@ export class DirectivesLog implements OnInit, AfterViewInit {
     modifiedAt: '2026-03-03T14:22:31.000Z',
   });
 }
+
+export { DirectivesLog };

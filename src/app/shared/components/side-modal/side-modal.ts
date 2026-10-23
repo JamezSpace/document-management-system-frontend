@@ -14,7 +14,7 @@ import { SideModalService } from '../../../core/services/page-wide/dashboard/gen
     }),
   ],
 })
-export class SideModal {
+class SideModal {
   sideModalService = inject(SideModalService)
 
   protected closeSideNavOnBackdropClick(event: any) {
@@ -29,3 +29,5 @@ export class SideModal {
   
   
 }
+
+export { SideModal };

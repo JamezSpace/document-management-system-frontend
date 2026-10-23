@@ -34,7 +34,7 @@ import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
     hugeTickDouble02
   })],
 })
-export class Notices {
+class Notices {
   readonly officeContext = inject(OfficeContextService);
   noticeService = inject(NoticesService);
   currentStaffService = inject(CurrentStaffService);
@@ -98,3 +98,5 @@ export class Notices {
     }
   }
 }
+
+export { Notices };

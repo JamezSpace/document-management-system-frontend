@@ -9,7 +9,7 @@ import type { AppError } from '../../../../models/ui/global/ErrorPresentation.ui
 @Injectable({
   providedIn: 'root',
 })
-export class CorrespondenceSubjectService {
+class CorrespondenceSubjectService {
   private http = inject(HttpClient);
 
   corrSubjects = signal<CorrSubjectApi[]>([]);
@@ -26,3 +26,5 @@ export class CorrespondenceSubjectService {
     })
   }
 }
+
+export { CorrespondenceSubjectService };

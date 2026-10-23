@@ -5,7 +5,7 @@ import { AuthService } from '../../features/auth/service/auth-service';
 import { CurrentStaffService } from '../../features/shared/services/current-staff/current-staff-service';
 import type { AppError } from '../../models/ui/global/ErrorPresentation.ui';
 
-export const authGuard: CanActivateFn = async (_route, state) => {
+const authGuard: CanActivateFn = async (_route, state) => {
   const authService = inject(AuthService);
   const currentStaffService = inject(CurrentStaffService);
   const router = inject(Router);
@@ -53,3 +53,5 @@ export const authGuard: CanActivateFn = async (_route, state) => {
     authService.endSecureEnvironmentSetup();
   }
 };
+
+export { authGuard };

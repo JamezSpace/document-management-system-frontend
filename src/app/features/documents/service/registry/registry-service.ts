@@ -6,7 +6,7 @@ import { DocumentApi, emptyDocument } from '../../../../models/api/documents/Doc
 @Injectable({
   providedIn: 'root',
 })
-export class RegistryService {
+class RegistryService {
   private sidebar = inject(HlmSidebarService);
   private router = inject(Router)
   documentClicked = signal<DocumentApi>(emptyDocument);
@@ -43,3 +43,5 @@ export class RegistryService {
   }
 
 }
+
+export { RegistryService };

@@ -88,7 +88,7 @@ import { LineLoader } from '../../shared/components/loaders/line-loader/line-loa
     lucideTimerReset, lucideWorkflow, lucideZap,
   })],
 })
-export class OfficeShell {
+class OfficeShell {
   private readonly authService = inject(AuthService);
   private readonly staffService = inject(CurrentStaffService);
   private readonly sidebarService = inject(HlmSidebarService);
@@ -137,3 +137,5 @@ export class OfficeShell {
     await this.authService.logout();
   }
 }
+
+export { OfficeShell };

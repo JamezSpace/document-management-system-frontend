@@ -10,8 +10,10 @@ import type { AppError } from '../../../../../models/ui/global/ErrorPresentation
   styleUrl: './component-error.css',
   providers: [provideIcons({ lucideRefreshCw, lucideTriangleAlert })],
 })
-export class ComponentError {
+class ComponentError {
   readonly error = input.required<AppError>();
   readonly retry = output<void>();
   readonly canRetry = computed(() => this.error().retryable);
 }
+
+export { ComponentError };
