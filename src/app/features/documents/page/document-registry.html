@@ -415,6 +415,7 @@
             <hlm-select
               class="block"
               formControlName="subjectCodeObject"
+              [itemToString]="correspondenceSubjectName"
               (valueChange)="onSubjectSelection($event)"
             >
               <hlm-select-trigger class="w-full">
@@ -434,7 +435,11 @@
         <div class="row">
           <div class="field in-dashboard w-full">
             <label>Business Function</label>
-            <hlm-select class="block" formControlName="functionCodeObject">
+            <hlm-select
+              class="block"
+              formControlName="functionCodeObject"
+              [itemToString]="businessFunctionName"
+            >
               <hlm-select-trigger class="w-full">
                 <hlm-select-value placeholder="Select Activity (e.g. Procurement)" />
               </hlm-select-trigger>

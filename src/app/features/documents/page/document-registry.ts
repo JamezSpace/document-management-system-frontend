@@ -54,7 +54,6 @@ import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import type { EmptyStateConfig } from '../../../models/ui/global/EmptyState.ui';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { LineLoader } from '../../../shared/components/loaders/line-loader/line-loader';
-import { UtilService } from '../../../shared/utils/service/util-service';
 import { BusinessFunctionService } from '../service/business-function/business-function-service';
 import { CorrespondenceSubjectService } from '../service/correspondence-subject/correspondence-subject-service';
 import { DocumentTypesService } from '../service/document-types/document-types-service';
@@ -96,7 +95,6 @@ import { OfficeContextService } from '../../../office-platform/context/office-co
     HlmInputGroup,
     HlmInputGroupAddon,
     EmptyState,
-    
     BrnAlertDialogContent,
     BrnAlertDialogTrigger,
     HlmButton,
@@ -132,7 +130,7 @@ import { OfficeContextService } from '../../../office-platform/context/office-co
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocumentRegistry implements OnInit {
+class DocumentRegistry implements OnInit {
   readonly documentSkeletons = [1, 2, 3, 4];
 
   router = inject(Router);
@@ -191,7 +189,7 @@ export class DocumentRegistry implements OnInit {
   readonly searchLoading = this.documentService.searchLoading;
   readonly isSearching = computed(() => this.searchQuery().trim().length > 0);
 
-  private readonly governedSearchEffect = effect((onCleanup) => {
+  private readonly GovernedSearchEffect = effect((onCleanup) => {
     const query = this.searchQuery().trim();
     const timer = setTimeout(() => {
       if (query) {
@@ -397,6 +395,10 @@ export class DocumentRegistry implements OnInit {
   }
 
   selectedCorrSubject = signal<CorrSubjectApi | null>(null);
+  readonly correspondenceSubjectName = (subject: CorrSubjectApi): string => subject.name;
+  readonly businessFunctionName = (businessFunction: BussFunctionApi): string =>
+    businessFunction.name;
+
   filteredBussFunctions = computed(() => {
     const selectedSubject = this.selectedCorrSubject();
     if (!selectedSubject) return [];
@@ -406,8 +408,8 @@ export class DocumentRegistry implements OnInit {
       .filter((func) => func.subjectId === selectedSubject.id);
   });
 
-  onSubjectSelection(selectedSubject: CorrSubjectApi) {
-    this.selectedCorrSubject.set(selectedSubject);
+  onSubjectSelection(selectedSubject: CorrSubjectApi | null | undefined) {
+    this.selectedCorrSubject.set(selectedSubject ?? null);
     this.initDocFormGroup.controls.functionCodeObject.reset();
   }
 
@@ -580,3 +582,5 @@ export class DocumentRegistry implements OnInit {
     this.registryService.openDocDetails(doc);
   }
 }
+
+export { DocumentRegistry };
