@@ -24,7 +24,7 @@ import { OrganizationService } from '../../../shared/services/organization/organ
     provideIcons({lucideX})
   ]
 })
-export class DocumentDetails {
+class DocumentDetails {
     registryService = inject(RegistryService)
     sideModalService = inject(SideModalService);
     utilService = inject(UtilService);
@@ -72,16 +72,12 @@ export class DocumentDetails {
         return this.docTypesService.allDocTypes().find(docType => docType.id === typeId)
     })
 
-    addressedTo = computed(() => {
-        console.log(this.documentToShowFullDetails());
-        
+    addressedTo = computed(() => {          
         const recipients = this.documentToShowFullDetails().addressees;
 
         let addressees = recipients.map(addr => {            
             return this.unitMembersService.data().find(member => member.designation.id === addr.addressedToDesignationId)?.designation.title;
         })
-
-        console.log(addressees);
         
         return addressees;
     })
@@ -96,3 +92,5 @@ export class DocumentDetails {
         this.unitMembersService.data().find(member => member.id === staffId)?.designation.title;
     }
 }
+
+export { DocumentDetails };
