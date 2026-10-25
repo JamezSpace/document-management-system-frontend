@@ -1,0 +1,159 @@
+  <section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+    <nav hlmBreadcrumb aria-label="Breadcrumb">
+      <ol hlmBreadcrumbList>
+        <li hlmBreadcrumbItem>
+          <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+        </li>
+        <li hlmBreadcrumbSeparator></li>
+        <li hlmBreadcrumbItem>
+          <span hlmBreadcrumbPage>Establishment</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          People operations
+        </p>
+        <h1 nata-h1>Establishment</h1>
+        <p class="mt-2 text-muted-foreground" nata-p>
+          Maintain sanctioned positions, grades, reporting structures, vacancies and incumbents.
+        </p>
+      </div>
+      <button hlmBtn><ng-icon name="lucideBriefcaseBusiness" />Propose position</button>
+    </header>
+    <hlm-separator class="my-6" />
+
+<div class="mb-5 flex flex-wrap items-center gap-2">
+  <div class="flex rounded-md border bg-card p-1">
+    <button
+      hlmBtn
+      size="sm"
+      [variant]="establishmentView() === 'hierarchy' ? 'default' : 'ghost'"
+      (click)="establishmentView.set('hierarchy')"
+    >
+      <ng-icon name="lucideNetwork" />Hierarchy</button
+    ><button
+      hlmBtn
+      size="sm"
+      [variant]="establishmentView() === 'table' ? 'default' : 'ghost'"
+      (click)="establishmentView.set('table')"
+    >
+      <ng-icon name="lucideList" />Table
+    </button>
+  </div>
+  <button hlmBtn variant="outline">
+    <ng-icon name="lucideFilter" />Office, grade and status
+  </button>
+</div>
+@if (establishmentView() === 'hierarchy') {
+  <div class="grid gap-4 xl:grid-cols-3">
+    @for (
+      office of [
+        {
+          name: 'Academic Planning',
+          head: 'Director · Grade 15 · Filled',
+          units: [
+            'Assistant Director · Grade 14 · Vacant',
+            'Principal Planning Officer · Grade 13 · Dr. T. Okafor',
+            'Planning Officer · Grade 9 · 2 filled / 1 vacant',
+          ],
+        },
+        {
+          name: 'Secretariat',
+          head: 'Principal Executive Officer · Grade 12 · Filled',
+          units: [
+            'Senior Executive Officer · Grade 10 · A. Balogun',
+            'Executive Officer II · Grade 8 · Filled',
+            'Protocol Officer · Grade 9 · Vacant',
+          ],
+        },
+        {
+          name: 'Records & Registry',
+          head: 'Chief Records Officer · Grade 14 · Filled',
+          units: [
+            'Principal Records Officer · Grade 12 · Filled',
+            'Senior Records Officer · Grade 10 · 2 filled',
+            'Records Officer · Grade 8 · 2 vacant',
+          ],
+        },
+      ];
+      track office.name
+    ) {
+      <section hlmCard class="border bg-card p-5 shadow-xs">
+        <div class="flex items-center gap-2">
+          <ng-icon name="lucideBriefcaseBusiness" class="text-primary" />
+          <h2 class="text-lg font-semibold">{{ office.name }}</h2>
+        </div>
+        <div
+          class="mt-4 rounded-md border-l-4 border-l-primary bg-primary/5 p-3 text-sm font-medium"
+        >
+          {{ office.head }}
+        </div>
+        <div class="ml-4 mt-3 space-y-2 border-l pl-4">
+          @for (unit of office.units; track unit) {
+            <div class="rounded-md border p-3 text-sm">{{ unit }}</div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+} @else {
+  <div hlmTableContainer class="rounded-md border bg-card shadow-xs">
+    <table hlmTable>
+      <thead hlmTHead>
+        <tr hlmTr>
+          <th hlmTh>Sanctioned position</th>
+          <th hlmTh>Grade</th>
+          <th hlmTh>Reporting office</th>
+          <th hlmTh>Status</th>
+          <th hlmTh>Incumbent</th>
+          <th hlmTh>Authority reference</th>
+        </tr>
+      </thead>
+      <tbody hlmTBody>
+        @for (
+          row of [
+            {
+              position: 'Assistant Director, Academic Planning',
+              grade: '14',
+              office: 'Director, Academic Planning',
+              status: 'Vacant',
+              incumbent: '—',
+              authority: 'EST/2024/118',
+            },
+            {
+              position: 'Principal Planning Officer',
+              grade: '13',
+              office: 'Academic Planning',
+              status: 'Filled',
+              incumbent: 'Dr. Tola Okafor',
+              authority: 'EST/2024/119',
+            },
+            {
+              position: 'Protocol Officer',
+              grade: '9',
+              office: 'Secretariat',
+              status: 'Vacant',
+              incumbent: '—',
+              authority: 'EST/2025/044',
+            },
+          ];
+          track row.position
+        ) {
+          <tr hlmTr>
+            <td hlmTd class="font-medium">{{ row.position }}</td>
+            <td hlmTd>{{ row.grade }}</td>
+            <td hlmTd>{{ row.office }}</td>
+            <td hlmTd>{{ row.status }}</td>
+            <td hlmTd>{{ row.incumbent }}</td>
+            <td hlmTd class="font-mono text-xs">{{ row.authority }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+  </section>
+
+

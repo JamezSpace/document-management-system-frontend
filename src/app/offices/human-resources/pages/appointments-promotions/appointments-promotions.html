@@ -1,0 +1,184 @@
+<hlm-sheet side="right">
+  <section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+    <nav hlmBreadcrumb aria-label="Breadcrumb">
+      <ol hlmBreadcrumbList>
+        <li hlmBreadcrumbItem>
+          <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+        </li>
+        <li hlmBreadcrumbSeparator></li>
+        <li hlmBreadcrumbItem>
+          <span hlmBreadcrumbPage>Appointments & promotions</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          People operations
+        </p>
+        <h1 nata-h1>Appointments & promotions</h1>
+        <p class="mt-2 text-muted-foreground" nata-p>
+          Progress evidence-based appointment and promotion cases through accountable authority.
+        </p>
+      </div>
+      <button hlmBtn><ng-icon name="lucideAward" />Initiate case</button>
+    </header>
+    <hlm-separator class="my-6" />
+
+<div class="mb-5 flex gap-1 overflow-x-auto border-b">
+  @for (stage of appointmentStages; track stage) {
+    <button
+      type="button"
+      class="border-b-2 border-b-transparent px-4 py-3 text-sm text-muted-foreground"
+      [class.border-b-primary]="appointmentStage() === stage"
+      [class.text-foreground]="appointmentStage() === stage"
+      [class.font-semibold]="appointmentStage() === stage"
+      (click)="appointmentStage.set(stage)"
+    >
+      {{ stage }}
+    </button>
+  }
+</div>
+<div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+  @for (
+    item of [
+      {
+        person: 'Dr. Tola Okafor',
+        case: 'Promotion to Assistant Director',
+        ref: 'HR/APPT/2026/0118',
+        stage: 'Awaiting authority',
+        evidence: '8/8 complete',
+        effective: '1 Oct 2026',
+        status: 'Ready for decision',
+      },
+      {
+        person: 'Amina Balogun',
+        case: 'Promotion to Principal Executive Officer',
+        ref: 'HR/APPT/2026/0122',
+        stage: 'Under review',
+        evidence: '6/8 complete',
+        effective: 'Proposed 1 Jan 2027',
+        status: 'Evidence hold',
+      },
+      {
+        person: 'Dr. K. Ibrahim',
+        case: 'Senior Lecturer appointment',
+        ref: 'HR/APPT/2026/0127',
+        stage: 'Documents pending',
+        evidence: '4/9 complete',
+        effective: 'Not set',
+        status: 'Candidate documents due',
+      },
+    ];
+    track item.ref
+  ) {
+    <article hlmCard class="border bg-card p-5 shadow-xs">
+      <div class="flex justify-between gap-3">
+        <span
+          class="rounded-full border border-(--brand-info)/35 bg-(--brand-info)/10 px-2 py-0.5 text-xs text-(--brand-info)"
+          >{{ item.stage }}</span
+        ><ng-icon name="lucideAward" class="text-xl text-primary" />
+      </div>
+      <h2 class="mt-5 text-lg font-semibold">{{ item.person }}</h2>
+      <p class="mt-1 text-sm text-muted-foreground">{{ item.case }}</p>
+      <p class="mt-2 font-mono text-xs text-muted-foreground">{{ item.ref }}</p>
+      <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
+        <div>
+          <dt class="text-xs text-muted-foreground">Evidence</dt>
+          <dd>{{ item.evidence }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-muted-foreground">Effective</dt>
+          <dd>{{ item.effective }}</dd>
+        </div>
+        <div class="col-span-2">
+          <dt class="text-xs text-muted-foreground">Case state</dt>
+          <dd>{{ item.status }}</dd>
+        </div>
+      </dl>
+      <button hlmBtn variant="outline" class="mt-5 w-full" hlmSheetTrigger>
+        Open case evidence
+      </button>
+      @if (item.stage === 'Awaiting authority') {
+        <button
+          hlmBtn
+          class="mt-2 w-full bg-(--brand-authority-accent) text-(--brand-authority-foreground) hover:bg-(--brand-authority-accent-hover)"
+          [hlmAlertDialogTriggerFor]="authorityDialog"
+          (click)="prepareAppointmentApproval()"
+        >
+          Approve case
+        </button>
+      }
+    </article>
+  }
+</div>
+  </section>
+
+<hlm-alert-dialog #authorityDialog
+  ><hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(38rem,92vw)]"
+    ><hlm-alert-dialog-header
+      ><p class="text-xs font-semibold uppercase tracking-wider text-(--brand-authority-accent)">
+HR authority action
+      </p>
+      <h2 hlmAlertDialogTitle>{{ authorityAction().title }}</h2>
+      <p hlmAlertDialogDescription>
+This decision changes an employment or leave state and will be permanently audited.
+      </p></hlm-alert-dialog-header
+    >
+    <div
+      class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md border bg-muted/40 p-4 text-sm"
+    >
+      <div>
+<p class="text-xs text-muted-foreground">Current state</p>
+<p class="mt-1 font-semibold">{{ authorityAction().currentState }}</p>
+      </div>
+      <ng-icon name="lucideArrowRight" />
+      <div>
+<p class="text-xs text-muted-foreground">Proposed state</p>
+<p class="mt-1 font-semibold">{{ authorityAction().proposedState }}</p>
+      </div>
+    </div>
+    <dl class="grid gap-3 text-sm">
+      <div>
+<dt class="font-semibold">Who is exercising authority?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().authority }}</dd>
+      </div>
+      <div>
+<dt class="font-semibold">What policy consequence follows?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().consequence }}</dd>
+      </div>
+      <div>
+<dt class="font-semibold">Is it reversible?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().reversible }}</dd>
+      </div>
+      <div>
+<dt class="font-semibold">What evidence will be recorded?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().evidence }}</dd>
+      </div>
+    </dl>
+    <label class="grid gap-1.5 text-sm font-medium"
+      >Decision rationale<textarea
+hlmTextarea
+class="min-h-28"
+placeholder="State the evidence and HR policy basis"
+      ></textarea></label
+    ><label
+      class="flex items-start gap-2 rounded-md border border-(--brand-authority-accent)/35 bg-(--brand-authority-accent)/10 p-3 text-sm"
+      ><hlm-checkbox aria-label="Confirm HR authority action" /><span
+>I confirm the staff or case, governing evidence, policy effect and my authority to
+decide.</span
+      ></label
+    ><hlm-alert-dialog-footer
+      ><button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button
+      ><button
+hlmAlertDialogAction
+[class.bg-destructive]="authorityAction().destructive"
+[class.bg-(--brand-authority-accent)]="!authorityAction().destructive"
+[class.text-(--brand-authority-foreground)]="!authorityAction().destructive"
+      >
+{{ authorityAction().confirmLabel }}
+      </button></hlm-alert-dialog-footer
+    ></hlm-alert-dialog-content
+  ></hlm-alert-dialog
+>
+</hlm-sheet>

@@ -1,0 +1,213 @@
+  <section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+    <nav hlmBreadcrumb aria-label="Breadcrumb">
+      <ol hlmBreadcrumbList>
+        <li hlmBreadcrumbItem>
+          <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+        </li>
+        <li hlmBreadcrumbSeparator></li>
+        <li hlmBreadcrumbItem>
+          <span hlmBreadcrumbPage>Leave management</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          People operations
+        </p>
+        <h1 nata-h1>Leave management</h1>
+        <p class="mt-2 text-muted-foreground" nata-p>
+          Coordinate leave balances, coverage, conflicts and audited approval or cancellation.
+        </p>
+      </div>
+      <button hlmBtn><ng-icon name="lucideCalendarCheck" />Record leave request</button>
+    </header>
+    <hlm-separator class="my-6" />
+
+<div class="mb-5 flex flex-wrap items-center gap-2">
+  <div class="flex rounded-md border bg-card p-1">
+    <button
+      hlmBtn
+      size="sm"
+      [variant]="leaveView() === 'calendar' ? 'default' : 'ghost'"
+      (click)="leaveView.set('calendar')"
+    >
+      <ng-icon name="lucideLayoutGrid" />Calendar</button
+    ><button
+      hlmBtn
+      size="sm"
+      [variant]="leaveView() === 'queue' ? 'default' : 'ghost'"
+      (click)="leaveView.set('queue')"
+    >
+      <ng-icon name="lucideList" />Request queue
+    </button>
+  </div>
+  <button hlmBtn variant="outline">
+    <ng-icon name="lucideFilter" />Office and leave type
+  </button>
+</div>
+<div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
+  <section hlmCard class="border bg-card p-5 shadow-xs">
+    @if (leaveView() === 'calendar') {
+      <div class="grid grid-cols-5 gap-px overflow-hidden rounded-md border bg-border">
+        @for (day of ['Mon 31', 'Tue 1', 'Wed 2', 'Thu 3', 'Fri 4']; track day) {
+          <div class="min-h-96 bg-card p-3">
+            <p class="border-b pb-2 text-sm font-semibold">{{ day }}</p>
+            @if (day.includes('Tue')) {
+              <div class="mt-3 rounded-md border-l-4 border-l-primary bg-primary/5 p-3">
+                <p class="text-sm font-medium">A. Balogun</p>
+                <p class="text-xs text-muted-foreground">Annual leave · day 1/5</p>
+              </div>
+            }
+            @if (day.includes('Thu')) {
+              <div
+                class="mt-3 rounded-md border-l-4 border-l-(--brand-warning-highlight) bg-(--brand-warning-highlight)/10 p-3"
+              >
+                <p class="text-sm font-medium">Secretariat coverage</p>
+                <p class="text-xs text-muted-foreground">Two officers absent</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="divide-y">
+        @for (
+          request of [
+            'Amina Balogun · Annual leave · 5 days',
+            'T. Musa · Medical leave · 3 days',
+            'E. Nwosu · Study leave · 10 days',
+          ];
+          track request
+        ) {
+          <button
+            type="button"
+            class="flex w-full items-center justify-between p-4 text-left hover:bg-muted/50"
+          >
+            <span>{{ request }}</span
+            ><ng-icon name="lucideChevronRight" />
+          </button>
+        }
+      </div>
+    }
+  </section>
+  <aside hlmCard class="h-fit border bg-card p-5 shadow-xs">
+    <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      Selected request
+    </p>
+    <h2 class="mt-2 text-lg font-semibold">Amina Balogun · Annual leave</h2>
+    <dl class="mt-5 grid gap-4 text-sm">
+      <div>
+        <dt class="text-xs text-muted-foreground">Balance</dt>
+        <dd class="mt-1">18 days available → 13 after approval</dd>
+      </div>
+      <div>
+        <dt class="text-xs text-muted-foreground">Dates</dt>
+        <dd class="mt-1">1–5 September 2026</dd>
+      </div>
+      <div>
+        <dt class="text-xs text-muted-foreground">Coverage</dt>
+        <dd class="mt-1">Executive Officer II assigned as acting cover</dd>
+      </div>
+      <div>
+        <dt class="text-xs text-muted-foreground">Approval chain</dt>
+        <dd class="mt-1 text-(--brand-success)">
+          Line manager recommended · HR verification complete
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs text-muted-foreground">Conflict</dt>
+        <dd class="mt-1 text-(--brand-warning)">
+          Overlaps one executive meeting requiring handover
+        </dd>
+      </div>
+    </dl>
+    <button
+      hlmBtn
+      class="mt-6 w-full bg-(--brand-authority-accent) text-(--brand-authority-foreground) hover:bg-(--brand-authority-accent-hover)"
+      [hlmAlertDialogTriggerFor]="authorityDialog"
+      (click)="prepareLeaveApproval()"
+    >
+      <ng-icon name="lucideBadgeCheck" />Approve leave</button
+    ><button
+      hlmBtn
+      variant="destructive"
+      class="mt-2 w-full"
+      [hlmAlertDialogTriggerFor]="authorityDialog"
+      (click)="prepareLeaveCancellation()"
+    >
+      Cancel approved leave
+    </button>
+  </aside>
+</div>
+  </section>
+
+<hlm-alert-dialog #authorityDialog
+  ><hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(38rem,92vw)]"
+    ><hlm-alert-dialog-header
+      ><p class="text-xs font-semibold uppercase tracking-wider text-(--brand-authority-accent)">
+HR authority action
+      </p>
+      <h2 hlmAlertDialogTitle>{{ authorityAction().title }}</h2>
+      <p hlmAlertDialogDescription>
+This decision changes an employment or leave state and will be permanently audited.
+      </p></hlm-alert-dialog-header
+    >
+    <div
+      class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md border bg-muted/40 p-4 text-sm"
+    >
+      <div>
+<p class="text-xs text-muted-foreground">Current state</p>
+<p class="mt-1 font-semibold">{{ authorityAction().currentState }}</p>
+      </div>
+      <ng-icon name="lucideArrowRight" />
+      <div>
+<p class="text-xs text-muted-foreground">Proposed state</p>
+<p class="mt-1 font-semibold">{{ authorityAction().proposedState }}</p>
+      </div>
+    </div>
+    <dl class="grid gap-3 text-sm">
+      <div>
+<dt class="font-semibold">Who is exercising authority?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().authority }}</dd>
+      </div>
+      <div>
+<dt class="font-semibold">What policy consequence follows?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().consequence }}</dd>
+      </div>
+      <div>
+<dt class="font-semibold">Is it reversible?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().reversible }}</dd>
+      </div>
+      <div>
+<dt class="font-semibold">What evidence will be recorded?</dt>
+<dd class="mt-1 text-muted-foreground">{{ authorityAction().evidence }}</dd>
+      </div>
+    </dl>
+    <label class="grid gap-1.5 text-sm font-medium"
+      >Decision rationale<textarea
+hlmTextarea
+class="min-h-28"
+placeholder="State the evidence and HR policy basis"
+      ></textarea></label
+    ><label
+      class="flex items-start gap-2 rounded-md border border-(--brand-authority-accent)/35 bg-(--brand-authority-accent)/10 p-3 text-sm"
+      ><hlm-checkbox aria-label="Confirm HR authority action" /><span
+>I confirm the staff or case, governing evidence, policy effect and my authority to
+decide.</span
+      ></label
+    ><hlm-alert-dialog-footer
+      ><button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button
+      ><button
+hlmAlertDialogAction
+[class.bg-destructive]="authorityAction().destructive"
+[class.bg-(--brand-authority-accent)]="!authorityAction().destructive"
+[class.text-(--brand-authority-foreground)]="!authorityAction().destructive"
+      >
+{{ authorityAction().confirmLabel }}
+      </button></hlm-alert-dialog-footer
+    ></hlm-alert-dialog-content
+  ></hlm-alert-dialog
+>
+
+

@@ -1,0 +1,187 @@
+<hlm-sheet side="right">
+  <section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          People operations
+        </p>
+        <h1 nata-h1>Human Resources</h1>
+        <p class="mt-2 text-muted-foreground" nata-p>
+          Manage scoped people operations, personnel records, establishment and employment lifecycle actions.
+        </p>
+      </div>
+      <a hlmBtn routerLink="/office/human-resources/staff"><ng-icon name="lucideUsers" />Staff registry</a>
+    </header>
+    <hlm-separator class="my-6" />
+
+<div
+  class="mb-5 flex items-start gap-3 rounded-md border border-(--brand-info)/35 bg-(--brand-info)/10 p-4"
+>
+  <ng-icon name="lucideShieldCheck" class="mt-0.5 shrink-0 text-(--brand-info)" />
+  <div>
+    <p class="font-semibold">Scoped HR view</p>
+    <p class="mt-1 text-sm text-muted-foreground">
+      Metrics include only offices and employment populations within your effective HR
+      authority.
+    </p>
+  </div>
+</div>
+<div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+  @for (
+    metric of [
+      {
+        label: 'Staff changes',
+        value: '14',
+        note: 'Last 30 days',
+        icon: 'lucideUsers',
+        tone: 'text-primary',
+      },
+      {
+        label: 'Pending activations',
+        value: '7',
+        note: '3 ready today',
+        icon: 'lucideUserCheck',
+        tone: 'text-primary',
+      },
+      {
+        label: 'Leave requiring action',
+        value: '9',
+        note: '2 coverage conflicts',
+        icon: 'lucideCalendarCheck',
+        tone: 'text-(--brand-warning)',
+      },
+      {
+        label: 'Appointment cases',
+        value: '18',
+        note: '5 awaiting authority',
+        icon: 'lucideAward',
+        tone: 'text-(--brand-authority-accent)',
+      },
+      {
+        label: 'Vacancies',
+        value: '23',
+        note: '8 priority positions',
+        icon: 'lucideBriefcaseBusiness',
+        tone: 'text-primary',
+      },
+      {
+        label: 'Expiring events',
+        value: '6',
+        note: 'Within 60 days',
+        icon: 'lucideAlarmClock',
+        tone: 'text-(--brand-warning)',
+      },
+    ];
+    track metric.label
+  ) {
+    <article hlmCard class="border bg-card p-4 shadow-xs">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <p class="text-xs text-muted-foreground">{{ metric.label }}</p>
+          <p class="mt-2 text-3xl font-bold">{{ metric.value }}</p>
+          <p class="mt-2 text-xs text-muted-foreground">{{ metric.note }}</p>
+        </div>
+        <span class="rounded-md bg-muted p-2" [class]="metric.tone"
+          ><ng-icon [name]="metric.icon"
+        /></span>
+      </div>
+    </article>
+  }
+</div>
+<div class="mt-5 grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
+  <section hlmCard class="border bg-card p-5 shadow-xs">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-lg font-semibold">HR actions requiring attention</h2>
+        <p class="text-sm text-muted-foreground">
+          Prioritised by authority, effective date and staff impact
+        </p>
+      </div>
+      <span class="rounded-full bg-primary px-2.5 py-1 text-xs text-primary-foreground"
+        >21 open</span
+      >
+    </div>
+    <div class="mt-4 grid gap-3">
+      @for (
+        item of [
+          {
+            type: 'Leave conflict',
+            title: 'Concurrent leave affects Secretariat coverage',
+            owner: 'Amina Balogun',
+            due: 'Decision today',
+            tone: 'text-(--brand-warning)',
+          },
+          {
+            type: 'Appointment',
+            title: 'Principal Planning Officer promotion case',
+            owner: 'Dr. Tola Okafor',
+            due: 'Authority due 2 Sep',
+            tone: 'text-(--brand-authority-accent)',
+          },
+          {
+            type: 'Employment event',
+            title: 'Six probation periods expire within 60 days',
+            owner: 'Multiple offices',
+            due: 'Review cycle opens today',
+            tone: 'text-(--brand-info)',
+          },
+        ];
+        track item.title
+      ) {
+        <article class="flex items-center justify-between gap-4 rounded-md border p-4">
+          <div>
+            <p class="text-xs font-semibold" [class]="item.tone">{{ item.type }}</p>
+            <h3 class="mt-2 font-semibold">{{ item.title }}</h3>
+            <p class="mt-1 text-xs text-muted-foreground">
+              {{ item.owner }} · {{ item.due }}
+            </p>
+          </div>
+          <button hlmBtn variant="outline" size="sm">Review</button>
+        </article>
+      }
+    </div>
+  </section>
+  <aside class="grid gap-5">
+    <section hlmCard class="border bg-card p-5 shadow-xs">
+      <h2 class="text-lg font-semibold">Establishment position</h2>
+      <div class="mt-4 grid grid-cols-2 gap-3 text-center">
+        <div class="rounded-md bg-muted/50 p-4">
+          <p class="text-2xl font-bold">316</p>
+          <p class="text-xs text-muted-foreground">Sanctioned</p>
+        </div>
+        <div class="rounded-md bg-muted/50 p-4">
+          <p class="text-2xl font-bold">23</p>
+          <p class="text-xs text-muted-foreground">Vacant</p>
+        </div>
+      </div>
+      <a
+        hlmBtn
+        variant="outline"
+        class="mt-4 w-full"
+        routerLink="/office/human-resources/establishment"
+        >Open establishment</a
+      >
+    </section>
+    <section hlmCard class="border bg-card p-5 shadow-xs">
+      <h2 class="text-lg font-semibold">Recent staff changes</h2>
+      <div class="mt-4 space-y-3">
+        @for (
+          change of [
+            '2 appointments activated',
+            '4 promotions took effect',
+            '3 office transfers recorded',
+          ];
+          track change
+        ) {
+          <div class="flex gap-2">
+            <ng-icon name="lucideCheck" class="mt-0.5 text-(--brand-success)" />
+            <p class="text-sm">{{ change }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  </aside>
+</div>
+  </section>
+</hlm-sheet>
+

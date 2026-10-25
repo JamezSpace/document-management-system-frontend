@@ -1,0 +1,162 @@
+  <section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+    <nav hlmBreadcrumb aria-label="Breadcrumb">
+      <ol hlmBreadcrumbList>
+        <li hlmBreadcrumbItem>
+          <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+        </li>
+        <li hlmBreadcrumbSeparator></li>
+        <li hlmBreadcrumbItem>
+          <span hlmBreadcrumbPage>HR reports</span>
+        </li>
+      </ol>
+    </nav>
+    <header class="mt-5 flex flex-wrap items-start justify-between gap-5">
+      <div class="max-w-3xl">
+        <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          People operations
+        </p>
+        <h1 nata-h1>HR reports</h1>
+        <p class="mt-2 text-muted-foreground" nata-p>
+          Generate governed workforce reports within sensitivity, scope and extraction restrictions.
+        </p>
+      </div>
+      <button hlmBtn [hlmAlertDialogTriggerFor]="reportDialog"><ng-icon name="lucideFileText" />Generate report</button>
+    </header>
+    <hlm-separator class="my-6" />
+
+<div class="mb-5 grid gap-2 md:grid-cols-2 xl:grid-cols-5">
+  <label class="grid gap-1 text-xs font-medium text-muted-foreground"
+    >Date range<input hlmInput value="1 Aug – 31 Aug 2026" /></label
+  ><label class="grid gap-1 text-xs font-medium text-muted-foreground"
+    >Office<input hlmInput value="Within my HR scope" /></label
+  ><label class="grid gap-1 text-xs font-medium text-muted-foreground"
+    >Employment type<input hlmInput value="All permitted types" /></label
+  ><label class="grid gap-1 text-xs font-medium text-muted-foreground"
+    >Status<input hlmInput value="Active" /></label
+  ><button hlmBtn class="self-end"><ng-icon name="lucideFilter" />Apply filters</button>
+</div>
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+  @for (
+    report of [
+      {
+        title: 'Workforce establishment position',
+        description: 'Sanctioned, filled and vacant positions by office and grade.',
+        sensitivity: 'Internal HR',
+        extraction: 'Aggregate export permitted',
+        updated: 'Updated daily',
+      },
+      {
+        title: 'Employment events due',
+        description:
+          'Probation, confirmation, contract and retirement events within the selected horizon.',
+        sensitivity: 'Restricted personnel',
+        extraction: 'Named export requires HR authority',
+        updated: 'Updated 31 Aug',
+      },
+      {
+        title: 'Leave position and coverage',
+        description: 'Leave balances, scheduled absences and office coverage conflicts.',
+        sensitivity: 'Restricted personnel',
+        extraction: 'No bulk named export',
+        updated: 'Live view',
+      },
+      {
+        title: 'Appointments and promotions pipeline',
+        description: 'Case volume, stage, evidence completeness and decision outcomes.',
+        sensitivity: 'Confidential HR',
+        extraction: 'PDF only · watermark required',
+        updated: 'Updated hourly',
+      },
+      {
+        title: 'Staff movement register',
+        description: 'Appointments, promotions, transfers, separations and status changes.',
+        sensitivity: 'Restricted personnel',
+        extraction: 'Purpose and authority required',
+        updated: 'Updated daily',
+      },
+      {
+        title: 'HR service compliance',
+        description: 'Case ageing, statutory deadlines and unresolved policy exceptions.',
+        sensitivity: 'Internal HR',
+        extraction: 'Aggregate export permitted',
+        updated: 'Updated daily',
+      },
+    ];
+    track report.title
+  ) {
+    <article hlmCard class="border bg-card p-5 shadow-xs">
+      <div class="flex items-start justify-between gap-3">
+        <ng-icon name="lucideFileText" class="text-2xl text-primary" /><span
+          class="rounded-full border border-(--brand-warning-highlight)/35 bg-(--brand-warning-highlight)/10 px-2 py-0.5 text-xs text-(--brand-warning)"
+          >{{ report.sensitivity }}</span
+        >
+      </div>
+      <h2 class="mt-5 text-lg font-semibold">{{ report.title }}</h2>
+      <p class="mt-2 text-sm text-muted-foreground">{{ report.description }}</p>
+      <div class="mt-4 rounded-md bg-muted/50 p-3">
+        <p class="text-xs font-semibold">Extraction restriction</p>
+        <p class="mt-1 text-xs text-muted-foreground">{{ report.extraction }}</p>
+      </div>
+      <p class="mt-4 text-xs text-muted-foreground">{{ report.updated }}</p>
+      <div class="mt-4 flex gap-2">
+        <button hlmBtn class="flex-1" [hlmAlertDialogTriggerFor]="reportDialog">
+          Generate</button
+        ><button
+          hlmBtn
+          variant="outline"
+          size="icon"
+          [hlmAlertDialogTriggerFor]="reportDialog"
+          aria-label="Export report"
+        >
+          <ng-icon name="lucideDownload" />
+        </button>
+      </div>
+    </article>
+  }
+</div>
+  </section>
+
+<hlm-alert-dialog #reportDialog
+  ><hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(34rem,92vw)]"
+    ><hlm-alert-dialog-header
+      ><p class="text-xs font-semibold uppercase tracking-wider text-(--brand-warning)">
+Governed HR extraction
+      </p>
+      <h2 hlmAlertDialogTitle>Generate restricted HR report?</h2>
+      <p hlmAlertDialogDescription>
+The output inherits the highest sensitivity of the included personnel data.
+      </p></hlm-alert-dialog-header
+    >
+    <div
+      class="rounded-md border border-(--brand-warning-highlight)/35 bg-(--brand-warning-highlight)/10 p-4 text-sm"
+    >
+      <p class="font-semibold">Sensitivity: Restricted personnel</p>
+      <p class="mt-2 text-muted-foreground">
+Named records remain limited to your HR scope. Purpose, filters, row count, output format,
+watermark and download event will be recorded.
+      </p>
+    </div>
+    <dl class="grid gap-3 text-sm">
+      <div>
+<dt class="font-semibold">Extraction restriction</dt>
+<dd class="mt-1 text-muted-foreground">
+  No onward sharing; store only in an approved controlled location.
+</dd>
+      </div>
+      <div>
+<dt class="font-semibold">Current scope</dt>
+<dd class="mt-1 text-muted-foreground">Permitted offices · active staff · August 2026</dd>
+      </div>
+    </dl>
+    <label class="flex items-start gap-2"
+      ><hlm-checkbox aria-label="Acknowledge HR extraction restriction" /><span class="text-sm"
+>I understand the sensitivity, permitted purpose and handling restriction.</span
+      ></label
+    ><hlm-alert-dialog-footer
+      ><button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button
+      ><button hlmAlertDialogAction>Generate governed report</button></hlm-alert-dialog-footer
+    ></hlm-alert-dialog-content
+  ></hlm-alert-dialog
+>
+
+
