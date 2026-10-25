@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { HttpContext } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { finalize, switchMap, tap } from 'rxjs';
+import { finalize, Subscription, switchMap, tap } from 'rxjs';
 import type { SignaturePlaceHolderForBaseLevelAuthorityUi } from '../../../../models/ui/workspace/signature/signature.ui';
 import { WorkspaceContextApi } from '../../../../models/api/workspace/WorkspaceContext.api';
 import { ERROR_SURFACE } from '../../../../core/interceptors/error/error-context';
@@ -21,14 +22,15 @@ import { UtilService } from '../../../../shared/utils/service/util-service';
   providedIn: 'root',
 })
 class WorkspaceService {
-  private router = inject(Router);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly officeContext = inject(OfficeContextService);
   private readonly workspaceApi = inject(WorkspaceApi);
   private readonly utilService = inject(UtilService);
   documentService = inject(DocumentService);
   workspaceUiService = inject(WorkspaceUiService);
   organizationService = inject(OrganizationService);
-  
+  private workspaceRequest?: Subscription;
 
   loading = signal<boolean>(false);
   readonly saving = this.documentService.saveDocumentLoading;
@@ -114,10 +116,20 @@ class WorkspaceService {
   });
 
   /** WORKSPACE FUNCTIONALITY */
-  exitWorkspace() {
-    this.documentService.resetContext();
+  exitWorkspace(): void {
+    this.resetContext();
+    this.location.back();
+  }
 
-    return this.router.navigateByUrl(this.officeContext.route('documents'));
+  resetContext(): void {
+    this.workspaceRequest?.unsubscribe();
+    this.workspaceRequest = undefined;
+    this.loading.set(false);
+    this.submitting.set(false);
+    this.error.set(null);
+    this.workspaceContext.set(null);
+    this.workspaceEtag.set(null);
+    this.documentService.resetContext();
   }
 
   refreshWorkspace(): void {
@@ -223,12 +235,13 @@ class WorkspaceService {
   }
 
   fetchWorkspaceContext(documentId: string): void {
+    this.workspaceRequest?.unsubscribe();
     this.loading.set(true);
     this.error.set(null);
     this.workspaceContext.set(null);
     this.workspaceEtag.set(null);
 
-    this.workspaceApi
+    this.workspaceRequest = this.workspaceApi
       .get(documentId, new HttpContext().set(ERROR_SURFACE, ErrorSurface.PAGE))
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({

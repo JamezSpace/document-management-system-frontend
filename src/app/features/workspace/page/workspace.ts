@@ -20,7 +20,6 @@ import { Toolbar } from '../components/toolbar/toolbar';
 import { WorkspaceService } from '../service/data/workspace-service';
 import { MemoViewModel } from '../../../models/ui/workspace/MemoViewModel.ui';
 import { PageError } from '../../../shared/components/errors/local/page-error/page-error';
-import { OfficeContextService } from '../../../office-platform/context/office-context.service';
 import { GovernanceService } from '../service/data/governance-service';
 
 @Component({
@@ -53,7 +52,6 @@ class Workspace implements OnInit, OnDestroy {
   private readonly minutesService = inject(MinutesService);
   private readonly currentStaffService = inject(CurrentStaffService);
   private readonly organizationService = inject(OrganizationService);
-  private readonly officeContext = inject(OfficeContextService);
   private readonly governanceService = inject(GovernanceService);
 
   readonly workspaceLoading = this.workspaceService.loading;
@@ -124,8 +122,6 @@ class Workspace implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.document()) return;
-
     const documentId = this.activatedRoute.snapshot.paramMap.get('id');
     if (!documentId) {
       void this.router.navigateByUrl('/404');
@@ -137,7 +133,7 @@ class Workspace implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.documentService.resetContext();
+    this.workspaceService.resetContext();
   }
 
   reloadWorkspace(): void {
@@ -146,7 +142,7 @@ class Workspace implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    void this.router.navigateByUrl(this.officeContext.route('documents'));
+    this.workspaceService.exitWorkspace();
   }
 
   previewDocument(): void {
