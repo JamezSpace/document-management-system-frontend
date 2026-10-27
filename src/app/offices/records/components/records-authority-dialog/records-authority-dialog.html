@@ -1,0 +1,12 @@
+<hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx" class="min-w-[min(38rem,92vw)]">
+  <hlm-alert-dialog-header>
+    <p class="text-xs font-semibold uppercase tracking-wider text-(--brand-authority-accent)">Formal authority action</p>
+    <h2 hlmAlertDialogTitle>{{ action().title }}</h2>
+    <p hlmAlertDialogDescription>This action changes lifecycle authority and will be permanently audited.</p>
+  </hlm-alert-dialog-header>
+  <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md border bg-muted/40 p-4 text-sm"><div><p class="text-xs text-muted-foreground">Current state</p><p class="mt-1 font-semibold">{{ action().currentState }}</p></div><ng-icon name="lucideArrowRight" class="text-muted-foreground" /><div><p class="text-xs text-muted-foreground">Proposed state</p><p class="mt-1 font-semibold">{{ action().proposedState }}</p></div></div>
+  <dl class="grid gap-3 text-sm"><div><dt class="font-semibold">Who is exercising authority?</dt><dd class="mt-1 text-muted-foreground">{{ action().authority }}</dd></div><div><dt class="font-semibold">What policy consequence follows?</dt><dd class="mt-1 text-muted-foreground">{{ action().consequence }}</dd></div><div><dt class="font-semibold">Is it reversible?</dt><dd class="mt-1 text-muted-foreground">{{ action().reversible }}</dd></div><div><dt class="font-semibold">What evidence will be recorded?</dt><dd class="mt-1 text-muted-foreground">{{ action().evidence }}</dd></div></dl>
+  <label class="grid gap-1.5 text-sm font-medium">Authority justification<textarea hlmTextarea class="min-h-24" placeholder="Justification is required and becomes part of the audit record"></textarea></label>
+  @if (action().destructive) {<label class="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm"><hlm-checkbox aria-label="Acknowledge irreversible action" /><span>I acknowledge that execution is irreversible and that held or ineligible records remain excluded.</span></label>}
+  <hlm-alert-dialog-footer><button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button><button hlmAlertDialogAction [class.bg-destructive]="action().destructive">{{ action().confirmLabel }}</button></hlm-alert-dialog-footer>
+</hlm-alert-dialog-content>

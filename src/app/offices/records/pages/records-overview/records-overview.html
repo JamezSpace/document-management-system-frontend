@@ -1,0 +1,24 @@
+<nexus-records-page-shell title="Records & Registry" description="Control official correspondence from intake through archival and disposition.">
+  <a records-page-actions hlmBtn routerLink="/office/records/intake"><ng-icon name="lucideScanLine" />Open intake</a>
+
+  <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    @for (metric of [
+      { label: 'Unregistered intake', value: '18', note: '6 awaiting quality check', icon: 'lucideInbox', tone: 'text-(--brand-info)' },
+      { label: 'Routing breaches', value: '4', note: '2 require escalation', icon: 'lucideCircleAlert', tone: 'text-(--brand-error)' },
+      { label: 'Retention actions due', value: '27', note: 'Due within 14 days', icon: 'lucideCalendarClock', tone: 'text-(--brand-warning)' },
+      { label: 'Records on hold', value: '12', note: '9 legal · 3 audit', icon: 'lucideLockKeyhole', tone: 'text-(--brand-warning)' }
+    ]; track metric.label) {
+      <article hlmCard class="border bg-card p-5 shadow-xs"><div class="flex items-start justify-between gap-3"><div><p class="text-sm text-muted-foreground">{{ metric.label }}</p><p class="mt-2 text-3xl font-bold">{{ metric.value }}</p><p class="mt-2 text-xs text-muted-foreground">{{ metric.note }}</p></div><span class="rounded-md bg-muted p-2.5" [class]="metric.tone"><ng-icon [name]="metric.icon" /></span></div></article>
+    }
+  </div>
+
+  <div class="mt-5 grid gap-5 xl:grid-cols-[1.4fr_1fr]">
+    <section hlmCard class="border bg-card p-5 shadow-xs"><div class="flex items-center justify-between gap-3"><div><h2 class="text-lg font-semibold">Intake queue</h2><p class="text-sm text-muted-foreground">Items awaiting registry control</p></div><a hlmBtn variant="ghost" routerLink="/office/records/intake">View workspace<ng-icon name="lucideChevronRight" /></a></div><div class="mt-4 grid gap-2">@for (item of [{ source: 'Secure email', title: 'Industrial attachment policy review', age: '12 min', state: 'Quality check' }, { source: 'Walk-in scan', title: 'Contractor performance assessment', age: '34 min', state: 'Capture review' }, { source: 'Courier', title: 'Accreditation evidence bundle', age: '1 hr', state: 'Classification' }]; track item.title) {<button type="button" class="flex w-full items-center justify-between gap-4 rounded-md border p-3 text-left hover:bg-muted/50"><span><span class="block font-medium">{{ item.title }}</span><span class="mt-1 block text-xs text-muted-foreground">{{ item.source }} · {{ item.age }}</span></span><span class="rounded-full border border-(--brand-info)/35 bg-(--brand-info)/10 px-2.5 py-1 text-xs font-medium text-(--brand-info)">{{ item.state }}</span></button>}</div></section>
+    <section hlmCard class="border bg-card p-5 shadow-xs"><h2 class="text-lg font-semibold">Routing exceptions</h2><p class="text-sm text-muted-foreground">Breaches requiring registry intervention</p><div class="mt-4 space-y-4">@for (exception of [{ ref: 'NF/REG/2026/0839', issue: 'Acknowledgement overdue', office: 'Procurement Office', due: '2h 18m' }, { ref: 'NF/REG/2026/0828', issue: 'No responsible designation', office: 'Academic Planning', due: '5h 40m' }, { ref: 'NF/REG/2026/0814', issue: 'Route rejected', office: 'Bursary', due: '1d 3h' }]; track exception.ref) {<div class="flex gap-3 border-l-2 border-l-(--brand-error) pl-3"><div class="min-w-0 flex-1"><p class="font-medium">{{ exception.issue }}</p><p class="truncate text-xs text-muted-foreground">{{ exception.ref }} · {{ exception.office }}</p></div><span class="text-xs font-semibold text-(--brand-error)">{{ exception.due }}</span></div>}</div></section>
+  </div>
+
+  <div class="mt-5 grid gap-5 lg:grid-cols-2">
+    <section hlmCard class="border bg-card p-5 shadow-xs"><h2 class="text-lg font-semibold">Disposition calendar</h2><p class="text-sm text-muted-foreground">System-determined lifecycle actions</p><div class="mt-4 grid grid-cols-3 gap-3 text-center">@for (period of [{ label: 'This week', value: '9' }, { label: 'Next 30 days', value: '42' }, { label: 'On hold', value: '12' }]; track period.label) {<div class="rounded-md bg-muted/60 p-4"><p class="text-2xl font-bold">{{ period.value }}</p><p class="mt-1 text-xs text-muted-foreground">{{ period.label }}</p></div>}</div></section>
+    <section hlmCard class="border bg-card p-5 shadow-xs"><h2 class="text-lg font-semibold">Recent registry activity</h2><div class="mt-4 space-y-4">@for (event of ['Record NF/REG/2026/0841 registered', 'Route acknowledged by Procurement Office', 'Audit hold applied to FIN-2019 series']; track event) {<div class="flex gap-3"><span class="mt-1.5 size-2 shrink-0 rounded-full bg-primary"></span><div><p class="text-sm font-medium">{{ event }}</p><p class="text-xs text-muted-foreground">Recorded with actor, scope and revision evidence</p></div></div>}</div></section>
+  </div>
+</nexus-records-page-shell>
