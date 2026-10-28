@@ -283,6 +283,55 @@ iconify-icon {
   }
 }
 
+/* Consequential actions: logout, cancellation, rejection, revocation and deletion. */
+.critical-action {
+  background-color: var(--brand-error);
+  border-color: var(--brand-error);
+  color: var(--primary-foreground);
+
+  &:hover {
+    background-color: var(--brand-critical);
+    border-color: var(--brand-critical);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand-error);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    background-color: var(--brand-disabled-background);
+    border-color: var(--brand-border);
+    color: var(--brand-disabled-foreground);
+  }
+}
+
+.sidebar-critical-action {
+  color: var(--sidebar-foreground);
+
+  &:hover {
+    background-color: color-mix(
+      in oklab,
+      var(--brand-error) 28%,
+      var(--brand-secondary)
+    );
+    color: var(--sidebar-foreground);
+  }
+
+  &:active {
+    background-color: color-mix(
+      in oklab,
+      var(--brand-critical) 36%,
+      var(--brand-secondary)
+    );
+  }
+
+  &:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--brand-error) 65%, var(--brand-secondary));
+    outline-offset: 2px;
+  }
+}
+
 /* ANIMATIONS */
 @keyframes nexusFadeIn {
   0% {

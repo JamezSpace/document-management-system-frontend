@@ -131,8 +131,7 @@
       <ng-icon name="lucideBadgeCheck" />Approve leave</button
     ><button
       hlmBtn
-      variant="destructive"
-      class="mt-2 w-full"
+      class="critical-action mt-2 w-full"
       [hlmAlertDialogTriggerFor]="authorityDialog"
       (click)="prepareLeaveCancellation()"
     >
@@ -200,7 +199,7 @@ decide.</span
       ><button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button
       ><button
 hlmAlertDialogAction
-[class.bg-destructive]="authorityAction().destructive"
+[class.critical-action]="authorityAction().destructive"
 [class.bg-(--brand-authority-accent)]="!authorityAction().destructive"
 [class.text-(--brand-authority-foreground)]="!authorityAction().destructive"
       >

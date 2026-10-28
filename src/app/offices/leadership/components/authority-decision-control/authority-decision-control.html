@@ -1,7 +1,7 @@
 <hlm-alert-dialog #decisionDialog>
   <button
     hlmBtn
-    [class.bg-destructive]="mode() === 'reject'"
+    [class.critical-action]="mode() === 'reject'"
     [class.bg-(--brand-authority-accent)]="mode() !== 'reject'"
     [class.text-(--brand-authority-foreground)]="mode() !== 'reject'"
     [class.hover:bg-(--brand-authority-accent-hover)]="mode() !== 'reject'"
@@ -73,7 +73,7 @@
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
       <button
         hlmAlertDialogAction
-        [class.bg-destructive]="authorityAction().reject"
+        [class.critical-action]="authorityAction().reject"
         [class.bg-(--brand-authority-accent)]="!authorityAction().reject"
         [class.text-(--brand-authority-foreground)]="!authorityAction().reject"
       >

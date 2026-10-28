@@ -75,7 +75,7 @@
       <hlm-dropdown-menu-separator />
       <button
         hlmDropdownMenuItem
-        class="text-red-600"
+        class="text-(--brand-error)"
         [hlmAlertDialogTriggerFor]="deleteStaffDialog"
       >
         Delete
@@ -234,7 +234,7 @@
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction (click)="deleteSelectedStaff(); ctx.close()">
+      <button hlmAlertDialogAction class="critical-action" (click)="deleteSelectedStaff(); ctx.close()">
         Confirm
       </button>
     </hlm-alert-dialog-footer>

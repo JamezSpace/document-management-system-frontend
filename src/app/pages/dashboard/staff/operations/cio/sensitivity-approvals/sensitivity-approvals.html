@@ -44,7 +44,7 @@
             </div>
 
             <div class="flex gap-2">
-              <button type="button" class="nexus-button secondary"
+              <button type="button" class="nexus-button critical-action"
                 [hlmAlertDialogTriggerFor]="decisionDialog" (click)="prepareDecision(request, 'reject')">
                 Reject
               </button>
@@ -91,7 +91,7 @@
 
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction [class.bg-destructive]="selectedDecision() === 'reject'"
+      <button hlmAlertDialogAction [class.critical-action]="selectedDecision() === 'reject'"
         [disabled]="reviewReason.invalid || governanceService.mutating()"
         (click)="submitDecision(); ctx.close()">
         Confirm {{ selectedDecision() }}

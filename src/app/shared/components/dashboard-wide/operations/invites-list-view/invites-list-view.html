@@ -88,7 +88,7 @@
 
       <button
         hlmDropdownMenuItem
-        class="text-red-600"
+        class="text-(--brand-error)"
         [hlmAlertDialogTriggerFor]="deleteInviteDialog"
       >
         Delete
@@ -259,7 +259,7 @@
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction (click)="deleteSelectedInvite(); ctx.close()">Confirm</button>
+      <button hlmAlertDialogAction class="critical-action" (click)="deleteSelectedInvite(); ctx.close()">Confirm</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

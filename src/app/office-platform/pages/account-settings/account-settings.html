@@ -1,12 +1,220 @@
-<section class="mx-auto max-w-6xl px-4 pb-10 soft-fade">
-  <nav hlmBreadcrumb aria-label="Breadcrumb"><ol hlmBreadcrumbList><li hlmBreadcrumbItem><a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a></li><li hlmBreadcrumbSeparator></li><li hlmBreadcrumbItem><span hlmBreadcrumbPage>Profile & settings</span></li></ol></nav>
-  <header class="mt-5"><p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Personal governance</p><h1 nata-h1>Profile & account security</h1><p class="mt-2 text-muted-foreground" nata-p>Review your governed identity, authentication, sessions, acknowledgements and notifications.</p></header><hlm-separator class="my-6" />
-  <div class="mb-5 flex gap-1 overflow-x-auto border-b">@for (item of tabs; track item) {<button type="button" class="border-b-2 border-b-transparent px-4 py-3 text-sm text-muted-foreground" [class.border-b-primary]="tab() === item" [class.text-foreground]="tab() === item" [class.font-semibold]="tab() === item" (click)="tab.set(item)">{{ item }}</button>}</div>
-  @switch (tab()) {
-    @case ('Identity') {<section hlmCard class="border bg-card p-6 shadow-xs"><div class="flex items-start gap-4"><span class="rounded-md bg-muted p-3 text-primary"><ng-icon name="lucideFingerprint" /></span><div><h2 class="text-lg font-semibold">Governed identity</h2><p class="text-sm text-muted-foreground">Identity attributes are supplied by the institutional directory.</p></div></div><dl class="mt-6 grid gap-5 sm:grid-cols-2 text-sm"><div><dt class="text-xs text-muted-foreground">Full name</dt><dd class="mt-1 font-medium">Current signed-in staff member</dd></div><div><dt class="text-xs text-muted-foreground">Staff identity</dt><dd class="mt-1 font-mono">Directory managed</dd></div><div><dt class="text-xs text-muted-foreground">Office and designation</dt><dd class="mt-1">Derived from effective appointment</dd></div><div><dt class="text-xs text-muted-foreground">Governed roles</dt><dd class="mt-1">Visible in the access review record</dd></div></dl><p class="mt-6 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">Directory-managed identity fields cannot be edited here. Request a correction through Human Resources.</p></section>}
-    @case ('Security') {<div class="grid gap-4 md:grid-cols-2"><section hlmCard class="border bg-card p-6 shadow-xs"><ng-icon name="lucideShieldCheck" class="text-(--brand-success)" /><h2 class="mt-4 text-lg font-semibold">Multi-factor authentication</h2><p class="mt-2 text-sm text-muted-foreground">Enabled · authenticator verified 18 August 2026</p><button hlmBtn variant="outline" class="mt-5">Manage authentication methods</button></section><section hlmCard class="border bg-card p-6 shadow-xs"><ng-icon name="lucideKeyRound" class="text-primary" /><h2 class="mt-4 text-lg font-semibold">Password and recovery</h2><p class="mt-2 text-sm text-muted-foreground">Last password change: 12 July 2026 · recovery contact verified</p><button hlmBtn variant="outline" class="mt-5">Update security credentials</button></section></div>}
-    @case ('Sessions') {<section hlmCard class="border bg-card p-6 shadow-xs"><h2 class="text-lg font-semibold">Active sessions</h2><p class="text-sm text-muted-foreground">Revocation is recorded as an account-security event.</p><div class="mt-5 divide-y rounded-md border">@for (session of [{ device: 'Windows workstation · Edge', place: 'Lagos office network', activity: 'Current session · active now' }, { device: 'Android mobile · Chrome', place: 'Verified mobile network', activity: 'Last active 31 Aug · 18:42' }]; track session.device) {<div class="flex flex-wrap items-center justify-between gap-3 p-4"><div class="flex gap-3"><ng-icon name="lucideLaptop" class="mt-0.5 text-primary" /><div><p class="font-medium">{{ session.device }}</p><p class="text-xs text-muted-foreground">{{ session.place }} · {{ session.activity }}</p></div></div><button hlmBtn variant="outline">Revoke session</button></div>}</div></section>}
-    @case ('Governance') {<section hlmCard class="border bg-card p-6 shadow-xs"><div class="flex gap-3"><ng-icon name="lucideHistory" class="mt-0.5 text-primary" /><div><h2 class="text-lg font-semibold">Policy acknowledgements</h2><p class="text-sm text-muted-foreground">Exact policy version, acknowledgement time and identity are retained.</p></div></div><div class="mt-5 space-y-3">@for (policy of [{ title: 'Document Governance Policy', version: 'v3.2', date: 'Acknowledged 18 Aug 2026' }, { title: 'Acceptable Use and Access Policy', version: 'v5.1', date: 'Acknowledged 18 Aug 2026' }, { title: 'Records Retention Standard', version: 'v2.4', date: 'Acknowledged 21 Aug 2026' }]; track policy.title) {<div class="flex items-center justify-between gap-3 rounded-md border p-4"><div><p class="font-medium">{{ policy.title }}</p><p class="text-xs text-muted-foreground">{{ policy.version }} · {{ policy.date }}</p></div><ng-icon name="lucideCheck" class="text-(--brand-success)" /></div>}</div></section>}
-    @case ('Notifications') {<section hlmCard class="border bg-card p-6 shadow-xs"><div class="flex gap-3"><ng-icon name="lucideBell" class="mt-0.5 text-primary" /><div><h2 class="text-lg font-semibold">Governed notification preferences</h2><p class="text-sm text-muted-foreground">Mandatory security, authority and hold notices cannot be disabled.</p></div></div><div class="mt-5 divide-y rounded-md border">@for (preference of [{ title: 'Assignment and deadline reminders', detail: 'Email and in-application', locked: false }, { title: 'Security and privileged-access alerts', detail: 'Mandatory · email and in-application', locked: true }, { title: 'Authority decisions and signatures', detail: 'Mandatory · in-application', locked: true }, { title: 'Weekly workload summary', detail: 'Email', locked: false }]; track preference.title) {<label class="flex items-start justify-between gap-4 p-4"><div><p class="font-medium">{{ preference.title }}</p><p class="text-xs text-muted-foreground">{{ preference.detail }}</p></div><hlm-checkbox [checked]="true" [disabled]="preference.locked" /></label>}</div></section>}
-  }
+<section class="mx-auto px-4 pb-10 soft-fade">
+  <nav hlmBreadcrumb aria-label="Breadcrumb">
+    <ol hlmBreadcrumbList>
+      <li hlmBreadcrumbItem>
+        <a hlmBreadcrumbLink [link]="officeContext.route('overview')">Office</a>
+      </li>
+      <li hlmBreadcrumbSeparator></li>
+      <li hlmBreadcrumbItem><span hlmBreadcrumbPage>Profile & settings</span></li>
+    </ol>
+  </nav>
+  <header class="mt-5">
+    <h1 nata-h1>Profile & account security</h1>
+    <p class="mt-2 text-muted-foreground" nata-p>
+      Review your governed identity, authentication, sessions, acknowledgements and notifications.
+    </p>
+  </header>
+  <hlm-separator class="my-6" />
+  <mat-tab-group
+    animationDuration="180ms"
+    mat-stretch-tabs="false"
+    mat-align-tabs="start"
+    preserveContent
+    [selectedIndex]="1"
+  >
+    <mat-tab label="Identity">
+      <div class="pt-5">
+      <section hlmCard class="border bg-card p-6 shadow-xs">
+        <div class="flex items-start gap-4">
+          <span class="rounded-md bg-muted p-3 text-primary"
+            ><ng-icon name="lucideFingerprint"
+          /></span>
+          <div>
+            <h2 class="text-lg font-semibold">Governed identity</h2>
+            <p class="text-sm text-muted-foreground">
+              Identity attributes are supplied by the institutional directory.
+            </p>
+          </div>
+        </div>
+        <dl class="mt-6 grid gap-5 sm:grid-cols-2 text-sm">
+          <div>
+            <dt class="text-xs text-muted-foreground">Full name</dt>
+            <dd class="mt-1 font-medium">Current signed-in staff member</dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Staff identity</dt>
+            <dd class="mt-1 font-mono">Directory managed</dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Office and designation</dt>
+            <dd class="mt-1">Derived from effective appointment</dd>
+          </div>
+          <div>
+            <dt class="text-xs text-muted-foreground">Governed roles</dt>
+            <dd class="mt-1">Visible in the access review record</dd>
+          </div>
+        </dl>
+        <p class="mt-6 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">
+          Directory-managed identity fields cannot be edited here. Request a correction through
+          Human Resources.
+        </p>
+      </section>
+      </div>
+    </mat-tab>
+    <mat-tab label="Security">
+      <div class="pt-5">
+      <div class="grid gap-4 md:grid-cols-2">
+        <section hlmCard class="border bg-card p-6 shadow-xs">
+          <ng-icon name="lucideShieldCheck" class="text-(--brand-success)" />
+          <h2 class="mt-4 text-lg font-semibold">Multi-factor authentication</h2>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Enabled · authenticator verified 18 August 2026
+          </p>
+          <button hlmBtn variant="outline" class="mt-5">Manage authentication methods</button>
+        </section>
+        <section hlmCard class="border bg-card p-6 shadow-xs">
+          <ng-icon name="lucideKeyRound" class="text-primary" />
+          <h2 class="mt-4 text-lg font-semibold">Password and recovery</h2>
+          <p class="mt-2 text-sm text-muted-foreground">
+            Last password change: 12 July 2026 · recovery contact verified
+          </p>
+          <button hlmBtn variant="outline" class="mt-5">Update security credentials</button>
+        </section>
+      </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Sessions">
+      <div class="pt-5">
+      <section hlmCard class="border bg-card p-6 shadow-xs">
+        <h2 class="text-lg font-semibold">Active sessions</h2>
+        <p class="text-sm text-muted-foreground">
+          Revocation is recorded as an account-security event.
+        </p>
+        <div class="mt-5 divide-y rounded-md border">
+          @for (
+            session of [
+              {
+                device: 'Windows workstation · Edge',
+                place: 'Lagos office network',
+                activity: 'Current session · active now',
+              },
+              {
+                device: 'Android mobile · Chrome',
+                place: 'Verified mobile network',
+                activity: 'Last active 31 Aug · 18:42',
+              },
+            ];
+            track session.device
+          ) {
+            <div class="flex flex-wrap items-center justify-between gap-3 p-4">
+              <div class="flex gap-3">
+                <ng-icon name="lucideLaptop" class="mt-0.5 text-primary" />
+                <div>
+                  <p class="font-medium">{{ session.device }}</p>
+                  <p class="text-xs text-muted-foreground">
+                    {{ session.place }} · {{ session.activity }}
+                  </p>
+                </div>
+              </div>
+              <button hlmBtn variant="outline">Revoke session</button>
+            </div>
+          }
+        </div>
+      </section>
+      </div>
+    </mat-tab>
+    <mat-tab label="Governance">
+      <div class="pt-5">
+      <section hlmCard class="border bg-card p-6 shadow-xs">
+        <div class="flex gap-3">
+          <ng-icon name="lucideHistory" class="mt-0.5 text-primary" />
+          <div>
+            <h2 class="text-lg font-semibold">Policy acknowledgements</h2>
+            <p class="text-sm text-muted-foreground">
+              Exact policy version, acknowledgement time and identity are retained.
+            </p>
+          </div>
+        </div>
+        <div class="mt-5 space-y-3">
+          @for (
+            policy of [
+              {
+                title: 'Document Governance Policy',
+                version: 'v3.2',
+                date: 'Acknowledged 18 Aug 2026',
+              },
+              {
+                title: 'Acceptable Use and Access Policy',
+                version: 'v5.1',
+                date: 'Acknowledged 18 Aug 2026',
+              },
+              {
+                title: 'Records Retention Standard',
+                version: 'v2.4',
+                date: 'Acknowledged 21 Aug 2026',
+              },
+            ];
+            track policy.title
+          ) {
+            <div class="flex items-center justify-between gap-3 rounded-md border p-4">
+              <div>
+                <p class="font-medium">{{ policy.title }}</p>
+                <p class="text-xs text-muted-foreground">
+                  {{ policy.version }} · {{ policy.date }}
+                </p>
+              </div>
+              <ng-icon name="lucideCheck" class="text-(--brand-success)" />
+            </div>
+          }
+        </div>
+      </section>
+      </div>
+    </mat-tab>
+    <mat-tab label="Notifications">
+      <div class="pt-5">
+      <section hlmCard class="border bg-card p-6 shadow-xs">
+        <div class="flex gap-3">
+          <ng-icon name="lucideBell" class="mt-0.5 text-primary" />
+          <div>
+            <h2 class="text-lg font-semibold">Governed notification preferences</h2>
+            <p class="text-sm text-muted-foreground">
+              Mandatory security, authority and hold notices cannot be disabled.
+            </p>
+          </div>
+        </div>
+        <div class="mt-5 divide-y rounded-md border">
+          @for (
+            preference of [
+              {
+                title: 'Assignment and deadline reminders',
+                detail: 'Email and in-application',
+                locked: false,
+              },
+              {
+                title: 'Security and privileged-access alerts',
+                detail: 'Mandatory · email and in-application',
+                locked: true,
+              },
+              {
+                title: 'Authority decisions and signatures',
+                detail: 'Mandatory · in-application',
+                locked: true,
+              },
+              { title: 'Weekly workload summary', detail: 'Email', locked: false },
+            ];
+            track preference.title
+          ) {
+            <label class="flex items-start justify-between gap-4 p-4"
+              ><div>
+                <p class="font-medium">{{ preference.title }}</p>
+                <p class="text-xs text-muted-foreground">{{ preference.detail }}</p>
+              </div>
+              <hlm-checkbox [checked]="true" [disabled]="preference.locked"
+            /></label>
+          }
+        </div>
+      </section>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </section>

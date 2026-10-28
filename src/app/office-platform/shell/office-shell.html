@@ -39,7 +39,12 @@
           <a hlmSidebarMenuButton routerLink="settings" [isActive]="isActive('settings')"><ng-icon name="lucideSettings" /><span>Settings</span></a>
         </li>
         <li hlmSidebarMenuItem>
-          <button type="button" hlmSidebarMenuButton [hlmAlertDialogTriggerFor]="logOutDialog">
+          <button
+            type="button"
+            hlmSidebarMenuButton
+            class="sidebar-critical-action"
+            [hlmAlertDialogTriggerFor]="logOutDialog"
+          >
             <ng-icon name="lucideLogOut" /><span>Logout</span>
           </button>
         </li>
@@ -91,7 +96,7 @@
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction class="bg-primary text-white" (click)="logout()">Log out</button>
+      <button hlmAlertDialogAction class="critical-action" (click)="logout()">Log out</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

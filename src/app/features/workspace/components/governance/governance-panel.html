@@ -288,7 +288,7 @@
       <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
       <button
         hlmAlertDialogAction
-        class="bg-destructive text-destructive-foreground"
+        class="critical-action"
         [disabled]="revocationReason.invalid || governanceService.mutating()"
         (click)="revokeGrant(); ctx.close()"
       >
