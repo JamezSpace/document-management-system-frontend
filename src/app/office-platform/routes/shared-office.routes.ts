@@ -48,7 +48,8 @@ const sharedOfficeRoutes: Routes = [
   {
     path: 'notices',
     canActivate: [capabilityGuard(C.Notice.View)],
-    loadComponent: () => import('../../pages/dashboard/staff/general/notices/notices').then((page) => page.Notices),
+    loadComponent: () =>
+      import('../../features/notices/pages/notices/notices').then((page) => page.Notices),
   },
   {
     path: 'settings',

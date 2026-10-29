@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { OfficeContextService } from '../../../../../office-platform/context/office-context.service';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 
 import { Notices } from './notices';
 

@@ -6,14 +6,14 @@ import { HlmMenubarImports } from '@spartan-ng/helm/menubar';
 import { HlmTooltipImports } from '@spartan-ng/helm/tooltip';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { hugeTickDouble02 } from '@ng-icons/huge-icons';
-import { NoticesService } from '../../../../../core/services/page-wide/dashboard/generic/notices/notices-service';
-import { NotificationPreference } from '../../../../../enums/notices/notices.enum';
-import { CurrentStaffService } from '../../../../../features/shared/services/current-staff/current-staff-service';
-import { NoticesApi } from '../../../../../models/api/notices/notices.api';
-import type { EmptyStateConfig } from '../../../../../models/ui/global/EmptyState.ui';
-import { EmptyState } from '../../../../../shared/components/empty-state/empty-state';
-import { officeActivityContext } from '../../../../../office-platform/activity/office-activity.context';
-import { OfficeContextService } from '../../../../../office-platform/context/office-context.service';
+import { NoticesService } from '../../services/notices/notices-service';
+import { NotificationPreference } from '../../../../enums/notices/notices.enum';
+import { CurrentStaffService } from '../../../shared/services/current-staff/current-staff-service';
+import { NoticesApi } from '../../../../models/api/notices/notices.api';
+import type { EmptyStateConfig } from '../../../../models/ui/global/EmptyState.ui';
+import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
+import { officeActivityContext } from '../../../../office-platform/activity/office-activity.context';
+import { OfficeContextService } from '../../../../office-platform/context/office-context.service';
 import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
 
 @Component({
