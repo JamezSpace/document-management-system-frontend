@@ -65,7 +65,13 @@ class OfficeContextService {
 
     if (capabilities.has('system.configure')) return 'system-administration';
     if (capabilities.has('audit.view')) return 'audit-compliance';
-    if (capabilities.has('staff.activate') || capabilities.has('staff.create')) return 'human-resources';
+    if (
+      capabilities.has('staff.list') ||
+      capabilities.has('staff.view') ||
+      capabilities.has('staff.activate') ||
+      capabilities.has('staff.create') ||
+      capabilities.has('identity.change.review')
+    ) return 'human-resources';
     if (capabilities.has('directive.issue') || capabilities.has('document.approve')) return 'leadership';
     if (capabilities.has('record.register') || capabilities.has('record.archive')) return 'records';
     if (identityText.includes('secretar')) return 'secretariat';

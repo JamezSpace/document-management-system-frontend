@@ -9,7 +9,22 @@ const HUMAN_RESOURCES_ROUTES: Routes = [
     loadComponent: () => import('./pages/hr-overview/hr-overview').then((m) => m.HrOverview),
   },
   ...sharedOfficeRoutes,
-  { path: 'staff', canActivate: [capabilityGuard(C.Staff.View)], loadComponent: () => import('../../pages/dashboard/staff/operations/hr/staff-registry/staff-registry').then((m) => m.StaffRegistry) },
+  {
+    path: 'staff',
+    canActivate: [capabilityGuard(C.Staff.List)],
+    loadComponent: () =>
+      import('./pages/staff-administration/staff-administration').then(
+        (m) => m.StaffAdministration,
+      ),
+  },
+  {
+    path: 'identity-change-review',
+    canActivate: [capabilityGuard(C.Identity.ChangeReview)],
+    loadComponent: () =>
+      import('./pages/identity-change-review/identity-change-review').then(
+        (m) => m.IdentityChangeReview,
+      ),
+  },
   { path: 'staff-activation', canActivate: [capabilityGuard(C.Staff.Activate)], loadComponent: () => import('../../pages/dashboard/staff/operations/hr/staff-activation/staff-activation').then((m) => m.StaffActivation) },
   {
     path: 'personnel-files',

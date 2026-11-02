@@ -173,26 +173,6 @@ class StaffService {
       });
   }
 
-  deleteStaff(staffId: string) {
-    this.loading.set(true);
-
-    this.http
-      .delete<ApiResponse<void>>(`${environment.api}/identity/staff/${staffId}`)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: () => {
-          this.staff.update((list) => list.filter((item) => item.id !== staffId));
-          this.utilService.showToast('info', 'Staff record deleted successfully.');
-        },
-        error: (err: AppError) => {
-          this.error.set(err);
-          this.utilService.showToast(
-            'error',
-            err.message || 'Unable to delete staff record.',
-          );
-        },
-      });
-  }
 }
 
 export { StaffService };

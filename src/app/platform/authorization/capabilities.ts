@@ -27,10 +27,15 @@ const Capabilities = {
     Issue: 'directive.issue',
   },
   Staff: {
+    List: 'staff.list',
     View: 'staff.view',
     Create: 'staff.create',
     Update: 'staff.update',
     Activate: 'staff.activate',
+    Deactivate: 'staff.deactivate',
+  },
+  Identity: {
+    ChangeReview: 'identity.change.review',
   },
   Notice: {
     View: 'notice.view',

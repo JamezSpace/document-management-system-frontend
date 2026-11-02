@@ -20,200 +20,460 @@
     mat-stretch-tabs="false"
     mat-align-tabs="start"
     preserveContent
-    [selectedIndex]="1"
+    [selectedIndex]="0"
   >
     <mat-tab label="Identity">
-      <div class="pt-5">
-      <section hlmCard class="border bg-card p-6 shadow-xs">
-        <div class="flex items-start gap-4">
-          <span class="rounded-md bg-muted p-3 text-primary"
-            ><ng-icon name="lucideFingerprint"
-          /></span>
-          <div>
-            <h2 class="text-lg font-semibold">Governed identity</h2>
-            <p class="text-sm text-muted-foreground">
-              Identity attributes are supplied by the institutional directory.
-            </p>
+      <div class="space-y-5 pt-5">
+        @if (identityService.loading()) {
+          <section hlmCard class="border bg-card p-6 text-sm text-muted-foreground shadow-xs">
+            Loading your governed identity…
+          </section>
+        } @else if (identityService.error() && !identityService.identity()) {
+          <section hlmCard class="border border-(--brand-error)/35 bg-card p-6 shadow-xs">
+            <div class="flex items-start gap-3">
+              <ng-icon name="lucideCircleAlert" class="mt-0.5 text-(--brand-error)" />
+              <div>
+                <h2 class="font-semibold">Identity could not be loaded</h2>
+                <p class="mt-1 text-sm text-muted-foreground">{{ identityService.error() }}</p>
+                <button hlmBtn variant="outline" class="mt-4" type="button" (click)="reload()">
+                  <ng-icon name="lucideRefreshCw" />Retry
+                </button>
+              </div>
+            </div>
+          </section>
+        } @else if (identityService.identity(); as identity) {
+          <div class="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(19rem,0.65fr)]">
+            <section hlmCard class="border bg-card p-6 shadow-xs">
+              <div class="flex flex-wrap items-start justify-between gap-4">
+                <div class="flex items-start gap-4">
+                  <img
+                    [src]="identity.profile.profilePictureUrl ?? 'ui-logo.png'"
+                    alt="Profile picture"
+                    class="size-20 rounded-full border object-cover"
+                  />
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Governed identity
+                    </p>
+                    <h2 class="mt-1 text-xl font-semibold">
+                      {{ identity.profile.firstName }}
+                      @if (identity.profile.middleName) {
+                        {{ identity.profile.middleName }}
+                      }
+                      {{ identity.profile.lastName }}
+                    </h2>
+                    <p class="mt-1 text-sm text-muted-foreground">{{ identity.profile.email }}</p>
+                  </div>
+                </div>
+                @if (canDirect('profilePicture')) {
+                  <label hlmBtn variant="outline" class="cursor-pointer">
+                    <ng-icon name="lucideCamera" />Change photo
+                    <input
+                      class="sr-only"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      [disabled]="identityService.saving()"
+                      (change)="selectProfilePicture($event)"
+                    />
+                  </label>
+                }
+              </div>
+              @if (profilePictureError()) {
+                <p class="mt-3 text-sm text-(--brand-error)">{{ profilePictureError() }}</p>
+              }
+
+              <dl class="mt-6 grid gap-5 text-sm sm:grid-cols-2">
+                <div>
+                  <dt class="text-xs text-muted-foreground">Staff number</dt>
+                  <dd class="mt-1 font-mono">{{ identity.employment.staffNumber }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">Employment status</dt>
+                  <dd class="mt-1 font-medium">{{ identity.employment.status }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">Office</dt>
+                  <dd class="mt-1">{{ identity.employment.office.name }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">Designation</dt>
+                  <dd class="mt-1">{{ identity.employment.designation.title }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">Unit</dt>
+                  <dd class="mt-1">{{ identity.employment.unit.name }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">Signature</dt>
+                  <dd class="mt-1">
+                    {{ identity.profile.signature.present ? 'On file' : 'Not provided' }}
+                    @if (identity.profile.signature.updatedAt) {
+                      · updated {{ formatDate(identity.profile.signature.updatedAt) }}
+                    }
+                  </dd>
+                </div>
+              </dl>
+
+              @if (canDirect('phoneNumber')) {
+                <form class="mt-6 border-t pt-5" [formGroup]="phoneForm" (ngSubmit)="savePhone()">
+                  <div class="flex flex-wrap items-end gap-3">
+                    <label class="grid min-w-64 flex-1 gap-1.5 text-sm font-medium">
+                      Phone number
+                      <input hlmInput formControlName="phoneNumber" placeholder="+2348012345678" />
+                    </label>
+                    <button
+                      hlmBtn
+                      type="submit"
+                      [disabled]="phoneForm.invalid || identityService.saving()"
+                    >
+                      <ng-icon name="lucideSave" />Save direct change
+                    </button>
+                  </div>
+                  @if (
+                    phoneForm.controls.phoneNumber.invalid && phoneForm.controls.phoneNumber.touched
+                  ) {
+                    <p class="mt-2 text-xs text-(--brand-error)">
+                      Use international format, for example +2348012345678.
+                    </p>
+                  }
+                  <p class="mt-2 text-xs text-muted-foreground">
+                    {{ identity.governance.fields.phoneNumber?.reasonCode?.replaceAll('_', ' ') }} ·
+                    revision {{ identity.revision }}
+                  </p>
+                </form>
+              }
+            </section>
+
+            <aside hlmCard class="h-fit border bg-card p-6 shadow-xs">
+              <div class="flex gap-3">
+                <ng-icon name="lucideFingerprint" class="mt-0.5 text-primary" />
+                <div>
+                  <h2 class="font-semibold">Active identity policy</h2>
+                  <p class="mt-1 font-mono text-xs text-muted-foreground">
+                    {{ identity.governance.policy.key }} · v{{ identity.governance.policy.version }}
+                  </p>
+                </div>
+              </div>
+              <div class="mt-5 space-y-3 text-sm">
+                @for (field of governanceFields; track field) {
+                  @if (identity.governance.fields[field]; as rule) {
+                    <div class="rounded-md border p-3">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="font-medium">{{
+                          field
+                            .replaceAll('Name', ' name')
+                            .replaceAll('Number', ' number')
+                            .replaceAll('Picture', ' picture')
+                        }}</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs">{{
+                          rule.mode.replaceAll('_', ' ')
+                        }}</span>
+                      </div>
+                      <p class="mt-1 text-xs text-muted-foreground">
+                        {{ rule.reasonCode.replaceAll('_', ' ') }}
+                      </p>
+                    </div>
+                  }
+                }
+              </div>
+            </aside>
           </div>
-        </div>
-        <dl class="mt-6 grid gap-5 sm:grid-cols-2 text-sm">
-          <div>
-            <dt class="text-xs text-muted-foreground">Full name</dt>
-            <dd class="mt-1 font-medium">Current signed-in staff member</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-muted-foreground">Staff identity</dt>
-            <dd class="mt-1 font-mono">Directory managed</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-muted-foreground">Office and designation</dt>
-            <dd class="mt-1">Derived from effective appointment</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-muted-foreground">Governed roles</dt>
-            <dd class="mt-1">Visible in the access review record</dd>
-          </div>
-        </dl>
-        <p class="mt-6 rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">
-          Directory-managed identity fields cannot be edited here. Request a correction through
-          Human Resources.
-        </p>
-      </section>
+
+          <section hlmCard class="border bg-card p-6 shadow-xs">
+            <div class="flex items-start gap-3">
+              <ng-icon name="lucideUpload" class="mt-0.5 text-primary" />
+              <div>
+                <h2 class="text-lg font-semibold">Request an identity change</h2>
+                <p class="text-sm text-muted-foreground">
+                  Approval-controlled fields are submitted with a reason and policy-required
+                  evidence.
+                </p>
+              </div>
+            </div>
+            <form class="mt-6" [formGroup]="governedForm" (ngSubmit)="submitChangeRequest()">
+              <div class="grid gap-4 md:grid-cols-2">
+                @if (canRequest('firstName')) {
+                  <label class="grid gap-1.5 text-sm font-medium"
+                    >First name<input hlmInput formControlName="firstName"
+                  /></label>
+                }
+                @if (canRequest('middleName')) {
+                  <label class="grid gap-1.5 text-sm font-medium"
+                    >Middle name
+                    <span class="text-xs font-normal text-muted-foreground"
+                      >Optional; clear to remove</span
+                    ><input hlmInput formControlName="middleName"
+                  /></label>
+                }
+                @if (canRequest('lastName')) {
+                  <label class="grid gap-1.5 text-sm font-medium"
+                    >Last name<input hlmInput formControlName="lastName"
+                  /></label>
+                }
+                @if (canRequest('email')) {
+                  <label class="grid gap-1.5 text-sm font-medium"
+                    >Email<input hlmInput type="email" formControlName="email"
+                  /></label>
+                }
+              </div>
+              <label class="mt-4 grid gap-1.5 text-sm font-medium">
+                Reason
+                <textarea
+                  hlmTextarea
+                  class="min-h-24"
+                  formControlName="reason"
+                  placeholder="Explain why this governed identity change is required"
+                ></textarea>
+              </label>
+              <div class="mt-4 grid gap-4 md:grid-cols-2">
+                <label
+                  class="grid cursor-pointer gap-1.5 rounded-md border p-4 text-sm font-medium"
+                >
+                  Supporting evidence
+                  <span class="text-xs font-normal text-muted-foreground"
+                    >JPEG, PNG, WebP or PDF</span
+                  >
+                  <input
+                    class="mt-2 text-xs"
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp,application/pdf"
+                    (change)="selectEvidence($event)"
+                  />
+                  @if (evidenceFiles().length) {
+                    <span class="text-xs font-normal"
+                      >{{ evidenceFiles().length }} file(s) selected</span
+                    >
+                  }
+                </label>
+                @if (canRequest('signature')) {
+                  <label
+                    class="grid cursor-pointer gap-1.5 rounded-md border p-4 text-sm font-medium"
+                  >
+                    Replacement signature
+                    <span class="text-xs font-normal text-muted-foreground"
+                      >Safe SVG only; the asset remains private</span
+                    >
+                    <input
+                      class="mt-2 text-xs"
+                      type="file"
+                      accept="image/svg+xml,.svg"
+                      (change)="selectSignature($event)"
+                    />
+                    @if (signatureFile()) {
+                      <span class="text-xs font-normal">{{ signatureFile()?.name }}</span>
+                    }
+                  </label>
+                }
+              </div>
+              @if (requestError()) {
+                <p
+                  class="mt-4 rounded-md border border-(--brand-error)/35 bg-(--brand-error)/10 p-3 text-sm text-(--brand-error)"
+                >
+                  {{ requestError() }}
+                </p>
+              }
+              <div class="mt-5 flex justify-end">
+                <button hlmBtn type="submit" [disabled]="identityService.saving()">
+                  <ng-icon name="lucideUpload" />{{
+                    identityService.saving() ? 'Submitting…' : 'Submit for approval'
+                  }}
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section hlmCard class="border bg-card p-6 shadow-xs">
+            <div class="flex items-start gap-3">
+              <ng-icon name="lucideFileClock" class="mt-0.5 text-primary" />
+              <div>
+                <h2 class="text-lg font-semibold">Change-request history</h2>
+                <p class="text-sm text-muted-foreground">Newest requests appear first.</p>
+              </div>
+            </div>
+            @if (identityService.history().length === 0) {
+              <p class="mt-5 rounded-md border bg-muted/30 p-4 text-sm text-muted-foreground">
+                No identity change requests have been submitted.
+              </p>
+            } @else {
+              <div class="mt-5 divide-y rounded-md border">
+                @for (request of identityService.history(); track request.id) {
+                  <article class="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
+                    <div>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <p class="font-mono text-xs">{{ request.id }}</p>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs">{{
+                          request.status
+                        }}</span>
+                      </div>
+                      <p class="mt-2 text-sm font-medium">{{ changeLabels(request.changes) }}</p>
+                      <p class="mt-1 text-sm text-muted-foreground">{{ request.reason }}</p>
+                    </div>
+                    <div class="text-xs text-muted-foreground md:text-right">
+                      <p>{{ formatDate(request.createdAt) }}</p>
+                      <p class="mt-1">Policy v{{ request.policy.version }}</p>
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </section>
+        }
       </div>
     </mat-tab>
     <mat-tab label="Security">
       <div class="pt-5">
-      <div class="grid gap-4 md:grid-cols-2">
-        <section hlmCard class="border bg-card p-6 shadow-xs">
-          <ng-icon name="lucideShieldCheck" class="text-(--brand-success)" />
-          <h2 class="mt-4 text-lg font-semibold">Multi-factor authentication</h2>
-          <p class="mt-2 text-sm text-muted-foreground">
-            Enabled · authenticator verified 18 August 2026
-          </p>
-          <button hlmBtn variant="outline" class="mt-5">Manage authentication methods</button>
-        </section>
-        <section hlmCard class="border bg-card p-6 shadow-xs">
-          <ng-icon name="lucideKeyRound" class="text-primary" />
-          <h2 class="mt-4 text-lg font-semibold">Password and recovery</h2>
-          <p class="mt-2 text-sm text-muted-foreground">
-            Last password change: 12 July 2026 · recovery contact verified
-          </p>
-          <button hlmBtn variant="outline" class="mt-5">Update security credentials</button>
-        </section>
-      </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          <section hlmCard class="border bg-card p-6 shadow-xs">
+            <ng-icon name="lucideShieldCheck" class="text-(--brand-success)" />
+            <h2 class="mt-4 text-lg font-semibold">Multi-factor authentication</h2>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Enabled · authenticator verified 18 August 2026
+            </p>
+            <button hlmBtn variant="outline" class="mt-5">Manage authentication methods</button>
+          </section>
+          <section hlmCard class="border bg-card p-6 shadow-xs">
+            <ng-icon name="lucideKeyRound" class="text-primary" />
+            <h2 class="mt-4 text-lg font-semibold">Password and recovery</h2>
+            <p class="mt-2 text-sm text-muted-foreground">
+              Last password change: 12 July 2026 · recovery contact verified
+            </p>
+            <button hlmBtn variant="outline" class="mt-5">Update security credentials</button>
+          </section>
+        </div>
       </div>
     </mat-tab>
     <mat-tab label="Sessions">
       <div class="pt-5">
-      <section hlmCard class="border bg-card p-6 shadow-xs">
-        <h2 class="text-lg font-semibold">Active sessions</h2>
-        <p class="text-sm text-muted-foreground">
-          Revocation is recorded as an account-security event.
-        </p>
-        <div class="mt-5 divide-y rounded-md border">
-          @for (
-            session of [
-              {
-                device: 'Windows workstation · Edge',
-                place: 'Lagos office network',
-                activity: 'Current session · active now',
-              },
-              {
-                device: 'Android mobile · Chrome',
-                place: 'Verified mobile network',
-                activity: 'Last active 31 Aug · 18:42',
-              },
-            ];
-            track session.device
-          ) {
-            <div class="flex flex-wrap items-center justify-between gap-3 p-4">
-              <div class="flex gap-3">
-                <ng-icon name="lucideLaptop" class="mt-0.5 text-primary" />
-                <div>
-                  <p class="font-medium">{{ session.device }}</p>
-                  <p class="text-xs text-muted-foreground">
-                    {{ session.place }} · {{ session.activity }}
-                  </p>
+        <section hlmCard class="border bg-card p-6 shadow-xs">
+          <h2 class="text-lg font-semibold">Active sessions</h2>
+          <p class="text-sm text-muted-foreground">
+            Revocation is recorded as an account-security event.
+          </p>
+          <div class="mt-5 divide-y rounded-md border">
+            @for (
+              session of [
+                {
+                  device: 'Windows workstation · Edge',
+                  place: 'Lagos office network',
+                  activity: 'Current session · active now',
+                },
+                {
+                  device: 'Android mobile · Chrome',
+                  place: 'Verified mobile network',
+                  activity: 'Last active 31 Aug · 18:42',
+                },
+              ];
+              track session.device
+            ) {
+              <div class="flex flex-wrap items-center justify-between gap-3 p-4">
+                <div class="flex gap-3">
+                  <ng-icon name="lucideLaptop" class="mt-0.5 text-primary" />
+                  <div>
+                    <p class="font-medium">{{ session.device }}</p>
+                    <p class="text-xs text-muted-foreground">
+                      {{ session.place }} · {{ session.activity }}
+                    </p>
+                  </div>
                 </div>
+                <button hlmBtn variant="outline">Revoke session</button>
               </div>
-              <button hlmBtn variant="outline">Revoke session</button>
-            </div>
-          }
-        </div>
-      </section>
+            }
+          </div>
+        </section>
       </div>
     </mat-tab>
     <mat-tab label="Governance">
       <div class="pt-5">
-      <section hlmCard class="border bg-card p-6 shadow-xs">
-        <div class="flex gap-3">
-          <ng-icon name="lucideHistory" class="mt-0.5 text-primary" />
-          <div>
-            <h2 class="text-lg font-semibold">Policy acknowledgements</h2>
-            <p class="text-sm text-muted-foreground">
-              Exact policy version, acknowledgement time and identity are retained.
-            </p>
-          </div>
-        </div>
-        <div class="mt-5 space-y-3">
-          @for (
-            policy of [
-              {
-                title: 'Document Governance Policy',
-                version: 'v3.2',
-                date: 'Acknowledged 18 Aug 2026',
-              },
-              {
-                title: 'Acceptable Use and Access Policy',
-                version: 'v5.1',
-                date: 'Acknowledged 18 Aug 2026',
-              },
-              {
-                title: 'Records Retention Standard',
-                version: 'v2.4',
-                date: 'Acknowledged 21 Aug 2026',
-              },
-            ];
-            track policy.title
-          ) {
-            <div class="flex items-center justify-between gap-3 rounded-md border p-4">
-              <div>
-                <p class="font-medium">{{ policy.title }}</p>
-                <p class="text-xs text-muted-foreground">
-                  {{ policy.version }} · {{ policy.date }}
-                </p>
-              </div>
-              <ng-icon name="lucideCheck" class="text-(--brand-success)" />
+        <section hlmCard class="border bg-card p-6 shadow-xs">
+          <div class="flex gap-3">
+            <ng-icon name="lucideHistory" class="mt-0.5 text-primary" />
+            <div>
+              <h2 class="text-lg font-semibold">Policy acknowledgements</h2>
+              <p class="text-sm text-muted-foreground">
+                Exact policy version, acknowledgement time and identity are retained.
+              </p>
             </div>
-          }
-        </div>
-      </section>
+          </div>
+          <div class="mt-5 space-y-3">
+            @for (
+              policy of [
+                {
+                  title: 'Document Governance Policy',
+                  version: 'v3.2',
+                  date: 'Acknowledged 18 Aug 2026',
+                },
+                {
+                  title: 'Acceptable Use and Access Policy',
+                  version: 'v5.1',
+                  date: 'Acknowledged 18 Aug 2026',
+                },
+                {
+                  title: 'Records Retention Standard',
+                  version: 'v2.4',
+                  date: 'Acknowledged 21 Aug 2026',
+                },
+              ];
+              track policy.title
+            ) {
+              <div class="flex items-center justify-between gap-3 rounded-md border p-4">
+                <div>
+                  <p class="font-medium">{{ policy.title }}</p>
+                  <p class="text-xs text-muted-foreground">
+                    {{ policy.version }} · {{ policy.date }}
+                  </p>
+                </div>
+                <ng-icon name="lucideCheck" class="text-(--brand-success)" />
+              </div>
+            }
+          </div>
+        </section>
       </div>
     </mat-tab>
     <mat-tab label="Notifications">
       <div class="pt-5">
-      <section hlmCard class="border bg-card p-6 shadow-xs">
-        <div class="flex gap-3">
-          <ng-icon name="lucideBell" class="mt-0.5 text-primary" />
-          <div>
-            <h2 class="text-lg font-semibold">Governed notification preferences</h2>
-            <p class="text-sm text-muted-foreground">
-              Mandatory security, authority and hold notices cannot be disabled.
-            </p>
+        <section hlmCard class="border bg-card p-6 shadow-xs">
+          <div class="flex gap-3">
+            <ng-icon name="lucideBell" class="mt-0.5 text-primary" />
+            <div>
+              <h2 class="text-lg font-semibold">Governed notification preferences</h2>
+              <p class="text-sm text-muted-foreground">
+                Mandatory security, authority and hold notices cannot be disabled.
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="mt-5 divide-y rounded-md border">
-          @for (
-            preference of [
-              {
-                title: 'Assignment and deadline reminders',
-                detail: 'Email and in-application',
-                locked: false,
-              },
-              {
-                title: 'Security and privileged-access alerts',
-                detail: 'Mandatory · email and in-application',
-                locked: true,
-              },
-              {
-                title: 'Authority decisions and signatures',
-                detail: 'Mandatory · in-application',
-                locked: true,
-              },
-              { title: 'Weekly workload summary', detail: 'Email', locked: false },
-            ];
-            track preference.title
-          ) {
-            <label class="flex items-start justify-between gap-4 p-4"
-              ><div>
-                <p class="font-medium">{{ preference.title }}</p>
-                <p class="text-xs text-muted-foreground">{{ preference.detail }}</p>
-              </div>
-              <hlm-checkbox [checked]="true" [disabled]="preference.locked"
-            /></label>
-          }
-        </div>
-      </section>
+          <div class="mt-5 divide-y rounded-md border">
+            @for (
+              preference of [
+                {
+                  title: 'Assignment and deadline reminders',
+                  detail: 'Email and in-application',
+                  locked: false,
+                },
+                {
+                  title: 'Security and privileged-access alerts',
+                  detail: 'Mandatory · email and in-application',
+                  locked: true,
+                },
+                {
+                  title: 'Authority decisions and signatures',
+                  detail: 'Mandatory · in-application',
+                  locked: true,
+                },
+                { title: 'Weekly workload summary', detail: 'Email', locked: false },
+              ];
+              track preference.title
+            ) {
+              <label class="flex items-start justify-between gap-4 p-4"
+                ><div>
+                  <p class="font-medium">{{ preference.title }}</p>
+                  <p class="text-xs text-muted-foreground">{{ preference.detail }}</p>
+                </div>
+                <hlm-checkbox [checked]="true" [disabled]="preference.locked"
+              /></label>
+            }
+          </div>
+        </section>
       </div>
     </mat-tab>
   </mat-tab-group>

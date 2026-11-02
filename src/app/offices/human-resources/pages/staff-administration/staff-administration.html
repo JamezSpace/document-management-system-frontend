@@ -1,0 +1,121 @@
+<section class="mx-auto max-w-[96rem] px-4 pb-10 soft-fade">
+  <header class="mt-5 flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">People operations</p>
+      <h1 class="mt-2 text-3xl font-bold">Administrative staff management</h1>
+      <p class="mt-2 text-muted-foreground">
+        Revision-safe employment administration with retained lifecycle records.
+      </p>
+    </div>
+    <button hlmBtn variant="outline" type="button" (click)="loadStaff(administration.staffPage().page)">
+      <ng-icon name="lucideRefreshCw" />Refresh
+    </button>
+  </header>
+  <hlm-separator class="my-6" />
+
+  <form hlmCard class="grid gap-3 border bg-card p-4 shadow-xs md:grid-cols-[1fr_13rem_13rem_auto]" [formGroup]="filters" (ngSubmit)="loadStaff()">
+    <label class="grid gap-1.5 text-sm font-medium">
+      Search
+      <input hlmInput formControlName="search" placeholder="Name, email or staff number" />
+    </label>
+    <label class="grid gap-1.5 text-sm font-medium">
+      Status
+      <select class="h-10 rounded-md border bg-background px-3 text-sm" formControlName="status">
+        <option value="">All statuses</option>
+        @for (status of statuses; track status) {<option [value]="status">{{ status }}</option>}
+      </select>
+    </label>
+    <label class="grid gap-1.5 text-sm font-medium">
+      Unit
+      <select class="h-10 rounded-md border bg-background px-3 text-sm" formControlName="unitId">
+        <option value="">All units</option>
+        @for (unit of units(); track unit.id) {<option [value]="unit.id">{{ unit.fullName }}</option>}
+      </select>
+    </label>
+    <button hlmBtn class="self-end" type="submit"><ng-icon name="lucideSearch" />Apply</button>
+  </form>
+
+  @if (administration.error()) {
+    <p class="mt-4 rounded-md border border-(--brand-error)/35 bg-(--brand-error)/10 p-3 text-sm text-(--brand-error)">{{ administration.error() }}</p>
+  }
+
+  <div class="mt-5 grid gap-5" [class.xl:grid-cols-[minmax(0,1fr)_25rem]]="selected()">
+    <section hlmCard class="overflow-hidden border bg-card shadow-xs">
+      <div class="border-b p-4">
+        <h2 class="font-semibold">Staff registry</h2>
+        <p class="text-xs text-muted-foreground">{{ administration.staffPage().total }} retained staff record(s)</p>
+      </div>
+      @if (administration.loading()) {
+        <p class="p-6 text-sm text-muted-foreground">Loading staff records…</p>
+      } @else if (administration.staffPage().items.length === 0) {
+        <p class="p-6 text-sm text-muted-foreground">No staff records match these filters.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="border-b bg-muted/40 text-xs text-muted-foreground">
+              <tr><th class="p-3">Staff</th><th class="p-3">Number</th><th class="p-3">Office</th><th class="p-3">Designation</th><th class="p-3">Status</th><th class="p-3">Revision</th></tr>
+            </thead>
+            <tbody class="divide-y">
+              @for (staff of administration.staffPage().items; track staff.staffId) {
+                <tr class="cursor-pointer hover:bg-muted/30" [class.bg-muted]="selected()?.staffId === staff.staffId" (click)="openStaff(staff)">
+                  <td class="p-3"><p class="font-medium">{{ staff.fullName }}</p><p class="text-xs text-muted-foreground">{{ staff.email }}</p></td>
+                  <td class="p-3 font-mono">{{ staff.staffNumber }}</td>
+                  <td class="p-3"><p>{{ staff.office.name }}</p><p class="text-xs text-muted-foreground">{{ staff.unit.name }}</p></td>
+                  <td class="p-3">{{ staff.designation.title }}</td>
+                  <td class="p-3"><span class="rounded-full bg-muted px-2 py-1 text-xs">{{ staff.status }}</span></td>
+                  <td class="p-3 font-mono">{{ staff.revision }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      <div class="flex items-center justify-between border-t p-3 text-sm">
+        <span>Page {{ administration.staffPage().page }} of {{ administration.staffPage().totalPages || 1 }}</span>
+        <div class="flex gap-2">
+          <button hlmBtn variant="outline" size="sm" type="button" [disabled]="administration.staffPage().page <= 1" (click)="loadStaff(administration.staffPage().page - 1)"><ng-icon name="lucideArrowLeft" />Previous</button>
+          <button hlmBtn variant="outline" size="sm" type="button" [disabled]="administration.staffPage().page >= administration.staffPage().totalPages" (click)="loadStaff(administration.staffPage().page + 1)">Next<ng-icon name="lucideArrowRight" /></button>
+        </div>
+      </div>
+    </section>
+
+    @if (selected(); as staff) {
+      <aside hlmCard class="h-fit border bg-card p-5 shadow-xs">
+        @if (administration.detailLoading()) {
+          <p class="text-sm text-muted-foreground">Loading current staff revision…</p>
+        } @else {
+          <div class="flex items-start justify-between gap-3">
+            <div><p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{{ staff.staffId }}</p><h2 class="mt-1 text-xl font-semibold">{{ staff.fullName }}</h2><p class="text-sm text-muted-foreground">{{ staff.email }}</p></div>
+            <button class="text-muted-foreground" type="button" aria-label="Close detail" (click)="administration.clearSelection()">×</button>
+          </div>
+          <p class="mt-4 rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">Current ETag retained for mutations · revision {{ staff.revision }}</p>
+
+          @if (mode() === 'detail') {
+            <dl class="mt-5 grid gap-3 text-sm"><div><dt class="text-xs text-muted-foreground">Staff number</dt><dd class="font-mono">{{ staff.staffNumber }}</dd></div><div><dt class="text-xs text-muted-foreground">Employment type</dt><dd>{{ staff.employmentType }}</dd></div><div><dt class="text-xs text-muted-foreground">Unit / office</dt><dd>{{ staff.unit.name }} · {{ staff.office.name }}</dd></div><div><dt class="text-xs text-muted-foreground">Designation</dt><dd>{{ staff.designation.title }}</dd></div><div><dt class="text-xs text-muted-foreground">Status</dt><dd>{{ staff.status }}</dd></div><div><dt class="text-xs text-muted-foreground">Last updated</dt><dd>{{ formatDate(staff.updatedAt) }}</dd></div></dl>
+            <div class="mt-5 grid gap-2">
+              @if (can('staff.update')) {<button hlmBtn type="button" (click)="startEdit()"><ng-icon name="lucideUserRoundCog" />Edit managed fields</button>}
+              @if (can('staff.activate') || can('staff.deactivate')) {<button hlmBtn variant="outline" type="button" (click)="startStatusTransition()"><ng-icon name="lucideShieldCheck" />Transition status</button>}
+            </div>
+          } @else if (mode() === 'edit') {
+            <form class="mt-5 grid gap-4" [formGroup]="editForm" (ngSubmit)="saveAdministrativeFields()">
+              <label class="grid gap-1.5 text-sm font-medium">Staff number<input hlmInput type="number" formControlName="staffNumber" /></label>
+              <label class="grid gap-1.5 text-sm font-medium">Employment type<select class="h-10 rounded-md border bg-background px-3" formControlName="employmentType">@for (type of employmentTypes; track type) {<option [value]="type">{{ type }}</option>}</select></label>
+              <label class="grid gap-1.5 text-sm font-medium">Unit<select class="h-10 rounded-md border bg-background px-3" formControlName="unitId" (change)="onUnitChange($any($event.target).value)">@for (unit of units(); track unit.id) {<option [value]="unit.id">{{ unit.fullName }}</option>}</select></label>
+              <label class="grid gap-1.5 text-sm font-medium">Office<select class="h-10 rounded-md border bg-background px-3" formControlName="officeId" (change)="onOfficeChange()">@for (office of offices(); track office.id) {<option [value]="office.id">{{ office.name }}</option>}</select></label>
+              <label class="grid gap-1.5 text-sm font-medium">Designation<select class="h-10 rounded-md border bg-background px-3" formControlName="designationId">@for (designation of designations(); track designation.id) {<option [value]="designation.id">{{ designation.title }}</option>}</select></label>
+              <label class="grid gap-1.5 text-sm font-medium">Administrative reason<textarea hlmTextarea class="min-h-24" formControlName="reason"></textarea></label>
+              <div class="grid grid-cols-2 gap-2"><button hlmBtn variant="outline" type="button" (click)="mode.set('detail')">Cancel</button><button hlmBtn type="submit" [disabled]="administration.saving()"><ng-icon name="lucideSave" />Save</button></div>
+            </form>
+          } @else {
+            <form class="mt-5 grid gap-4" [formGroup]="statusForm" (ngSubmit)="transitionStatus()">
+              <div class="rounded-md border border-(--brand-warning)/35 bg-(--brand-warning)/10 p-3 text-sm">Staff records are never deleted. This action records an explicit, audited lifecycle transition.</div>
+              <label class="grid gap-1.5 text-sm font-medium">Target status<select class="h-10 rounded-md border bg-background px-3" formControlName="toStatus">@for (status of statuses; track status) {@if (status !== staff.status && canTransitionTo(status)) {<option [value]="status">{{ status }}</option>}}</select></label>
+              <label class="grid gap-1.5 text-sm font-medium">Transition reason<textarea hlmTextarea class="min-h-24" formControlName="reason"></textarea></label>
+              <div class="grid grid-cols-2 gap-2"><button hlmBtn variant="outline" type="button" (click)="mode.set('detail')">Cancel</button><button hlmBtn type="submit" [disabled]="administration.saving()">Record transition</button></div>
+            </form>
+          }
+        }
+      </aside>
+    }
+  </div>
+</section>

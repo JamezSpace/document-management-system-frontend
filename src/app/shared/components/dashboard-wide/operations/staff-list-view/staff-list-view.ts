@@ -153,13 +153,6 @@ class StaffListView implements OnInit, AfterViewInit {
     this.staffService.updateStaff(staff.id, payload);
   }
 
-  deleteSelectedStaff() {
-    const staff = this.selectedStaff();
-    if (!staff) return;
-
-    this.staffService.deleteStaff(staff.id);
-  }
-
   getUnitLabel(staff: BaseStaffEntity) {
     return staff.unit?.name ?? '--';
   }

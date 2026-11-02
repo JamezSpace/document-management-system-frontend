@@ -72,14 +72,6 @@
       @if (canEdit(staff)) {
         <button hlmDropdownMenuItem (click)="openUpdateModal()">Update</button>
       }
-      <hlm-dropdown-menu-separator />
-      <button
-        hlmDropdownMenuItem
-        class="text-(--brand-error)"
-        [hlmAlertDialogTriggerFor]="deleteStaffDialog"
-      >
-        Delete
-      </button>
     }
   </hlm-dropdown-menu>
 </ng-template>
@@ -223,20 +215,3 @@
     <p class="px-1.5 text-sm">Select a staff member to view details.</p>
   }
 </nexus-side-modal>
-
-<hlm-alert-dialog #deleteStaffDialog>
-  <hlm-alert-dialog-content *hlmAlertDialogPortal="let ctx">
-    <hlm-alert-dialog-header>
-      <h2 hlmAlertDialogTitle>Delete staff account?</h2>
-      <p hlmAlertDialogDescription>
-        This action cannot be undone. The staff record will be permanently removed.
-      </p>
-    </hlm-alert-dialog-header>
-    <hlm-alert-dialog-footer>
-      <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-      <button hlmAlertDialogAction class="critical-action" (click)="deleteSelectedStaff(); ctx.close()">
-        Confirm
-      </button>
-    </hlm-alert-dialog-footer>
-  </hlm-alert-dialog-content>
-</hlm-alert-dialog>

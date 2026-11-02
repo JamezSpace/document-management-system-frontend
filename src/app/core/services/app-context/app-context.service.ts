@@ -14,8 +14,25 @@ class AppContextService {
   readonly capabilities = computed(() => new Set(this.authority()?.capabilities ?? []));
 
   async load(context?: HttpContext): Promise<StaffActor> {
-    const response = await firstValueFrom(this.identityApi.getCurrentStaff(context));
-    const actor = { ...response.data.staff, authority: response.data.authority };
+    const response = await firstValueFrom(this.identityApi.getMe(context));
+    const identity = response.body?.data;
+    if (!identity) throw new Error('The identity response did not include a profile.');
+
+    const profile = identity.profile;
+    const actor: StaffActor = {
+      ...identity.employment,
+      firstName: profile.firstName,
+      middleName: profile.middleName ?? '',
+      lastName: profile.lastName,
+      fullName: [profile.firstName, profile.middleName, profile.lastName].filter(Boolean).join(' '),
+      email: profile.email,
+      media: {
+        profilePicUrl: profile.profilePictureUrl,
+        // Self-service responses deliberately expose presence metadata, never the signature asset.
+        signatureUrl: null,
+      },
+      authority: identity.authority,
+    };
     this.actor.set(actor);
     return actor;
   }

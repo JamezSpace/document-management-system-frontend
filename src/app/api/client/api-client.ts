@@ -30,6 +30,28 @@ class ApiClient {
     return this.http.patch<ApiResponse<T>>(this.url(path), body, { context, headers });
   }
 
+  patchResponse<T>(
+    path: string,
+    body: unknown,
+    options: { context?: HttpContext; headers?: HttpHeaders | Record<string, string> } = {},
+  ): Observable<HttpResponse<ApiResponse<T>>> {
+    return this.http.patch<ApiResponse<T>>(this.url(path), body, {
+      ...options,
+      observe: 'response',
+    });
+  }
+
+  putResponse<T>(
+    path: string,
+    body: unknown,
+    options: { context?: HttpContext; headers?: HttpHeaders | Record<string, string> } = {},
+  ): Observable<HttpResponse<ApiResponse<T>>> {
+    return this.http.put<ApiResponse<T>>(this.url(path), body, {
+      ...options,
+      observe: 'response',
+    });
+  }
+
   delete<T>(path: string, context?: HttpContext): Observable<ApiResponse<T>> {
     return this.http.delete<ApiResponse<T>>(this.url(path), { context });
   }

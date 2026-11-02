@@ -167,13 +167,25 @@ const definitions: OfficeWorkbenchDefinition[] = [
     label: 'Human Resources',
     summary: 'People, personnel files, establishment, leave, appointments and promotions.',
     landingRoute: 'overview',
-    accessCapabilities: [C.Staff.View, C.Staff.Create, C.Staff.Activate],
+    accessCapabilities: [
+      C.Staff.List,
+      C.Staff.View,
+      C.Staff.Create,
+      C.Staff.Activate,
+      C.Identity.ChangeReview,
+    ],
     navigation: [
       personal,
       {
         label: 'People operations',
         items: [
-          item('Staff registry', 'lucideUsers', 'staff', C.Staff.View),
+          item('Staff registry', 'lucideUsers', 'staff', C.Staff.List),
+          item(
+            'Identity change review',
+            'lucideClipboardCheck',
+            'identity-change-review',
+            C.Identity.ChangeReview,
+          ),
           item('Pending activations', 'lucideUserCheck', 'staff-activation', C.Staff.Activate),
           item('Personnel files', 'lucideFiles', 'personnel-files', C.Staff.View),
           item('Leave management', 'lucideCalendarCheck', 'leave', C.Staff.Update),
