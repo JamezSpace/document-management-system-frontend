@@ -3,6 +3,11 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
+  provideErrorStateMatcher,
+  ShowOnDirtyErrorStateMatcher,
+} from '@spartan-ng/brain/forms';
+import {
+  lucideArrowRight,
   lucideBell,
   lucideCamera,
   lucideCheck,
@@ -12,17 +17,20 @@ import {
   lucideHistory,
   lucideKeyRound,
   lucideLaptop,
+  lucidePencil,
+  lucidePhone,
   lucideRefreshCw,
   lucideSave,
   lucideShieldCheck,
   lucideUpload,
 } from '@ng-icons/lucide';
+import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmBreadCrumbImports } from '@spartan-ng/helm/breadcrumb';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { HlmCheckbox } from '@spartan-ng/helm/checkbox';
-import { HlmSeparator } from '@spartan-ng/helm/separator';
+import { HlmCheckboxImports } from '@spartan-ng/helm/checkbox';
 import { HlmInput } from '@spartan-ng/helm/input';
+import { HlmSkeleton } from '@spartan-ng/helm/skeleton';
 import { HlmTextarea } from '@spartan-ng/helm/textarea';
 import type {
   GovernedProfileField,
@@ -37,18 +45,20 @@ import { IdentitySelfService } from './identity-self-service.service';
   imports: [
     NgIcon,
     MatTabsModule,
+    HlmAlertDialogImports,
     HlmBreadCrumbImports,
     HlmButtonImports,
     HlmCardImports,
-    HlmCheckbox,
+    HlmCheckboxImports,
     HlmInput,
-    HlmSeparator,
+    HlmSkeleton,
     HlmTextarea,
     ReactiveFormsModule,
   ],
   templateUrl: './account-settings.html',
   providers: [
     provideIcons({
+      lucideArrowRight,
       lucideBell,
       lucideCamera,
       lucideCheck,
@@ -58,12 +68,15 @@ import { IdentitySelfService } from './identity-self-service.service';
       lucideHistory,
       lucideKeyRound,
       lucideLaptop,
+      lucidePencil,
+      lucidePhone,
       lucideRefreshCw,
       lucideSave,
       lucideShieldCheck,
       lucideUpload,
     }),
     IdentitySelfService,
+    provideErrorStateMatcher(ShowOnDirtyErrorStateMatcher),
   ],
 })
 class AccountSettings implements OnInit {
@@ -73,6 +86,8 @@ class AccountSettings implements OnInit {
 
   readonly profilePictureError = signal<string | null>(null);
   readonly requestError = signal<string | null>(null);
+  readonly editingPhone = signal(false);
+  readonly requestingIdentityChange = signal(false);
   readonly evidenceFiles = signal<File[]>([]);
   readonly signatureFile = signal<File | null>(null);
   readonly governanceFields: GovernedProfileField[] = [
@@ -85,7 +100,7 @@ class AccountSettings implements OnInit {
     'signature',
   ];
 
-  readonly phoneForm = new FormGroup({
+  readonly phoneFormGroup = new FormGroup({
     phoneNumber: new FormControl('', {
       nonNullable: true,
       validators: [Validators.pattern(/^\+[1-9]\d{7,14}$/)],
@@ -132,13 +147,49 @@ class AccountSettings implements OnInit {
     return decision?.reasonCode.replaceAll('_', ' ') ?? 'No active field decision';
   }
 
-  async savePhone(): Promise<void> {
-    if (this.phoneForm.invalid || this.identityService.saving()) return;
+  beginPhoneEdit(): void {
+    this.resetPhoneForm();
+    this.editingPhone.set(true);
+  }
+
+  cancelPhoneEdit(): void {
+    this.resetPhoneForm();
+    this.editingPhone.set(false);
+  }
+
+  phoneHasChanged(): boolean {
+    const current = this.identityService.profile()?.phoneNumber?.trim() ?? '';
+    return this.phoneFormGroup.controls.phoneNumber.value.trim() !== current;
+  }
+
+  beginIdentityChangeRequest(): void {
+    this.resetGovernedForm(this.identityService.profile());
+    this.requestError.set(null);
+    this.evidenceFiles.set([]);
+    this.signatureFile.set(null);
+    this.requestingIdentityChange.set(true);
+  }
+
+  cancelIdentityChangeRequest(): void {
+    this.resetGovernedForm(this.identityService.profile());
+    this.requestError.set(null);
+    this.evidenceFiles.set([]);
+    this.signatureFile.set(null);
+    this.requestingIdentityChange.set(false);
+  }
+
+  async confirmPhoneChange(dialog: { close: () => void }): Promise<void> {
+    if (this.phoneFormGroup.invalid || !this.phoneHasChanged() || this.identityService.saving()) {
+      return;
+    }
+
     try {
-      const value = this.phoneForm.getRawValue().phoneNumber.trim();
+      const value = this.phoneFormGroup.getRawValue().phoneNumber.trim();
       await this.identityService.updatePhone(value || null);
       this.resetForms(this.identityService.profile());
+      this.editingPhone.set(false);
       this.toast.success('Phone number updated.');
+      dialog.close();
     } catch {
       // Normalized API errors are presented globally and retained by the service.
     }
@@ -175,6 +226,7 @@ class AccountSettings implements OnInit {
     input.value = '';
     const accepted = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
     const invalid = files.find((file) => !accepted.has(file.type));
+    
     if (invalid) {
       this.requestError.set('Evidence must be a JPEG, PNG, WebP or PDF file.');
       return;
@@ -187,6 +239,7 @@ class AccountSettings implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     input.value = '';
+    
     if (file && file.type !== 'image/svg+xml') {
       this.requestError.set('The replacement signature must be an SVG file.');
       return;
@@ -199,6 +252,7 @@ class AccountSettings implements OnInit {
     this.requestError.set(null);
     const changes = this.changedGovernedFields();
     const signature = this.canRequest('signature') ? this.signatureFile() : null;
+    
     if (signature && this.canRequest('signature')) changes.signature = '';
 
     if (this.governedForm.invalid) {
@@ -210,6 +264,7 @@ class AccountSettings implements OnInit {
       this.requestError.set('Change at least one approval-controlled field.');
       return;
     }
+    
     if (this.requiresEvidence(changes) && this.evidenceFiles().length === 0) {
       this.requestError.set('Supporting evidence is required for the selected changes.');
       return;
@@ -228,6 +283,7 @@ class AccountSettings implements OnInit {
       this.evidenceFiles.set([]);
       this.signatureFile.set(null);
       this.resetForms(this.identityService.profile());
+      this.requestingIdentityChange.set(false);
       this.toast.success('Identity change request submitted for approval.');
     } catch {
       // Normalized API errors are presented globally and retained by the service.
@@ -268,6 +324,7 @@ class AccountSettings implements OnInit {
 
   private requiresEvidence(changes: Partial<Record<GovernedProfileField, unknown>>): boolean {
     const fields = Object.keys(changes) as GovernedProfileField[];
+    
     if (this.signatureFile()) fields.push('signature');
     return fields.some((field) =>
       this.identityService.governanceFor(field)?.requirements.includes('supporting_evidence'),
@@ -276,13 +333,26 @@ class AccountSettings implements OnInit {
 
   private resetForms(profile: IdentityProfileDto | null): void {
     if (!profile) return;
-    this.phoneForm.reset({ phoneNumber: profile.phoneNumber ?? '' });
+
+    this.phoneFormGroup.reset({ phoneNumber: profile.phoneNumber ?? '' });
+    this.resetGovernedForm(profile);
+  }
+
+  private resetGovernedForm(profile: IdentityProfileDto | null): void {
+    if (!profile) return;
+
     this.governedForm.reset({
       firstName: profile.firstName,
       middleName: profile.middleName ?? '',
       lastName: profile.lastName,
       email: profile.email,
       reason: '',
+    });
+  }
+
+  private resetPhoneForm(): void {
+    this.phoneFormGroup.reset({
+      phoneNumber: this.identityService.profile()?.phoneNumber ?? '',
     });
   }
 }
