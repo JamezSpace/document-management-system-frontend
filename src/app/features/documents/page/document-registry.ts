@@ -180,7 +180,7 @@ class DocumentRegistry implements OnInit {
       this.unitMembersService.fetchUnitMembers(staff.unit.id, officeActivityContext());
     }
 
-    this.documentService.fetchDocumentsByStaff(staff.id, officeActivityContext());
+    this.documentService.fetchMyDocuments(officeActivityContext());
   });
 
   searchQuery = signal<string>('');

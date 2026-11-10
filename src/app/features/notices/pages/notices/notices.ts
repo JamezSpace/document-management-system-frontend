@@ -56,7 +56,7 @@ class Notices {
 
     if (!this.noticesRequested) {
       this.noticesRequested = true;
-      this.noticeService.fetchNotices(staff.id, officeActivityContext());
+      this.noticeService.fetchMyNotices(officeActivityContext());
     }
   });
 
@@ -94,7 +94,7 @@ class Notices {
   handleEmptyStateAction(action: string): void {
     const staff = this.signedInStaff();
     if (action === 'refresh-notices' && staff) {
-      this.noticeService.fetchNotices(staff.id, officeActivityContext());
+      this.noticeService.fetchMyNotices(officeActivityContext());
     }
   }
 }

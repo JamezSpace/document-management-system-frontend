@@ -72,12 +72,12 @@ class DocumentService {
       });
   }
 
-  fetchDocumentsByStaff(staffId: string, context?: HttpContext) {
+  fetchMyDocuments(context?: HttpContext) {
     this.loading.set(true);
 
     this.http
       .get<ApiResponse<DocumentApi[]>>(
-        `${environment.api}/document/documents/${staffId}`,
+        `${environment.api}/document/documents/me`,
         context ? { context } : undefined,
       )
       .pipe(finalize(() => this.loading.set(false)))

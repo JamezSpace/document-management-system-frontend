@@ -16,12 +16,12 @@ class NoticesService {
   loading = signal<boolean>(false);
   error = signal<AppError | null>(null);
 
-  fetchNotices(staffId: string, context?: HttpContext) {
+  fetchMyNotices(context?: HttpContext) {
     this.loading.set(true);
 
     this.http
       .get<ApiResponse<NoticesApi[]>>(
-        `${environment.api}/notifications/${staffId}`,
+        `${environment.api}/notifications/me`,
         context ? { context } : undefined,
       )
       .pipe(finalize(() => this.loading.set(false)))
