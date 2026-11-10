@@ -18,7 +18,7 @@
       <form [formGroup]="authFormGroup" (ngSubmit)="submitData()" autocomplete="off">
         <div class="row">
           <div class="field">
-            <label for="">institutional email</label>
+            <label for="user-email">institutional email</label>
             <div class="" hlmInputGroup>
               <div hlmInputGroupAddon>
                 <ng-icon name="lucideMail" />
@@ -28,6 +28,7 @@
                 type="email"
                 placeholder="staff@ui.edu.ng"
                 formControlName="email"
+                id="user-email"
                 hlmInputGroupInput
               />
             </div>
@@ -35,7 +36,7 @@
         </div>
         <div class="row">
           <div class="field">
-            <label for="">password</label>
+            <label for="user-password">password</label>
             <div hlmInputGroup>
               <div hlmInputGroupAddon align="inline-start">
                 <ng-icon name="lucideLockKeyhole" />
@@ -47,6 +48,7 @@
                 formControlName="password"
                 maxlength="20"
                 class="w-full"
+                id="user-password"
               />
 
               <div hlmInputGroupAddon align="inline-end">
