@@ -18,7 +18,7 @@
     <mat-tab label="Details">
       <section class="pt-5">
         <!-- direction -->
-        <article class="mb-2">
+        <article class="mb-2.5">
           <span class="descriptor">recipient category</span>
           <p class="capitalize">
             {{ documentToShowFullDetails().correspondence.direction }}
@@ -29,7 +29,7 @@
           documentToShowFullDetails().correspondence.direction === 'external' &&
           documentToShowFullDetails().correspondence.recipientUnitId
         ) {
-          <article class="mb-2">
+          <article class="mb-2.5">
             <span class="descriptor">recipient unit</span>
             <p class="capitalize">
               {{ recipientUnit()?.code?.toUpperCase() ?? '--' }}
@@ -37,7 +37,7 @@
           </article>
         } @else {
           <!-- recipient -->
-          <article class="mb-2">
+          <article class="mb-2.5">
             <span class="descriptor">addressed to</span>
             <ul>
               @for (addresee of addressedTo(); track $index) {
@@ -50,7 +50,7 @@
         }
 
         <!-- type -->
-        <article class="mb-2">
+        <article class="mb-2.5">
           <span class="descriptor">correspondence type</span>
           <p>
             {{ docType()?.name ?? '--' }}
@@ -58,7 +58,7 @@
         </article>
 
         <!-- correspondence subject -->
-        <article class="mb-2">
+        <article class="mb-2.5">
           <span class="descriptor">correspondence subject</span>
           <p>
             {{ corrSubject()?.name ?? '--' }}
@@ -66,7 +66,7 @@
         </article>
 
         <!-- business function -->
-        <article class="mb-2">
+        <article class="mb-2.5">
           <span class="descriptor">business function</span>
           <p>
             {{ businessFuntion()?.name ?? '--' }}
@@ -74,7 +74,7 @@
         </article>
 
         <!-- created at -->
-        <article class="mb-2">
+        <article class="mb-2.5">
           <span class="descriptor">created at</span>
           <p>
             {{ utilService.formatDateAsReadableString(documentToShowFullDetails().createdAt) }}
@@ -82,7 +82,7 @@
         </article>
 
         <!-- last updated at -->
-        <article class="mb-2">
+        <article class="mb-2.5">
           <span class="descriptor">last modified at</span>
           <p>
             @if (documentToShowFullDetails().updatedAt; as updatedDate) {

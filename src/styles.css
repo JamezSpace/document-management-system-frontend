@@ -187,6 +187,153 @@ iconify-icon {
 }
 
 /* BUTTON SYSTEM */
+@layer components {
+  .spartan-button {
+    gap: 8px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    font-size: 90%;
+    font-weight: 500;
+    text-transform: capitalize;
+    transition:
+      color 250ms ease,
+      background-color 250ms ease,
+      border-color 250ms ease,
+      box-shadow 250ms ease;
+
+    &:focus-visible {
+      outline: 2px solid var(--brand-primary);
+      outline-offset: 2px;
+    }
+
+    &:disabled,
+    &[data-disabled] {
+      pointer-events: none;
+      cursor: not-allowed;
+      opacity: 1;
+      color: var(--brand-disabled-foreground);
+      background-color: var(--brand-disabled-background);
+      border-color: var(--brand-border);
+    }
+  }
+
+  .spartan-button-variant-default {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--brand-primary-hover);
+      border-color: var(--brand-primary-hover);
+    }
+
+    &:active {
+      background-color: var(--brand-primary-active);
+      border-color: var(--brand-primary-active);
+    }
+  }
+
+  .spartan-button-variant-outline {
+    background-color: transparent;
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+
+    &:hover {
+      background-color: color-mix(in oklab, var(--brand-primary) 10%, transparent);
+    }
+  }
+
+  .spartan-button-variant-secondary {
+    background-color: var(--brand-surface);
+    border-color: var(--brand-border);
+    color: var(--brand-text);
+
+    &:hover {
+      background-color: var(--brand-surface-alt);
+    }
+  }
+
+  .spartan-button-variant-ghost {
+    background-color: transparent;
+    color: var(--brand-text);
+
+    &:hover {
+      background-color: var(--brand-surface-alt);
+    }
+  }
+
+  .spartan-button-variant-destructive {
+    background-color: var(--brand-error);
+    border-color: var(--brand-error);
+    color: var(--primary-foreground);
+
+    &:hover {
+      background-color: var(--brand-critical);
+      border-color: var(--brand-critical);
+    }
+
+    &:focus-visible {
+      outline-color: var(--brand-error);
+    }
+  }
+
+  .spartan-button-variant-link {
+    background-color: transparent;
+    color: var(--brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+
+    &:hover {
+      color: var(--brand-primary-hover);
+    }
+  }
+
+  .spartan-button-size-default {
+    padding: 12px 24px;
+  }
+
+  .spartan-button-size-xs {
+    gap: 4px;
+    padding: 6px 10px;
+  }
+
+  .spartan-button-size-sm {
+    gap: 6px;
+    padding: 8px 16px;
+  }
+
+  .spartan-button-size-lg {
+    padding: 14px 28px;
+  }
+
+  .spartan-button-size-icon,
+  .spartan-button-size-icon-xs,
+  .spartan-button-size-icon-sm,
+  .spartan-button-size-icon-lg {
+    padding: 0;
+  }
+
+  .spartan-button-size-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .spartan-button-size-icon-xs {
+    width: 28px;
+    height: 28px;
+  }
+
+  .spartan-button-size-icon-sm {
+    width: 32px;
+    height: 32px;
+  }
+
+  .spartan-button-size-icon-lg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
 .nexus-button {
   --bg-color: var(--brand-primary);
 
@@ -210,6 +357,7 @@ iconify-icon {
   &:active {
     --bg-color: var(--brand-primary-active);
   }
+
   &:focus {
     outline: 2px solid var(--brand-primary);
     outline-offset: 2px;
@@ -224,15 +372,6 @@ iconify-icon {
     border-color: var(--brand-border);
   }
 
-  &.red {
-    background-color: var(--brand-error);
-    border-color: var(--brand-error);
-  }
-
-  &.red:hover {
-    background-color: var(--brand-critical);
-    border-color: var(--brand-critical);
-  }
 }
 
 .nexus-button.authority {
@@ -272,15 +411,6 @@ iconify-icon {
   &:hover {
     background-color: color-mix(in oklab, var(--brand-primary) 10%, transparent);
   }
-
-  &.red {
-    border: 1px solid var(--brand-error);
-    color: var(--brand-error);
-  }
-
-  &.red:hover {
-    background-color: color-mix(in oklab, var(--brand-error) 10%, transparent);
-  }
 }
 
 /* Consequential actions: logout, cancellation, rejection, revocation and deletion. */
@@ -310,26 +440,34 @@ iconify-icon {
   color: var(--sidebar-foreground);
 
   &:hover {
-    background-color: color-mix(
-      in oklab,
-      var(--brand-error) 28%,
-      var(--brand-secondary)
-    );
+    background-color: color-mix(in oklab, var(--brand-error) 28%, var(--brand-secondary));
     color: var(--sidebar-foreground);
   }
 
   &:active {
-    background-color: color-mix(
-      in oklab,
-      var(--brand-critical) 36%,
-      var(--brand-secondary)
-    );
+    background-color: color-mix(in oklab, var(--brand-critical) 36%, var(--brand-secondary));
   }
 
   &:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--brand-error) 65%, var(--brand-secondary));
     outline-offset: 2px;
   }
+}
+
+.descriptor {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+  margin-bottom: 3.5px;
+}
+
+.section-descriptor {
+  text-transform: uppercase;
+  opacity: 0.7;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: -0.5px;
 }
 
 /* ANIMATIONS */
